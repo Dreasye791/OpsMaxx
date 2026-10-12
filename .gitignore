@@ -36,3 +36,10 @@ tests/.tmp-cloudexec/
 # The real output goes to resources/bin via scripts/build-addyd.sh.
 sidecar/addyd/addyd
 sidecar/netd/netd
+
+# A local `go` wrapper that skips `vet` and `test`, for machines where the
+# module proxy stalls during test-dependency resolution. It exists to get the
+# engines built, not to be shared: the gate it removes is a real one, so it
+# must not travel to a machine where it would quietly apply. Ignored rather
+# than deleted so the machine that needed it keeps it.
+.go-shim/
