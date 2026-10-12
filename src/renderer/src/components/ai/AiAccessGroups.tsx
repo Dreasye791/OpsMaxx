@@ -106,7 +106,7 @@ function TierMatrix({ groups }: { groups: AccessGroup[] }): React.JSX.Element | 
             <tr>
               <th>{t('Capability')}</th>
               {groups.map((g) => (
-                <th key={g.id}>{g.name}</th>
+                <th key={g.id}>{t(g.name)}</th>
               ))}
             </tr>
           </thead>
@@ -116,7 +116,7 @@ function TierMatrix({ groups }: { groups: AccessGroup[] }): React.JSX.Element | 
                 {/* The detail, not just the label: "Server metrics" understated
                     its grant once already, and a comparison that repeats the
                     label teaches nothing the grid does not. */}
-                <td title={c.detail}>{c.label}</td>
+                <td title={t(c.detail)}>{t(c.label)}</td>
                 {groups.map((g) => {
                   // An absent capability evaluates as DENY everywhere else in
                   // the app, so it is shown as deny here rather than blank —
@@ -313,7 +313,7 @@ function GroupEditor({ group, summary, onChange, onSave, onDelete }: {
               <select
                 className="input"
                 style={{ width: 110 }}
-                aria-label={`Read permission for ${rule.pattern}`}
+                aria-label={t('Read permission for {path}', { path: rule.pattern })}
                 value={rule.read ?? ''}
                 onChange={(e) => setRule(rule.id, { read: (e.target.value || undefined) as PermissionValue | undefined })}
               >
@@ -327,7 +327,7 @@ function GroupEditor({ group, summary, onChange, onSave, onDelete }: {
               <select
                 className="input"
                 style={{ width: 110 }}
-                aria-label={`Write permission for ${rule.pattern}`}
+                aria-label={t('Write permission for {path}', { path: rule.pattern })}
                 value={rule.write ?? ''}
                 onChange={(e) => setRule(rule.id, { write: (e.target.value || undefined) as PermissionValue | undefined })}
               >
@@ -502,7 +502,7 @@ function ServerAssignment({ groups }: { groups: AccessGroup[] }): React.JSX.Elem
           <option value="">{t('No AI Access')}</option>
           {groups.map((g) => (
             <option key={g.id} value={g.id}>
-              {g.name}
+              {t(g.name)}
             </option>
           ))}
         </select>
@@ -520,7 +520,7 @@ function ServerAssignment({ groups }: { groups: AccessGroup[] }): React.JSX.Elem
           checked={isProtected(workspaceScope)}
           disabled={!activeWorkspaceId}
           onChange={(on) => void setProtected(workspaceScope, on)}
-          label={`Protected from agents: ${workspaces.find((w) => w.id === activeWorkspaceId)?.name ?? 'workspace'}`}
+          label={t('Protected from agents: {name}', { name: workspaces.find((w) => w.id === activeWorkspaceId)?.name ?? t('workspace') })}
         />
       </div>
 
@@ -544,7 +544,7 @@ function ServerAssignment({ groups }: { groups: AccessGroup[] }): React.JSX.Elem
               <Switch
                 checked={isProtected(scope)}
                 onChange={(on) => void setProtected(scope, on)}
-                label={`Protected from agents: ${s.name}`}
+                label={t('Protected from agents: {name}', { name: s.name })}
               />
             </label>
             <select
@@ -559,7 +559,7 @@ function ServerAssignment({ groups }: { groups: AccessGroup[] }): React.JSX.Elem
               <option value="">{t('No AI Access')}</option>
               {groups.map((g) => (
                 <option key={g.id} value={g.id}>
-                  {g.name}
+                  {t(g.name)}
                 </option>
               ))}
             </select>
@@ -649,13 +649,13 @@ export function AiAccessGroups(): React.JSX.Element {
       // third way to lose unsaved edits, after the card click and the deep link.
       if (dirty) {
         setPendingId(g.id)
-        toast(`Created ${g.name}. It is not open yet — you have unsaved changes here.`, 'ok')
+        toast(`Created ${t(g.name)}. It is not open yet — you have unsaved changes here.`, 'ok')
       } else {
         setSelectedId(g.id)
         // Deliberately not "created, you're done": a new group is not empty, it
         // arrives with defaults, and the summary showing them is right below.
         toast(
-          `Created ${g.name}. Read what its card says it allows before you assign it to anything.`,
+          `Created ${t(g.name)}. Read what its card says it allows before you assign it to anything.`,
           'ok'
         )
       }

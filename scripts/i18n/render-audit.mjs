@@ -153,11 +153,89 @@ const rail = JSON.parse((await evaluate(
 )) || '[]')
 
 const screens = [{ screen: '(initial)', label: '', ...JSON.parse(await evaluate(COLLECT)) }]
+
+const clickRail = (i) =>
+  evaluate(`(() => { const b = document.querySelectorAll('.activity-btn')[${i}]; if (!b) return false; b.click(); return true })()`)
+
+/**
+ * The second level.
+ *
+ * Settings has fifteen sections and AI & MCP has seven, and both render them
+ * through the same `.settings-nav .nav-item` rail. Walking only the top level
+ * reports the one section that happens to be selected and says nothing about
+ * the other twenty-one — which is exactly the reading that made "Settings is
+ * translated" look true while thirteen of its fifteen pages were English.
+ *
+ * Two traps, both found by checking the numbers rather than trusting them:
+ * a panel that is mounted but hidden still matches the selector, so the items
+ * must be filtered for visibility or a modal's screen "gains" the sections of
+ * a panel nobody can see; and the first click after a screen change can land
+ * before the panel is ready, which silently leaves two sections with identical
+ * readings. So the click is confirmed against the `active` class the source
+ * sets, and retried once.
+ */
+const VISIBLE = `(el) => { const r = el.getBoundingClientRect(); const s = getComputedStyle(el); return r.width > 0 && r.height > 0 && s.display !== 'none' && s.visibility !== 'hidden' }`
+
+const subNav = () =>
+  evaluate(`(() => {
+    const vis = ${VISIBLE}
+    return JSON.stringify([...document.querySelectorAll('.settings-nav .nav-item')]
+      .map((b, i) => ({ i, label: (b.textContent || '').trim() }))
+      .filter((_, i) => { const all = [...document.querySelectorAll('.settings-nav .nav-item')]; return vis(all[i]) }))
+  })()`)
+
+const clickSub = async (i) => {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const ok = await evaluate(`(() => { const b = document.querySelectorAll('.settings-nav .nav-item')[${i}]; if (!b) return false; b.click(); return true })()`)
+    if (!ok) return false
+    for (let t = 0; t < 12; t++) {
+      await sleep(250)
+      const active = await evaluate(`(() => { const b = document.querySelectorAll('.settings-nav .nav-item')[${i}]; return !!(b && b.classList.contains('active')) })()`)
+      if (active) return true
+    }
+  }
+  return false
+}
+
 for (const b of rail) {
-  const ok = await evaluate(`(() => { const b = document.querySelectorAll('.activity-btn')[${b.i}]; if (!b) return false; b.click(); return true })()`)
-  if (!ok) continue
+  // A modal outlives the screen that opened it. The bug-report button opens one,
+  // and every reading taken afterwards is the modal and whatever is behind it
+  // merged — which reports the same strings on screens that have nothing in
+  // common and makes two sections look identical when they are not. Escape
+  // before each screen, and again after, so a modal belongs to its own screen.
+  await pressEscape()
+  await sleep(500)
+  if (!(await clickRail(b.i))) continue
   await sleep(2200)
-  screens.push({ screen: `rail:${b.i}`, label: b.label, ...JSON.parse(await evaluate(COLLECT)) })
+
+  const subs = JSON.parse((await subNav()) || '[]')
+  if (subs.length === 0) {
+    screens.push({ screen: `rail:${b.i}`, label: b.label, ...JSON.parse(await evaluate(COLLECT)) })
+    await pressEscape()
+    await sleep(300)
+    continue
+  }
+
+  // Every section is clicked, the first included. The tempting shortcut — read
+  // the first one, click the rest — silently mislabels it: the panel opens on
+  // whichever section was selected last, which is `appearance` here, so the
+  // reading labelled "General" was Appearance and the section that calls itself
+  // General was never opened at all. Two sections then reported identical
+  // numbers, which is what gave it away.
+  for (const sub of subs) {
+    if (!(await clickSub(sub.i))) {
+      screens.push({ screen: `rail:${b.i}/${sub.i}`, label: `${b.label} › ${sub.label} (did not open)`, texts: [], attrs: [] })
+      continue
+    }
+    await sleep(700)
+    screens.push({
+      screen: `rail:${b.i}/${sub.i}`,
+      label: `${b.label} › ${sub.label}`,
+      ...JSON.parse(await evaluate(COLLECT))
+    })
+  }
+  await pressEscape()
+  await sleep(300)
 }
 
 try { child.kill('SIGKILL') } catch { /* already gone */ }
