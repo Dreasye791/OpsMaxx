@@ -19,6 +19,7 @@ import {
 import type { Server } from '../../types'
 import { NoteWhy, PanelShell } from './PanelShell'
 import { SweepEmpty } from './SweepEmpty'
+import { useT } from '../../i18n'
 
 // The estate inventory — roadmap item C, renderer half.
 //
@@ -67,6 +68,7 @@ function SortHeader({
 }
 
 function Cell({ row, column }: { row: InventoryRow; column: InventoryColumn }): React.JSX.Element {
+  const t = useT()
   const cell = row.cells[column.id]
   return (
     // `data-host`/`data-col` name the cell for anything that has to find one —
@@ -84,8 +86,7 @@ function Cell({ row, column }: { row: InventoryRow; column: InventoryColumn }): 
               the two facts have to arrive together or the first one wins. */}
           {cell.staleMetadata && (
             <span className="chip warn inv-stale" title={cell.help}>
-              stale cache
-            </span>
+              {t('stale cache')}</span>
           )}
         </>
       ) : (
@@ -108,6 +109,7 @@ export function InventoryPanel({
   servers: Server[]
   onOpen?: (serverId: string) => void
 }): React.JSX.Element {
+  const t = useT()
   const samples = useFleet((s) => s.samples)
   const facts = useFleet((s) => s.facts)
   const reportFacts = useFleet((s) => s.reportFacts)
@@ -217,13 +219,10 @@ export function InventoryPanel({
     // state where refreshing IS the task — see below.
     <PanelShell
       icon={<Boxes size={14} />}
-      title="Inventory"
+      title={t('Inventory')}
       about={
         <p>
-          What each server is running and what it is owed — distribution, kernel, pending and
-          security updates. Read from package caches as they are; nothing is installed or
-          refreshed.
-        </p>
+          {t('What each server is running and what it is owed — distribution, kernel, pending and security updates. Read from package caches as they are; nothing is installed or refreshed.')}</p>
       }
       actions={
         <>
@@ -231,7 +230,7 @@ export function InventoryPanel({
             <button
               className="btn ghost sm"
               onClick={() => setHardware((h) => !h)}
-              title="Kernel, architecture, CPU model, RAM and virtualisation — what the server IS, as opposed to what it needs."
+              title={t('Kernel, architecture, CPU model, RAM and virtualisation — what the server IS, as opposed to what it needs.')}
             >
               {hardware ? 'Hide hardware' : 'Show hardware'}
             </button>
@@ -264,25 +263,24 @@ export function InventoryPanel({
           subject="No server facts have been collected yet."
           busy={busy}
           onCheckNow={() => void check()}
-          note="Nothing is installed or refreshed by this: package caches are read as they are, and their age is reported next to the counts."
+          note={t('Nothing is installed or refreshed by this: package caches are read as they are, and their age is reported next to the counts.')}
         />
       ) : (
         <>
           <div className="panel-stats">
             <span>
-              {summary.hosts} server{summary.hosts === 1 ? '' : 's'} · facts for {summary.withFacts}
+              {summary.hosts} {t('server')}{summary.hosts === 1 ? '' : 's'} {t('· facts for')}{' '}{summary.withFacts}
             </span>
             <span>
-              {summary.pendingTotal} pending update{summary.pendingTotal === 1 ? '' : 's'}
+              {summary.pendingTotal} {t('pending update')}{summary.pendingTotal === 1 ? '' : 's'}
               {/* Counted, not skipped. A total drawn from nine hosts out of
                   twelve is a different number from a total drawn from twelve. */}
               {summary.pendingUnknown > 0 && (
-                <span className="state-unknown"> · {summary.pendingUnknown} server
-                  {summary.pendingUnknown === 1 ? '' : 's'} could not be counted</span>
+                <span className="state-unknown"> · {summary.pendingUnknown} {t('server')}{summary.pendingUnknown === 1 ? '' : 's'} {t('could not be counted')}</span>
               )}
             </span>
             <span>
-              {summary.securityTotal} security update{summary.securityTotal === 1 ? '' : 's'}
+              {summary.securityTotal} {t('security update')}{summary.securityTotal === 1 ? '' : 's'}
               {/* The same treatment the pending total already had, and the one
                   whose absence made this line dangerous: a security total with
                   nothing beside it reads as an estate-wide figure. Three hosts
@@ -290,8 +288,7 @@ export function InventoryPanel({
                   not one word more, which is the exact sentence a non-root
                   account must never be shown during the week a CVE lands. */}
               {summary.securityUnknown > 0 && (
-                <span className="state-unknown"> · {summary.securityUnknown} server
-                  {summary.securityUnknown === 1 ? '' : 's'} could not answer</span>
+                <span className="state-unknown"> · {summary.securityUnknown} {t('server')}{summary.securityUnknown === 1 ? '' : 's'} {t('could not answer')}</span>
               )}
             </span>
             {/* The counts above are read out of package caches, and a cache
@@ -301,16 +298,13 @@ export function InventoryPanel({
             {summary.staleMetadata > 0 && (
               <span
                 className="state-watch"
-                title="OpsMaxx never refreshes a package cache — refreshing is a network operation and on some package managers it can break the server — so a count read out of an old cache is reported with the cache's age beside it rather than silently presented as current."
+                title={t('OpsMaxx never refreshes a package cache — refreshing is a network operation and on some package managers it can break the server — so a count read out of an old cache is reported with the cache\'s age beside it rather than silently presented as current.')}
               >
-                {summary.staleMetadata} server{summary.staleMetadata === 1 ? '' : 's'} counted from a
-                stale package cache
-              </span>
+                {summary.staleMetadata} {t('server')}{summary.staleMetadata === 1 ? '' : 's'} {t('counted from a stale package cache')}</span>
             )}
             {summary.rebootsOwed > 0 && (
               <span className="state-watch">
-                {summary.rebootsOwed} server{summary.rebootsOwed === 1 ? '' : 's'} awaiting a reboot
-              </span>
+                {summary.rebootsOwed} {t('server')}{summary.rebootsOwed === 1 ? '' : 's'} {t('awaiting a reboot')}</span>
             )}
           </div>
 
@@ -321,18 +315,13 @@ export function InventoryPanel({
           {summary.securityUnanswerable > 0 && (
             <div className="panel-note is-unknown">
               <ShieldQuestion size={12} />{' '}
-              {summary.securityUnanswerable} server
-              {summary.securityUnanswerable === 1 ? '' : 's'} can never report a security update
-              count, so {summary.securityUnanswerable === 1 ? 'it is' : 'they are'} not in the{' '}
-              {summary.securityTotal} above. Treat{' '}
-              {summary.securityUnanswerable === 1 ? 'it' : 'them'} as unknown, never as zero.
-              {/* The sentence above is the finding and does not fold. What folds
+              {summary.securityUnanswerable} {t('server')}{summary.securityUnanswerable === 1 ? '' : 's'} {t('can never report a security update count, so')}{' '}{summary.securityUnanswerable === 1 ? 'it is' : 'they are'} {t('not in the')}{' '}
+              {summary.securityTotal} {t('above. Treat')}{' '}
+              {summary.securityUnanswerable === 1 ? 'it' : 'them'} {t('as unknown, never as zero.')}{/* The sentence above is the finding and does not fold. What folds
                   is which distributions and why — true, useful once, and 38px
                   of a table's window every time it is not being read. */}
-              <NoteWhy summary="Why they cannot answer">
-                Arch and Alpine have no security channel at all, and dnf cannot answer where the
-                repositories publish no updateinfo.
-              </NoteWhy>
+              <NoteWhy summary={t('Why they cannot answer')}>
+                {t('Arch and Alpine have no security channel at all, and dnf cannot answer where the repositories publish no updateinfo.')}</NoteWhy>
             </div>
           )}
 
@@ -346,21 +335,17 @@ export function InventoryPanel({
               fact about their estate, and the reverse. */}
           {summary.securityUnknown > 0 && (
             <div className="panel-note is-unknown">
-              <ShieldQuestion size={12} /> {summary.securityUnknown} server
-              {summary.securityUnknown === 1 ? '' : 's'} did not answer the security question, so{' '}
-              {summary.securityUnknown === 1 ? 'it is' : 'they are'} not in the{' '}
+              <ShieldQuestion size={12} /> {summary.securityUnknown} {t('server')}{summary.securityUnknown === 1 ? '' : 's'} {t('did not answer the security question, so')}{' '}
+              {summary.securityUnknown === 1 ? 'it is' : 'they are'} {t('not in the')}{' '}
               {summary.securityTotal} above.
-              <NoteWhy summary="These gaps can close">
-                A probe refused for want of privilege answers for an account that has it, and a
-                server whose facts have not been collected yet answers on the next sweep. The
-                Security column says which applies to which server.
-              </NoteWhy>
+              <NoteWhy summary={t('These gaps can close')}>
+                {t('A probe refused for want of privilege answers for an account that has it, and a server whose facts have not been collected yet answers on the next sweep. The Security column says which applies to which server.')}</NoteWhy>
             </div>
           )}
 
           {failed.map((f) => (
             <div key={f.name} className="panel-note is-alarm">
-              {f.name}: the facts probe failed — {f.error}
+              {f.name}{t(': the facts probe failed —')}{' '}{f.error}
             </div>
           ))}
 

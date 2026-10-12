@@ -20,6 +20,7 @@ import {
   type PrefAnswers,
   type PrefControl
 } from './setupQuestions'
+import { useT } from '../../i18n'
 
 /**
  * The first thing a new install shows.
@@ -55,6 +56,7 @@ import {
 const LAST = SETUP_QUESTIONS.length + 1
 
 export function SetupCard(): React.JSX.Element | null {
+  const t = useT()
   const open = useOnboarding((s) => s.setupOpen)
   const finishSetup = useOnboarding((s) => s.finishSetup)
   const settings = useApp((s) => s.settings)
@@ -173,7 +175,7 @@ export function SetupCard(): React.JSX.Element | null {
     <div className="setup-scrim" role="dialog" aria-modal="true" aria-labelledby="setup-title">
       <div className="setup-card">
         <header className="setup-head">
-          <span className="setup-brand">Set up OpsMaxx</span>
+          <span className="setup-brand">{t('Set up OpsMaxx')}</span>
           <span className="setup-steps">
             <span className="setup-dots" aria-hidden="true">
               {Array.from({ length: LAST + 1 }, (_, n) => (
@@ -182,7 +184,7 @@ export function SetupCard(): React.JSX.Element | null {
             </span>
             {/* The dots are decoration; this is the part that is announced. */}
             <span className="setup-step-count" aria-live="polite">
-              Step {step + 1} of {LAST + 1}
+              {t('Step')}{' '}{step + 1} {t('of')}{' '}{LAST + 1}
             </span>
           </span>
         </header>
@@ -227,15 +229,13 @@ export function SetupCard(): React.JSX.Element | null {
           {step > 0 && (
             <button type="button" className="btn sm" onClick={goBack}>
               <ArrowLeft size={13} />
-              Back
-            </button>
+              {t('Back')}</button>
           )}
           {onReview && <ReviewHint answers={answers} prefs={prefs} />}
           <button type="button" className="btn primary" onClick={goNext}>
             {onReview ? (
               <>
-                Start
-                <CornerDownLeft size={14} />
+                {t('Start')}<CornerDownLeft size={14} />
               </>
             ) : (
               <>
@@ -267,15 +267,13 @@ function PersonaStep({
   persona: string | null
   onChoose: (id: string) => void
 }): React.JSX.Element {
+  const t = useT()
   return (
     <>
       <h1 id="setup-title" className="setup-step-title" ref={headingRef} tabIndex={-1}>
-        What do you do?
-      </h1>
+        {t('What do you do?')}</h1>
       <p className="setup-q-detail">
-        Optional — it answers the next four questions for you, and every one stays editable.
-        Nothing you choose here is permanent.
-      </p>
+        {t('Optional — it answers the next four questions for you, and every one stays editable. Nothing you choose here is permanent.')}</p>
       <div className="setup-persona-row">
         {PERSONAS.map((p) => (
           <button
@@ -316,6 +314,7 @@ function QuestionStep({
   value: boolean
   onAnswer: (v: boolean) => void
 }): React.JSX.Element {
+  const t = useT()
   return (
     <>
       <h1 id="setup-title" className="setup-step-title" ref={headingRef} tabIndex={-1}>
@@ -331,8 +330,7 @@ function QuestionStep({
           className={clsx('setup-yn', value && 'on')}
           onClick={() => onAnswer(true)}
         >
-          Yes
-        </button>
+          {t('Yes')}</button>
         <button
           type="button"
           role="radio"
@@ -340,8 +338,7 @@ function QuestionStep({
           className={clsx('setup-yn', !value && 'on')}
           onClick={() => onAnswer(false)}
         >
-          No
-        </button>
+          {t('No')}</button>
       </div>
     </>
   )
@@ -365,12 +362,12 @@ function ReviewStep({
   onToggleGroup: (id: string, open: boolean) => void
   onPick: (key: keyof PrefAnswers, value: string | number | boolean) => void
 }): React.JSX.Element {
+  const t = useT()
   return (
     <>
       <h1 id="setup-title" className="setup-step-title" ref={headingRef} tabIndex={-1}>
-        Ready when you are
-      </h1>
-      <p className="setup-q-detail">Click any answer to go back and change it.</p>
+        {t('Ready when you are')}</h1>
+      <p className="setup-q-detail">{t('Click any answer to go back and change it.')}</p>
       <ul className="setup-review-list">
         {SETUP_QUESTIONS.map((q, n) => {
           const on = answers[q.id] === true
@@ -393,8 +390,7 @@ function ReviewStep({
           should walk past. */}
       <section className="setup-prefs" aria-labelledby="setup-prefs-label">
         <h2 id="setup-prefs-label" className="setup-section-label">
-          How should it behave?
-          <span className="setup-section-hint">Sensible defaults; open one to change it.</span>
+          {t('How should it behave?')}<span className="setup-section-hint">{t('Sensible defaults; open one to change it.')}</span>
         </h2>
         {PREF_GROUPS.map((g) => (
           <details
@@ -435,6 +431,7 @@ function ReviewHint({
   answers: Record<string, boolean>
   prefs: PrefAnswers
 }): React.JSX.Element {
+  const t = useT()
   const onCount = SETUP_QUESTIONS.filter((q) => answers[q.id] === true).reduce(
     (n, q) => n + q.modules.length,
     0
@@ -447,8 +444,7 @@ function ReviewHint({
 
   return (
     <span className="setup-hint">
-      {onCount} module{onCount === 1 ? '' : 's'} on
-      {prefCount > 0 && `, ${prefCount} preference${prefCount === 1 ? '' : 's'} changed`}. Anything
+      {onCount} {t('module')}{onCount === 1 ? '' : 's'} {t('on')}{prefCount > 0 && `, ${prefCount} preference${prefCount === 1 ? '' : 's'} changed`}. Anything
       not listed here &mdash; revoking keys, unattended rules, reading other accounts&rsquo; access
       &mdash; stays off and lives in Settings.
     </span>

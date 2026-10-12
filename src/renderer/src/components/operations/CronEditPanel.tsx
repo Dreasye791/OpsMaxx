@@ -20,6 +20,7 @@ import type {
 import { approvalFor, planBroadcast } from '../../../../shared/broadcast'
 import type { Server } from '../../types'
 import { PanelShell } from '../monitor/PanelShell'
+import { useT } from '../../i18n'
 
 // Writing a crontab — the write half of what used to be one Monitoring tab.
 //
@@ -117,6 +118,7 @@ function JobForm({
   onCancel: () => void
   busy: boolean
 }): React.JSX.Element {
+  const t = useT()
   const scheduleOk = isValidCronSchedule(draft.schedule)
   // The same sentence the Monitoring list shows, computed by the same function,
   // so what the operator reads before saving is what they will read afterwards.
@@ -130,14 +132,14 @@ function JobForm({
           className="input mono"
           style={{ maxWidth: 170 }}
           placeholder="0 3 * * *"
-          aria-label="Schedule"
+          aria-label={t('Schedule')}
           value={draft.schedule}
           onChange={(e) => onChange({ ...draft, schedule: e.target.value })}
         />
         <input
           className="input mono grow"
-          placeholder="/usr/bin/backup --all"
-          aria-label="Command"
+          placeholder={t('/usr/bin/backup --all')}
+          aria-label={t('Command')}
           value={draft.command}
           onChange={(e) => onChange({ ...draft, command: e.target.value })}
         />
@@ -150,21 +152,20 @@ function JobForm({
         </span>
         <span className="grow" />
         <button className="btn" onClick={onCancel}>
-          Cancel
-        </button>
+          {t('Cancel')}</button>
         <button
           className="btn"
           disabled={busy || !scheduleOk || draft.command.trim() === ''}
           onClick={onReview}
         >
-          Review change
-        </button>
+          {t('Review change')}</button>
       </div>
     </div>
   )
 }
 
 export function CronEditPanel({ servers }: { servers: Server[] }): React.JSX.Element {
+  const t = useT()
   const [serverId, setServerId] = useState<string | null>(null)
   const [host, setHost] = useState<HostCron | null>(null)
   const [loading, setLoading] = useState(false)
@@ -338,8 +339,7 @@ export function CronEditPanel({ servers }: { servers: Server[] }): React.JSX.Ele
     if (refusal !== null) {
       return (
         <span className="faint" title={refusal}>
-          not editable
-        </span>
+          {t('not editable')}</span>
       )
     }
     // A job with no line behind it is one we cannot point at. It should not
@@ -353,7 +353,7 @@ export function CronEditPanel({ servers }: { servers: Server[] }): React.JSX.Ele
         <button
           className="btn"
           disabled={busy}
-          title="Change this job"
+          title={t('Change this job')}
           onClick={() => {
             setPending(null)
             setNote(null)
@@ -370,7 +370,7 @@ export function CronEditPanel({ servers }: { servers: Server[] }): React.JSX.Ele
         <button
           className="btn"
           disabled={busy}
-          title="Remove this job"
+          title={t('Remove this job')}
           onClick={() => {
             setDraft(null)
             if (entry.line !== undefined) void review({ op: 'remove', line: entry.line })
@@ -392,7 +392,7 @@ export function CronEditPanel({ servers }: { servers: Server[] }): React.JSX.Ele
   return (
     <PanelShell
       icon={<CalendarClock size={14} />}
-      title="Change what a server runs on a schedule"
+      title={t('Change what a server runs on a schedule')}
       about={
         <p>
           Adds, changes or removes one job in the connected account&rsquo;s own crontab, on one
@@ -404,7 +404,7 @@ export function CronEditPanel({ servers }: { servers: Server[] }): React.JSX.Ele
         <>
           <select
             className="input"
-            aria-label="Server"
+            aria-label={t('Server')}
             value={serverId ?? ''}
             onChange={(e) => {
               setServerId(e.target.value === '' ? null : e.target.value)
@@ -414,7 +414,7 @@ export function CronEditPanel({ servers }: { servers: Server[] }): React.JSX.Ele
               setNote(null)
             }}
           >
-            <option value="">Choose a server…</option>
+            <option value="">{t('Choose a server…')}</option>
             {eligible.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.name}
@@ -426,8 +426,7 @@ export function CronEditPanel({ servers }: { servers: Server[] }): React.JSX.Ele
             disabled={loading || serverId === null}
             onClick={() => serverId && void collect(serverId)}
           >
-            <RefreshCw size={13} className={clsx(loading && 'spin')} /> Read this server
-          </button>
+            <RefreshCw size={13} className={clsx(loading && 'spin')} /> {t('Read this server')}</button>
         </>
       }
     >
@@ -442,17 +441,12 @@ export function CronEditPanel({ servers }: { servers: Server[] }): React.JSX.Ele
 
       {host === null ? (
         <div className="panel-empty">
-          <p className="panel-empty-title">Nothing has been read yet.</p>
+          <p className="panel-empty-title">{t('Nothing has been read yet.')}</p>
           <p className="panel-empty-body">
-            Pick a server and read it. A crontab is written back whole, so this reads the file it is
-            about to replace first — a change planned against a file nobody read is a change that
-            deletes the part nobody saw. The estate-wide view of what is scheduled, including the
-            sources this account is not allowed to read, is on Monitoring.
-          </p>
+            {t('Pick a server and read it. A crontab is written back whole, so this reads the file it is about to replace first — a change planned against a file nobody read is a change that deletes the part nobody saw. The estate-wide view of what is scheduled, including the sources this account is not allowed to read, is on Monitoring.')}</p>
           <div className="panel-empty-actions">
             <button className="btn ghost sm" onClick={() => openMonitor('cron')}>
-              Open Scheduled jobs
-            </button>
+              {t('Open Scheduled jobs')}</button>
           </div>
         </div>
       ) : host.error ? (
@@ -466,10 +460,7 @@ export function CronEditPanel({ servers }: { servers: Server[] }): React.JSX.Ele
               read deserves the reason. */}
           {!ownCrontabReadable(host) ? (
             <div className="panel-note is-unknown" data-testid="cron-unreadable">
-              <ShieldAlert size={12} /> This account&rsquo;s crontab on {host.serverName} was not
-              read in full, so nothing here can be written to it. A write replaces the whole file,
-              which means the part that could not be read is the part it would delete.
-            </div>
+              <ShieldAlert size={12} /> This account&rsquo;s crontab on {host.serverName} {t('was not read in full, so nothing here can be written to it. A write replaces the whole file, which means the part that could not be read is the part it would delete.')}</div>
           ) : (
             <div className="row" style={{ gap: 8, alignItems: 'center', marginTop: 6 }}>
               <span className="faint">
@@ -487,8 +478,7 @@ export function CronEditPanel({ servers }: { servers: Server[] }): React.JSX.Ele
                   setDraft({ schedule: '0 3 * * *', command: '' })
                 }}
               >
-                <Plus size={12} /> Add job
-              </button>
+                <Plus size={12} /> {t('Add job')}</button>
             </div>
           )}
 
@@ -532,7 +522,7 @@ export function CronEditPanel({ servers }: { servers: Server[] }): React.JSX.Ele
                   title={e.input === undefined ? e.command : `${e.command}\n\nstdin:\n${e.input}`}
                 >
                   {e.command}
-                  {e.input !== undefined && <span className="faint"> · stdin</span>}
+                  {e.input !== undefined && <span className="faint"> {t('· stdin')}</span>}
                 </span>
                 {e.user && <span className="faint">{e.user}</span>}
                 {rowControls(e)}
@@ -572,23 +562,16 @@ export function CronEditPanel({ servers }: { servers: Server[] }): React.JSX.Ele
                 {pending.reply.summary}
               </div>
               <div className="faint">
-                The whole crontab is replaced — that is the only way to write one — after a
-                timestamped copy of it is kept on {pending.target.serverName}. It is written back
-                only if the file is still the one this was planned against, and it is read back
-                afterwards and compared; if it does not match, the copy goes straight back.
-              </div>
+                {t('The whole crontab is replaced — that is the only way to write one — after a timestamped copy of it is kept on')}{' '}{pending.target.serverName}{t('. It is written back only if the file is still the one this was planned against, and it is read back afterwards and compared; if it does not match, the copy goes straight back.')}</div>
               {pending.reply.addedFinalNewline && (
                 <div className="state-watch">
-                  <ShieldAlert size={11} /> This crontab has no newline at the end of its last line,
-                  so one is being added. Without it the new job would be glued onto the end of the
-                  previous one.
-                </div>
+                  <ShieldAlert size={11} /> {t('This crontab has no newline at the end of its last line, so one is being added. Without it the new job would be glued onto the end of the previous one.')}</div>
               )}
               {needed !== null && (
                 <input
                   className="input mono"
                   style={{ maxWidth: 120 }}
-                  aria-label="Confirmation phrase"
+                  aria-label={t('Confirmation phrase')}
                   placeholder={`Type ${needed}`}
                   value={phrase}
                   onChange={(ev) => setPhrase(ev.target.value)}
@@ -611,8 +594,7 @@ export function CronEditPanel({ servers }: { servers: Server[] }): React.JSX.Ele
             <span className="grow" />
             {pending !== null && (
               <button className="btn ghost" disabled={busy} onClick={() => setPending(null)}>
-                Cancel
-              </button>
+                {t('Cancel')}</button>
             )}
             <button
               className="btn danger"
@@ -622,7 +604,7 @@ export function CronEditPanel({ servers }: { servers: Server[] }): React.JSX.Ele
               }
               onClick={() => void apply()}
             >
-              Apply to {host.serverName}
+              {t('Apply to')}{' '}{host.serverName}
             </button>
           </div>
         </>

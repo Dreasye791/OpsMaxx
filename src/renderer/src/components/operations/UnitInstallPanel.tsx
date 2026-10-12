@@ -11,6 +11,7 @@ import {
 import type { Server } from '../../types'
 import { PanelShell } from '../monitor/PanelShell'
 import { withVaultUnlock } from '../../lib/withVaultUnlock'
+import { useT } from '../../i18n'
 
 // Installing a `systemd --user` unit — the write half of what used to be one
 // Monitoring tab.
@@ -35,6 +36,7 @@ import { withVaultUnlock } from '../../lib/withVaultUnlock'
 // to make easy.
 
 export function UnitInstallPanel({ servers }: { servers: Server[] }): React.JSX.Element {
+  const t = useT()
   const [serverId, setServerId] = useState<string | null>(null)
   const [draft, setDraft] = useState<UnitDraft>({
     name: '',
@@ -109,10 +111,10 @@ export function UnitInstallPanel({ servers }: { servers: Server[] }): React.JSX.
     // other tab now.
     <PanelShell
       icon={<ServerCog size={14} />}
-      title="Install a service on a server"
+      title={t('Install a service on a server')}
       about={
         <p>
-          Writes a unit to <code>~/.config/systemd/user/</code> on one server and enables it. It
+          {t('Writes a unit to')}{' '}<code>~/.config/systemd/user/</code> on one server and enables it. It
           is not started: the server&rsquo;s own systemd owns it from then on, which is the point
           — it is there when OpsMaxx is not.
         </p>
@@ -120,14 +122,14 @@ export function UnitInstallPanel({ servers }: { servers: Server[] }): React.JSX.
       actions={
         <select
           className="input"
-          aria-label="Server"
+          aria-label={t('Server')}
           value={serverId ?? ''}
           onChange={(e) => {
             setServerId(e.target.value === '' ? null : e.target.value)
             setResult(null)
           }}
         >
-          <option value="">Choose a server…</option>
+          <option value="">{t('Choose a server…')}</option>
           {servers.map((s) => (
             <option key={s.id} value={s.id}>
               {s.name}
@@ -140,33 +142,33 @@ export function UnitInstallPanel({ servers }: { servers: Server[] }): React.JSX.
         <input
           className="input"
           placeholder="worker.service"
-          aria-label="Unit name"
+          aria-label={t('Unit name')}
           value={draft.name}
           onChange={(e) => setDraft({ ...draft, name: e.target.value })}
         />
         <input
           className="input"
-          placeholder="What it is, in one line"
-          aria-label="Description"
+          placeholder={t('What it is, in one line')}
+          aria-label={t('Description')}
           value={draft.description}
           onChange={(e) => setDraft({ ...draft, description: e.target.value })}
         />
         <input
           className="input mono"
-          placeholder="/usr/local/bin/worker --queue main"
-          aria-label="ExecStart"
+          placeholder={t('/usr/local/bin/worker --queue main')}
+          aria-label={t('ExecStart')}
           value={draft.execStart}
           onChange={(e) => setDraft({ ...draft, execStart: e.target.value })}
         />
         <select
           className="input"
-          aria-label="Restart policy"
+          aria-label={t('Restart policy')}
           value={draft.restart}
           onChange={(e) => setDraft({ ...draft, restart: e.target.value as UnitRestart })}
         >
-          <option value="on-failure">Restart on failure</option>
-          <option value="always">Always restart</option>
-          <option value="no">Never restart</option>
+          <option value="on-failure">{t('Restart on failure')}</option>
+          <option value="always">{t('Always restart')}</option>
+          <option value="no">{t('Never restart')}</option>
         </select>
 
         {/* The exact bytes, before they are written. A file is about to appear
@@ -187,8 +189,7 @@ export function UnitInstallPanel({ servers }: { servers: Server[] }): React.JSX.
             <>
               {' '}
               <button className="btn ghost sm" onClick={() => openMonitor('services')}>
-                See what this server supervises
-              </button>
+                {t('See what this server supervises')}</button>
             </>
           )}
         </div>
@@ -212,8 +213,7 @@ export function UnitInstallPanel({ servers }: { servers: Server[] }): React.JSX.
           disabled={busy || target === null || !check.ok}
           onClick={() => void install()}
         >
-          Install
-        </button>
+          {t('Install')}</button>
       </div>
     </PanelShell>
   )

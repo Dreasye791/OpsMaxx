@@ -33,6 +33,7 @@ import { VpnImportModal } from './VpnImportModal'
 import { VpnProfileForm, type VpnFormFocus } from './VpnProfileForm'
 import { NgrokSetup } from './NgrokSetup'
 import { VpnLogDrawer } from './VpnLogDrawer'
+import { useT } from '../../i18n'
 
 const KIND_LABEL: Record<VpnKind, string> = {
   wireguard: 'WireGuard',
@@ -280,6 +281,7 @@ export interface VpnProfiles {
  * places to fix the next time a start can fail in a new way.
  */
 export function useVpnProfiles(): VpnProfiles {
+  const t = useT()
   const profiles = useWorkspaceVpns()
   const vpnStatuses = useApp((s) => s.vpnStatuses)
   const setVpnStatus = useApp((s) => s.setVpnStatus)
@@ -678,17 +680,17 @@ export function useVpnProfiles(): VpnProfiles {
           </button>
           <button
             className="icon-btn sm"
-            title="Edit profile"
+            title={t('Edit profile')}
             onClick={() => setEditing({ profile: p })}
           >
             <Pencil size={14} />
           </button>
-          <button className="icon-btn sm" title="Show log" onClick={() => setLogsFor(p)}>
+          <button className="icon-btn sm" title={t('Show log')} onClick={() => setLogsFor(p)}>
             <ScrollText size={14} />
           </button>
           <button
             className="icon-btn sm"
-            title="Delete profile"
+            title={t('Delete profile')}
             onClick={() => void requestRemove(p)}
           >
             <Trash2 size={14} />
@@ -712,15 +714,13 @@ export function useVpnProfiles(): VpnProfiles {
                       className="btn sm primary"
                       onClick={() => openExternal(OPENVPN_DOWNLOAD)}
                     >
-                      Install OpenVPN
-                    </button>
+                      {t('Install OpenVPN')}</button>
                   )}
                   <button
                     className="btn sm"
                     onClick={() => setEditing({ profile: p, focus: 'binaryPath' })}
                   >
-                    Set the path
-                  </button>
+                    {t('Set the path')}</button>
                 </>
               )}
               {/* The engine came with the app, so the repair is getting the app
@@ -728,13 +728,12 @@ export function useVpnProfiles(): VpnProfiles {
                   disabled Start, a build-script name and no control at all. */}
               {engineForKindIsBundled(p.spec.kind, platform) && (
                 <button className="btn sm primary" onClick={() => openExternal(OPSMAXX_DOWNLOAD)}>
-                  Reinstall OpsMaxx
-                </button>
+                  {t('Reinstall OpsMaxx')}</button>
               )}
             </div>
             {engine?.reason && engine.reason !== engineProblem && (
               <details className="disclosure">
-                <summary className="disclosure-head">Details</summary>
+                <summary className="disclosure-head">{t('Details')}</summary>
                 <div className="disclosure-body">
                   <span className="faint" style={{ fontSize: 11 }}>
                     {engine.reason}
@@ -770,9 +769,8 @@ export function useVpnProfiles(): VpnProfiles {
           >
             <AlertTriangle size={12} style={{ flexShrink: 0 }} />
             <span className="grow">
-              Confirm what {ungated.map((x) => x.name).join(', ')}{' '}
-              {ungated.length === 1 ? 'exposes' : 'expose'} before starting.
-            </span>
+              {t('Confirm what')}{' '}{ungated.map((x) => x.name).join(', ')}{' '}
+              {ungated.length === 1 ? 'exposes' : 'expose'} {t('before starting.')}</span>
             <button
               className="btn sm primary"
               onClick={() => setEditing({ profile: p, focus: 'proxies' })}
@@ -820,7 +818,7 @@ export function useVpnProfiles(): VpnProfiles {
       )}
       {confirmStop && (
         <Modal
-          title="Stop this VPN?"
+          title={t('Stop this VPN?')}
           subtitle={confirmStop.profile.name}
           onClose={() => setConfirmStop(null)}
         >
@@ -829,8 +827,7 @@ export function useVpnProfiles(): VpnProfiles {
               <AlertTriangle size={16} />
               <span style={{ fontSize: 13 }}>
                 {confirmStop.dependents.length}{' '}
-                {confirmStop.dependents.length === 1 ? 'session is' : 'sessions are'} using this VPN.
-              </span>
+                {confirmStop.dependents.length === 1 ? 'session is' : 'sessions are'} {t('using this VPN.')}</span>
             </div>
             <div className="col" style={{ gap: 2 }}>
               {confirmStop.dependents.map((d) => (
@@ -840,14 +837,11 @@ export function useVpnProfiles(): VpnProfiles {
               ))}
             </div>
             <span className="faint" style={{ fontSize: 11 }}>
-              They are closed first, then the tunnel — nothing is left talking to a network that is
-              no longer there.
-            </span>
+              {t('They are closed first, then the tunnel — nothing is left talking to a network that is no longer there.')}</span>
             <div className="row" style={{ gap: 8 }}>
               <span className="grow" />
               <button className="btn sm" onClick={() => setConfirmStop(null)}>
-                Keep it running
-              </button>
+                {t('Keep it running')}</button>
               <button
                 className="btn danger outline sm"
                 onClick={() => {
@@ -856,15 +850,14 @@ export function useVpnProfiles(): VpnProfiles {
                   void stop(p)
                 }}
               >
-                Stop anyway
-              </button>
+                {t('Stop anyway')}</button>
             </div>
           </div>
         </Modal>
       )}
       {confirmDelete && (
         <Modal
-          title="Delete this VPN profile?"
+          title={t('Delete this VPN profile?')}
           subtitle={confirmDelete.profile.name}
           onClose={() => setConfirmDelete(null)}
         >
@@ -872,10 +865,8 @@ export function useVpnProfiles(): VpnProfiles {
             <div className="row" style={{ gap: 8, color: 'var(--danger)' }}>
               <AlertTriangle size={16} />
               <span style={{ fontSize: 13 }}>
-                Deleting {confirmDelete.profile.name} deletes {vaultLoss(confirmDelete.profile)}{' '}
-                from the vault. That key material cannot be recovered — if it is not saved anywhere
-                else, this profile cannot be recreated.
-              </span>
+                {t('Deleting')}{' '}{confirmDelete.profile.name} {t('deletes')}{' '}{vaultLoss(confirmDelete.profile)}{' '}
+                {t('from the vault. That key material cannot be recovered — if it is not saved anywhere else, this profile cannot be recreated.')}</span>
             </div>
 
             {confirmDelete.dependents.length > 0 && (
@@ -883,8 +874,7 @@ export function useVpnProfiles(): VpnProfiles {
                 <span className="field-label">
                   {confirmDelete.dependents.length}{' '}
                   {confirmDelete.dependents.length === 1 ? 'live session is' : 'live sessions are'}{' '}
-                  using it, and will be closed
-                </span>
+                  {t('using it, and will be closed')}</span>
                 {confirmDelete.dependents.map((d) => (
                   <span key={`${d.kind}-${d.id}`} className="muted" style={{ fontSize: 12 }}>
                     {d.name} <span className="faint">({d.kind})</span>
@@ -900,9 +890,7 @@ export function useVpnProfiles(): VpnProfiles {
               <div className="col" style={{ gap: 2 }}>
                 <span className="field-label">
                   {confirmDelete.attached.length}{' '}
-                  {confirmDelete.attached.length === 1 ? 'connection' : 'connections'} will be
-                  detached and will connect directly from now on
-                </span>
+                  {confirmDelete.attached.length === 1 ? 'connection' : 'connections'} {t('will be detached and will connect directly from now on')}</span>
                 {confirmDelete.attached.map((a) => (
                   <span key={`${a.kind}-${a.id}`} className="muted" style={{ fontSize: 12 }}>
                     {a.name} <span className="faint">({a.kind})</span>
@@ -912,14 +900,11 @@ export function useVpnProfiles(): VpnProfiles {
             )}
 
             <span className="faint" style={{ fontSize: 11 }}>
-              The profile itself is only stored here — nothing on the far side of the tunnel
-              changes.
-            </span>
+              {t('The profile itself is only stored here — nothing on the far side of the tunnel changes.')}</span>
             <div className="row" style={{ gap: 8 }}>
               <span className="grow" />
               <button className="btn sm" onClick={() => setConfirmDelete(null)}>
-                Keep it
-              </button>
+                {t('Keep it')}</button>
               <button
                 className="btn danger outline sm"
                 onClick={() => {
@@ -928,8 +913,7 @@ export function useVpnProfiles(): VpnProfiles {
                   void remove(p)
                 }}
               >
-                <Trash2 size={14} /> Delete profile and key material
-              </button>
+                <Trash2 size={14} /> {t('Delete profile and key material')}</button>
             </div>
           </div>
         </Modal>

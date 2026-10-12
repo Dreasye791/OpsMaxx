@@ -31,6 +31,7 @@ import type { Server } from '../../types'
 import type { SftpEntry, SftpProgress, SftpResult, SftpUploadSummary, SshAuth } from '../../../../shared/ssh'
 import { bridgeOn } from '../../lib/bridge'
 import { EmptyState } from '../common/EmptyState'
+import { useT } from '../../i18n'
 
 const asAuth = (a: string): SshAuth => (a === 'password' || a === 'agent' ? a : 'key')
 
@@ -141,6 +142,7 @@ function queueNames(queue: Transfer[]): string {
 
 // ---- Real SFTP -------------------------------------------------------------
 function RealSftp({ server, tabId }: { server?: Server; tabId?: string }): React.JSX.Element {
+  const t = useT()
   // Absent server means this machine.
   const local = server === undefined
   // One session per server, as before; one for this machine, shared the same
@@ -807,7 +809,7 @@ function RealSftp({ server, tabId }: { server?: Server; tabId?: string }): React
       onDrop={onDrop}
     >
       <div className="viewbar" style={{ margin: '0 -20px 16px', paddingLeft: 20, paddingRight: 20 }}>
-        <button className="icon-btn" onClick={() => void navigate('/')} title="Root">
+        <button className="icon-btn" onClick={() => void navigate('/')} title={t('Root')}>
           <Home size={15} />
         </button>
         {/* Click the trail to type a path.
@@ -820,7 +822,7 @@ function RealSftp({ server, tabId }: { server?: Server; tabId?: string }): React
           <div
             className="row"
             style={{ gap: 2, flex: 1, overflow: 'hidden', cursor: 'text' }}
-            title="Click to type a path"
+            title={t('Click to type a path')}
             onClick={() => setEditingPath(path)}
           >
             {parts.map((p, i) => (
@@ -844,7 +846,7 @@ function RealSftp({ server, tabId }: { server?: Server; tabId?: string }): React
             className="input mono"
             style={{ flex: 1, height: 26 }}
             autoFocus
-            aria-label="Path"
+            aria-label={t('Path')}
             value={editingPath}
             onChange={(ev) => setEditingPath(ev.target.value)}
             onKeyDown={(ev) => {
@@ -876,7 +878,7 @@ function RealSftp({ server, tabId }: { server?: Server; tabId?: string }): React
           className={clsx('icon-btn', following && 'active')}
           style={follow.can ? undefined : { opacity: 0.45 }}
           aria-disabled={!follow.can}
-          aria-label="Follow terminal"
+          aria-label={t('Follow terminal')}
           aria-pressed={follow.can ? linked : undefined}
           title={
             follow.why
@@ -896,19 +898,17 @@ function RealSftp({ server, tabId }: { server?: Server; tabId?: string }): React
         >
           <Link2 size={15} />
         </button>
-        <button className="icon-btn" title="Refresh" onClick={() => void list(path)}>
+        <button className="icon-btn" title={t('Refresh')} onClick={() => void list(path)}>
           <RefreshCw size={14} />
         </button>
         <button className="btn sm" onClick={() => setCreating(true)}>
-          <FolderPlus size={13} /> New folder
-        </button>
+          <FolderPlus size={13} /> {t('New folder')}</button>
         <button
           className="btn sm"
-          title="Upload files — you can also drag them onto this list"
+          title={t('Upload files — you can also drag them onto this list')}
           onClick={() => void pickAndUpload()}
         >
-          <Upload size={13} /> Upload
-        </button>
+          <Upload size={13} /> {t('Upload')}</button>
       </div>
 
       <div className="row" style={{ marginBottom: 12, gap: 6, position: 'relative' }}>
@@ -916,7 +916,7 @@ function RealSftp({ server, tabId }: { server?: Server; tabId?: string }): React
         <input
           className="input grow"
           style={{ paddingLeft: 30 }}
-          placeholder="Filter files…"
+          placeholder={t('Filter files…')}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
@@ -925,9 +925,9 @@ function RealSftp({ server, tabId }: { server?: Server; tabId?: string }): React
       {progress && (
         <div className="row" style={{ marginBottom: queue.length ? 4 : 12, gap: 10 }}>
           {progress.direction === 'down' ? (
-            <Download size={14} className="faint" aria-label="Downloading" />
+            <Download size={14} className="faint" aria-label={t('Downloading')} />
           ) : (
-            <Upload size={14} className="faint" aria-label="Uploading" />
+            <Upload size={14} className="faint" aria-label={t('Uploading')} />
           )}
           <span className="faint" style={{ fontSize: 12, whiteSpace: 'nowrap' }}>
             {progress.name}
@@ -953,15 +953,14 @@ function RealSftp({ server, tabId }: { server?: Server; tabId?: string }): React
             {queue.length} queued: {queueNames(queue)}
           </span>
           <button className="btn ghost sm" onClick={() => setQueue([])}>
-            Clear queue
-          </button>
+            {t('Clear queue')}</button>
         </div>
       )}
 
       {loading && (
         <div className="empty" style={{ height: 200 }}>
           <Loader2 size={22} className="spin" />
-          <p>Loading {path}…</p>
+          <p>{t('Loading')}{' '}{path}…</p>
         </div>
       )}
 
@@ -993,10 +992,10 @@ function RealSftp({ server, tabId }: { server?: Server; tabId?: string }): React
         <table className="table">
           <thead>
             <tr>
-              <th style={{ width: '50%' }}>Name</th>
-              <th>Size</th>
-              <th>Modified</th>
-              <th>Permissions</th>
+              <th style={{ width: '50%' }}>{t('Name')}</th>
+              <th>{t('Size')}</th>
+              <th>{t('Modified')}</th>
+              <th>{t('Permissions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -1009,7 +1008,7 @@ function RealSftp({ server, tabId }: { server?: Server; tabId?: string }): React
                       className="input"
                       autoFocus
                       style={{ height: 28 }}
-                      placeholder="Folder name"
+                      placeholder={t('Folder name')}
                       value={newName}
                       onChange={(e) => setNewName(e.target.value)}
                       onKeyDown={(e) => {
@@ -1034,8 +1033,7 @@ function RealSftp({ server, tabId }: { server?: Server; tabId?: string }): React
                     <CornerLeftUp size={15} style={{ color: 'var(--text-faint)' }} />
                     <span className="mono">..</span>
                     <span className="faint" style={{ fontSize: 11 }}>
-                      parent directory
-                    </span>
+                      {t('parent directory')}</span>
                   </span>
                 </td>
                 <td />
@@ -1123,8 +1121,7 @@ function RealSftp({ server, tabId }: { server?: Server; tabId?: string }): React
           cancelLabel={overwrite.why === 'dir' || overwrite.why === 'owner' ? null : 'Cancel all'}
           footer={
             <button className="btn secondary size-28" onClick={() => overwrite.answer('skip')}>
-              Skip
-            </button>
+              {t('Skip')}</button>
           }
           confirm={{
             label: overwrite.why === 'dir' || overwrite.why === 'owner' ? 'Overwrite in place' : 'Overwrite',
@@ -1172,6 +1169,7 @@ function FileEditor({
   onClose: () => void
   onSave: (c: string) => void
 }): React.JSX.Element {
+  const t = useT()
   const [content, setContent] = useState(initial)
   const dirty = content !== initial
   return (
@@ -1183,15 +1181,13 @@ function FileEditor({
       footer={
         <>
           <span className="faint mono" style={{ fontSize: 11 }}>
-            {content.length} bytes {dirty ? '· modified' : ''}
+            {content.length} {t('bytes')}{' '}{dirty ? '· modified' : ''}
           </span>
           <span className="spacer" />
           <button className="btn" onClick={onClose}>
-            Close
-          </button>
+            {t('Close')}</button>
           <button className="btn primary" disabled={!dirty} onClick={() => onSave(content)}>
-            Save
-          </button>
+            {t('Save')}</button>
         </>
       }
     >
@@ -1229,6 +1225,7 @@ const DEMO_TREE: Record<string, { name: string; dir: boolean; size: number; mtim
 const EDITORS = ['VS Code', 'Cursor', 'Sublime Text', 'Notepad++', 'System Default']
 
 function DemoSftp(): React.JSX.Element {
+  const t = useT()
   const setModal = useApp((s) => s.setModal)
   const [path, setPath] = useState('/opt/app')
   const [query, setQuery] = useState('')
@@ -1256,7 +1253,7 @@ function DemoSftp(): React.JSX.Element {
   return (
     <div className="content" style={{ paddingTop: 0 }}>
       <div className="viewbar" style={{ margin: '0 -20px 16px', paddingLeft: 20, paddingRight: 20 }}>
-        <button className="icon-btn" onClick={() => setPath('/')} title="Root">
+        <button className="icon-btn" onClick={() => setPath('/')} title={t('Root')}>
           <Home size={15} />
         </button>
         <div className="row" style={{ gap: 2, flex: 1, overflow: 'hidden' }}>
@@ -1269,12 +1266,11 @@ function DemoSftp(): React.JSX.Element {
             </span>
           ))}
         </div>
-        <span className="chip warn">demo</span>
+        <span className="chip warn">{t('demo')}</span>
         {/* The only control in this pane that used to fail silently, in a pane
             whose entire design is "nothing works here, and it says so". */}
         <button className="btn sm" onClick={() => notReal('Upload')}>
-          <Upload size={13} /> Upload
-        </button>
+          <Upload size={13} /> {t('Upload')}</button>
       </div>
 
       <div className="row" style={{ marginBottom: 12, gap: 6, position: 'relative' }}>
@@ -1282,7 +1278,7 @@ function DemoSftp(): React.JSX.Element {
         <input
           className="input grow"
           style={{ paddingLeft: 30 }}
-          placeholder="Filter files…"
+          placeholder={t('Filter files…')}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
@@ -1291,10 +1287,10 @@ function DemoSftp(): React.JSX.Element {
       <table className="table">
         <thead>
           <tr>
-            <th style={{ width: '50%' }}>Name</th>
-            <th>Size</th>
-            <th>Modified</th>
-            <th>Permissions</th>
+            <th style={{ width: '50%' }}>{t('Name')}</th>
+            <th>{t('Size')}</th>
+            <th>{t('Modified')}</th>
+            <th>{t('Permissions')}</th>
           </tr>
         </thead>
         <tbody>

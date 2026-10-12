@@ -6,11 +6,13 @@ import { useVpnProfiles } from './useVpnProfiles'
 import { isReverseProxyKind } from '../../../../shared/vpn'
 import { toast } from '../../store/toast'
 import type { VpnProfile } from '../../types'
+import { useT } from '../../i18n'
 
 /** WireGuard and OpenVPN profiles. frp lives next door in `FrpManager`: it is
  *  the same subsystem but the opposite direction of travel, and the two lists
  *  stacked in one scrolling column were how frp ended up below the fold. */
 export function VpnManager(): React.JSX.Element {
+  const t = useT()
   // Everything that is not a reverse proxy. See isReverseProxyKind for why the
   // two panels share one predicate rather than each spelling it out.
   const profiles = useWorkspaceVpns().filter((p) => !isReverseProxyKind(p.spec.kind))
@@ -53,20 +55,17 @@ export function VpnManager(): React.JSX.Element {
     <div className="content">
       <div className="content-header">
         <div>
-          <h1>VPN</h1>
-          <div className="sub">WireGuard and OpenVPN tunnels</div>
+          <h1>{t('VPN')}</h1>
+          <div className="sub">{t('WireGuard and OpenVPN tunnels')}</div>
         </div>
         <div className="spacer" />
         <button className="btn secondary size-28" onClick={() => importProfile('wireguard')}>
-          <Plus size={14} /> Import WireGuard
-        </button>
+          <Plus size={14} /> {t('Import WireGuard')}</button>
         <button className="btn secondary size-28" onClick={() => importProfile('openvpn')}>
-          <Plus size={14} /> Import OpenVPN
-        </button>
+          <Plus size={14} /> {t('Import OpenVPN')}</button>
         {/* Not "Import": there is no file. See addTailscale. */}
         <button className="btn secondary size-28" disabled={hasTailscale} onClick={addTailscale}>
-          <Plus size={14} /> Add Tailscale
-        </button>
+          <Plus size={14} /> {t('Add Tailscale')}</button>
       </div>
 
       {/* Above both the empty state and the list. A machine that already has
@@ -81,7 +80,7 @@ export function VpnManager(): React.JSX.Element {
       {profiles.length === 0 ? (
         <EmptyState
           icon={<Globe size={26} />}
-          title="No VPN profiles"
+          title={t('No VPN profiles')}
           message="Import a WireGuard .conf or an OpenVPN .ovpn to carry servers, databases and tunnels over a VPN. Tailscale needs no file — it uses the client already on this machine."
           // Both, because the header offers both and the sentence above names
           // both. A single "Import WireGuard" button here was the only thing on
@@ -91,14 +90,11 @@ export function VpnManager(): React.JSX.Element {
           action={
             <div className="row" style={{ gap: 'var(--sp-2)' }}>
               <button className="btn primary" onClick={() => importProfile('wireguard')}>
-                <Plus size={15} /> Import WireGuard
-              </button>
+                <Plus size={15} /> {t('Import WireGuard')}</button>
               <button className="btn secondary size-32" onClick={() => importProfile('openvpn')}>
-                <Plus size={15} /> Import OpenVPN
-              </button>
+                <Plus size={15} /> {t('Import OpenVPN')}</button>
               <button className="btn secondary size-32" onClick={addTailscale}>
-                <Plus size={15} /> Add Tailscale
-              </button>
+                <Plus size={15} /> {t('Add Tailscale')}</button>
             </div>
           }
         />

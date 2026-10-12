@@ -33,6 +33,7 @@ import {
   useNow
 } from './state'
 import type { CicdBridge, CicdConnection, CicdPanelState } from '../../../../shared/cicd'
+import { useT } from '../../i18n'
 
 /**
  * The CI/CD landing view.
@@ -120,6 +121,7 @@ export function CicdPanel({
   active?: boolean
   onSaveConnection?: (connection: CicdConnection, token: string) => void | Promise<void>
 }): React.JSX.Element {
+  const t = useT()
   const stored = useCicdConnectionList()
   const upsert = useApp((s) => s.upsertCicdConnection)
   const connections = seed ?? stored
@@ -371,16 +373,9 @@ export function CicdPanel({
       about={
         <>
           <p className="ui-note">
-            Pipelines, runs and logs from Jenkins, GitLab CI and GitHub Actions accounts you
-            connect. OpsMaxx polls them on a timer and never receives a webhook, so everything
-            here is as fresh as the last successful read — which the header states.
-          </p>
+            {t('Pipelines, runs and logs from Jenkins, GitLab CI and GitHub Actions accounts you connect. OpsMaxx polls them on a timer and never receives a webhook, so everything here is as fresh as the last successful read — which the header states.')}</p>
           <p className="ui-note">
-            Reading is what this module does on its own. Starting, cancelling and disabling live
-            on the same screen but behind a second module — "Start a build" — because the
-            consequence is that a deploy goes out, and that is a separate decision from being
-            allowed to look.
-          </p>
+            {t('Reading is what this module does on its own. Starting, cancelling and disabling live on the same screen but behind a second module — "Start a build" — because the consequence is that a deploy goes out, and that is a separate decision from being allowed to look.')}</p>
         </>
       }
       actions={
@@ -395,8 +390,7 @@ export function CicdPanel({
             }
             onClick={() => readNow(bridge, states, connections.map((c) => c.id))}
           >
-            Refresh
-          </button>
+            {t('Refresh')}</button>
         )
       }
       testId="cicd-panel"
@@ -404,15 +398,14 @@ export function CicdPanel({
       {connections.length === 0 ? (
         <EmptyState
           icon={<Activity size={22} />}
-          title="No CI account is connected"
+          title={t('No CI account is connected')}
           message="Connect a Jenkins, GitLab or GitHub account and OpsMaxx will watch its pipelines. Nothing is polled until one exists."
           action={
             <button
               className="btn primary size-28"
               onClick={() => setConnecting({ mode: 'new' })}
             >
-              Connect an account
-            </button>
+              {t('Connect an account')}</button>
           }
         />
       ) : open && openConnection ? (
@@ -437,7 +430,7 @@ export function CicdPanel({
           <div className="cicd-nav">
           <div className="cicd-accounts-strip">
             <TabStrip
-              label="CI/CD account tabs"
+              label={t('CI/CD account tabs')}
               items={[
                 {
                   id: ALL,
@@ -469,8 +462,8 @@ export function CicdPanel({
               <button
                 type="button"
                 className="tab-new"
-                title="Connect a CI account."
-                aria-label="Connect a CI account"
+                title={t('Connect a CI account.')}
+                aria-label={t('Connect a CI account')}
                 onClick={() => setConnecting({ mode: 'new' })}
               >
                 <Plus size={16} />
@@ -478,8 +471,8 @@ export function CicdPanel({
               <button
                 type="button"
                 className="tab-new"
-                title="Edit or remove connected accounts."
-                aria-label="Manage CI accounts"
+                title={t('Edit or remove connected accounts.')}
+                aria-label={t('Manage CI accounts')}
                 onClick={() => setAccountsOpen({ on: 'list' })}
               >
                 <Settings2 size={15} />
@@ -494,16 +487,14 @@ export function CicdPanel({
               aria-pressed={subTab === 'activity'}
               onClick={() => setTab('activity')}
             >
-              Activity
-            </button>
+              {t('Activity')}</button>
             <button
               type="button"
               className={clsx('seg-btn', subTab === 'pipelines' && 'active')}
               aria-pressed={subTab === 'pipelines'}
               onClick={() => setTab('pipelines')}
             >
-              Pipelines
-              {allPipelines.length > 0 && <span className="count">{allPipelines.length}</span>}
+              {t('Pipelines')}{allPipelines.length > 0 && <span className="count">{allPipelines.length}</span>}
             </button>
             {/* Absent, not disabled. A greyed tab is still a claim that the
                 screen exists and is merely unavailable; for GitHub and GitLab
@@ -563,17 +554,17 @@ export function CicdPanel({
             <input
               className="input"
               value={filter}
-              placeholder="Filter by pipeline, branch or account…"
-              aria-label="Filter runs"
+              placeholder={t('Filter by pipeline, branch or account…')}
+              aria-label={t('Filter runs')}
               onChange={(e) => setFilter(e.target.value)}
             />
             <select
               className="input"
               value={bucket}
-              aria-label="Show"
+              aria-label={t('Show')}
               onChange={(e) => setBucket(e.target.value as CicdBucket | 'all')}
             >
-              <option value="all">Everything</option>
+              <option value="all">{t('Everything')}</option>
               {BUCKET_ORDER.map((b) => (
                 <option key={b} value={b}>
                   {BUCKET_LABEL[b]}
@@ -593,16 +584,12 @@ export function CicdPanel({
           {!firstRead && (
           <div className="panel-stats" data-testid="cicd-counts">
             <span>
-              {shown.length} of {rows.length} {rows.length === 1 ? 'run' : 'runs'} in the last 24
-              hours
-            </span>
+              {shown.length} {t('of')}{' '}{rows.length} {rows.length === 1 ? 'run' : 'runs'} {t('in the last 24 hours')}</span>
             {olderThanWindow > 0 && (
               <span className="faint">
-                {olderThanWindow} last ran longer ago than that and {olderThanWindow === 1 ? 'is' : 'are'} not
-                shown
-              </span>
+                {olderThanWindow} {t('last ran longer ago than that and')}{' '}{olderThanWindow === 1 ? 'is' : 'are'} {t('not shown')}</span>
             )}
-            {neverRun > 0 && <span className="faint">{neverRun} have never run</span>}
+            {neverRun > 0 && <span className="faint">{neverRun} {t('have never run')}</span>}
           </div>
           )}
 
@@ -741,6 +728,7 @@ export function CicdPanel({
  * nor green.
  */
 function RunRow({ row, onOpen }: { row: CicdRow; onOpen: () => void }): React.JSX.Element {
+  const t = useT()
   const path = pathLabel(row.pipeline)
   return (
     <button className={clsx('cicd-row', row.stale && 'is-stale')} onClick={onOpen}>
@@ -760,7 +748,7 @@ function RunRow({ row, onOpen }: { row: CicdRow; onOpen: () => void }): React.JS
       <span className="faint cicd-row-age">
         {row.run.startedAt === undefined ? '—' : `${duration(row.run.startedAt)} ago`}
       </span>
-      {row.stale && <span className="state-unknown">not re-read</span>}
+      {row.stale && <span className="state-unknown">{t('not re-read')}</span>}
     </button>
   )
 }
@@ -845,6 +833,7 @@ function Freshness({
   troubleOnly?: boolean
   onUpdateToken: (connection: CicdConnection) => void
 }): React.JSX.Element {
+  const t = useT()
   const rows = connections.map((c) => ({
     c,
     trouble: hasTrouble(states.get(c.id), intervalSec, now)
@@ -857,9 +846,7 @@ function Freshness({
       {quiet > 0 && (
         <div className="panel-stats" data-testid="cicd-accounts-ok">
           <span>
-            {quiet} of {rows.length} {rows.length === 1 ? 'account is' : 'accounts are'} answering
-            on time
-          </span>
+            {quiet} {t('of')}{' '}{rows.length} {rows.length === 1 ? 'account is' : 'accounts are'} {t('answering on time')}</span>
           <span className="faint">
             Open an account&apos;s own tab for its last read and its request budget.
           </span>
@@ -896,12 +883,11 @@ function Freshness({
                   : s?.readAt === undefined
                     ? 'never read'
                     : `Read ${duration(s.readAt)} ago`}{' '}
-                · every {every}s
+                {t('· every')}{' '}{every}s
               </span>
               {s?.budget !== undefined && (
                 <span className="ui-note">
-                  {s.budget.remaining} of {s.budget.limit} requests left
-                  {s.budget.resetAt !== undefined &&
+                  {s.budget.remaining} {t('of')}{' '}{s.budget.limit} {t('requests left')}{s.budget.resetAt !== undefined &&
                     `, resets in ${Math.max(0, Math.round((s.budget.resetAt - now) / 1000))}s`}
                 </span>
               )}
@@ -929,9 +915,7 @@ function Freshness({
               ) : (
               <div className="panel-note is-alarm">
                 <span className="grow">
-                  {c.name} authenticates with a credential in the vault, and the vault is locked.
-                  The runs below are the last ones read and are not being refreshed.
-                </span>
+                  {c.name} {t('authenticates with a credential in the vault, and the vault is locked. The runs below are the last ones read and are not being refreshed.')}</span>
                 <UnlockVaultButton
                   reason={`Unlocking resumes reading pipelines from ${c.name}.`}
                   // The press was made to fix THIS screen. Waiting out the rest
@@ -946,12 +930,9 @@ function Freshness({
             ) : expired ? (
               <div className="panel-note is-alarm">
                 <span className="grow">
-                  {c.name} refused the token. It has expired or been revoked — the runs below are
-                  the last ones read and are not being refreshed.
-                </span>
+                  {c.name} {t('refused the token. It has expired or been revoked — the runs below are the last ones read and are not being refreshed.')}</span>
                 <button className="btn secondary size-24" onClick={() => onUpdateToken(c)}>
-                  Update token
-                </button>
+                  {t('Update token')}</button>
               </div>
             ) : limited ? (
               <div className="panel-note is-watch">
@@ -962,18 +943,15 @@ function Freshness({
               s?.error !== undefined && (
                 <div className="panel-note is-alarm">
                   <span className="grow">
-                    {hostOf(c.baseUrl)} could not be read ({s.failures}{' '}
-                    {s.failures === 1 ? 'attempt' : 'attempts'}): {s.error}. The runs below are
-                    ageing, not gone.
-                  </span>
+                    {hostOf(c.baseUrl)} {t('could not be read (')}{s.failures}{' '}
+                    {s.failures === 1 ? 'attempt' : 'attempts'}): {s.error}{t('. The runs below are ageing, not gone.')}</span>
                   <button
                     className="btn secondary size-24"
                     disabled={!canRefresh}
                     title={canRefresh ? undefined : 'This build cannot read on demand.'}
                     onClick={() => readNow(bridge, states, [c.id])}
                   >
-                    Retry
-                  </button>
+                    {t('Retry')}</button>
                 </div>
               )
             )}

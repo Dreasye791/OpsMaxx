@@ -10,10 +10,12 @@ import { toast } from '../../store/toast'
 import { colorVar } from '../layout/WorkspaceSwitcher'
 import type { WorkspaceColor } from '../../types'
 import { Switch } from '../common/Switch'
+import { useT } from '../../i18n'
 
 const COLORS: WorkspaceColor[] = ['green', 'purple', 'blue', 'orange', 'red', 'cyan', 'pink']
 
 export function WorkspaceManager(): React.JSX.Element {
+  const t = useT()
   const setModal = useApp((s) => s.setModal)
   const workspaces = useApp((s) => s.workspaces)
   const toggleHidden = useApp((s) => s.toggleWorkspaceHidden)
@@ -127,8 +129,7 @@ export function WorkspaceManager(): React.JSX.Element {
                 setWorkspace(id)
               }}
             >
-              <Lock size={13} /> Unlock
-            </button>
+              <Lock size={13} /> {t('Unlock')}</button>
           ))}
         <button
           className="icon-btn sm"
@@ -164,13 +165,10 @@ export function WorkspaceManager(): React.JSX.Element {
         <div className="vault-panel">
           <div className="row" style={{ gap: 8 }}>
             <span style={{ color: 'var(--danger)', fontSize: 12 }}>
-              Delete <b>{wname}</b> and everything in it — servers, databases, tunnels and folders?
-              This cannot be undone.
-            </span>
+              {t('Delete')}{' '}<b>{wname}</b> {t('and everything in it — servers, databases, tunnels and folders? This cannot be undone.')}</span>
             <span className="spacer" />
             <button className="btn sm" onClick={() => setConfirming(null)}>
-              Cancel
-            </button>
+              {t('Cancel')}</button>
             <button
               className="btn sm danger"
               onClick={async () => {
@@ -194,8 +192,7 @@ export function WorkspaceManager(): React.JSX.Element {
                 toast(`${wname} deleted`)
               }}
             >
-              Delete workspace
-            </button>
+              {t('Delete workspace')}</button>
           </div>
         </div>
       )}
@@ -212,17 +209,17 @@ export function WorkspaceManager(): React.JSX.Element {
 
   return (
     <Modal
-      title="Manage Workspaces"
+      title={t('Manage Workspaces')}
       subtitle="Organize servers, credentials and settings into isolated spaces"
       onClose={() => setModal(null)}
       size="lg"
     >
       <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <div className="sidebar-title">New workspace</div>
+        <div className="sidebar-title">{t('New workspace')}</div>
         <div className="input-group">
           <input
             className="input grow"
-            placeholder="Workspace name"
+            placeholder={t('Workspace name')}
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
@@ -238,8 +235,7 @@ export function WorkspaceManager(): React.JSX.Element {
                   : 'Give the workspace a name first'
             }
           >
-            <Plus size={14} /> Create
-          </button>
+            <Plus size={14} /> {t('Create')}</button>
         </div>
         <div className="row" style={{ gap: 8 }}>
           {COLORS.map((c) => (
@@ -261,7 +257,7 @@ export function WorkspaceManager(): React.JSX.Element {
           ))}
           <span className="spacer" />
           <label className="row" style={{ gap: 8 }}>
-            <span className="muted">Password protect</span>
+            <span className="muted">{t('Password protect')}</span>
             <Switch checked={withPassword} onChange={setWithPassword} />
           </label>
         </div>
@@ -277,20 +273,18 @@ export function WorkspaceManager(): React.JSX.Element {
             />
             {passwordTooShort && (
               <div className="s-desc" style={{ color: 'var(--danger)' }}>
-                Use at least {WS_MIN_PASSWORD} characters.
+                {t('Use at least')}{' '}{WS_MIN_PASSWORD} characters.
               </div>
             )}
             <div className="faint" style={{ fontSize: 11 }}>
-              Hides this workspace behind a password inside OpsMaxx. It is not your vault master
-              password, and it does not encrypt anything on disk.
-            </div>
+              {t('Hides this workspace behind a password inside OpsMaxx. It is not your vault master password, and it does not encrypt anything on disk.')}</div>
           </>
         )}
       </div>
 
       <div>
         <div className="sidebar-title" style={{ margin: '4px 0 8px' }}>
-          Active ({active.length})
+          {t('Active (')}{active.length})
         </div>
         {active.map((w) => (
           <Row key={w.id} id={w.id} wname={w.name} wcolor={w.color} isHidden={false} hasPassword={w.hasPassword} />
@@ -300,7 +294,7 @@ export function WorkspaceManager(): React.JSX.Element {
       {hidden.length > 0 && (
         <div>
           <div className="sidebar-title" style={{ margin: '4px 0 8px' }}>
-            Hidden ({hidden.length})
+            {t('Hidden (')}{hidden.length})
           </div>
           {hidden.map((w) => (
             <Row key={w.id} id={w.id} wname={w.name} wcolor={w.color} isHidden hasPassword={w.hasPassword} />
@@ -322,6 +316,7 @@ function PasswordForm({
   hasPassword: boolean
   onDone: () => void
 }): React.JSX.Element {
+  const t = useT()
   const setWorkspaceProtected = useApp((s) => s.setWorkspaceProtected)
   const [current, setCurrent] = useState('')
   const [next, setNext] = useState('')
@@ -380,7 +375,7 @@ function PasswordForm({
             ref={currentRef}
             type="password"
             autoFocus
-            placeholder="Current password"
+            placeholder={t('Current password')}
             value={current}
             onChange={(e) => {
               setError(null)
@@ -425,19 +420,14 @@ function PasswordForm({
             title={current ? `Stop asking for a password on ${wname}` : 'Enter the current password first'}
             onClick={() => void clear()}
           >
-            Remove
-          </button>
+            {t('Remove')}</button>
         )}
         <button className="btn sm" onClick={onDone}>
-          Cancel
-        </button>
+          {t('Cancel')}</button>
       </div>
       {error && <div className="vault-error">{error}</div>}
       <div className="faint" style={{ fontSize: 11 }}>
-        This password hides the workspace inside OpsMaxx. It does not encrypt anything on disk,
-        and it is not your vault master password — for secrets that must be encrypted at rest, put
-        them in the Vault in the left sidebar.
-      </div>
+        {t('This password hides the workspace inside OpsMaxx. It does not encrypt anything on disk, and it is not your vault master password — for secrets that must be encrypted at rest, put them in the Vault in the left sidebar.')}</div>
     </div>
   )
 }

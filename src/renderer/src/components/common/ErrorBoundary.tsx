@@ -2,6 +2,7 @@ import { Component, type ErrorInfo, type ReactNode } from 'react'
 import { AlertTriangle, Copy, RotateCcw } from 'lucide-react'
 import { bridgeHas } from '../../lib/bridge'
 import { forwardDebugError } from '../../lib/debugForward'
+import { useT } from '../../i18n'
 
 interface Props {
   children: ReactNode
@@ -85,6 +86,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   render(): ReactNode {
+  const t = useT()
     const { error, diagnostics } = this.state
     if (!error) return this.props.children
 
@@ -94,11 +96,9 @@ export class ErrorBoundary extends Component<Props, State> {
           <div className="crash-icon">
             <AlertTriangle size={24} />
           </div>
-          <h2>Something broke in the interface</h2>
+          <h2>{t('Something broke in the interface')}</h2>
           <p className="faint">
-            Your servers, credentials and vault are stored on disk and are unaffected. Reloading
-            rebuilds the window — any open SSH sessions will be reconnected.
-          </p>
+            {t('Your servers, credentials and vault are stored on disk and are unaffected. Reloading rebuilds the window — any open SSH sessions will be reconnected.')}</p>
 
           <pre className="crash-detail selectable">{error.message}</pre>
 
@@ -116,20 +116,17 @@ export class ErrorBoundary extends Component<Props, State> {
               className="btn"
               onClick={() => window.opsmaxx?.clipboard.write(this.report())}
             >
-              <Copy size={14} /> Copy details
-            </button>
+              <Copy size={14} /> {t('Copy details')}</button>
             {bridgeHas(window.opsmaxx?.diagnostics as Record<string, unknown> | undefined, 'text') && (
               <button
                 className="btn"
                 disabled={diagnostics === null}
                 onClick={this.copyDiagnostics}
               >
-                <Copy size={14} /> Copy diagnostics
-              </button>
+                <Copy size={14} /> {t('Copy diagnostics')}</button>
             )}
             <button className="btn primary" onClick={() => window.location.reload()}>
-              <RotateCcw size={14} /> Reload
-            </button>
+              <RotateCcw size={14} /> {t('Reload')}</button>
           </div>
 
           {/* Two buttons, two different promises, so both are spelled out and
@@ -143,13 +140,8 @@ export class ErrorBoundary extends Component<Props, State> {
               Copy details promises nothing and has to say so: it is the raw
               throw, which is the point of having it. */}
           <p className="faint" style={{ fontSize: 11, marginTop: 12 }}>
-            <strong>Copy details</strong> copies this error exactly as it was thrown, full paths
-            and all — redact hostnames and usernames yourself before posting it.{' '}
-            <strong>Copy diagnostics</strong> is the one to send: it adds your versions and
-            settings, trims paths and strips secrets, and only becomes available once that text is
-            on screen above. It copies that text and nothing else, so glance over it for hostnames
-            first.
-          </p>
+            <strong>{t('Copy details')}</strong> {t('copies this error exactly as it was thrown, full paths and all — redact hostnames and usernames yourself before posting it.')}{' '}
+            <strong>{t('Copy diagnostics')}</strong> {t('is the one to send: it adds your versions and settings, trims paths and strips secrets, and only becomes available once that text is on screen above. It copies that text and nothing else, so glance over it for hostnames first.')}</p>
         </div>
       </div>
     )

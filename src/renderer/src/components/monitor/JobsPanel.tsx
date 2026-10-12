@@ -42,6 +42,7 @@ import { PanelShell } from './PanelShell'
 import { Modal } from '../common/Modal'
 import { VaultLockedHosts } from '../common/PanelError'
 import { isVaultLocked } from '../../lib/withVaultUnlock'
+import { useT } from '../../i18n'
 
 // Roadmap item 33. The job engine shipped in full -- waves, health gate,
 // reboot-and-verify, detached execution, approval record -- and NO RENDERER
@@ -77,6 +78,7 @@ const STATE_CLASS: Record<string, string> = {
 }
 
 export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
+  const t = useT()
   // `null` until asked, never `[]`. An empty list drawn before the question is
   // "you have never run a job", which is a different sentence.
   const [jobs, setJobs] = useState<JobRecord[] | null>(null)
@@ -454,12 +456,10 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
     // view's one primary action; refresh drops to a ghost beside it.
     <PanelShell
       icon={<ListChecks size={14} />}
-      title="Jobs"
+      title={t('Jobs')}
       about={
         <p>
-          A job is a list of commands, a list of servers, and the confirmation its own risk
-          demands — asked before anything runs and recorded with the answer.
-        </p>
+          {t('A job is a list of commands, a list of servers, and the confirmation its own risk demands — asked before anything runs and recorded with the answer.')}</p>
       }
       actions={
         <>
@@ -474,8 +474,7 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
               setPending(null)
             }}
           >
-            <Plus size={13} /> New job
-          </button>
+            <Plus size={13} /> {t('New job')}</button>
         </>
       }
     >
@@ -502,36 +501,31 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
               aria-pressed={mode === 'command'}
               onClick={() => setMode('command')}
             >
-              Commands
-            </button>
+              {t('Commands')}</button>
             <button
               className={clsx('btn sm', mode === 'service' && 'primary')}
               aria-pressed={mode === 'service'}
               onClick={() => setMode('service')}
             >
-              Service action
-            </button>
+              {t('Service action')}</button>
             <button
               className={clsx('btn sm', mode === 'package' && 'primary')}
               aria-pressed={mode === 'package'}
               onClick={() => setMode('package')}
             >
-              Package
-            </button>
+              {t('Package')}</button>
             <button
               className={clsx('btn sm', mode === 'user' && 'primary')}
               aria-pressed={mode === 'user'}
               onClick={() => setMode('user')}
             >
-              Account
-            </button>
+              {t('Account')}</button>
             <button
               className={clsx('btn sm', mode === 'file' && 'primary')}
               aria-pressed={mode === 'file'}
               onClick={() => setMode('file')}
             >
-              File
-            </button>
+              {t('File')}</button>
           </div>
 
           {mode === 'file' ? (
@@ -539,14 +533,14 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
               <div className="row-actions" style={{ gap: 6 }}>
                 <input
                   className="input mono"
-                  aria-label="File path"
+                  aria-label={t('File path')}
                   placeholder="/etc/myapp/config.toml"
                   value={filePath}
                   onChange={(e) => setFilePath(e.target.value)}
                 />
                 <input
                   className="input mono"
-                  aria-label="Mode"
+                  aria-label={t('Mode')}
                   style={{ width: 80 }}
                   value={fileMode}
                   onChange={(e) => setFileMode(e.target.value)}
@@ -554,15 +548,15 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
               </div>
               <textarea
                 className="input mono"
-                aria-label="File contents"
+                aria-label={t('File contents')}
                 rows={6}
-                placeholder="The exact bytes to write."
+                placeholder={t('The exact bytes to write.')}
                 value={fileBody}
                 onChange={(e) => setFileBody(e.target.value)}
               />
               <input
                 className="input mono"
-                aria-label="Run afterwards"
+                aria-label={t('Run afterwards')}
                 placeholder="Run afterwards, only if the write succeeded — nginx -t && systemctl reload nginx"
                 value={fileAfter}
                 onChange={(e) => setFileAfter(e.target.value)}
@@ -570,30 +564,26 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
               <label className="r-sub">
                 <input
                   type="checkbox"
-                  aria-label="Run as root with sudo"
+                  aria-label={t('Run as root with sudo')}
                   checked={sudo}
                   onChange={(e) => setSudo(e.target.checked)}
                 />{' '}
-                Run as root (<code>sudo -n</code>)
+                {t('Run as root (')}<code>{t('sudo -n')}</code>)
               </label>
               {/* The hash is shown because it is what the server checks the
                   arriving bytes against, and what the approval covers. */}
               <div className="r-sub faint mono">
-                sha256 {fileSha === '' ? '…' : fileSha}
+                {t('sha256')}{' '}{fileSha === '' ? '…' : fileSha}
               </div>
               <div className="r-sub faint">
-                Writes a NEW file only. The server refuses if one is already
-                there, and refuses again if the bytes that arrive are not these
-                ones. Replacing an existing file needs its current checksum
-                read from each server first, which this does not do yet.
-              </div>
+                {t('Writes a NEW file only. The server refuses if one is already there, and refuses again if the bytes that arrive are not these ones. Replacing an existing file needs its current checksum read from each server first, which this does not do yet.')}</div>
             </>
           ) : mode === 'user' ? (
             <>
               <div className="row-actions" style={{ gap: 6 }}>
                 <select
                   className="input"
-                  aria-label="Account action"
+                  aria-label={t('Account action')}
                   value={userAction}
                   onChange={(e) => setUserAction(e.target.value as UserAction)}
                 >
@@ -605,16 +595,16 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
                 </select>
                 <input
                   className="input mono"
-                  aria-label="Account"
-                  placeholder="deploy"
+                  aria-label={t('Account')}
+                  placeholder={t('deploy')}
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
                 />
                 {userAction === 'add-group' && (
                   <input
                     className="input mono"
-                    aria-label="Group"
-                    placeholder="docker"
+                    aria-label={t('Group')}
+                    placeholder={t('docker')}
                     value={userGroup}
                     onChange={(e) => setUserGroup(e.target.value)}
                   />
@@ -622,8 +612,8 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
                 {userAction === 'set-expiry' && (
                   <input
                     className="input mono"
-                    aria-label="Expiry date"
-                    placeholder="YYYY-MM-DD, or empty to clear"
+                    aria-label={t('Expiry date')}
+                    placeholder={t('YYYY-MM-DD, or empty to clear')}
                     value={userExpiry}
                     onChange={(e) => setUserExpiry(e.target.value)}
                   />
@@ -633,21 +623,20 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
                 <label className="r-sub">
                   <input
                     type="checkbox"
-                    aria-label="Also remove the home directory"
+                    aria-label={t('Also remove the home directory')}
                     checked={removeHome}
                     onChange={(e) => setRemoveHome(e.target.checked)}
                   />{' '}
-                  Also remove the home directory — this is the part nothing puts back
-                </label>
+                  {t('Also remove the home directory — this is the part nothing puts back')}</label>
               )}
               <label className="r-sub">
                 <input
                   type="checkbox"
-                  aria-label="Run as root with sudo"
+                  aria-label={t('Run as root with sudo')}
                   checked={sudo}
                   onChange={(e) => setSudo(e.target.checked)}
                 />{' '}
-                Run as root (<code>sudo -n</code>)
+                {t('Run as root (')}<code>{t('sudo -n')}</code>)
               </label>
               {/* Said where somebody would go looking for the field. */}
               <div className="r-sub faint">
@@ -662,7 +651,7 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
               <div className="row-actions" style={{ gap: 6 }}>
                 <select
                   className="input"
-                  aria-label="Package action"
+                  aria-label={t('Package action')}
                   value={pkgAction}
                   onChange={(e) => setPkgAction(e.target.value as PackageAction)}
                 >
@@ -674,7 +663,7 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
                 </select>
                 <select
                   className="input"
-                  aria-label="Package manager"
+                  aria-label={t('Package manager')}
                   value={manager}
                   onChange={(e) => setManager(e.target.value as PackageManager)}
                 >
@@ -686,8 +675,8 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
                 </select>
                 <input
                   className="input mono"
-                  aria-label="Packages"
-                  placeholder="nginx openssl"
+                  aria-label={t('Packages')}
+                  placeholder={t('nginx openssl')}
                   value={pkgNames}
                   onChange={(e) => setPkgNames(e.target.value)}
                 />
@@ -695,26 +684,24 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
               <label className="r-sub">
                 <input
                   type="checkbox"
-                  aria-label="Run as root with sudo"
+                  aria-label={t('Run as root with sudo')}
                   checked={sudo}
                   onChange={(e) => setSudo(e.target.checked)}
                 />{' '}
-                Run as root (<code>sudo -n</code>)
+                {t('Run as root (')}<code>{t('sudo -n')}</code>)
               </label>
               {/* Chosen once for the whole job, and said so: a server running a
                   different manager is not a target for this job, because the
                   approval covers this exact command text. */}
               <div className="r-sub faint">
-                The command is built for <b>{manager}</b> and is the same on every server you
-                picked. Do not include servers that run a different package manager.
-              </div>
+                {t('The command is built for')}{' '}<b>{manager}</b> {t('and is the same on every server you picked. Do not include servers that run a different package manager.')}</div>
             </>
           ) : mode === 'service' ? (
             <>
               <div className="row-actions" style={{ gap: 6 }}>
                 <select
                   className="input"
-                  aria-label="Service action"
+                  aria-label={t('Service action')}
                   value={action}
                   onChange={(e) => setAction(e.target.value as ServiceAction)}
                 >
@@ -726,8 +713,8 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
                 </select>
                 <input
                   className="input mono"
-                  aria-label="Unit"
-                  placeholder="nginx"
+                  aria-label={t('Unit')}
+                  placeholder={t('nginx')}
                   value={unit}
                   onChange={(e) => setUnit(e.target.value)}
                 />
@@ -735,11 +722,11 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
               <label className="r-sub">
                 <input
                   type="checkbox"
-                  aria-label="Run as root with sudo"
+                  aria-label={t('Run as root with sudo')}
                   checked={sudo}
                   onChange={(e) => setSudo(e.target.checked)}
                 />{' '}
-                Run as root (<code>sudo -n</code>)
+                {t('Run as root (')}<code>{t('sudo -n')}</code>)
               </label>
               <div className="r-sub faint">
                 {knownUnits === undefined
@@ -755,7 +742,7 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
               <div className="row-actions" style={{ gap: 6, flexWrap: 'wrap' }}>
                 <select
                   className="input"
-                  aria-label="Saved template"
+                  aria-label={t('Saved template')}
                   value={templateId}
                   onChange={(e) => {
                     const t = templates.find((x) => x.id === e.target.value)
@@ -766,8 +753,7 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
                   }}
                 >
                   <option value="">
-                    Load a saved template…
-                  </option>
+                    {t('Load a saved template…')}</option>
                   {templates.map((t) => (
                     <option key={t.id} value={t.id}>
                       {t.name}
@@ -787,13 +773,12 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
                     else void storeTemplate(templateFromDraft(draft, crypto.randomUUID(), draft.title))
                   }}
                 >
-                  Save as template
-                </button>
+                  {t('Save as template')}</button>
                 {chosenTemplate && (
                   <>
                     <input
                       className="input"
-                      aria-label="Template name"
+                      aria-label={t('Template name')}
                       style={{ width: 180 }}
                       value={templateName}
                       onChange={(e) => setTemplateName(e.target.value)}
@@ -803,8 +788,7 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
                       disabled={templateName.trim() === chosenTemplate.name}
                       onClick={() => void storeTemplate({ ...chosenTemplate, name: templateName })}
                     >
-                      Rename
-                    </button>
+                      {t('Rename')}</button>
                     <button className="btn sm" onClick={() => void deleteTemplate()}>
                       {confirmDelete ? 'Confirm delete' : 'Delete'}
                     </button>
@@ -813,11 +797,9 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
               </div>
               {templateFile && (
                 <div className="s-note state-unknown">
-                  {templateFile.problem} Nothing can be saved or deleted until it is set aside. It
-                  is at <span className="mono selectable">{templateFile.path}</span>.{' '}
+                  {templateFile.problem} {t('Nothing can be saved or deleted until it is set aside. It is at')}{' '}<span className="mono selectable">{templateFile.path}</span>.{' '}
                   <button className="btn sm" onClick={() => void setAsideTemplates()}>
-                    Set aside and start fresh
-                  </button>
+                    {t('Set aside and start fresh')}</button>
                 </div>
               )}
               {templateNote && <div className="s-note state-unknown">{templateNote}</div>}
@@ -836,20 +818,19 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
                   }}
                 >
                   <p className="r-sub">
-                    To keep both, cancel and give this one a different title.
-                  </p>
+                    {t('To keep both, cancel and give this one a different title.')}</p>
                 </Modal>
               )}
               <input
                 className="input"
-                aria-label="Job title"
-                placeholder="What this job is, in a few words"
+                aria-label={t('Job title')}
+                placeholder={t('What this job is, in a few words')}
                 value={draft.title}
                 onChange={(e) => setDraft({ ...draft, title: e.target.value })}
               />
               <textarea
                 className="input mono"
-                aria-label="Steps"
+                aria-label={t('Steps')}
                 rows={5}
                 placeholder={'One command per line.\n# Lines starting with # are notes and are not run.'}
                 value={draft.steps}
@@ -861,7 +842,7 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
                   its own: not on a gate halt, not on a failure. */}
               <textarea
                 className="input mono"
-                aria-label="Rollback"
+                aria-label={t('Rollback')}
                 rows={3}
                 placeholder={'How to undo this, one command per line. Optional.\nIt is never run automatically — only when you press Roll back and confirm again.'}
                 value={draft.rollback}
@@ -870,7 +851,7 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
             </>
           )}
 
-          <div className="r-sub faint">Servers ({picked.length} of {servers.length})</div>
+          <div className="r-sub faint">{t('Servers (')}{picked.length} {t('of')}{' '}{servers.length})</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
             {servers.map((s) => (
               <button
@@ -890,12 +871,12 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
 
           <div className="row-actions" style={{ gap: 10, flexWrap: 'wrap' }}>
             <label className="r-sub">
-              Servers per wave{' '}
+              {t('Servers per wave')}{' '}
               <input
                 className="input"
                 type="number"
                 min={0}
-                aria-label="Servers per wave"
+                aria-label={t('Servers per wave')}
                 style={{ width: 70 }}
                 value={draft.waveSize}
                 onChange={(e) => setDraft({ ...draft, waveSize: Number(e.target.value) || 0 })}
@@ -904,21 +885,19 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
             <label className="r-sub">
               <input
                 type="checkbox"
-                aria-label="Hold each wave until the previous one is healthy"
+                aria-label={t('Hold each wave until the previous one is healthy')}
                 checked={draft.gate}
                 onChange={(e) => setDraft({ ...draft, gate: e.target.checked })}
               />{' '}
-              Hold each wave until the last one is healthy
-            </label>
+              {t('Hold each wave until the last one is healthy')}</label>
             <label className="r-sub">
               <input
                 type="checkbox"
-                aria-label="The last step restarts the machine"
+                aria-label={t('The last step restarts the machine')}
                 checked={draft.rebootLast}
                 onChange={(e) => setDraft({ ...draft, rebootLast: e.target.checked })}
               />{' '}
-              The last step restarts the machine
-            </label>
+              {t('The last step restarts the machine')}</label>
           </div>
 
           {/* The reason, not a grey button. A control disabled without a
@@ -927,11 +906,9 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
 
           <div className="row-actions">
             <button className="btn primary" disabled={!check.ok} onClick={review}>
-              Review
-            </button>
+              {t('Review')}</button>
             <button className="btn" onClick={() => setComposing(false)}>
-              Cancel
-            </button>
+              {t('Cancel')}</button>
           </div>
         </div>
       )}
@@ -940,13 +917,13 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
         <div className="list-row" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 6 }}>
           <div className="r-title">{pending.spec.title}</div>
           <div className="r-sub">
-            {pending.plan.totalHosts} server(s), {pending.plan.blastRadius} at once.{' '}
+            {pending.plan.totalHosts} server(s), {pending.plan.blastRadius} {t('at once.')}{' '}
             {pending.spec.gate === 'health'
               ? 'Each wave waits for the last one to report healthy.'
               : 'Waves run in order and nothing is checked between them.'}
           </div>
           {pending.plan.reasons.length > 0 && (
-            <div className="s-note warn">This job {pending.plan.reasons.join(', and ')}.</div>
+            <div className="s-note warn">{t('This job')}{' '}{pending.plan.reasons.join(', and ')}.</div>
           )}
           <pre className="mono" style={{ whiteSpace: 'pre-wrap', margin: 0 }}>
             {pending.spec.steps
@@ -955,8 +932,7 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
           </pre>
           {pending.spec.rollback && (
             <div className="s-note">
-              Rollback, approved with this job and run only if you ask for it:
-              <pre className="mono" style={{ whiteSpace: 'pre-wrap', margin: 0 }}>
+              {t('Rollback, approved with this job and run only if you ask for it:')}<pre className="mono" style={{ whiteSpace: 'pre-wrap', margin: 0 }}>
                 {pending.spec.rollback.map((st) => st.command).join('\n')}
               </pre>
             </div>
@@ -975,29 +951,24 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
           )}
           <div className="row-actions">
             <button className="btn primary" disabled={!canRun} onClick={() => void start()}>
-              Run
-            </button>
+              {t('Run')}</button>
             <button className="btn" onClick={() => setPending(null)}>
-              Back
-            </button>
+              {t('Back')}</button>
           </div>
         </div>
       )}
 
       {jobs === null ? (
         <div className="panel-empty">
-          <p className="panel-empty-title">Nothing read yet.</p>
+          <p className="panel-empty-title">{t('Nothing read yet.')}</p>
           <p className="panel-empty-body">
-            Press <b>Read jobs</b> to list what has run, or <b>New job</b> to compose one.
-          </p>
+            {t('Press')}{' '}<b>{t('Read jobs')}</b> {t('to list what has run, or')}{' '}<b>{t('New job')}</b> {t('to compose one.')}</p>
         </div>
       ) : jobs.length === 0 ? (
         <div className="panel-empty">
-          <p className="panel-empty-title">No jobs have run.</p>
+          <p className="panel-empty-title">{t('No jobs have run.')}</p>
           <p className="panel-empty-body">
-            A job is a list of commands run across servers you pick, in waves, with the answer to
-            its confirmation recorded before anything starts.
-          </p>
+            {t('A job is a list of commands run across servers you pick, in waves, with the answer to its confirmation recorded before anything starts.')}</p>
         </div>
       ) : (
         jobs.map((j) => (
@@ -1014,7 +985,7 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
               {(j.state === 'running' || j.state === 'queued') && (
                 <button
                   className="icon-btn sm"
-                  title="Stop this job. Servers that have not started will not start."
+                  title={t('Stop this job. Servers that have not started will not start.')}
                   onClick={() => void bridge()?.cancel?.(j.id)}
                 >
                   <Square size={12} />
@@ -1030,8 +1001,7 @@ export function JobsPanel({ servers, jump }: Props): React.JSX.Element {
                   title={`Run the rollback that was approved with ${j.title}. It asks again.`}
                   onClick={() => rollBack(j)}
                 >
-                  <Undo2 size={12} /> Roll back
-                </button>
+                  <Undo2 size={12} /> {t('Roll back')}</button>
               )}
             </div>
             {detail?.id === j.id && (

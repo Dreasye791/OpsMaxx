@@ -1,5 +1,6 @@
 import type { CicdOutcome, CicdStatus } from '../../../../shared/cicd'
 import { clsx } from '../../lib/format'
+import { useT } from '../../i18n'
 
 /**
  * A run's status as a shape AND a word, never as a colour alone.
@@ -80,10 +81,10 @@ export function StatusWord({
  * nothing to number. It renders as the unknown ring, which is the true answer.
  */
 export function RequestedWord({ note }: { note?: string }): React.JSX.Element {
+  const t = useT()
   return (
     <span className="cicd-status state-unknown" title={note}>
       <span className="state-dot is-unknown" aria-hidden />
-      REQUESTED · no run id yet
-    </span>
+      {t('REQUESTED · no run id yet')}</span>
   )
 }

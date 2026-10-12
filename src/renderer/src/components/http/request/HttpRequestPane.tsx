@@ -26,6 +26,7 @@ import { RequestSettings } from './RequestSettings'
 import { UrlBar, sendTab, useHttpRequest, useScopeChain } from './UrlBar'
 import { enabledCount, invalidJson, syncFromUrl } from './requestModel'
 import './request.css'
+import { useT } from '../../../i18n'
 
 export type RequestTab = 'params' | 'auth' | 'headers' | 'body' | 'settings'
 
@@ -64,6 +65,7 @@ export interface HttpRequestPaneProps {
 
 /** The REST tab: URL row, request editors, response, laid out by ProtocolLayout. */
 export function HttpRequestPane({ tabId }: HttpRequestPaneProps): React.JSX.Element | null {
+  const t = useT()
   const req = useHttpRequest(tabId)
   const tab = useHttp((s) => tabById(s, tabId))
   const updateDraft = useHttp((s) => s.updateDraft)
@@ -163,7 +165,7 @@ export function HttpRequestPane({ tabId }: HttpRequestPaneProps): React.JSX.Elem
       <span className="hc-reqbar">
         <select
           className="hc-select"
-          aria-label="Body type"
+          aria-label={t('Body type')}
           value={req.body.mode}
           onChange={(e) => onChange({ ...req, body: switchBodyMode(req.body, e.target.value as HttpRequest['body']['mode']) })}
         >
@@ -179,8 +181,7 @@ export function HttpRequestPane({ tabId }: HttpRequestPaneProps): React.JSX.Elem
             title={`Beautify (${isMac() ? '⌥⌘B' : 'Ctrl+Alt+B'})`}
             onClick={() => onChange(beautify(req))}
           >
-            Beautify
-          </button>
+            {t('Beautify')}</button>
         )}
       </span>
     ) : (
@@ -194,8 +195,8 @@ export function HttpRequestPane({ tabId }: HttpRequestPaneProps): React.JSX.Elem
       <span className="hc-grow" />
       <button
         className="btn ghost sm"
-        aria-label="Generate code"
-        title="Generate code"
+        aria-label={t('Generate code')}
+        title={t('Generate code')}
         aria-pressed={codeOpen}
         onClick={() => setPrefs({ codeOpen: !codeOpen })}
       >
@@ -206,7 +207,7 @@ export function HttpRequestPane({ tabId }: HttpRequestPaneProps): React.JSX.Elem
 
   const summary = (
     <span className="hc-reqsum">
-      <span>Request</span>
+      <span>{t('Request')}</span>
       {tabs.map((t) => (
         <button key={t.id} className="btn quiet sm" onClick={() => open(t.id as RequestTab)}>
           {t.label}
@@ -321,7 +322,7 @@ export function HttpRequestPane({ tabId }: HttpRequestPaneProps): React.JSX.Elem
                     onClose={() => setPrefs({ codeOpen: false })}
                   />
                 ) : (
-                  <p className="hc-note hc-pad">Nothing to generate yet: this request cannot be built.</p>
+                  <p className="hc-note hc-pad">{t('Nothing to generate yet: this request cannot be built.')}</p>
                 )}
               </div>
             )}

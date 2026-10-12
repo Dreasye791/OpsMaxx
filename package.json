@@ -85,6 +85,7 @@
     "test:capability": "ELECTRON_RUN_AS_NODE=1 electron ./node_modules/vitest/vitest.mjs run tests/historyCapability.test.ts",
     "check:advisories": "node scripts/check-engine-advisories.mjs",
     "i18n:coverage": "node scripts/i18n/coverage.mjs",
+    "i18n:codemod": "node scripts/i18n/codemod.mjs",
     "build:addyd": "bash scripts/build-addyd.sh"
   },
   "dependencies": {

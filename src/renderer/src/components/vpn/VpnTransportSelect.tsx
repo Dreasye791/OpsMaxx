@@ -4,6 +4,7 @@ import { useApp, useWorkspaceVpns } from '../../store/app'
 import { bridgeHas } from '../../lib/bridge'
 import type { UUID, VpnKind } from '../../types'
 import { HealthChip, vpnHealth } from './VpnStatusCard'
+import { useT } from '../../i18n'
 
 // Which VPN profile a saved connection is dialled through. `null` is a direct
 // connection and is what everything defaults to.
@@ -36,6 +37,7 @@ export function VpnTransportSelect({
   onChange,
   hint
 }: VpnTransportSelectProps): React.JSX.Element {
+  const t = useT()
   const profiles = useWorkspaceVpns()
   const vpnStatuses = useApp((s) => s.vpnStatuses)
   const setVpnStatus = useApp((s) => s.setVpnStatus)
@@ -76,22 +78,22 @@ export function VpnTransportSelect({
 
   return (
     <div className="field">
-      <label className="field-label">Reach through (optional)</label>
+      <label className="field-label">{t('Reach through (optional)')}</label>
       <div className="row" style={{ gap: 8 }}>
         <select
           className="input grow"
           value={value ?? ''}
           onChange={(e) => onChange(e.target.value || null)}
         >
-          <option value="">Direct — no VPN</option>
+          <option value="">{t('Direct — no VPN')}</option>
           {usable.map((p) => (
             <option key={p.id} value={p.id}>
-              via {p.name} ({KIND_LABEL[p.spec.kind]})
+              {t('via')}{' '}{p.name} ({KIND_LABEL[p.spec.kind]})
             </option>
           ))}
           {/* Kept selectable so the field shows what is actually stored. Picking
               "Direct" is how it is cleared. */}
-          {missing && <option value={value ?? ''}>(missing profile)</option>}
+          {missing && <option value={value ?? ''}>{t('(missing profile)')}</option>}
         </select>
         {selected && <HealthChip health={health} />}
       </div>
@@ -100,10 +102,7 @@ export function VpnTransportSelect({
         <div className="row" style={{ gap: 6, color: 'var(--warn)', fontSize: 11, marginTop: 6 }}>
           <AlertTriangle size={12} />
           <span>
-            The VPN profile this was saved against no longer exists, so this connection is being
-            made directly. Choose one above, or leave it — picking <em>Direct</em> clears the
-            reference.
-          </span>
+            {t('The VPN profile this was saved against no longer exists, so this connection is being made directly. Choose one above, or leave it — picking')}{' '}<em>{t('Direct')}</em> {t('clears the reference.')}</span>
         </div>
       ) : selected && health === 'off' ? (
         // Not a warning: connecting starts the profile. Saying so beats leaving
@@ -116,9 +115,7 @@ export function VpnTransportSelect({
 
       {usable.length === 0 && !missing ? (
         <span className="field-hint">
-          No WireGuard or OpenVPN profiles in this workspace yet — import one in the Tunnels view.
-          (frp is an inbound reverse proxy, so it is never a transport.)
-        </span>
+          {t('No WireGuard or OpenVPN profiles in this workspace yet — import one in the Tunnels view. (frp is an inbound reverse proxy, so it is never a transport.)')}</span>
       ) : (
         <span className="field-hint">{hint}</span>
       )}

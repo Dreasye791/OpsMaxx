@@ -8,6 +8,7 @@ import { VaultPicker } from '../http/fields/VaultPicker'
 import { toast } from '../../store/toast'
 import { isMac } from '../../lib/shortcuts'
 import './primitives.css'
+import { useT } from '../../i18n'
 
 export interface KeyValueTableProps {
   rows: Row[]
@@ -75,6 +76,7 @@ type Menu = { x: number; y: number; entries: MenuEntry[] }
  * (right-click, Shift+F10, or the row's ⋯).
  */
 export function KeyValueTable(props: KeyValueTableProps): React.JSX.Element {
+  const t = useT()
   const { rows, onChange, kind, showDescription, readOnly } = props
   const [bulk, setBulk] = useState<string | null>(null)
   const [menu, setMenu] = useState<Menu | null>(null)
@@ -327,7 +329,7 @@ export function KeyValueTable(props: KeyValueTableProps): React.JSX.Element {
               tabIndex={-1}
               className="hc-icon-btn"
               aria-label={`Actions for ${name}`}
-              title="Row actions"
+              title={t('Row actions')}
               onClick={(e) => openAt(e.currentTarget, rowMenu(row))}
             >
               <MoreHorizontal size={13} aria-hidden="true" />
@@ -344,13 +346,12 @@ export function KeyValueTable(props: KeyValueTableProps): React.JSX.Element {
         <div className="hc-kv-head">
           <span className="ui-label">One &quot;key: value&quot; per line · # disables a row</span>
           <button type="button" className="btn ghost sm" onClick={() => setBulkMode(false)}>
-            Key-value edit
-          </button>
+            {t('Key-value edit')}</button>
           <button
             type="button"
             className="hc-icon-btn"
-            aria-label="Table options"
-            title="Table options"
+            aria-label={t('Table options')}
+            title={t('Table options')}
             aria-haspopup="menu"
             onClick={(e) => openAt(e.currentTarget, tableMenu())}
           >
@@ -361,7 +362,7 @@ export function KeyValueTable(props: KeyValueTableProps): React.JSX.Element {
       {bulk !== null ? (
         <textarea
           className="hc-kv-bulk hc-mono"
-          aria-label="Bulk edit"
+          aria-label={t('Bulk edit')}
           spellCheck={false}
           value={bulk}
           readOnly={readOnly}
@@ -373,17 +374,17 @@ export function KeyValueTable(props: KeyValueTableProps): React.JSX.Element {
           <thead>
             <tr>
               <th className="hc-kv-check">
-                <span className="hc-sr-only">Enabled</span>
+                <span className="hc-sr-only">{t('Enabled')}</span>
               </th>
               <th className="ui-label">{keyLabel}</th>
-              <th className="ui-label">Value</th>
-              {showDescription && <th className="ui-label">Description</th>}
+              <th className="ui-label">{t('Value')}</th>
+              {showDescription && <th className="ui-label">{t('Description')}</th>}
               <th className="hc-kv-more">
                 <button
                   type="button"
                   className="hc-icon-btn"
-                  aria-label="Table options"
-                  title="Table options"
+                  aria-label={t('Table options')}
+                  title={t('Table options')}
                   aria-haspopup="menu"
                   onClick={(e) => openAt(e.currentTarget, tableMenu())}
                 >

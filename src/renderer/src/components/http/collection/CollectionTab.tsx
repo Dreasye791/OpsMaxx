@@ -13,6 +13,7 @@ import { countRequests } from '../sidebar/treeMenus'
 import { requestImport } from '../HttpSidebar'
 import { RouteSelect, collectionRoute, routeFields } from './RouteSelect'
 import '../nav.css'
+import { useT } from '../../../i18n'
 
 type Section = CollectionSection
 
@@ -29,6 +30,7 @@ export interface CollectionTabProps {
  * Connection (§2.16). It opens on the section the tab was opened for.
  */
 export function CollectionTab({ tabId }: CollectionTabProps): React.JSX.Element {
+  const t = useT()
   const collectionId = useHttp((s) => s.tabs.find((t) => t.id === tabId)?.ref?.collectionId)
   const asked = useHttp((s) => s.collectionSection[tabId])
   const c = useApi((s) => s.collections.find((x) => x.id === collectionId))
@@ -47,7 +49,7 @@ export function CollectionTab({ tabId }: CollectionTabProps): React.JSX.Element 
   const [pasted, setPasted] = useState('')
   const [caError, setCaError] = useState<string | null>(null)
   const [confirm, setConfirm] = useState<Confirm | null>(null)
-  if (!c) return <p className="hc-note-line">This collection no longer exists.</p>
+  if (!c) return <p className="hc-note-line">{t('This collection no longer exists.')}</p>
   const update = useApi.getState().updateCollection
   const set = (patch: Parameters<typeof update>[1]): void => update(c.id, patch)
 
@@ -63,14 +65,13 @@ export function CollectionTab({ tabId }: CollectionTabProps): React.JSX.Element 
       {c.tlsReview && (
         <div className="hc-banner" role="status">
           <TriangleAlert size={13} aria-hidden="true" />
-          <span>Certificate settings for {c.name} were changed on another device.</span>
+          <span>{t('Certificate settings for')}{' '}{c.name} {t('were changed on another device.')}</span>
           <button
             type="button"
             className="btn sm"
             onClick={() => setSection('connection')}
           >
-            Review
-          </button>
+            {t('Review')}</button>
         </div>
       )}
       <Tabs
@@ -89,11 +90,11 @@ export function CollectionTab({ tabId }: CollectionTabProps): React.JSX.Element 
         {section === 'overview' && (
           <>
             <label className="hc-form-row">
-              <span className="ui-label">Name</span>
+              <span className="ui-label">{t('Name')}</span>
               <input className="hc-input" value={c.name} onChange={(e) => set({ name: e.target.value })} />
             </label>
             <label className="hc-form-col">
-              <span className="ui-label">Description</span>
+              <span className="ui-label">{t('Description')}</span>
               <textarea className="hc-input hc-textarea" value={c.description ?? ''} onChange={(e) => set({ description: e.target.value })} />
             </label>
             <p className="hc-note-line">
@@ -101,16 +102,14 @@ export function CollectionTab({ tabId }: CollectionTabProps): React.JSX.Element 
             </p>
             {c.importedFrom && (
               <p className="hc-note-line">
-                Imported from {c.importedFrom.url ?? c.importedFrom.fileName}{' '}
+                {t('Imported from')}{' '}{c.importedFrom.url ?? c.importedFrom.fileName}{' '}
                 <button type="button" className="btn sm" onClick={() => requestImport(c.id)}>
-                  Re-import
-                </button>
+                  {t('Re-import')}</button>
               </p>
             )}
             {c.needsReimport && (
               <p className="hc-warn-line">
-                <TriangleAlert size={13} aria-hidden="true" /> This collection’s requests have to be re-imported from its spec.
-              </p>
+                <TriangleAlert size={13} aria-hidden="true" /> {t('This collection’s requests have to be re-imported from its spec.')}</p>
             )}
           </>
         )}
@@ -125,7 +124,7 @@ export function CollectionTab({ tabId }: CollectionTabProps): React.JSX.Element 
         )}
         {section === 'auth' && (
           <>
-            <p className="hc-note-line">Requests set to Inherit use this.</p>
+            <p className="hc-note-line">{t('Requests set to Inherit use this.')}</p>
             <AuthEditor
               value={c.auth}
               collectionName={c.name}
@@ -141,15 +140,13 @@ export function CollectionTab({ tabId }: CollectionTabProps): React.JSX.Element 
               <div className="hc-banner" role="note">
                 <TriangleAlert size={13} aria-hidden="true" />
                 <span>
-                  These connection settings came from another device. Requests in {c.name} are held until you accept them.
-                </span>
+                  {t('These connection settings came from another device. Requests in')}{' '}{c.name} {t('are held until you accept them.')}</span>
                 <button type="button" className="btn primary sm" onClick={() => useApi.getState().acceptTlsReview(c.id)}>
-                  Accept these settings
-                </button>
+                  {t('Accept these settings')}</button>
               </div>
             )}
             <label className="hc-form-row">
-              <span className="ui-label">Send from</span>
+              <span className="ui-label">{t('Send from')}</span>
               <RouteSelect value={collectionRoute(c)} onChange={(r) => set(routeFields(r))} />
             </label>
             <label className="hc-form-row">
@@ -158,24 +155,22 @@ export function CollectionTab({ tabId }: CollectionTabProps): React.JSX.Element 
                 checked={!c.insecureTls}
                 onChange={(e) => (e.target.checked ? set({ insecureTls: false }) : setConfirm({ kind: 'tls-off' }))}
               />
-              Verify certificates
-            </label>
+              {t('Verify certificates')}</label>
             {c.insecureTls && (
               <p className="hc-warn-line">
-                <TriangleAlert size={13} aria-hidden="true" /> Certificates are NOT verified for requests in {c.name}.
+                <TriangleAlert size={13} aria-hidden="true" /> {t('Certificates are NOT verified for requests in')}{' '}{c.name}.
               </p>
             )}
             <div className="hc-form-col">
-              <span className="ui-label">Custom CA</span>
+              <span className="ui-label">{t('Custom CA')}</span>
               {c.caPem ? (
                 <p className="hc-note-line">
-                  Custom CA set ({certCount(c.caPem)} {certCount(c.caPem) === 1 ? 'certificate' : 'certificates'}).{' '}
+                  {t('Custom CA set (')}{certCount(c.caPem)} {certCount(c.caPem) === 1 ? 'certificate' : 'certificates'}).{' '}
                   <button type="button" className="btn ghost sm" onClick={() => set({ caPem: undefined })}>
-                    Remove
-                  </button>
+                    {t('Remove')}</button>
                 </p>
               ) : (
-                <p className="hc-note-line">None: certificates are checked against the system’s trusted roots.</p>
+                <p className="hc-note-line">{t('None: certificates are checked against the system’s trusted roots.')}</p>
               )}
               <div className="hc-form-row">
                 <button
@@ -183,20 +178,18 @@ export function CollectionTab({ tabId }: CollectionTabProps): React.JSX.Element 
                   className="btn sm"
                   onClick={() => void window.opsmaxx.http.chooseCaFile().then(offerCa, () => setCaError('Could not read that file.'))}
                 >
-                  Choose file…
-                </button>
+                  {t('Choose file…')}</button>
               </div>
               <textarea
                 className="hc-input hc-textarea hc-mono"
-                aria-label="Paste a CA certificate (PEM)"
-                placeholder="-----BEGIN CERTIFICATE-----"
+                aria-label={t('Paste a CA certificate (PEM)')}
+                placeholder={t('-----BEGIN CERTIFICATE-----')}
                 value={pasted}
                 onChange={(e) => setPasted(e.target.value)}
               />
               <div className="hc-form-row">
                 <button type="button" className="btn sm" disabled={!pasted.trim()} onClick={() => offerCa(certificateBlocks(pasted))}>
-                  Use pasted certificate
-                </button>
+                  {t('Use pasted certificate')}</button>
               </div>
               {caError && (
                 <p className="hc-error-line" role="alert">
@@ -205,7 +198,7 @@ export function CollectionTab({ tabId }: CollectionTabProps): React.JSX.Element 
               )}
             </div>
             <label className="hc-form-row">
-              <span className="ui-label">Default timeout (seconds)</span>
+              <span className="ui-label">{t('Default timeout (seconds)')}</span>
               <input
                 className="hc-input hc-num"
                 type="number"
@@ -236,9 +229,7 @@ export function CollectionTab({ tabId }: CollectionTabProps): React.JSX.Element 
           }}
         >
           <p>
-            Every request in {c.name} will accept any certificate, including one presented by somebody intercepting the
-            connection. Adding the server’s CA instead keeps the check.
-          </p>
+            {t('Every request in')}{' '}{c.name} {t('will accept any certificate, including one presented by somebody intercepting the connection. Adding the server’s CA instead keeps the check.')}</p>
         </Modal>
       )}
       {confirm?.kind === 'ca' && (
@@ -256,8 +247,7 @@ export function CollectionTab({ tabId }: CollectionTabProps): React.JSX.Element 
           }}
         >
           <p>
-            Requests in {c.name} will accept certificates signed by {certCount(confirm.pem) === 1 ? 'this certificate' : `these ${certCount(confirm.pem)} certificates`}, in addition to the system’s roots.
-          </p>
+            {t('Requests in')}{' '}{c.name} {t('will accept certificates signed by')}{' '}{certCount(confirm.pem) === 1 ? 'this certificate' : `these ${certCount(confirm.pem)} certificates`}{t(', in addition to the system’s roots.')}</p>
         </Modal>
       )}
     </div>

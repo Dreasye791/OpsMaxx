@@ -3,6 +3,7 @@ import { KeyRound, Monitor, RotateCw } from 'lucide-react'
 import type { Server } from '../../types'
 import { clsx } from '../../lib/format'
 import { bridgeHas } from '../../lib/bridge'
+import { useT } from '../../i18n'
 
 // A remote desktop, drawn by the IronRDP WebAssembly client into a canvas
 // owned by the <iron-remote-desktop> web component.
@@ -226,6 +227,7 @@ export function RdpView({
    */
   visible: boolean
 }): React.JSX.Element {
+  const t = useT()
   const hostRef = useRef<HTMLDivElement>(null)
   const uiRef = useRef<UserInteraction | null>(null)
   const [phase, setPhase] = useState<Phase>('idle')
@@ -748,7 +750,7 @@ export function RdpView({
         <button
           type="button"
           className="icon-btn"
-          title="Send Ctrl+Alt+Del"
+          title={t('Send Ctrl+Alt+Del')}
           disabled={phase !== 'connected'}
           onClick={() => uiRef.current?.ctrlAltDel()}
         >
@@ -757,7 +759,7 @@ export function RdpView({
         <button
           type="button"
           className="icon-btn"
-          title="Reconnect"
+          title={t('Reconnect')}
           // NOT disabled while connecting, which is the one state a user most
           // needs it in. A host that stalls inside CredSSP never resolves and
           // neither `await ready` nor connect() has a client-side deadline, so
@@ -800,8 +802,7 @@ export function RdpView({
                 </div>
                 <div className="rdp-overlay-msg">{error}</div>
                 <button type="button" className="btn" onClick={retry}>
-                  <RotateCw size={14} /> Reconnect
-                </button>
+                  <RotateCw size={14} /> {t('Reconnect')}</button>
               </>
             ) : (
               <div className="rdp-overlay-msg">

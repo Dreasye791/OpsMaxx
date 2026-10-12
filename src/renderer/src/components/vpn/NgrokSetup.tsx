@@ -6,6 +6,7 @@ import { useVault } from '../../store/vault'
 import { toast } from '../../store/toast'
 import { UnlockVaultButton } from '../common/UnlockVaultButton'
 import type { NgrokSpec, NgrokTunnel, VpnProfile } from '../../types'
+import { useT } from '../../i18n'
 
 /**
  * Creating an ngrok profile.
@@ -52,6 +53,7 @@ export function NgrokSetup({
   onClose: () => void
   onDone: (p: VpnProfile) => void
 }): React.JSX.Element {
+  const t = useT()
   const upsertVpnProfile = useApp((s) => s.upsertVpnProfile)
   const activeId = useApp((s) => s.activeId)
   const vaultUnlocked = useVault((s) => s.unlocked)
@@ -160,12 +162,12 @@ export function NgrokSetup({
       confirm={{ label: 'Save', onClick: save, disabled: !ready }}
     >
       <div className="field">
-        <label className="field-label">Name</label>
+        <label className="field-label">{t('Name')}</label>
         <input className="input" value={name} onChange={(e) => setName(e.target.value)} />
       </div>
 
       <div className="field">
-        <label className="field-label">Authtoken</label>
+        <label className="field-label">{t('Authtoken')}</label>
         {!vaultUnlocked ? (
           /* The vault is where the token belongs, so unlocking is the step —
              offered here rather than described, the same as everywhere else
@@ -182,7 +184,7 @@ export function NgrokSetup({
                 value={entryId}
                 onChange={(e) => setEntryId(e.target.value)}
               >
-                <option value="">Choose a vault entry…</option>
+                <option value="">{t('Choose a vault entry…')}</option>
                 {usable.map((e) => (
                   <option key={e.id} value={e.id}>
                     {e.name}
@@ -211,14 +213,14 @@ export function NgrokSetup({
               <div className="col" style={{ gap: 6 }}>
                 <input
                   className="input"
-                  placeholder="Name it — e.g. ngrok (personal)"
+                  placeholder={t('Name it — e.g. ngrok (personal)')}
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
                 />
                 <input
                   className="input mono"
                   type="password"
-                  placeholder="Paste the authtoken"
+                  placeholder={t('Paste the authtoken')}
                   value={newToken}
                   onChange={(e) => setNewToken(e.target.value)}
                 />
@@ -231,15 +233,13 @@ export function NgrokSetup({
                     {saving ? 'Saving…' : 'Save to vault'}
                   </button>
                   <button className="btn sm" onClick={() => setAdding(false)}>
-                    Cancel
-                  </button>
+                    {t('Cancel')}</button>
                 </div>
               </div>
             ) : (
               <div className="row" style={{ gap: 6 }}>
                 <button className="btn sm" onClick={() => setAdding(true)}>
-                  <Plus size={13} /> Add an authtoken
-                </button>
+                  <Plus size={13} /> {t('Add an authtoken')}</button>
                 {/* Where the token comes from. A dialog that asks for a
                     credential and does not say where it is minted leaves the
                     reader to go and find out. */}
@@ -249,20 +249,17 @@ export function NgrokSetup({
                     window.open(NGROK_TOKEN_URL, '_blank', 'noopener,noreferrer')
                   }
                 >
-                  <ExternalLink size={13} /> Get one from ngrok
-                </button>
+                  <ExternalLink size={13} /> {t('Get one from ngrok')}</button>
               </div>
             )}
           </>
         )}
         <span className="field-hint">
-          Stored in the vault and handed to the agent through its environment — never written into a
-          config file and never on a command line.
-        </span>
+          {t('Stored in the vault and handed to the agent through its environment — never written into a config file and never on a command line.')}</span>
       </div>
 
       <div className="field">
-        <label className="field-label">Endpoints</label>
+        <label className="field-label">{t('Endpoints')}</label>
         <div className="col" style={{ gap: 10 }}>
           {tunnels.map((t, i) => (
             <div key={i} className="col" style={{ gap: 6 }}>
@@ -331,12 +328,9 @@ export function NgrokSetup({
             style={{ alignSelf: 'flex-start' }}
             onClick={() => setTunnels((ts) => [...ts, blankTunnel(ts.length)])}
           >
-            <Plus size={13} /> Add another endpoint
-          </button>
+            <Plus size={13} /> {t('Add another endpoint')}</button>
           <span className="field-hint">
-            Some ngrok plans allow only one endpoint per agent. If a second is refused, that is the
-            account rather than this profile.
-          </span>
+            {t('Some ngrok plans allow only one endpoint per agent. If a second is refused, that is the account rather than this profile.')}</span>
         </div>
       </div>
     </Modal>

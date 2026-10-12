@@ -6,6 +6,7 @@ import { useHttp } from '../../../store/http'
 import { cancel } from '../../../lib/httpSend'
 import { bytes, clsx } from '../../../lib/format'
 import { statusShape } from './bodyWindow'
+import { useT } from '../../../i18n'
 
 const IDLE: ResponseState = { status: 'idle' }
 
@@ -36,25 +37,25 @@ const TLS_TEXT = {
  * read on its own.
  */
 export function ResponseStatus({ tabId }: { tabId: Id }): React.JSX.Element {
+  const t = useT()
   const r = useResponse(tabId)
   const elapsed = useElapsed(r.status === 'sending' ? r.startedAt : null)
 
-  if (r.status === 'idle') return <span className="hc-rs hc-rs-idle">No response yet</span>
+  if (r.status === 'idle') return <span className="hc-rs hc-rs-idle">{t('No response yet')}</span>
 
   if (r.status === 'sending') {
     return (
       <span className="hc-rs">
         <Loader2 size={13} className="spin" aria-hidden />
-        <span>Waiting… {elapsed}</span>
-        <button className="btn sm danger" onClick={() => cancel(tabId)} title="Cancel (Esc)">
-          Cancel
-        </button>
+        <span>{t('Waiting…')}{' '}{elapsed}</span>
+        <button className="btn sm danger" onClick={() => cancel(tabId)} title={t('Cancel (Esc)')}>
+          {t('Cancel')}</button>
       </span>
     )
   }
 
   if (r.status === 'error') {
-    if (r.errorClass === 'prod-declined') return <span className="hc-rs hc-rs-idle">Not sent</span>
+    if (r.errorClass === 'prod-declined') return <span className="hc-rs hc-rs-idle">{t('Not sent')}</span>
     return (
       <span className="hc-rs hc-rs-error">
         <AlertTriangle size={13} aria-hidden />
@@ -78,7 +79,7 @@ export function ResponseStatus({ tabId }: { tabId: Id }): React.JSX.Element {
         <span className={clsx('state-dot', statusShape(res.status))} aria-hidden />
         {res.status} {res.statusText}
       </span>
-      <span className="hc-rs-metric">{Math.round(res.durationMs)} ms</span>
+      <span className="hc-rs-metric">{Math.round(res.durationMs)} {t('ms')}</span>
       <span className="hc-rs-metric" title={size}>
         {bytes(res.body.byteLength)}
         {res.truncated ? ' (cut)' : ''}
@@ -93,7 +94,7 @@ export function ResponseStatus({ tabId }: { tabId: Id }): React.JSX.Element {
           {sentAs.tls === 'unverified' ? <LockOpen size={13} /> : <Lock size={13} />}
         </span>
       )}
-      {sentAs.route.key !== 'direct' && <span className="hc-rs-metric">via {sentAs.route.label}</span>}
+      {sentAs.route.key !== 'direct' && <span className="hc-rs-metric">{t('via')}{' '}{sentAs.route.label}</span>}
     </span>
   )
 }

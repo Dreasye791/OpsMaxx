@@ -231,6 +231,32 @@ for (const [file, lits] of literalsByFile) {
 const untranslated = [...literalSites.keys()].filter((k) => !catalogue.has(k)).sort()
 const orphans = [...catalogue.keys()].filter((k) => !reachable.has(k)).sort()
 
+/**
+ * `--json` for the worklist, so a translator can sort it by length, group it by
+ * file, or feed it to something else. The human report below is for the person
+ * deciding whether coverage is good enough; this is for the person closing the
+ * gap, and they want different shapes of the same data.
+ */
+if (process.argv.includes('--json')) {
+  process.stdout.write(
+    JSON.stringify(
+      {
+        lit: literalSites.size,
+        dynamic: dynamicSites.length,
+        entries: catalogue.size,
+        untranslated: untranslated.map((k) => {
+          const where = literalSites.get(k)[0]
+          return { key: k, where: where.split(':')[0], line: Number(where.split(':')[1]), len: k.length }
+        }),
+        orphans: orphans.map((k) => ({ key: k, line: catalogue.get(k).line }))
+      },
+      null,
+      1
+    ) + '\n'
+  )
+  process.exit(0)
+}
+
 const pct =
   literalSites.size === 0
     ? 100

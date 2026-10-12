@@ -12,6 +12,7 @@ import { layoutMenuEntries } from './layoutMenu'
 import { requestClose } from './closing'
 import { badgeFor, tabMenuEntries, tabTitle } from './tabMenus'
 import { focusUrl } from '../focus'
+import { useT } from '../../../i18n'
 
 interface Menu {
   x: number
@@ -41,6 +42,7 @@ export function newRequest(kind: RequestKind): void {
  * last tab, the `⌄` list, the environment picker and `⊞` Layout.
  */
 export function HttpTabStrip({ envPicker, forced }: HttpTabStripProps): React.JSX.Element {
+  const t = useT()
   const ws = useApp((s) => s.activeWorkspaceId)
   const allTabs = useHttp((s) => s.tabs)
   const activeId = useHttp((s) => s.activeTab[ws] ?? null)
@@ -133,7 +135,7 @@ export function HttpTabStrip({ envPicker, forced }: HttpTabStripProps): React.JS
         onDragOver={(e) => dragId.current && e.preventDefault()}
         onDrop={() => drop(dropAt ?? tabs.length)}
       >
-        <div className="hc-tablist" role="tablist" aria-label="Request tabs">
+        <div className="hc-tablist" role="tablist" aria-label={t('Request tabs')}>
           {tabs.map((tab, index) => (
             <Tab
               key={tab.id}
@@ -170,8 +172,8 @@ export function HttpTabStrip({ envPicker, forced }: HttpTabStripProps): React.JS
           </button>
           <button
             className="icon-btn xs"
-            aria-label="New WebSocket or GraphQL request"
-            title="New WebSocket or GraphQL request"
+            aria-label={t('New WebSocket or GraphQL request')}
+            title={t('New WebSocket or GraphQL request')}
             aria-haspopup="menu"
             onClick={(e) =>
               openMenu(anchorOf(e.currentTarget), [
@@ -189,8 +191,8 @@ export function HttpTabStrip({ envPicker, forced }: HttpTabStripProps): React.JS
       <span className="hc-strip-tools">
         <button
           className="icon-btn sm"
-          aria-label="Open tabs and recently closed"
-          title="Open tabs and recently closed"
+          aria-label={t('Open tabs and recently closed')}
+          title={t('Open tabs and recently closed')}
           aria-haspopup="menu"
           onClick={(e) => openMenu(anchorOf(e.currentTarget), listEntries())}
         >
@@ -199,8 +201,8 @@ export function HttpTabStrip({ envPicker, forced }: HttpTabStripProps): React.JS
         {envPicker}
         <button
           className="icon-btn sm"
-          aria-label="Layout (panels and splits)"
-          title="Layout (panels and splits)"
+          aria-label={t('Layout (panels and splits)')}
+          title={t('Layout (panels and splits)')}
           aria-haspopup="menu"
           onClick={(e) => {
             const tabId = active?.id ?? ghostId
@@ -229,6 +231,7 @@ interface TabProps {
 }
 
 function Tab(p: TabProps): React.JSX.Element {
+  const t = useT()
   const { tab } = p
   const req = useHttp((s) => s.requestFor(tab.id))
   // Subscribed so a collection rename or a save re-renders the title and the dirty dot.
@@ -286,11 +289,11 @@ function Tab(p: TabProps): React.JSX.Element {
       )}
       <span className="hc-tab-glyph">
         {sending ? (
-          <Loader2 size={12} className="spin" aria-label="Sending" />
+          <Loader2 size={12} className="spin" aria-label={t('Sending')} />
         ) : connected ? (
-          <span className="hc-live-dot" role="img" aria-label="Connected" />
+          <span className="hc-live-dot" role="img" aria-label={t('Connected')} />
         ) : dirty ? (
-          <span className="hc-dirty" role="img" aria-label="Unsaved changes" />
+          <span className="hc-dirty" role="img" aria-label={t('Unsaved changes')} />
         ) : null}
         {!sending && (
           <button
@@ -317,6 +320,7 @@ function RenameInput({
   initial: string
   onDone: () => void
 }): React.JSX.Element {
+  const t = useT()
   const [value, setValue] = useState(initial)
   const commit = (): void => {
     const name = value.trim()
@@ -332,7 +336,7 @@ function RenameInput({
   return (
     <input
       className="input hc-tab-rename"
-      aria-label="Tab name"
+      aria-label={t('Tab name')}
       autoFocus
       value={value}
       onChange={(e) => setValue(e.target.value)}

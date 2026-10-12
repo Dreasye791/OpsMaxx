@@ -3,6 +3,7 @@ import { Check, X } from 'lucide-react'
 import type { AccessGroup, SessionMode } from '../../../../shared/mcp'
 import { SESSION_MODES, sessionModeLabel } from '../../../../shared/mcp'
 import { Switch } from '../common/Switch'
+import { useT } from '../../i18n'
 
 /** Marks a predefined profile's value in the consent select, apart from group ids. */
 const PROFILE = 'profile:'
@@ -29,6 +30,7 @@ interface WorkspaceOpt {
  * reasoning as the CLI pairing code, which is shown only in this window.
  */
 export function AiAuthorizations(): React.JSX.Element {
+  const t = useT()
   // `null` until the first read returns, never `[]`.
   //
   // The same rule as the Approvals panel, for the same reason: "No client is
@@ -120,22 +122,17 @@ export function AiAuthorizations(): React.JSX.Element {
 
   return (
     <div className="settings-section">
-      <h2>Authorization requests</h2>
+      <h2>{t('Authorization requests')}</h2>
       <div className="sub">
-        A client that asked to connect over OAuth waits here. Nothing is granted until you choose
-        what it may do — there is no default, and the client cannot choose for itself. Approving
-        creates a session exactly as if you had made one by hand.
-      </div>
+        {t('A client that asked to connect over OAuth waits here. Nothing is granted until you choose what it may do — there is no default, and the client cannot choose for itself. Approving creates a session exactly as if you had made one by hand.')}</div>
 
       {unreadable ? (
         <div className="s-desc state-unknown">
-          The list of authorization requests could not be read, so this is not a statement that none
-          are waiting.
-        </div>
+          {t('The list of authorization requests could not be read, so this is not a statement that none are waiting.')}</div>
       ) : pending === null ? (
-        <div className="s-desc state-unknown">Checking for anything waiting…</div>
+        <div className="s-desc state-unknown">{t('Checking for anything waiting…')}</div>
       ) : pending.length === 0 ? (
-        <div className="s-desc">No client is waiting to be authorized.</div>
+        <div className="s-desc">{t('No client is waiting to be authorized.')}</div>
       ) : null}
 
       {error ? <div className="s-desc state-unknown">{error}</div> : null}
@@ -151,17 +148,15 @@ export function AiAuthorizations(): React.JSX.Element {
                   control characters in main before it ever reaches here. */}
               <div className="r-title">{request.clientName}</div>
               <div className="r-sub">
-                asked to connect · returns to <span className="mono">{request.redirectUri}</span>
+                {t('asked to connect · returns to')}{' '}<span className="mono">{request.redirectUri}</span>
               </div>
 
               <div className="r-sub" style={{ marginTop: 10 }}>
-                Workspaces it may see
-              </div>
+                {t('Workspaces it may see')}</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 6 }}>
                 {workspaces.length === 0 ? (
                   <div className="s-desc">
-                    There are no workspaces yet, and a session has to be scoped to at least one.
-                  </div>
+                    {t('There are no workspaces yet, and a session has to be scoped to at least one.')}</div>
                 ) : (
                   workspaces.map((w) => (
                     // The click target is the whole label, not just the switch.
@@ -183,8 +178,7 @@ export function AiAuthorizations(): React.JSX.Element {
               </div>
 
               <div className="r-sub" style={{ marginTop: 10 }}>
-                What it may do
-              </div>
+                {t('What it may do')}</div>
               {/* No preselection, deliberately. Everywhere else in this app a
                   group picker lands on a configured default; here the whole
                   point of the screen is that a person chose, so Approve stays
@@ -196,7 +190,7 @@ export function AiAuthorizations(): React.JSX.Element {
                 value={picked.groupId}
                 onChange={(e) => setFor(request.id, { groupId: e.target.value })}
               >
-                <option value="">Choose a profile…</option>
+                <option value="">{t('Choose a profile…')}</option>
                 {/* Bypass is not offered: it is confirmed where it is set, and
                     it can be picked afterwards under Active Sessions. */}
                 {SESSION_MODES.filter((m) => m.id !== 'custom' && m.id !== 'bypass').map((m) => (
@@ -204,7 +198,7 @@ export function AiAuthorizations(): React.JSX.Element {
                     {m.label} — {m.detail}
                   </option>
                 ))}
-                <optgroup label="Custom — an access group, exactly as written">
+                <optgroup label={t('Custom — an access group, exactly as written')}>
                   {groups.map((g) => (
                     <option key={g.id} value={g.id}>
                       {g.name}
@@ -220,16 +214,14 @@ export function AiAuthorizations(): React.JSX.Element {
                 disabled={busy === request.id}
                 onClick={() => deny(request.id)}
               >
-                <X size={13} /> Deny
-              </button>
+                <X size={13} /> {t('Deny')}</button>
               <button
                 className="btn sm primary"
                 disabled={!ready || busy === request.id}
                 title={ready ? undefined : 'Choose a workspace and a profile first'}
                 onClick={() => approve(request.id)}
               >
-                <Check size={13} /> Approve
-              </button>
+                <Check size={13} /> {t('Approve')}</button>
             </div>
           </div>
         )

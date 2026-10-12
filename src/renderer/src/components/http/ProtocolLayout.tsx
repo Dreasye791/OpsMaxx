@@ -18,6 +18,7 @@ import { keyLabel, withKey } from './hotkeys'
 import { focusUrl } from './focus'
 import { layoutMenuEntries } from './tabs/layoutMenu'
 import './http.css'
+import { useT } from '../../i18n'
 
 // One grid for every protocol (§2.2): URL row, then the request and response
 // halves in a SplitPane that is side by side or stacked by width, and that can
@@ -187,6 +188,7 @@ const splitFor = (side: 'a' | 'b' | null): SplitState =>
   side === 'a' ? 'request-collapsed' : side === 'b' ? 'response-collapsed' : 'normal'
 
 export function ProtocolLayout(props: ProtocolLayoutProps): React.JSX.Element {
+  const t = useT()
   const { tabId, kind } = props
   // The ghost (§2.10) renders through this same tree, so promoting it on the
   // first keystroke changes what is below the URL row and nothing above it:
@@ -217,14 +219,14 @@ export function ProtocolLayout(props: ProtocolLayoutProps): React.JSX.Element {
           min={orientation === 'horizontal' ? [SIDE_MIN, SIDE_MIN] : [STACKED_MIN, STACKED_MIN]}
           collapsed={collapsedSide(split)}
           onCollapse={(side) => setSplit(tabId, splitFor(side))}
-          label="Resize request and response"
+          label={t('Resize request and response')}
           // Double-click restores §2.2's default; right-click, Shift+F10 or the ContextMenu key opens the Layout menu (§2.5).
           defaultRatio={DEFAULT_PREFS.ratios[kind][orientation === 'horizontal' ? 'h' : 'v']}
           onMenu={setMenuAt}
           collapsedA={
             // A click anywhere restores; a summary label's own click also opens its tab.
             <div className="hc-collapsed-bar" onClick={restore}>
-              <span className="hc-collapsed-title">Request</span>
+              <span className="hc-collapsed-title">{t('Request')}</span>
               <span className="hc-collapsed-summary">{props.requestSummary}</span>
               <RestoreButton label={withKey('Show request', 'http-toggle-request')} onClick={restore} down />
             </div>
@@ -236,14 +238,14 @@ export function ProtocolLayout(props: ProtocolLayoutProps): React.JSX.Element {
             </div>
           }
         >
-          <section className="hc-request" aria-label="Request">
+          <section className="hc-request" aria-label={t('Request')}>
             <div className="hc-tabrow" data-hc-region="request-tabs">
               {props.requestTabs}
             </div>
             {props.requestToolbar && <div className="hc-toolbar">{props.requestToolbar}</div>}
             <div className="hc-pane-body">{props.request}</div>
           </section>
-          <section className="hc-response" aria-label="Response" data-hc-region="response">
+          <section className="hc-response" aria-label={t('Response')} data-hc-region="response">
             {props.response}
           </section>
         </SplitPane>
@@ -320,6 +322,7 @@ export function SplitToggles({ tabId }: { tabId: Id }): React.JSX.Element {
 
 /** Below the ghost's live URL row: what to do first, and the other ways in (§2.3). */
 function EmptyWorkbench(): React.JSX.Element {
+  const t = useT()
   const open = (kind: RequestKind): void => {
     useHttp.getState().openScratch(kind)
     focusUrl()
@@ -328,18 +331,15 @@ function EmptyWorkbench(): React.JSX.Element {
   const region = keyLabel('http-focus-region')
   return (
     <div className="hc-empty-body">
-      <div className="hc-empty-title">Send a request</div>
-      <div>Requests leave from this machine or through any server’s SSH connection.</div>
+      <div className="hc-empty-title">{t('Send a request')}</div>
+      <div>{t('Requests leave from this machine or through any server’s SSH connection.')}</div>
       <div className="hc-empty-actions">
         <button className="btn" onClick={() => open('ws')}>
-          New WebSocket
-        </button>
+          {t('New WebSocket')}</button>
         <button className="btn" onClick={() => open('graphql')}>
-          New GraphQL
-        </button>
+          {t('New GraphQL')}</button>
         <button className="btn" onClick={() => useHttp.getState().openImport()}>
-          Import…
-        </button>
+          {t('Import…')}</button>
         <span className="faint">
           {[newTab && `${newTab} new tab`, region && `${region} move focus`].filter(Boolean).join(' · ')}
         </span>

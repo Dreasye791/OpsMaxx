@@ -6,6 +6,7 @@ import { clsx } from '../../../lib/format'
 import { outgoing, toCurl, type Outgoing } from '../../../../../shared/curl'
 import type { GraphQlRequest, HttpRequest, SentView } from '../../../../../shared/apiModel'
 import type { HttpRequestSpec } from '../../../../../shared/httpClient'
+import { useT } from '../../../i18n'
 
 /**
  * Generate code for the current request.
@@ -108,6 +109,7 @@ export interface CodeSnippetDrawerProps {
 }
 
 export function CodeSnippetDrawer({ request, sent, resolveSecrets, onClose }: CodeSnippetDrawerProps): React.JSX.Element {
+  const t = useT()
   const [lang, setLang] = useState<SnippetLang>('curl')
   const [live, setLive] = useState<HttpRequestSpec | null>(null)
   const [confirming, setConfirming] = useState(false)
@@ -120,9 +122,9 @@ export function CodeSnippetDrawer({ request, sent, resolveSecrets, onClose }: Co
   )
 
   return (
-    <section className="hc-snippet" aria-label="Generate code">
+    <section className="hc-snippet" aria-label={t('Generate code')}>
       <div className="row" style={{ gap: 'var(--sp-2)', alignItems: 'center' }}>
-        <div className="segment" role="tablist" aria-label="Language">
+        <div className="segment" role="tablist" aria-label={t('Language')}>
           {LANGS.map((l) => (
             <button
               key={l.id}
@@ -136,27 +138,22 @@ export function CodeSnippetDrawer({ request, sent, resolveSecrets, onClose }: Co
           ))}
         </div>
         <button className="btn secondary size-28" onClick={() => void window.opsmaxx?.clipboard?.write(snippet.text)}>
-          Copy
-        </button>
+          {t('Copy')}</button>
         {resolveSecrets && !live && !confirming && (
           <button className="btn secondary size-28" onClick={() => setConfirming(true)}>
-            Include secrets…
-          </button>
+            {t('Include secrets…')}</button>
         )}
         {live && (
           <button className="btn secondary size-28" onClick={() => setLive(null)}>
-            Mask secrets
-          </button>
+            {t('Mask secrets')}</button>
         )}
-        <button className="btn secondary size-28" aria-label="Close code" onClick={onClose}>
-          Close
-        </button>
+        <button className="btn secondary size-28" aria-label={t('Close code')} onClick={onClose}>
+          {t('Close')}</button>
       </div>
       {confirming && (
         <div className="row" role="alert" style={{ gap: 'var(--sp-2)', alignItems: 'center' }}>
           <span className="field-error">
-            The snippet will show vault values and tokens in plain text, and Copy puts them on the clipboard.
-          </span>
+            {t('The snippet will show vault values and tokens in plain text, and Copy puts them on the clipboard.')}</span>
           <button
             className="btn danger size-28"
             onClick={() => {
@@ -168,20 +165,16 @@ export function CodeSnippetDrawer({ request, sent, resolveSecrets, onClose }: Co
               )
             }}
           >
-            Show secrets
-          </button>
+            {t('Show secrets')}</button>
           <button className="btn secondary size-28" onClick={() => setConfirming(false)}>
-            Cancel
-          </button>
+            {t('Cancel')}</button>
         </div>
       )}
       {unresolved && !live && (
         <p className="field-error" role="alert">
-          Secrets could not be filled in, so the snippet stays masked. The vault may be locked, a variable may be
-          unresolved, or a value from history may need entering again; sending the request says which.
-        </p>
+          {t('Secrets could not be filled in, so the snippet stays masked. The vault may be locked, a variable may be unresolved, or a value from history may need entering again; sending the request says which.')}</p>
       )}
-      <pre className="mono" aria-label="Snippet">
+      <pre className="mono" aria-label={t('Snippet')}>
         {snippet.text}
       </pre>
       {snippet.notes.map((n) => (

@@ -28,6 +28,7 @@ import { toast } from '../../store/toast'
 import { ContextMenu, MenuEntry } from './ContextMenu'
 import { Modal } from '../common/Modal'
 import type { Folder as FolderRecord, Server, ServerStatus } from '../../types'
+import { useT } from '../../i18n'
 
 /**
  * What each status dot says, for anyone who cannot tell its colour — the dot's
@@ -72,6 +73,7 @@ interface Ctx {
  * this is now what populates the list the palette and the hotkey read.
  */
 function LocalMachineSection({ query }: { query: string }): React.JSX.Element | null {
+  const t = useT()
   const shells = useApp((s) => s.localShells)
   const refreshLocalShells = useApp((s) => s.refreshLocalShells)
   // Focus-or-open, not always-open: a server row in this same tree focuses the
@@ -102,8 +104,7 @@ function LocalMachineSection({ query }: { query: string }): React.JSX.Element | 
   return (
     <div className="tree-section">
       <div className="tree-section-label">
-        <Monitor size={11} /> This machine
-      </div>
+        <Monitor size={11} /> {t('This machine')}</div>
       {ordered.map((sh) => (
         // role/tabIndex/onKeyDown because `.tree-row` is a div with an onClick
         // and nothing else. Buttons rather than rows of the tree below: these
@@ -130,6 +131,7 @@ function LocalMachineSection({ query }: { query: string }): React.JSX.Element | 
 }
 
 export function ConnectionTree(): React.JSX.Element {
+  const t = useT()
   const folders = useWorkspaceFolders()
   const servers = useWorkspaceServers()
   // Two servers with the same name render identically here and everywhere the
@@ -461,7 +463,7 @@ export function ConnectionTree(): React.JSX.Element {
         <input
           className="input"
           style={{ height: 30, width: '100%' }}
-          placeholder="Search connections…"
+          placeholder={t('Search connections…')}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
@@ -487,9 +489,8 @@ export function ConnectionTree(): React.JSX.Element {
         {favorites.length > 0 && (
           <div className="tree-section">
             <div className="tree-section-label">
-              <Star size={11} /> Favorites
-            </div>
-            <div role="tree" aria-label="Favorites">
+              <Star size={11} /> {t('Favorites')}</div>
+            <div role="tree" aria-label={t('Favorites')}>
               {favorites.map((s) => serverRow(s, `fav:${s.id}`, 1))}
             </div>
           </div>
@@ -511,10 +512,10 @@ export function ConnectionTree(): React.JSX.Element {
               setDragId(null)
             }}
           >
-            <FolderTree size={11} /> Connections <span className="count">{servers.length}</span>
+            <FolderTree size={11} /> {t('Connections')}{' '}<span className="count">{servers.length}</span>
             <button
               className="icon-btn xs"
-              title="New folder"
+              title={t('New folder')}
               onClick={(e) => {
                 e.stopPropagation()
                 setRenaming(addFolder('New folder', null))
@@ -525,7 +526,7 @@ export function ConnectionTree(): React.JSX.Element {
           </div>
 
           {(rootFolders.length > 0 || rootServers.length > 0) && (
-            <div role="tree" aria-label="Connections">
+            <div role="tree" aria-label={t('Connections')}>
               {rootFolders.map((f) => {
                 const open = !collapsed[f.id]
                 const childFolders = childFoldersOf(f.id)
@@ -643,9 +644,8 @@ export function ConnectionTree(): React.JSX.Element {
         {recent.length > 0 && (
           <div className="tree-section">
             <div className="tree-section-label">
-              <ServerIcon size={11} /> Recent
-            </div>
-            <div role="tree" aria-label="Recent">
+              <ServerIcon size={11} /> {t('Recent')}</div>
+            <div role="tree" aria-label={t('Recent')}>
               {recent.map((s) => {
                 const key = `recent:${s.id}`
                 return (
@@ -710,14 +710,9 @@ export function ConnectionTree(): React.JSX.Element {
               the entry disappearing from a list reads as reversible, and the
               credential it takes with it is not. */}
           <p className="s-desc">
-            This removes the connection and its saved credential from the OS credential store,
-            including any saved desktop password. Neither can be recovered from OpsMaxx
-            afterwards.
-          </p>
+            {t('This removes the connection and its saved credential from the OS credential store, including any saved desktop password. Neither can be recovered from OpsMaxx afterwards.')}</p>
           <p className="s-desc">
-            Nothing on {pendingDelete.host || 'the server'} itself is touched — no key is revoked
-            and no session is ended.
-          </p>
+            {t('Nothing on')}{' '}{pendingDelete.host || 'the server'} {t('itself is touched — no key is revoked and no session is ended.')}</p>
         </Modal>
       )}
     </>

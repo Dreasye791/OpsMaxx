@@ -23,7 +23,8 @@ import { Switch } from '../common/Switch'
 // answer "what am I about to install": beta cascades, so the newest thing on
 // offer there is often an ordinary stable release.
 function OfferedTag({ version }: { version: string }): React.JSX.Element | null {
-  return channelOfVersion(version) === 'beta' ? <span className="build-tag">beta</span> : null
+  const t = useT()
+  return channelOfVersion(version) === 'beta' ? <span className="build-tag">{t('beta')}</span> : null
 }
 
 // The same switch Settings uses. Duplicated rather than imported because that

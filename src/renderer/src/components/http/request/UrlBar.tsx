@@ -21,6 +21,7 @@ import { suggestedFileName, headerValue } from '../response/bodyWindow'
 import { METHODS, METHOD_ABBR, methodToken, syncFromUrl, withResolvedScheme } from './requestModel'
 import { urlRowLayout, useWidth } from '../ProtocolLayout'
 import './request.css'
+import { useT } from '../../../i18n'
 
 export interface UrlBarProps {
   tabId: Id
@@ -78,6 +79,7 @@ export function useScopeChain(tab: HttpTabState | undefined): VariableScopeChain
 }
 
 export function UrlBar({ tabId, ghost }: UrlBarProps): React.JSX.Element | null {
+  const t = useT()
   const req = useHttpRequest(tabId)
   const tab = useHttp((s) => tabById(s, tabId))
   const sending = useHttp((s) => s.responses[tabId]?.status === 'sending')
@@ -230,7 +232,7 @@ export function UrlBar({ tabId, ghost }: UrlBarProps): React.JSX.Element | null 
     >
       <select
         className="hc-method"
-        aria-label="Method"
+        aria-label={t('Method')}
         value={req.method}
         style={{ color: `var(${methodToken(req.method)})` }}
         onChange={(e) => update({ ...req, method: e.target.value })}

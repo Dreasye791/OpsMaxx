@@ -13,6 +13,7 @@ import {
   type PingResult,
   type TraceHop
 } from '../../../../shared/netTools'
+import { useT } from '../../i18n'
 
 /**
  * ping and traceroute, run FROM a target rather than from here.
@@ -32,6 +33,7 @@ import {
 type Tool = 'ping' | 'traceroute'
 
 export function NetToolsPanel(): React.JSX.Element {
+  const t = useT()
   const servers = useWorkspaceServers()
   const localAllowed = useApp((s) => s.settings.localTerminalEnabled !== false)
 
@@ -132,17 +134,17 @@ export function NetToolsPanel(): React.JSX.Element {
     <div className="content">
       <div className="content-header">
         <div>
-          <h1>Network tools</h1>
-          <div className="sub">Run ping and traceroute from this machine or from a server</div>
+          <h1>{t('Network tools')}</h1>
+          <div className="sub">{t('Run ping and traceroute from this machine or from a server')}</div>
         </div>
       </div>
 
       <div className="card" style={{ marginBottom: 16 }}>
         <div className="row" style={{ gap: 8, flexWrap: 'wrap', alignItems: 'flex-end' }}>
           <label className="field" style={{ minWidth: 180 }}>
-            <span className="field-label">Run from</span>
+            <span className="field-label">{t('Run from')}</span>
             <select className="input" value={source} onChange={(e) => setSource(e.target.value)}>
-              {localAllowed && <option value="local">This machine</option>}
+              {localAllowed && <option value="local">{t('This machine')}</option>}
               {servers.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name}
@@ -152,22 +154,22 @@ export function NetToolsPanel(): React.JSX.Element {
           </label>
 
           <label className="field" style={{ minWidth: 120 }}>
-            <span className="field-label">Tool</span>
+            <span className="field-label">{t('Tool')}</span>
             <select
               className="input"
               value={tool}
               onChange={(e) => setTool(e.target.value as Tool)}
             >
-              <option value="ping">ping</option>
-              <option value="traceroute">traceroute</option>
+              <option value="ping">{t('ping')}</option>
+              <option value="traceroute">{t('traceroute')}</option>
             </select>
           </label>
 
           <label className="field" style={{ flex: 1, minWidth: 200 }}>
-            <span className="field-label">Host</span>
+            <span className="field-label">{t('Host')}</span>
             <input
               className="input"
-              placeholder="example.com or 10.0.0.1"
+              placeholder={t('example.com or 10.0.0.1')}
               value={host}
               onChange={(e) => setHost(e.target.value)}
               onKeyDown={(e) => {
@@ -184,9 +186,7 @@ export function NetToolsPanel(): React.JSX.Element {
           // Said as soon as it is true, rather than on submit: the button is
           // already disabled, and a disabled button with no reason is a puzzle.
           <span className="field-hint">
-            Enter a hostname or an IP address. Anything else is refused before a
-            command is built.
-          </span>
+            {t('Enter a hostname or an IP address. Anything else is refused before a command is built.')}</span>
         )}
       </div>
 
@@ -209,25 +209,24 @@ export function NetToolsPanel(): React.JSX.Element {
           </div>
           <div className="info-grid">
             <div>
-              <div className="ft-label">Reachable</div>
+              <div className="ft-label">{t('Reachable')}</div>
               <div className="ft-value">{ping.reachable ? 'Yes' : 'No'}</div>
             </div>
             <div>
-              <div className="ft-label">Packet loss</div>
+              <div className="ft-label">{t('Packet loss')}</div>
               <div className="ft-value">{ping.loss}%</div>
             </div>
             {ping.avgMs !== undefined && (
               <div>
-                <div className="ft-label">Average</div>
-                <div className="ft-value">{ping.avgMs.toFixed(1)} ms</div>
+                <div className="ft-label">{t('Average')}</div>
+                <div className="ft-value">{ping.avgMs.toFixed(1)} {t('ms')}</div>
               </div>
             )}
             {ping.minMs !== undefined && ping.maxMs !== undefined && (
               <div>
-                <div className="ft-label">Range</div>
+                <div className="ft-label">{t('Range')}</div>
                 <div className="ft-value">
-                  {ping.minMs.toFixed(1)}–{ping.maxMs.toFixed(1)} ms
-                </div>
+                  {ping.minMs.toFixed(1)}–{ping.maxMs.toFixed(1)} {t('ms')}</div>
               </div>
             )}
           </div>
@@ -244,10 +243,10 @@ export function NetToolsPanel(): React.JSX.Element {
       {hops && (
         <div className="card">
           <div className="sidebar-title" style={{ marginBottom: 10 }}>
-            Route to {host}
+            {t('Route to')}{' '}{host}
           </div>
           <div className="col" style={{ gap: 3 }}>
-            {hops.length === 0 && <span className="faint">No hops were reported.</span>}
+            {hops.length === 0 && <span className="faint">{t('No hops were reported.')}</span>}
             {hops.map((h) => (
               <div key={h.hop} className="row" style={{ gap: 10, alignItems: 'baseline' }}>
                 <span className="mono faint" style={{ minWidth: 26, textAlign: 'right' }}>

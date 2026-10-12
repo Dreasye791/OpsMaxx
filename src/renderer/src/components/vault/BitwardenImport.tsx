@@ -3,6 +3,7 @@ import { AlertTriangle, Download, Loader2 } from 'lucide-react'
 import { useVault } from '../../store/vault'
 import { toast } from '../../store/toast'
 import type { VaultEntry } from '../../../../shared/vault'
+import { useT } from '../../i18n'
 
 /**
  * Importing a Bitwarden or Vaultwarden vault.
@@ -18,6 +19,7 @@ import type { VaultEntry } from '../../../../shared/vault'
  * named.
  */
 export function BitwardenImport(): React.JSX.Element {
+  const t = useT()
   const entries = useVault((s) => s.entries)
   const [serverURL, setServerURL] = useState('https://vault.bitwarden.com')
   const [email, setEmail] = useState('')
@@ -68,21 +70,18 @@ export function BitwardenImport(): React.JSX.Element {
   return (
     <div className="bw-import">
       <div className="setting-desc">
-        Reads a Bitwarden or Vaultwarden vault into this one, once. It does not keep the two in
-        step afterwards, and nothing is sent anywhere else: this machine talks to that server
-        directly.
-      </div>
+        {t('Reads a Bitwarden or Vaultwarden vault into this one, once. It does not keep the two in step afterwards, and nothing is sent anywhere else: this machine talks to that server directly.')}</div>
 
       <label className="bw-field">
-        <span>Server</span>
+        <span>{t('Server')}</span>
         <input value={serverURL} onChange={(e) => setServerURL(e.target.value)} spellCheck={false} />
       </label>
       <label className="bw-field">
-        <span>Email</span>
+        <span>{t('Email')}</span>
         <input value={email} onChange={(e) => setEmail(e.target.value)} spellCheck={false} />
       </label>
       <label className="bw-field">
-        <span>Master password</span>
+        <span>{t('Master password')}</span>
         <input
           type="password"
           value={password}
@@ -91,11 +90,11 @@ export function BitwardenImport(): React.JSX.Element {
         />
       </label>
       <label className="bw-field">
-        <span>Two-factor code</span>
+        <span>{t('Two-factor code')}</span>
         <input
           value={twoFactorCode}
           onChange={(e) => setTwoFactorCode(e.target.value)}
-          placeholder="only if the account has it"
+          placeholder={t('only if the account has it')}
           autoComplete="off"
           spellCheck={false}
         />
@@ -116,16 +115,14 @@ export function BitwardenImport(): React.JSX.Element {
       {preview && (
         <div className="bw-preview">
           <div className="setting-label">
-            {preview.entries.length} {preview.entries.length === 1 ? 'entry' : 'entries'} would be
-            added
-          </div>
+            {preview.entries.length} {preview.entries.length === 1 ? 'entry' : 'entries'} {t('would be added')}</div>
           <ul>
             {preview.entries.slice(0, 50).map((e) => (
               <li key={e.id}>
                 {e.name} <span className="bw-kind">{e.kind}</span>
               </li>
             ))}
-            {preview.entries.length > 50 && <li>… and {preview.entries.length - 50} more</li>}
+            {preview.entries.length > 50 && <li>{t('… and')}{' '}{preview.entries.length - 50} {t('more')}</li>}
           </ul>
 
           {preview.skipped.length > 0 && (
@@ -133,7 +130,7 @@ export function BitwardenImport(): React.JSX.Element {
               {/* Listed, never dropped. An import that quietly left half a
                   vault behind is one somebody discovers when they need one of
                   the missing passwords. */}
-              <div className="setting-label">{preview.skipped.length} could not be imported</div>
+              <div className="setting-label">{preview.skipped.length} {t('could not be imported')}</div>
               <ul className="bw-skipped">
                 {preview.skipped.map((s, i) => (
                   <li key={i}>
@@ -145,12 +142,9 @@ export function BitwardenImport(): React.JSX.Element {
           )}
 
           <button className="btn" onClick={apply} disabled={preview.entries.length === 0}>
-            Add these to my vault
-          </button>
+            {t('Add these to my vault')}</button>
           <div className="setting-desc">
-            Existing entries are left alone. Anything with the same name arrives as a second entry
-            rather than replacing yours.
-          </div>
+            {t('Existing entries are left alone. Anything with the same name arrives as a second entry rather than replacing yours.')}</div>
         </div>
       )}
     </div>

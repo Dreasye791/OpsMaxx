@@ -5,6 +5,7 @@ import type { VariableScopeChain } from '../../../../../shared/apiVariables'
 import { VariableInput, type VariableInputProps } from '../fields/VariableInput'
 import { VaultValueField } from '../fields/VaultValueField'
 import './request.css'
+import { useT } from '../../../i18n'
 
 export interface AuthEditorProps {
   value: Auth
@@ -96,6 +97,7 @@ export function AuthEditor({
   stripped = [],
   onMoveToVault
 }: AuthEditorProps): React.JSX.Element {
+  const t = useT()
   const change = (next: Auth): void => {
     if (!readOnly) onChange(next)
   }
@@ -116,7 +118,7 @@ export function AuthEditor({
   return (
     <div className="hc-auth">
       <label className="hc-field">
-        <span className="ui-label">Type</span>
+        <span className="ui-label">{t('Type')}</span>
         <select
           className="hc-select"
           value={value.type}
@@ -138,12 +140,12 @@ export function AuthEditor({
             : 'Uses the auth set on the collection.'}
         </p>
       )}
-      {value.type === 'none' && <p className="hc-note">This request sends no credentials.</p>}
+      {value.type === 'none' && <p className="hc-note">{t('This request sends no credentials.')}</p>}
       {value.type === 'bearer' && secret('token', 'Token', value.token, (token) => change({ ...value, token }))}
       {value.type === 'basic' && (
         <>
           <div className="hc-field">
-            <span className="ui-label">Username</span>
+            <span className="ui-label">{t('Username')}</span>
             <VarField
               readOnly={readOnly}
               value={value.username}
@@ -158,27 +160,27 @@ export function AuthEditor({
       {value.type === 'apikey' && (
         <>
           <div className="hc-field">
-            <span className="ui-label">Key</span>
+            <span className="ui-label">{t('Key')}</span>
             <VarField
               readOnly={readOnly}
               value={value.name}
               onChange={(name) => change({ ...value, name })}
               chain={chain}
               ariaLabel="Key name"
-              placeholder="X-Api-Key"
+              placeholder={t('X-Api-Key')}
             />
           </div>
           {secret('value', 'Value', value.value, (v) => change({ ...value, value: v }))}
           <label className="hc-field">
-            <span className="ui-label">Add to</span>
+            <span className="ui-label">{t('Add to')}</span>
             <select
               className="hc-select"
               value={value.in}
               disabled={readOnly}
               onChange={(e) => change({ ...value, in: e.target.value as 'header' | 'query' })}
             >
-              <option value="header">Header</option>
-              <option value="query">Query parameter</option>
+              <option value="header">{t('Header')}</option>
+              <option value="query">{t('Query parameter')}</option>
             </select>
           </label>
         </>
@@ -208,6 +210,7 @@ function SecretInput({
   stripped: boolean
   onMoveToVault?: () => void
 }): React.JSX.Element {
+  const t = useT()
   const [vaultMode, setVaultMode] = useState(value.startsWith('vault:'))
   const lower = label.toLowerCase()
   const paste = async (): Promise<void> => onChange(await window.opsmaxx.clipboard.read())
@@ -239,22 +242,19 @@ function SecretInput({
       </div>
       {stripped && value === '' && (
         <p className="hc-note hc-warn" role="note">
-          Not kept from last session.{' '}
+          {t('Not kept from last session.')}{' '}
           <button className="btn quiet sm" onClick={() => void paste()} disabled={readOnly}>
-            Paste
-          </button>{' '}
+            {t('Paste')}</button>{' '}
           <button className="btn quiet sm" onClick={() => setVaultMode(true)} disabled={readOnly}>
-            Use vault…
-          </button>
+            {t('Use vault…')}</button>
         </p>
       )}
       {!vaultMode && isLiteralSecret(value) && (
         <p className="hc-note hc-warn" role="note">
-          Not saved — kept for this session only.{' '}
+          {t('Not saved — kept for this session only.')}{' '}
           {onMoveToVault && (
             <button className="btn quiet sm" onClick={onMoveToVault} disabled={readOnly}>
-              Move to vault…
-            </button>
+              {t('Move to vault…')}</button>
           )}
         </p>
       )}

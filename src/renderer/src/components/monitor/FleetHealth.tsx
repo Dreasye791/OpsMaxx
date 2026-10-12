@@ -29,6 +29,7 @@ import {
   unreachableLine
 } from './hostHealth'
 import type { Server } from '../../types'
+import { useT } from '../../i18n'
 
 // Fleet health.
 //
@@ -42,14 +43,15 @@ import type { Server } from '../../types'
 
 /** Ports, grouped by whether anything off-box can reach them. */
 function PortTable({ rows }: { rows: PortListener[] }): React.JSX.Element {
+  const t = useT()
   return (
     <table className="mini-table fh-ports-table">
       <thead>
         <tr>
-          <th>Port</th>
-          <th>Proto</th>
-          <th>Address</th>
-          <th>Process</th>
+          <th>{t('Port')}</th>
+          <th>{t('Proto')}</th>
+          <th>{t('Address')}</th>
+          <th>{t('Process')}</th>
         </tr>
       </thead>
       <tbody>
@@ -76,6 +78,7 @@ function HostPorts({
   listeners: PortListener[]
   source: HostRow['listenerSource']
 }): React.JSX.Element {
+  const t = useT()
   const groups = useMemo(() => splitListeners(listeners), [listeners])
   const unnamed = !listeners.some((l) => l.process)
   return (
@@ -83,7 +86,7 @@ function HostPorts({
       {groups.exposed.length > 0 && (
         <>
           <div className="fh-group">
-            Reachable from the network <span className="faint">{groups.exposed.length}</span>
+            {t('Reachable from the network')}{' '}<span className="faint">{groups.exposed.length}</span>
           </div>
           <PortTable rows={groups.exposed} />
         </>
@@ -91,7 +94,7 @@ function HostPorts({
       {groups.loopback.length > 0 && (
         <>
           <div className="fh-group">
-            Local only <span className="faint">{groups.loopback.length}</span>
+            {t('Local only')}{' '}<span className="faint">{groups.loopback.length}</span>
           </div>
           <PortTable rows={groups.loopback} />
         </>
@@ -100,9 +103,7 @@ function HostPorts({
         // Why the Process column is blank. The probe name belongs in a
         // sentence that explains it, not appended to a count as "(ss)".
         <div className="fh-note">
-          The ports were read with {source}, which needs root to name the process behind each one.
-          The port numbers themselves are accurate.
-        </div>
+          {t('The ports were read with')}{' '}{source}{t(', which needs root to name the process behind each one. The port numbers themselves are accurate.')}</div>
       )}
     </div>
   )
@@ -129,6 +130,7 @@ function HostRowView({
   row: HostRow
   attention: boolean
 }): React.JSX.Element {
+  const t = useT()
   const [open, setOpen] = useState(false)
   const failed = row.failed ?? []
 
@@ -154,12 +156,11 @@ function HostRowView({
           <>
             {failed.length > 0 && (
               <span className="chip danger">
-                <CircleAlert size={11} /> {failed.length} failed
-              </span>
+                <CircleAlert size={11} /> {failed.length} {t('failed')}</span>
             )}
             {row.diskCritical && (
               <span className="chip warn">
-                <HardDrive size={11} /> disk {row.diskPct?.toFixed(0)}%
+                <HardDrive size={11} /> {t('disk')}{' '}{row.diskPct?.toFixed(0)}%
               </span>
             )}
           </>
@@ -206,8 +207,7 @@ function HostRowView({
                   })
                 }}
               >
-                <ScrollText size={11} /> Logs
-              </button>
+                <ScrollText size={11} /> {t('Logs')}</button>
               {/* The other half of the same moment. `serviceStep` already had
                   restart, checked and with its protected units; it was reachable
                   only by going to Jobs and retyping the unit name you are
@@ -222,8 +222,7 @@ function HostRowView({
                   title={`Fill a restart job for ${u.name} on ${row.name}. Nothing runs until you confirm it.`}
                   onClick={() => openServiceJob(row.id, 'restart', u.name)}
                 >
-                  <RotateCw size={11} /> Restart
-                </button>
+                  <RotateCw size={11} /> {t('Restart')}</button>
               )}
             </li>
           ))}
@@ -234,8 +233,7 @@ function HostRowView({
         // The chip on the line above already carries the percentage; repeating
         // it here would spend a line saying nothing new.
         <div className="fh-pressure">
-          {bytes(row.diskUsed)} of {bytes(row.diskTotal)} used on the root filesystem.
-        </div>
+          {bytes(row.diskUsed)} {t('of')}{' '}{bytes(row.diskTotal)} {t('used on the root filesystem.')}</div>
       )}
 
       {attention && (
@@ -261,6 +259,7 @@ function HostRowView({
  * we have no opinion about, and the two must not be read as the same claim.
  */
 function UnreachableRowView({ row }: { row: UnreachableRow }): React.JSX.Element {
+  const t = useT()
   const last = row.last
   return (
     <div className="list-row fh-row">
@@ -269,21 +268,19 @@ function UnreachableRowView({ row }: { row: UnreachableRow }): React.JSX.Element
         <b className="fh-name">{row.name}</b>
         <span className="spacer" />
         <span className="chip warn">
-          <Unplug size={11} /> could not be checked
-        </span>
+          <Unplug size={11} /> {t('could not be checked')}</span>
       </div>
 
       {/* The sampler's own words. A paraphrase would cost the one detail that
           tells a refused connection apart from a wrong key. */}
       <div className="fh-note">
-        {row.error} · last tried {duration(row.at)} ago
-      </div>
+        {row.error} {t('· last tried')}{' '}{duration(row.at)} {t('ago')}</div>
 
       {last && (
         // What we knew before it went quiet, labelled as history so nobody
         // reads a stale port count as the state of the host right now.
         <div className="row fh-line">
-          <span className="fh-meta">Last good check: {servicesMeta(last)}</span>
+          <span className="fh-meta">{t('Last good check:')}{' '}{servicesMeta(last)}</span>
           <span className="spacer" />
           <span className="fh-meta">{portsLabel(last)}</span>
         </div>
@@ -305,13 +302,13 @@ function NotYetChecked({
   health: FleetSummary
   sampling: boolean
 }): React.JSX.Element {
+  const t = useT()
   return (
     <section className="fleet-health">
       <div className="fh-head">
-        <h2 className="ui-section-title">Fleet health</h2>
+        <h2 className="ui-section-title">{t('Fleet health')}</h2>
         <span className="chip">
-          <Clock size={11} /> Not checked yet
-        </span>
+          <Clock size={11} /> {t('Not checked yet')}</span>
         <span className="spacer" />
         {/* The same coverage line the filled panel carries, which here reads
             "0 of 10 servers reporting" — the fact the missing panel used to
@@ -320,22 +317,15 @@ function NotYetChecked({
       </div>
       {sampling ? (
         <div className="fh-note ui-note">
-          No server has reported yet. Background checking is on, so this fills in as servers answer —
-          failed services and disks close to full will be listed here.
-        </div>
+          {t('No server has reported yet. Background checking is on, so this fills in as servers answer — failed services and disks close to full will be listed here.')}</div>
       ) : (
         <>
           <div className="fh-note ui-note">
-            No server has reported yet. Background checking is off, so a server is only looked at while
-            its card is on screen — nothing is watching for failed services or full disks in between.
-            Turning it on in Settings → Monitoring sweeps the whole estate on a schedule and fills
-            this panel in.
-          </div>
+            {t('No server has reported yet. Background checking is off, so a server is only looked at while its card is on screen — nothing is watching for failed services or full disks in between. Turning it on in Settings → Monitoring sweeps the whole estate on a schedule and fills this panel in.')}</div>
           {/* The only thing to do on this screen, and it was the quietest
               control on it. */}
           <button className="btn sm primary" onClick={() => openSettings('monitoring')}>
-            Open Monitoring settings
-          </button>
+            {t('Open Monitoring settings')}</button>
         </>
       )}
     </section>
@@ -343,6 +333,7 @@ function NotYetChecked({
 }
 
 export function FleetHealth({ servers }: { servers: Server[] }): React.JSX.Element | null {
+  const t = useT()
   const hosts = useFleet((s) => s.hosts)
   const errors = useFleet((s) => s.errors)
   const sampling = useApp((s) => s.settings.fleetSamplingEnabled)
@@ -376,7 +367,7 @@ export function FleetHealth({ servers }: { servers: Server[] }): React.JSX.Eleme
   return (
     <section className="fleet-health">
       <div className="fh-head">
-        <h2 className="ui-section-title">Fleet health</h2>
+        <h2 className="ui-section-title">{t('Fleet health')}</h2>
         {failures && (
           <span className="chip danger">
             <CircleAlert size={11} /> {failures}
@@ -397,8 +388,7 @@ export function FleetHealth({ servers }: { servers: Server[] }): React.JSX.Eleme
             host nobody could reach is a claim the panel cannot make. */}
         {!failures && !disks && !unreachable && (
           <span className="chip ok">
-            <CircleCheck size={11} /> Nothing needs attention
-          </span>
+            <CircleCheck size={11} /> {t('Nothing needs attention')}</span>
         )}
         <span className="spacer" />
         <span className="fh-meta">{coverageLine(health)}</span>

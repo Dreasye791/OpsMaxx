@@ -3,6 +3,7 @@ import { useVault } from '../../store/vault'
 import { clsx } from '../../lib/format'
 import { useApp } from '../../store/app'
 import { vaultMatches, vaultEntriesFor, isSharedVaultEntry, type VaultKind } from '../../../../shared/vault'
+import { useT } from '../../i18n'
 
 const KIND_ICON: Record<VaultKind, React.ReactNode> = {
   login: <User size={13} className="faint" />,
@@ -14,6 +15,7 @@ const KIND_ICON: Record<VaultKind, React.ReactNode> = {
 }
 
 export function VaultSidebar(): React.JSX.Element {
+  const t = useT()
   const unlocked = useVault((s) => s.unlocked)
   const entries = useVault((s) => s.entries)
   const selectedId = useVault((s) => s.selectedId)
@@ -27,8 +29,7 @@ export function VaultSidebar(): React.JSX.Element {
     return (
       <div className="tree-section">
         <div className="faint" style={{ padding: '10px 12px', fontSize: 12, display: 'flex', gap: 6 }}>
-          <Lock size={13} /> Vault is locked.
-        </div>
+          <Lock size={13} /> {t('Vault is locked.')}</div>
       </div>
     )
   }
@@ -46,21 +47,20 @@ export function VaultSidebar(): React.JSX.Element {
         <input
           className="input"
           style={{ height: 30, width: '100%' }}
-          placeholder="Search vault…"
+          placeholder={t('Search vault…')}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
       </div>
       <div className="tree-section">
         <div className="tree-section-label">
-          Entries <span className="count">{shown.length}</span>
+          {t('Entries')}{' '}<span className="count">{shown.length}</span>
         </div>
         {hiddenCount > 0 && (
           // Saying nothing here would recreate the original confusion in the
           // opposite direction: entries you saved would simply be missing.
           <div className="faint" style={{ padding: '2px 12px 6px', fontSize: 11 }}>
-            {hiddenCount} more in other workspaces
-          </div>
+            {hiddenCount} {t('more in other workspaces')}</div>
         )}
         {shown.map((e) => (
           <div
@@ -71,9 +71,8 @@ export function VaultSidebar(): React.JSX.Element {
           >
             {KIND_ICON[e.kind]}
             {isSharedVaultEntry(e) && (
-              <span className="faint" style={{ fontSize: 'var(--fs-xs)' }} title="Visible in every workspace">
-                shared
-              </span>
+              <span className="faint" style={{ fontSize: 'var(--fs-xs)' }} title={t('Visible in every workspace')}>
+                {t('shared')}</span>
             )}
             <span className="label">{e.name}</span>
             {/* Deleting was only reachable by selecting an entry and finding the

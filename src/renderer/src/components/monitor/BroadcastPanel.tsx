@@ -18,6 +18,7 @@ import type { Server } from '../../types'
 import { PanelShell } from './PanelShell'
 import { VaultLockedHosts } from '../common/PanelError'
 import { isVaultLocked } from '../../lib/withVaultUnlock'
+import { useT } from '../../i18n'
 
 // Run one command across many servers.
 //
@@ -69,6 +70,7 @@ function resultTone(r: BroadcastHostResult): string {
 }
 
 function HostResult({ r }: { r: BroadcastHostResult }): React.JSX.Element {
+  const t = useT()
   const [open, setOpen] = useState(false)
   const out = [r.stdout, r.stderr].filter((s) => s && s.trim() !== '').join('\n')
   const outcome = outcomeOf(r)
@@ -93,7 +95,7 @@ function HostResult({ r }: { r: BroadcastHostResult }): React.JSX.Element {
         <ChevronRight size={13} className={clsx('chev', open && 'open')} style={{ opacity: out ? 1 : 0.25 }} />
         <b>{r.serverName}</b>
         <span className={clsx('grow faint', resultTone(r))}>{summary}</span>
-        {r.truncated && <span className="chip warn">output cut</span>}
+        {r.truncated && <span className="chip warn">{t('output cut')}</span>}
       </button>
       {open && out && <pre className="bc-out">{out}</pre>}
     </div>
@@ -108,6 +110,7 @@ function HostResult({ r }: { r: BroadcastHostResult }): React.JSX.Element {
 let liveRun: { runId: string; results: Record<string, BroadcastHostResult> } | null = null
 
 export function BroadcastPanel({ servers }: { servers: Server[] }): React.JSX.Element {
+  const t = useT()
   const [command, setCommand] = useState('')
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [phrase, setPhrase] = useState('')
@@ -271,12 +274,10 @@ export function BroadcastPanel({ servers }: { servers: Server[] }): React.JSX.El
   return (
     <PanelShell
       icon={<Terminal size={14} />}
-      title="Run a command"
+      title={t('Run a command')}
       about={
         <p>
-          Runs one command on every server you pick, one connection each. Nothing runs until you
-          confirm, and a command that changes or destroys state says so before the dialog opens.
-        </p>
+          {t('Runs one command on every server you pick, one connection each. Nothing runs until you confirm, and a command that changes or destroys state says so before the dialog opens.')}</p>
       }
     >
       {/* The composer is the first thing in the card, which is the one place
@@ -286,7 +287,7 @@ export function BroadcastPanel({ servers }: { servers: Server[] }): React.JSX.El
       <input
         className="input grow mono"
         style={{ width: '100%' }}
-        placeholder="Command to run on the selected servers…"
+        placeholder={t('Command to run on the selected servers…')}
         value={command}
         onChange={(e) => setCommand(e.target.value)}
         disabled={running}
@@ -294,7 +295,7 @@ export function BroadcastPanel({ servers }: { servers: Server[] }): React.JSX.El
 
       <div className="row wrap" style={{ gap: 6, marginTop: 8 }}>
         {eligible.length === 0 && (
-          <span className="state-unknown">No server in this workspace is online.</span>
+          <span className="state-unknown">{t('No server in this workspace is online.')}</span>
         )}
         {eligible.map((s) => (
           <button
@@ -336,7 +337,7 @@ export function BroadcastPanel({ servers }: { servers: Server[] }): React.JSX.El
 
       {plan.risk !== 'ordinary' && command.trim() !== '' && (
         <div className={clsx('panel-note', plan.risk === 'destructive' ? 'is-alarm' : 'is-watch')}>
-          <TriangleAlert size={12} /> This {plan.risk === 'destructive' ? 'destroys state' : 'changes state'} —{' '}
+          <TriangleAlert size={12} /> {t('This')}{' '}{plan.risk === 'destructive' ? 'destroys state' : 'changes state'} —{' '}
           {plan.reasons.join('; ')}.
         </div>
       )}
@@ -365,21 +366,19 @@ export function BroadcastPanel({ servers }: { servers: Server[] }): React.JSX.El
           <button
             className="btn danger"
             onClick={() => void window.opsmaxx?.broadcast?.cancel(runId.current)}
-            title="Hosts that have not started will not start. A host already running is left to finish — killing it mid-write is how a change ends up half applied."
+            title={t('Hosts that have not started will not start. A host already running is left to finish — killing it mid-write is how a change ends up half applied.')}
           >
-            <Square size={13} /> Stop
-          </button>
+            <Square size={13} /> {t('Stop')}</button>
         ) : (
           <button className="btn primary" disabled={targets.length === 0 || command.trim() === ''} onClick={attempt}>
-            <Play size={13} /> Run
-          </button>
+            <Play size={13} /> {t('Run')}</button>
         )}
       </div>
 
       {confirming && (
         <div className="bc-confirm">
           <div className="panel-subtitle">
-            Run on {targets.length} server{targets.length === 1 ? '' : 's'}?
+            {t('Run on')}{' '}{targets.length} {t('server')}{targets.length === 1 ? '' : 's'}?
           </div>
           <div className="panel-note mono">{command}</div>
           <div className="panel-note">{targets.map((t) => t.serverName).join(', ')}</div>
@@ -396,11 +395,9 @@ export function BroadcastPanel({ servers }: { servers: Server[] }): React.JSX.El
           )}
           <div className="row" style={{ gap: 8, marginTop: 8 }}>
             <button className="btn primary" disabled={!canConfirm} onClick={() => void start()}>
-              Run
-            </button>
+              {t('Run')}</button>
             <button className="btn ghost" onClick={() => { setConfirming(false); setPhrase('') }}>
-              Cancel
-            </button>
+              {t('Cancel')}</button>
           </div>
         </div>
       )}
@@ -410,8 +407,7 @@ export function BroadcastPanel({ servers }: { servers: Server[] }): React.JSX.El
           <div className="row muted" style={{ justifyContent: 'space-between' }}>
             <span className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
               <span>
-                {finished} of {rows.length} finished
-              </span>
+                {finished} {t('of')}{' '}{rows.length} {t('finished')}</span>
               {/* Fifteen hosts is a list nobody reads top to bottom. This is
                   the line that says whether they need to. */}
               {chips.map(({ o, n }) => (
@@ -425,8 +421,7 @@ export function BroadcastPanel({ servers }: { servers: Server[] }): React.JSX.El
                 button for hosts that are still executing. */}
             {!running && (
               <button className="btn ghost sm" onClick={() => setActivity('connections')}>
-                Open a terminal
-              </button>
+                {t('Open a terminal')}</button>
             )}
           </div>
           {/* Said once, here, rather than on each refused row: the decision
@@ -439,11 +434,8 @@ export function BroadcastPanel({ servers }: { servers: Server[] }): React.JSX.El
               {refused.length === 1
                 ? `${refused[0].serverName} refused this command for this account.`
                 : `${refused.length} servers refused this command for this account.`}{' '}
-              Nothing was retried as root. Prefixing the command with{' '}
-              <span className="mono">sudo</span> will re-run it here — and will ask you to confirm
-              again, because running as root across several servers is a bigger thing than running it
-              as yourself.
-            </div>
+              {t('Nothing was retried as root. Prefixing the command with')}{' '}
+              <span className="mono">{t('sudo')}</span> {t('will re-run it here — and will ask you to confirm again, because running as root across several servers is a bigger thing than running it as yourself.')}</div>
           )}
           {rows.map((r) => (
             <HostResult key={r.serverId} r={r} />
@@ -457,14 +449,12 @@ export function BroadcastPanel({ servers }: { servers: Server[] }): React.JSX.El
           that picking a host is a separate step from typing the command. */}
       {rows.length === 0 && !confirming && eligible.length > 0 && (
         <div className="panel-empty">
-          <p className="panel-empty-title">Nothing has been run yet.</p>
+          <p className="panel-empty-title">{t('Nothing has been run yet.')}</p>
           <p className="panel-empty-body">
             {targets.length === 0
               ? 'Pick the servers to run on from the row above, type a command, then press Run.'
               : `${targets.length} server${targets.length === 1 ? '' : 's'} selected. Type a command above, then press Run.`}{' '}
-            Results appear here, one block per server, and a server that refuses is reported rather
-            than retried as root.
-          </p>
+            {t('Results appear here, one block per server, and a server that refuses is reported rather than retried as root.')}</p>
         </div>
       )}
     </PanelShell>

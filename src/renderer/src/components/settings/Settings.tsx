@@ -429,6 +429,7 @@ function SettingSwitch({
  * disagreed with the machine.
  */
 function AutoStartSetting(): React.JSX.Element | null {
+  const t = useT()
   const [state, setState] = useState<AutoStartState | null>(null)
 
   useEffect(() => {
@@ -441,7 +442,7 @@ function AutoStartSetting(): React.JSX.Element | null {
     return (
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Start when I log in</div>
+          <div className="s-title">{t('Start when I log in')}</div>
           <div className="s-desc">{state.reason}</div>
         </div>
       </div>
@@ -457,15 +458,15 @@ function AutoStartSetting(): React.JSX.Element | null {
   return (
     <>
       <SettingSwitch
-        label="Start when I log in"
-        desc="Launch OpsMaxx with your machine, so background checking and alerts run from login rather than from whenever you next open the app."
+        label={t('Start when I log in')}
+        desc={t('Launch OpsMaxx with your machine, so background checking and alerts run from login rather than from whenever you next open the app.')}
         checked={state.openAtLogin}
         onChange={(v) => set({ openAtLogin: v })}
       />
       {state.openAtLogin && state.hiddenSupported && (
         <SettingSwitch
-          label="Start in the background"
-          desc="Launch without opening a window. Checks still run and alerts still fire — OpsMaxx is waiting in the Dock rather than in front of you."
+          label={t('Start in the background')}
+          desc={t('Launch without opening a window. Checks still run and alerts still fire — OpsMaxx is waiting in the Dock rather than in front of you.')}
           checked={state.openAsHidden}
           onChange={(v) => set({ openAsHidden: v })}
         />
@@ -482,6 +483,7 @@ function AutoStartSetting(): React.JSX.Element | null {
 // like a healthy one. fleet.status() is the only thing that can tell them
 // apart, and until this it was wired through IPC and read by nobody.
 function FleetSamplerLine(): React.JSX.Element | null {
+  const t = useT()
   const status = useFleetStatus((s) => s.status)
 
   // 'disabled' is the one idle reason the switch already explains.
@@ -494,7 +496,7 @@ function FleetSamplerLine(): React.JSX.Element | null {
       // vault is, unlock it, come back — for a state this screen can resolve
       // in one press, with Touch ID where the machine has it.
       <div className="panel-note is-watch">
-        <span className="grow">Paused — the vault is locked, so nothing is being checked.</span>
+        <span className="grow">{t('Paused — the vault is locked, so nothing is being checked.')}</span>
         <UnlockVaultButton reason="Background checking needs the credentials in your vault." />
       </div>
     )
@@ -502,8 +504,7 @@ function FleetSamplerLine(): React.JSX.Element | null {
   if (status.idleReason === 'no-targets') {
     return (
       <div className="s-desc warn">
-        Nothing to check — this workspace has no servers that can be sampled.
-      </div>
+        {t('Nothing to check — this workspace has no servers that can be sampled.')}</div>
     )
   }
   // Enabled, targets, vault open — and still not looping. Said plainly,
@@ -545,6 +546,7 @@ function sweepDuration(ms: number | undefined): string {
 // Real data: the SSH host keys trusted on first use. Forgetting one is how a
 // user recovers after a server is legitimately rebuilt with a new key.
 function KnownHosts(): React.JSX.Element {
+  const t = useT()
   const [hosts, setHosts] = useState<{ id: string; fingerprint: string; addedAt: string }[]>([])
 
   const load = (): void => {
@@ -560,7 +562,7 @@ function KnownHosts(): React.JSX.Element {
     <div style={{ marginBottom: 18 }}>
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Trusted SSH host keys</div>
+          <div className="s-title">{t('Trusted SSH host keys')}</div>
           <div className="s-desc">
             {hosts.length
               ? 'Connections are refused if a server presents a different key than the one saved here.'
@@ -568,8 +570,7 @@ function KnownHosts(): React.JSX.Element {
           </div>
         </div>
         <button className="btn sm" onClick={load}>
-          Refresh
-        </button>
+          {t('Refresh')}</button>
       </div>
 
       {/* Wreckage from the bug fixed in 0.36.2, and the reason this control
@@ -585,14 +586,8 @@ function KnownHosts(): React.JSX.Element {
                 : `${stale.length} entries are saved against loopback addresses`}
             </div>
             <div className="s-desc">
-              Before 0.36.2, a server reached through a VPN or tunnel had its host key saved under
-              the temporary local address the connection borrowed — a different one every time. That
-              is why those servers kept asking to be trusted again. The entries name no particular
-              machine, so an unrelated local service on the same port would inherit the trust.
-              <br />
-              If you deliberately trust an SSH server running on this machine, its entry looks the
-              same — remove that one individually instead.
-            </div>
+              {t('Before 0.36.2, a server reached through a VPN or tunnel had its host key saved under the temporary local address the connection borrowed — a different one every time. That is why those servers kept asking to be trusted again. The entries name no particular machine, so an unrelated local service on the same port would inherit the trust.')}<br />
+              {t('If you deliberately trust an SSH server running on this machine, its entry looks the same — remove that one individually instead.')}</div>
           </div>
           <button
             className="btn sm danger"
@@ -607,7 +602,7 @@ function KnownHosts(): React.JSX.Element {
               load()
             }}
           >
-            Remove {stale.length === 1 ? 'it' : `all ${stale.length}`}
+            {t('Remove')}{' '}{stale.length === 1 ? 'it' : `all ${stale.length}`}
           </button>
         </div>
       )}
@@ -627,8 +622,7 @@ function KnownHosts(): React.JSX.Element {
               load()
             }}
           >
-            Forget
-          </button>
+            {t('Forget')}</button>
         </div>
       ))}
     </div>
@@ -642,6 +636,7 @@ function KnownHosts(): React.JSX.Element {
 // is the subject rather than a side effect, so it says so and offers the same
 // prompt rather than sending the user off to find the Vault view.
 function VaultState(): React.JSX.Element {
+  const t = useT()
   const exists = useVault((s) => s.exists)
   const unlocked = useVault((s) => s.unlocked)
   const refresh = useVault((s) => s.refresh)
@@ -686,16 +681,13 @@ function VaultState(): React.JSX.Element {
       </div>
       {exists === null ? null : !exists ? (
         <button className="btn sm" onClick={() => setActivity('vault')}>
-          Set up a vault
-        </button>
+          {t('Set up a vault')}</button>
       ) : unlocked ? (
         <button className="btn sm" onClick={() => void useVault.getState().lock()}>
-          <Lock size={13} /> Lock now
-        </button>
+          <Lock size={13} /> {t('Lock now')}</button>
       ) : (
         <button className="btn sm primary" onClick={() => void unlock()}>
-          <LockOpen size={13} /> Unlock vault
-        </button>
+          <LockOpen size={13} /> {t('Unlock vault')}</button>
       )}
     </div>
   )
@@ -743,6 +735,7 @@ function VaultState(): React.JSX.Element {
  * See src/main/services/debugLog.ts.
  */
 function DebugPanel(): React.JSX.Element {
+  const t = useT()
   const settings = useApp((s) => s.settings)
   const setSettings = useApp((s) => s.setSettings)
   const [status, setStatus] = useState<DebugStatus | null>(null)
@@ -765,7 +758,7 @@ function DebugPanel(): React.JSX.Element {
   return (
     <>
       <SettingSwitch
-        label="Debug mode"
+        label={t('Debug mode')}
         desc="Record which internal operations run and which fail, so a bug report can say what the app did and not only what it is. You do not need this page to start one — the bug icon in the left rail offers it, which is where a report begins. Those messages come from this machine and your servers, and they routinely name hostnames, usernames, file paths and commands; passwords, keys and tokens are filtered out before anything is written, a hostname cannot be. Nothing is sent anywhere: the trace stays on this computer, you read the whole report before it is written, and starting a new recording clears the old one."
         checked={settings.debugLogEnabled === true}
         onChange={(v) => setSettings({ debugLogEnabled: v })}
@@ -773,12 +766,10 @@ function DebugPanel(): React.JSX.Element {
       {status !== null && status.bytes > 0 && (
         <div className="setting-row">
           <div className="s-info">
-            <div className="s-title">Recorded trace</div>
+            <div className="s-title">{t('Recorded trace')}</div>
             <div className="s-desc">
               {status.events > 0 ? `${status.events} events, ` : ''}
-              {kb} KB on disk{status.truncated ? ', cut at the 8 MB cap' : ''}. Yours to delete
-              whenever you like — reporting a bug does not remove it.
-            </div>
+              {kb} {t('KB on disk')}{status.truncated ? ', cut at the 8 MB cap' : ''}{t('. Yours to delete whenever you like — reporting a bug does not remove it.')}</div>
           </div>
           <button
             className="btn sm"
@@ -789,8 +780,7 @@ function DebugPanel(): React.JSX.Element {
               toast('Debug trace deleted.')
             }}
           >
-            Delete
-          </button>
+            {t('Delete')}</button>
         </div>
       )}
     </>
@@ -798,6 +788,7 @@ function DebugPanel(): React.JSX.Element {
 }
 
 function DiagnosticsPanel(): React.JSX.Element {
+  const t = useT()
   const [text, setText] = useState<string | null>(null)
 
   useEffect(() => {
@@ -821,7 +812,7 @@ function DiagnosticsPanel(): React.JSX.Element {
     <>
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Copy diagnostics</div>
+          <div className="s-title">{t('Copy diagnostics')}</div>
           <div className="s-desc">
             Your app version and update channel, this platform and its Electron, Chrome and Node
             versions, how many servers, workspaces, databases, tunnels and VPN profiles exist, which
@@ -841,8 +832,7 @@ function DiagnosticsPanel(): React.JSX.Element {
             toast('Diagnostics copied.')
           }}
         >
-          Copy
-        </button>
+          {t('Copy')}</button>
       </div>
       <pre className="paste-preview">{text ?? 'Collecting…'}</pre>
     </>

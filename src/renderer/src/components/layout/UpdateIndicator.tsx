@@ -3,6 +3,7 @@ import { useUpdater } from '../../store/updater'
 import { openSettings } from '../../store/nav'
 import { clsx } from '../../lib/format'
 import type { UpdaterStatus } from '../../../../shared/updater'
+import { useT } from '../../i18n'
 
 // The running version, on screen at all times, plus an update chip whenever one
 // is waiting.
@@ -58,6 +59,7 @@ function describe(status: UpdaterStatus, version: string | null, beta: boolean):
 }
 
 export function UpdateIndicator(): React.JSX.Element | null {
+  const t = useT()
   const init = useUpdater((s) => s.init)
   const status = useUpdater((s) => s.status)
   const capabilities = useUpdater((s) => s.capabilities)
@@ -83,7 +85,7 @@ export function UpdateIndicator(): React.JSX.Element | null {
       onClick={() => openSettings('general')}
     >
       <span>v{capabilities.currentVersion}</span>
-      {beta && <span className="build-tag">beta</span>}
+      {beta && <span className="build-tag">{t('beta')}</span>}
       {c && (
         <>
           <span className="update-dot" />

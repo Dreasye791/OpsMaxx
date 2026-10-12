@@ -22,6 +22,7 @@ import { jobApprovalFor } from '../../../../shared/jobs'
 import type { JobSpec, JobTargetRef } from '../../../../shared/jobs'
 import type { Server } from '../../types'
 import { PanelShell } from './PanelShell'
+import { useT } from '../../i18n'
 
 // Rules — roadmap item 27.
 //
@@ -109,6 +110,7 @@ function RuleCard({
   onToggle: (enabled: boolean) => void
   onRemove: () => void
 }): React.JSX.Element {
+  const t = useT()
   const hostName = (id: string): string => servers.find((s) => s.id === id)?.name ?? id
   const job = rule.action.type === 'job' ? rule.action : null
 
@@ -133,21 +135,20 @@ function RuleCard({
       </div>
 
       <div>
-        <span className="faint">When </span>
+        <span className="faint">{t('When')}{' '}</span>
         {when(rule)}
       </div>
 
       {job === null ? (
         <div>
-          <span className="faint">Then </span>
-          post to the configured webhook
-        </div>
+          <span className="faint">{t('Then')}{' '}</span>
+          {t('post to the configured webhook')}</div>
       ) : (
         <div className="col" style={{ gap: 4 }}>
           <div>
-            <span className="faint">Then run </span>
+            <span className="faint">{t('Then run')}{' '}</span>
             {job.spec.title}
-            <span className="faint"> on </span>
+            <span className="faint"> {t('on')}{' '}</span>
             {job.targets.map((t) => hostName(t.serverId)).join(', ')}
           </div>
           {/* The step text itself, never a job id. What a rule runs is the
@@ -177,7 +178,7 @@ function RuleCard({
           style={{ gap: 6, alignItems: 'flex-start' }}
         >
           <AlertTriangle size={14} />
-          <span>This rule will not run: {rule.verdict.reason}</span>
+          <span>{t('This rule will not run:')}{' '}{rule.verdict.reason}</span>
         </div>
       )}
       {rule.verdict.ok && rule.status.refusal !== undefined && (
@@ -186,7 +187,7 @@ function RuleCard({
           style={{ gap: 6, alignItems: 'flex-start' }}
         >
           <AlertTriangle size={14} />
-          <span>Last time it fired it was refused: {rule.status.refusal}</span>
+          <span>{t('Last time it fired it was refused:')}{' '}{rule.status.refusal}</span>
         </div>
       )}
     </div>
@@ -201,6 +202,7 @@ export function RulesPanel({
   /** True when this panel is only on screen because a rule is still armed. */
   moduleOff?: boolean
 }): React.JSX.Element {
+  const t = useT()
   // `null` until the read comes back, NOT `[]`.
   //
   // An empty array means "there are no rules", and this screen says that out
@@ -435,17 +437,14 @@ export function RulesPanel({
     // anything, which is exactly what the accent is reserved for.
     <PanelShell
       icon={<Zap size={14} />}
-      title="Rules"
+      title={t('Rules')}
       about={
         <p>
-          When an alert fires, run a job or post to the webhook. A rule runs the job it was
-          confirmed with, on the servers it was confirmed for, and refuses if either has changed.
-        </p>
+          {t('When an alert fires, run a job or post to the webhook. A rule runs the job it was confirmed with, on the servers it was confirmed for, and refuses if either has changed.')}</p>
       }
       actions={
         <button className="btn primary sm" onClick={() => setOpen((v) => !v)}>
-          <Plus size={14} /> New rule
-        </button>
+          <Plus size={14} /> {t('New rule')}</button>
       }
     >
       {/* Why this tab is here when the module switch says it should not be.
@@ -458,10 +457,7 @@ export function RulesPanel({
         <div className="row state-warn" style={{ gap: 6 }}>
           <AlertTriangle size={14} />
           <span>
-            Rules is switched off in Settings, but the rules below are still armed and still
-            run. Switching the module off hides this panel; it does not disarm anything.
-            Disarm each rule here, or leave them running deliberately.
-          </span>
+            {t('Rules is switched off in Settings, but the rules below are still armed and still run. Switching the module off hides this panel; it does not disarm anything. Disarm each rule here, or leave them running deliberately.')}</span>
         </div>
       )}
 
@@ -475,14 +471,12 @@ export function RulesPanel({
       {open && (
         <div className="card col" style={{ gap: 10, padding: 12 }}>
           <label className="col" style={{ gap: 4 }}>
-            Name
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Vacuum the journal" />
+            {t('Name')}<input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('Vacuum the journal')} />
           </label>
 
           <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
             <label className="col" style={{ gap: 4 }}>
-              When
-              <select value={kind} onChange={(e) => setKind(e.target.value as RuleAlertKind)}>
+              {t('When')}<select value={kind} onChange={(e) => setKind(e.target.value as RuleAlertKind)}>
                 {RULE_ALERT_KINDS.map((k) => (
                   <option key={k} value={k}>
                     {KIND_LABEL[k]}
@@ -491,16 +485,14 @@ export function RulesPanel({
               </select>
             </label>
             <label className="col" style={{ gap: 4 }}>
-              is
-              <select value={event} onChange={(e) => setEvent(e.target.value as RuleTriggerEvent)}>
-                <option value="raised">raised</option>
-                <option value="resolved">resolved</option>
+              {t('is')}<select value={event} onChange={(e) => setEvent(e.target.value as RuleTriggerEvent)}>
+                <option value="raised">{t('raised')}</option>
+                <option value="resolved">{t('resolved')}</option>
               </select>
             </label>
             <label className="col" style={{ gap: 4 }}>
-              on
-              <select value={hostFilter} onChange={(e) => setHostFilter(e.target.value)}>
-                <option value="">any server</option>
+              {t('on')}<select value={hostFilter} onChange={(e) => setHostFilter(e.target.value)}>
+                <option value="">{t('any server')}</option>
                 {servers.map((s) => (
                   <option key={s.id} value={s.id}>
                     {s.name}
@@ -509,11 +501,10 @@ export function RulesPanel({
               </select>
             </label>
             <label className="col" style={{ gap: 4 }}>
-              at or above
-              <input
+              {t('at or above')}<input
                 value={minValue}
                 onChange={(e) => setMinValue(e.target.value)}
-                placeholder="any reading"
+                placeholder={t('any reading')}
                 inputMode="decimal"
                 style={{ width: 100 }}
               />
@@ -531,20 +522,18 @@ export function RulesPanel({
 
           <div className="row" style={{ gap: 8, alignItems: 'flex-end', flexWrap: 'wrap' }}>
             <label className="col" style={{ gap: 4 }}>
-              At most
-              <input
+              {t('At most')}<input
                 type="number"
                 min={1}
                 max={RULE_LIMIT_MAX_FIRINGS}
                 value={maxFirings}
-                aria-label="Firings allowed in the window"
+                aria-label={t('Firings allowed in the window')}
                 onChange={(e) => setMaxFirings(Math.max(1, Number(e.target.value) || 1))}
                 style={{ width: 70 }}
               />
             </label>
             <label className="col" style={{ gap: 4 }}>
-              time(s) in
-              <select value={windowMs} onChange={(e) => setWindowMs(Number(e.target.value))}>
+              {t('time(s) in')}<select value={windowMs} onChange={(e) => setWindowMs(Number(e.target.value))}>
                 {WINDOWS.map((w) => (
                   <option key={w.ms} value={w.ms}>
                     {w.label}
@@ -553,8 +542,7 @@ export function RulesPanel({
               </select>
             </label>
             <span className="faint" style={{ paddingBottom: 6 }}>
-              A rule with no ceiling turns a flapping condition into an outage.
-            </span>
+              {t('A rule with no ceiling turns a flapping condition into an outage.')}</span>
           </div>
 
           <div className="row" style={{ gap: 12 }}>
@@ -565,8 +553,7 @@ export function RulesPanel({
                 checked={actionType === 'notify'}
                 onChange={() => setActionType('notify')}
               />
-              Post to the webhook
-            </label>
+              {t('Post to the webhook')}</label>
             <label className="row" style={{ gap: 4 }}>
               <input
                 type="radio"
@@ -574,8 +561,7 @@ export function RulesPanel({
                 checked={actionType === 'job'}
                 onChange={() => setActionType('job')}
               />
-              Run a job
-            </label>
+              {t('Run a job')}</label>
           </div>
 
           {warningFor('action') && (
@@ -585,12 +571,10 @@ export function RulesPanel({
           {actionType === 'job' && (
             <div className="col" style={{ gap: 8 }}>
               <label className="col" style={{ gap: 4 }}>
-                Job title
-                <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Clear the journal" />
+                {t('Job title')}<input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('Clear the journal')} />
               </label>
               <label className="col" style={{ gap: 4 }}>
-                Commands, one per line
-                <textarea
+                {t('Commands, one per line')}<textarea
                   rows={3}
                   value={commands}
                   onChange={(e) => setCommands(e.target.value)}
@@ -598,8 +582,7 @@ export function RulesPanel({
                 />
               </label>
               <div className="col" style={{ gap: 4 }}>
-                Servers
-                <div className="col" style={{ gap: 2, maxHeight: 160, overflowY: 'auto' }}>
+                {t('Servers')}<div className="col" style={{ gap: 2, maxHeight: 160, overflowY: 'auto' }}>
                   {servers.map((s) => (
                     <label key={s.id} className="row" style={{ gap: 6 }}>
                       <input
@@ -620,11 +603,10 @@ export function RulesPanel({
               {plan !== null && (
                 <div className="col" style={{ gap: 2 }}>
                   <div>
-                    <span className="faint">This runs on </span>
-                    {plan.blastRadius} server(s) at once
-                    <span className="faint"> and reads as </span>
+                    <span className="faint">{t('This runs on')}{' '}</span>
+                    {plan.blastRadius} {t('server(s) at once')}<span className="faint"> {t('and reads as')}{' '}</span>
                     {plan.risk}
-                    <span className="faint">, every time it fires.</span>
+                    <span className="faint">{t(', every time it fires.')}</span>
                   </div>
                   {plan.reasons.map((r) => (
                     <div key={r} className="faint">
@@ -642,9 +624,8 @@ export function RulesPanel({
                   `planPhrase`. */}
               {planPhrase !== null && (
                 <label className="col" style={{ gap: 4 }}>
-                  Run as a one-off, this job would need confirming by typing{' '}
-                  <b>{planPhrase}</b>. It needs that here too.
-                  <input
+                  {t('Run as a one-off, this job would need confirming by typing')}{' '}
+                  <b>{planPhrase}</b>{t('. It needs that here too.')}<input
                     value={jobPhrase}
                     aria-label={`Type ${planPhrase} to confirm the job`}
                     onChange={(e) => setJobPhrase(e.target.value)}
@@ -656,11 +637,10 @@ export function RulesPanel({
                 {/* Always typed, for a job rule. `planJob` would ask for a click
                     here; a standing authorisation is a different thing being
                     agreed to, and the word says which one. */}
-                This rule runs commands on those servers unattended, whenever it fires. Type{' '}
-                <b>{RULE_UNATTENDED_PHRASE}</b> to confirm.
-                <input
+                {t('This rule runs commands on those servers unattended, whenever it fires. Type')}{' '}
+                <b>{RULE_UNATTENDED_PHRASE}</b> {t('to confirm.')}<input
                   value={phrase}
-                  aria-label="Type UNATTENDED to confirm"
+                  aria-label={t('Type UNATTENDED to confirm')}
                   onChange={(e) => setPhrase(e.target.value)}
                 />
               </label>
@@ -669,34 +649,28 @@ export function RulesPanel({
 
           <div className="row" style={{ gap: 8 }}>
             <button className="btn primary" disabled={!canCreate} onClick={() => void create()}>
-              <Zap size={14} /> Create rule
-            </button>
+              <Zap size={14} /> {t('Create rule')}</button>
             <button className="btn ghost" onClick={reset}>
-              Cancel
-            </button>
+              {t('Cancel')}</button>
           </div>
         </div>
       )}
 
       {noBridge ? (
         <div className="panel-note is-alarm">
-          This build’s preload does not expose the rule engine yet. Restart the app to rebuild it.
-        </div>
+          {t('This build’s preload does not expose the rule engine yet. Restart the app to rebuild it.')}</div>
       ) : rules === null ? (
         <div className="panel-empty">
-          <p className="panel-empty-title">Reading the rules…</p>
+          <p className="panel-empty-title">{t('Reading the rules…')}</p>
         </div>
       ) : rules.length === 0 ? (
         // Was one grey sentence with no next step. The sentence is kept —
         // "nothing runs on its own" is the reassurance a rules screen owes the
         // reader — and now it says what to do about it.
         <div className="panel-empty">
-          <p className="panel-empty-title">No rules. Nothing runs on its own.</p>
+          <p className="panel-empty-title">{t('No rules. Nothing runs on its own.')}</p>
           <p className="panel-empty-body">
-            Press <b>New rule</b> to connect an alert to a job or to the webhook. Every rule is
-            confirmed once, against a specific job and specific servers, and refuses to run if either
-            of those changes afterwards.
-          </p>
+            {t('Press')}{' '}<b>{t('New rule')}</b> {t('to connect an alert to a job or to the webhook. Every rule is confirmed once, against a specific job and specific servers, and refuses to run if either of those changes afterwards.')}</p>
         </div>
       ) : (
         rules.map((r) => (

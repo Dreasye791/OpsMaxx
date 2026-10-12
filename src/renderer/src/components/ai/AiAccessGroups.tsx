@@ -25,6 +25,7 @@ import type {
   PolicyAssignment,
   PolicyScope
 } from '../../../../shared/mcp'
+import { useT } from '../../i18n'
 
 const PERM_OPTIONS: PermissionValue[] = ['allow', 'ask', 'deny']
 
@@ -90,21 +91,20 @@ const PERM_TONE: Record<PermissionValue, string> = {
 }
 
 function TierMatrix({ groups }: { groups: AccessGroup[] }): React.JSX.Element | null {
+  const t = useT()
   // Two is the minimum at which a comparison says anything.
   if (groups.length < 2) return null
   return (
     <details className="settings-section" style={{ marginTop: 12 }}>
       <summary className="disclosure-head">
-        Compare all {groups.length} groups
-        <span className="s-desc" style={{ marginLeft: 8 }}>
-          What each one allows, asks about, or refuses — read from the groups themselves.
-        </span>
+        {t('Compare all')}{' '}{groups.length} {t('groups')}<span className="s-desc" style={{ marginLeft: 8 }}>
+          {t('What each one allows, asks about, or refuses — read from the groups themselves.')}</span>
       </summary>
       <div className="inv-scroll">
         <table className="table inv-table">
           <thead>
             <tr>
-              <th>Capability</th>
+              <th>{t('Capability')}</th>
               {groups.map((g) => (
                 <th key={g.id}>{g.name}</th>
               ))}
@@ -149,16 +149,16 @@ function GroupCard({
   selected: boolean
   onSelect: () => void
 }): React.JSX.Element {
+  const t = useT()
   return (
     <button type="button" className={`ag-card ${selected ? 'selected' : ''}`} aria-pressed={selected} onClick={onSelect}>
       <div className="ag-card-head">
         <span className="ag-card-name">{group.name}</span>
-        {group.builtIn && <span className="chip">Built-in</span>}
-        {group.confirmRisky !== false && <span className="chip warn">Confirms risky actions</span>}
+        {group.builtIn && <span className="chip">{t('Built-in')}</span>}
+        {group.confirmRisky !== false && <span className="chip warn">{t('Confirms risky actions')}</span>}
         {summary.elevated.length > 0 && (
           <span className="chip danger">
-            <TriangleAlert size={10} /> No prompt
-          </span>
+            <TriangleAlert size={10} /> {t('No prompt')}</span>
         )}
       </div>
       {summary.clauses.map((clause) => (
@@ -177,6 +177,7 @@ function GroupEditor({ group, summary, onChange, onSave, onDelete }: {
   onSave: () => void
   onDelete: () => void
 }): React.JSX.Element {
+  const t = useT()
   // Passing the capabilities in is what lets this header say which rules grant
   // MORE than the grid above does. evaluateFilePath returns the most specific
   // matching rule before it ever looks at the blanket capability, so that
@@ -212,7 +213,7 @@ function GroupEditor({ group, summary, onChange, onSave, onDelete }: {
     <div>
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Name</div>
+          <div className="s-title">{t('Name')}</div>
         </div>
         <input
           className="input"
@@ -229,29 +230,22 @@ function GroupEditor({ group, summary, onChange, onSave, onDelete }: {
         <div className="setting-row" style={{ alignItems: 'flex-start' }}>
           <div className="s-info">
             <div className="s-title">
-              <TriangleAlert size={13} /> This group grants privileged access with no prompt
-            </div>
+              <TriangleAlert size={13} /> {t('This group grants privileged access with no prompt')}</div>
             <div className="s-desc">
-              An agent can act on it without you seeing anything. Set it to ASK in Capabilities below if you
-              want to approve each use.
-            </div>
+              {t('An agent can act on it without you seeing anything. Set it to ASK in Capabilities below if you want to approve each use.')}</div>
           </div>
         </div>
       )}
 
       <div className="setting-row" style={{ alignItems: 'flex-start' }}>
         <div className="s-info">
-          <div className="s-title">Confirm risky actions</div>
+          <div className="s-title">{t('Confirm risky actions')}</div>
           <div className="s-desc">
-            On: the actions below still ask even where a capability says Allow. Off: Allow means allow (a
-            command whose program is computed at run time still asks unless Sudo is Allow). Applies to agents
-            on the Custom profile using this group; the predefined profiles carry their own.
-          </div>
+            {t('On: the actions below still ask even where a capability says Allow. Off: Allow means allow (a command whose program is computed at run time still asks unless Sudo is Allow). Applies to agents on the Custom profile using this group; the predefined profiles carry their own.')}</div>
           <details className="disclosure" style={{ marginTop: 6 }}>
             <summary className="disclosure-head">
               <ChevronRight size={14} className="chev" />
-              What counts as risky
-            </summary>
+              {t('What counts as risky')}</summary>
             <ul className="s-desc" style={{ margin: '4px 0 0', paddingLeft: 18 }}>
               {RISKY_ACTIONS.map((a) => (
                 <li key={a}>{a}</li>
@@ -262,7 +256,7 @@ function GroupEditor({ group, summary, onChange, onSave, onDelete }: {
         <Switch
           checked={group.confirmRisky !== false}
           onChange={(confirmRisky) => onChange({ ...group, confirmRisky })}
-          label="Confirm risky actions"
+          label={t('Confirm risky actions')}
         />
       </div>
 
@@ -270,13 +264,12 @@ function GroupEditor({ group, summary, onChange, onSave, onDelete }: {
         <summary className="disclosure-head">
           <ChevronRight size={14} className="chev" />
           <SlidersHorizontal size={13} />
-          Capabilities — set each of the {AI_CAPABILITIES.length} individually
-          <span className="ag-counts">
+          {t('Capabilities — set each of the')}{' '}{AI_CAPABILITIES.length} {t('individually')}<span className="ag-counts">
             {/* A zero is noise here: "0 ask" makes the reader look for
                 something that is not there. */}
-            {summary.counts.allow > 0 && <span className="chip ok">{summary.counts.allow} allow</span>}
-            {summary.counts.ask > 0 && <span className="chip warn">{summary.counts.ask} ask</span>}
-            {summary.counts.deny > 0 && <span className="chip">{summary.counts.deny} deny</span>}
+            {summary.counts.allow > 0 && <span className="chip ok">{summary.counts.allow} {t('allow')}</span>}
+            {summary.counts.ask > 0 && <span className="chip warn">{summary.counts.ask} {t('ask')}</span>}
+            {summary.counts.deny > 0 && <span className="chip">{summary.counts.deny} {t('deny')}</span>}
           </span>
         </summary>
         <div className="disclosure-body" style={{ gap: 0 }}>
@@ -303,21 +296,18 @@ function GroupEditor({ group, summary, onChange, onSave, onDelete }: {
         <summary className="disclosure-head">
           <ChevronRight size={14} className="chev" />
           <FolderTree size={13} />
-          File path rules — {files.sentence}
+          {t('File path rules —')}{' '}{files.sentence}
         </summary>
         <div className="disclosure-body" style={{ gap: 0 }}>
           <div className="s-desc">
-            The most specific matching pattern wins; anything unmatched falls back to Read/Write Files above.
-            Sudo -i/su/bash-style unrestricted shells are blocked on every profile except Bypass, and are not
-            configurable here.
-          </div>
+            {t('The most specific matching pattern wins; anything unmatched falls back to Read/Write Files above. Sudo -i/su/bash-style unrestricted shells are blocked on every profile except Bypass, and are not configurable here.')}</div>
           {group.filePolicies.map((rule) => (
             <div className="setting-row" key={rule.id}>
               <input
                 className="input mono"
                 style={{ flex: 1 }}
                 value={rule.pattern}
-                aria-label="Path pattern"
+                aria-label={t('Path pattern')}
                 onChange={(e) => setRule(rule.id, { pattern: e.target.value })}
               />
               <select
@@ -327,7 +317,7 @@ function GroupEditor({ group, summary, onChange, onSave, onDelete }: {
                 value={rule.read ?? ''}
                 onChange={(e) => setRule(rule.id, { read: (e.target.value || undefined) as PermissionValue | undefined })}
               >
-                <option value="">read: —</option>
+                <option value="">{t('read: —')}</option>
                 {PERM_OPTIONS.map((p) => (
                   <option key={p} value={p}>
                     read: {p}
@@ -341,32 +331,29 @@ function GroupEditor({ group, summary, onChange, onSave, onDelete }: {
                 value={rule.write ?? ''}
                 onChange={(e) => setRule(rule.id, { write: (e.target.value || undefined) as PermissionValue | undefined })}
               >
-                <option value="">write: —</option>
+                <option value="">{t('write: —')}</option>
                 {PERM_OPTIONS.map((p) => (
                   <option key={p} value={p}>
                     write: {p}
                   </option>
                 ))}
               </select>
-              <button className="icon-btn" onClick={() => removeRule(rule.id)} aria-label="Remove rule">
+              <button className="icon-btn" onClick={() => removeRule(rule.id)} aria-label={t('Remove rule')}>
                 <Trash2 size={14} />
               </button>
             </div>
           ))}
           <button className="btn sm" style={{ marginTop: 12, alignSelf: 'flex-start' }} onClick={addRule}>
-            <Plus size={13} /> Add path rule
-          </button>
+            <Plus size={13} /> {t('Add path rule')}</button>
         </div>
       </details>
 
       <div className="setting-row" style={{ marginTop: 18 }}>
         <button className="btn sm primary" onClick={onSave}>
-          <Save size={13} /> Save group
-        </button>
+          <Save size={13} /> {t('Save group')}</button>
         {!group.builtIn && (
           <button className="btn sm danger" onClick={onDelete}>
-            <Trash2 size={13} /> Delete group
-          </button>
+            <Trash2 size={13} /> {t('Delete group')}</button>
         )}
       </div>
     </div>
@@ -384,6 +371,7 @@ interface ServerOpt {
 }
 
 function ServerAssignment({ groups }: { groups: AccessGroup[] }): React.JSX.Element {
+  const t = useT()
   const [workspaces, setWorkspaces] = useState<WorkspaceOpt[]>([])
   const [servers, setServers] = useState<ServerOpt[]>([])
   const [assignments, setAssignments] = useState<PolicyAssignment[]>([])
@@ -463,8 +451,7 @@ function ServerAssignment({ groups }: { groups: AccessGroup[] }): React.JSX.Elem
   }
   const protectedBadge = (
     <span className="chip warn">
-      <ShieldAlert size={10} /> Protected
-    </span>
+      <ShieldAlert size={10} /> {t('Protected')}</span>
   )
   const workspaceScope: PolicyScope = { level: 'workspace', workspaceId: activeWorkspaceId }
 
@@ -481,19 +468,13 @@ function ServerAssignment({ groups }: { groups: AccessGroup[] }): React.JSX.Elem
     <div id="ai-assignments">
       <h2>Server & workspace assignment</h2>
       <div className="sub">
-        Nothing here is needed to give an agent access — a session's own access group is the grant, and
-        a workspace with no assignment leaves it exactly as written. What an assignment does is hold a
-        workspace <i>below</i> that grant, whatever group an agent was issued. A server with no override
-        inherits its workspace's assignment.
-      </div>
+        {t('Nothing here is needed to give an agent access — a session\'s own access group is the grant, and a workspace with no assignment leaves it exactly as written. What an assignment does is hold a workspace')}{' '}<i>{t('below')}</i> {t('that grant, whatever group an agent was issued. A server with no override inherits its workspace\'s assignment.')}</div>
       <div className="sub">
-        <b>Protected from agents</b> is the other optional restriction, for production: every agent is held
-        at Ask first there, whatever its profile; Read only stays read only.
-      </div>
+        <b>{t('Protected from agents')}</b> {t('is the other optional restriction, for production: every agent is held at Ask first there, whatever its profile; Read only stays read only.')}</div>
 
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Workspace</div>
+          <div className="s-title">{t('Workspace')}</div>
         </div>
         <select className="input" value={activeWorkspaceId} onChange={(e) => setActiveWorkspaceId(e.target.value)}>
           {workspaces.map((w) => (
@@ -505,11 +486,9 @@ function ServerAssignment({ groups }: { groups: AccessGroup[] }): React.JSX.Elem
       </div>
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Default access group for this workspace</div>
+          <div className="s-title">{t('Default access group for this workspace')}</div>
           <div className="s-desc">
-            A restriction narrows every profile except Bypass. To hold this target even against Bypass, mark it
-            Protected. No AI Access holds for every profile.
-          </div>
+            {t('A restriction narrows every profile except Bypass. To hold this target even against Bypass, mark it Protected. No AI Access holds for every profile.')}</div>
         </div>
         <select
           className="input"
@@ -519,8 +498,8 @@ function ServerAssignment({ groups }: { groups: AccessGroup[] }): React.JSX.Elem
             return setWorkspaceGroup(e.target.value || null)
           }}
         >
-          <option value="__none">(no restriction — each session's own group applies)</option>
-          <option value="">No AI Access</option>
+          <option value="__none">{t('(no restriction — each session\'s own group applies)')}</option>
+          <option value="">{t('No AI Access')}</option>
           {groups.map((g) => (
             <option key={g.id} value={g.id}>
               {g.name}
@@ -532,11 +511,10 @@ function ServerAssignment({ groups }: { groups: AccessGroup[] }): React.JSX.Elem
       <div className="setting-row">
         <div className="s-info">
           <div className="s-title">
-            Protected from agents {isProtected(workspaceScope) && protectedBadge}
+            {t('Protected from agents')}{' '}{isProtected(workspaceScope) && protectedBadge}
           </div>
           <div className="s-desc">
-            Every agent is held at Ask first here, whatever its profile; Read only stays read only.
-          </div>
+            {t('Every agent is held at Ask first here, whatever its profile; Read only stays read only.')}</div>
         </div>
         <Switch
           checked={isProtected(workspaceScope)}
@@ -546,8 +524,8 @@ function ServerAssignment({ groups }: { groups: AccessGroup[] }): React.JSX.Elem
         />
       </div>
 
-      <h3 style={{ marginTop: 16 }}>Per-server overrides</h3>
-      {serversHere.length === 0 && <div className="s-desc">No servers in this workspace.</div>}
+      <h3 style={{ marginTop: 16 }}>{t('Per-server overrides')}</h3>
+      {serversHere.length === 0 && <div className="s-desc">{t('No servers in this workspace.')}</div>}
       {serversHere.map((s) => {
         const override = assignments.find((a) => a.scope.level === 'server' && a.scope.serverId === s.id)
         const scope: PolicyScope = { level: 'server', serverId: s.id }
@@ -558,11 +536,11 @@ function ServerAssignment({ groups }: { groups: AccessGroup[] }): React.JSX.Elem
                 {s.name} {isProtected(scope) && protectedBadge}
               </div>
               {isProtected(workspaceScope) && !isProtected(scope) && (
-                <div className="s-desc">Protected through its workspace.</div>
+                <div className="s-desc">{t('Protected through its workspace.')}</div>
               )}
             </div>
             <label className="row" style={{ gap: 6, alignItems: 'center' }}>
-              <span className="s-desc">Protected from agents</span>
+              <span className="s-desc">{t('Protected from agents')}</span>
               <Switch
                 checked={isProtected(scope)}
                 onChange={(on) => void setProtected(scope, on)}
@@ -577,8 +555,8 @@ function ServerAssignment({ groups }: { groups: AccessGroup[] }): React.JSX.Elem
                 return setServerOverride(s.id, e.target.value || null)
               }}
             >
-              <option value="__inherit">(workspace default)</option>
-              <option value="">No AI Access</option>
+              <option value="__inherit">{t('(workspace default)')}</option>
+              <option value="">{t('No AI Access')}</option>
               {groups.map((g) => (
                 <option key={g.id} value={g.id}>
                   {g.name}
@@ -599,6 +577,7 @@ function showAssignments(): void {
 }
 
 export function AiAccessGroups(): React.JSX.Element {
+  const t = useT()
   const [groups, setGroups] = useState<AccessGroup[]>([])
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [draft, setDraft] = useState<AccessGroup | null>(null)
@@ -757,13 +736,9 @@ export function AiAccessGroups(): React.JSX.Element {
 
   return (
     <div className="settings-section">
-      <h2>Access Groups</h2>
+      <h2>{t('Access Groups')}</h2>
       <div className="sub">
-        Access groups are for when the predefined profiles do not fit: an agent on the <b>Custom</b> profile does
-        exactly what its group says, per capability, and a group assigned to a workspace or server restricts
-        every agent there. Each card describes itself from its own settings. Pick one to change it, or create
-        your own (Logs Only, Production Read Only, ...).
-      </div>
+        {t('Access groups are for when the predefined profiles do not fit: an agent on the')}{' '}<b>{t('Custom')}</b> {t('profile does exactly what its group says, per capability, and a group assigned to a workspace or server restricts every agent there. Each card describes itself from its own settings. Pick one to change it, or create your own (Logs Only, Production Read Only, ...).')}</div>
 
       <div className="ag-grid">
         {groups.map((g) => (
@@ -790,12 +765,9 @@ export function AiAccessGroups(): React.JSX.Element {
         <div className="setting-row" style={{ alignItems: 'flex-start' }}>
           <div className="s-info">
             <div className="s-title">
-              <TriangleAlert size={13} /> {draft.name} has unsaved changes
-            </div>
+              <TriangleAlert size={13} /> {draft.name} {t('has unsaved changes')}</div>
             <div className="s-desc">
-              The card shows them, but nothing is stored until you save — the policy engine is still
-              enforcing the old settings. Opening {pendingName} now discards them.
-            </div>
+              {t('The card shows them, but nothing is stored until you save — the policy engine is still enforcing the old settings. Opening')}{' '}{pendingName} {t('now discards them.')}</div>
           </div>
           <button
             className="btn sm primary"
@@ -804,14 +776,11 @@ export function AiAccessGroups(): React.JSX.Element {
               void saveGroup().then((ok) => ok && switchTo(to))
             }}
           >
-            <Save size={13} /> Save and switch
-          </button>
+            <Save size={13} /> {t('Save and switch')}</button>
           <button className="btn sm danger" onClick={() => switchTo(pendingId)}>
-            Discard changes
-          </button>
+            {t('Discard changes')}</button>
           <button className="btn sm" onClick={() => setPendingId(null)}>
-            Keep editing
-          </button>
+            {t('Keep editing')}</button>
         </div>
       )}
 
@@ -820,23 +789,20 @@ export function AiAccessGroups(): React.JSX.Element {
           <div className="s-title">{draft ? `Editing ${draft.name}` : 'Pick a group to edit'}</div>
         </div>
         <button className="btn sm" onClick={() => setNewName('')}>
-          <Plus size={13} /> New group
-        </button>
+          <Plus size={13} /> {t('New group')}</button>
       </div>
 
       {newName !== null && (
         <div className="setting-row">
           <div className="s-info">
-            <div className="s-title">Name the new group</div>
+            <div className="s-title">{t('Name the new group')}</div>
             <div className="s-desc">
-              A new group starts by allowing reads, asking before terminal and database access,
-              refusing writes and sudo, and confirming risky actions. You can change all of it next.
-            </div>
+              {t('A new group starts by allowing reads, asking before terminal and database access, refusing writes and sudo, and confirming risky actions. You can change all of it next.')}</div>
           </div>
           <input
             className="input"
             autoFocus
-            placeholder="e.g. Logs Only"
+            placeholder={t('e.g. Logs Only')}
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             onKeyDown={(e) => {
@@ -845,9 +811,8 @@ export function AiAccessGroups(): React.JSX.Element {
             }}
           />
           <button className="btn sm primary" disabled={!newName.trim()} onClick={() => void createGroup()}>
-            Create
-          </button>
-          <button className="icon-btn" aria-label="Cancel" onClick={() => setNewName(null)}>
+            {t('Create')}</button>
+          <button className="icon-btn" aria-label={t('Cancel')} onClick={() => setNewName(null)}>
             <X size={14} />
           </button>
         </div>

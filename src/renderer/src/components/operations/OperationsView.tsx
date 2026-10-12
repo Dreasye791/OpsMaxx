@@ -19,6 +19,7 @@ import { UnitInstallPanel } from './UnitInstallPanel'
 // import { CicdTriggerPanel } from '../cicd/CicdTriggerPanel' — phase 2, with
 // the module entry and the card below.
 import type { Server } from '../../types'
+import { useT } from '../../i18n'
 
 // Operations — the half of the fleet destination that CHANGES servers.
 //
@@ -131,6 +132,7 @@ export function OperationsView({
    */
   hidden: boolean
 }): React.JSX.Element {
+  const t = useT()
   const tab = useNav((s) => s.operationsTab)
   const setTab = useNav((s) => s.setOperationsTab)
   const jump = useNav((s) => s.operationsJump)
@@ -184,10 +186,9 @@ export function OperationsView({
         <div className="ops-banner">
           <Wrench size={16} />
           <div>
-            <div className="ops-banner-title">Operations</div>
+            <div className="ops-banner-title">{t('Operations')}</div>
             <div className="ops-banner-sub">
-              Everything here changes servers. Nothing here is a refresh.
-            </div>
+              {t('Everything here changes servers. Nothing here is a refresh.')}</div>
           </div>
         </div>
 
@@ -212,10 +213,9 @@ export function OperationsView({
 
       {asked !== undefined && asked !== null && (
         <div className="panel-note is-unknown" data-testid="ops-tab-off">
-          <b>{asked.label}</b> is switched off, so this is not it. {asked.detail}{' '}
+          <b>{asked.label}</b> {t('is switched off, so this is not it.')}{' '}{asked.detail}{' '}
           <button className="btn ghost sm" onClick={() => openSettings('modules')}>
-            Choose modules
-          </button>
+            {t('Choose modules')}</button>
         </div>
       )}
 
@@ -225,7 +225,7 @@ export function OperationsView({
         // not consent), so for most installs this IS the Operations page, and
         // it has to be able to explain itself without a trip to Settings.
         <div className="ops-empty">
-          <div className="s-title">Nothing here can change a server yet.</div>
+          <div className="s-title">{t('Nothing here can change a server yet.')}</div>
           {off.map((m) => (
             <div key={m.id} className="s-desc" style={{ marginTop: 8 }}>
               <b>{m.label}</b> — {m.detail}
@@ -233,8 +233,7 @@ export function OperationsView({
           ))}
           <div style={{ marginTop: 12 }}>
             <button className="btn sm primary" onClick={() => openSettings('modules')}>
-              Choose modules
-            </button>
+              {t('Choose modules')}</button>
           </div>
         </div>
       )}
@@ -315,10 +314,9 @@ export function OperationsView({
             .reduce((acc, label, i) =>
               i === off.length - 1 ? `${acc} and ${label}` : `${acc}, ${label}`
             )}{' '}
-          {off.length === 1 ? 'is' : 'are'} available and switched off.{' '}
+          {off.length === 1 ? 'is' : 'are'} {t('available and switched off.')}{' '}
           <button className="btn ghost sm" onClick={() => openSettings('modules')}>
-            Choose modules
-          </button>
+            {t('Choose modules')}</button>
         </div>
       )}
     </div>

@@ -3,6 +3,7 @@ import { useApp, useWorkspaceVpns } from '../../store/app'
 import { clsx } from '../../lib/format'
 import type { VpnProfile, VpnStatus } from '../../types'
 import { HealthDot, frpSummary, handshakeLabel, vpnHealth } from './VpnStatusCard'
+import { useT } from '../../i18n'
 
 const KIND_TAG: Record<VpnProfile['spec']['kind'], string> = {
   wireguard: 'wg',
@@ -36,6 +37,7 @@ function hover(profile: VpnProfile, status: VpnStatus | undefined): string {
 }
 
 export function VpnSidebar(): React.JSX.Element {
+  const t = useT()
   const profiles = useWorkspaceVpns()
   const vpnStatuses = useApp((s) => s.vpnStatuses)
   // See TunnelSidebar: a marker, not a control. The tabs above the content do
@@ -64,13 +66,13 @@ export function VpnSidebar(): React.JSX.Element {
     <>
       <div className="tree-section">
         <div className={clsx('tree-section-label', tab === 'vpn' && 'active')}>
-          <Globe size={11} /> VPN <span className="count">{vpns.length}</span>
+          <Globe size={11} /> {t('VPN')}{' '}<span className="count">{vpns.length}</span>
         </div>
         {rows(vpns)}
       </div>
       <div className="tree-section">
         <div className={clsx('tree-section-label', tab === 'frp' && 'active')}>
-          <Share2 size={11} /> Reverse proxies <span className="count">{frps.length}</span>
+          <Share2 size={11} /> {t('Reverse proxies')}{' '}<span className="count">{frps.length}</span>
         </div>
         {rows(frps)}
       </div>

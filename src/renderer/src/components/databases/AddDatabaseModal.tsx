@@ -16,6 +16,7 @@ import { adviseOnError } from '../../lib/connectionError'
 import { withVaultUnlock } from '../../lib/withVaultUnlock'
 import type { DbKind, UUID } from '../../types'
 import { Switch } from '../common/Switch'
+import { useT } from '../../i18n'
 
 // Per-engine, and `dbLabel`/`dbPlaceholder` are REQUIRED fields rather than a
 // ternary at the input, because a ternary is how two of the five came to be
@@ -47,6 +48,7 @@ const KINDS: {
 const kindOf = (k: DbKind): (typeof KINDS)[number] => KINDS.find((x) => x.id === k)!
 
 export function AddDatabaseModal(): React.JSX.Element {
+  const t = useT()
   const setModal = useApp((s) => s.setModal)
   const addDatabase = useApp((s) => s.addDatabase)
   const servers = useWorkspaceServers()
@@ -391,7 +393,7 @@ export function AddDatabaseModal(): React.JSX.Element {
       }}
     >
       <div className="field">
-        <label className="field-label">Engine</label>
+        <label className="field-label">{t('Engine')}</label>
         <div className="radio-cards" style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>
           {KINDS.map((k) => (
             <button
@@ -409,13 +411,13 @@ export function AddDatabaseModal(): React.JSX.Element {
       <div className="row" style={{ gap: 8 }}>
         <div className="grow">
           <Field
-            label="Connection name"
+            label={t('Connection name')}
             required
             error={problem('name', name.trim() ? null : 'Give this connection a name.')}
           >
             <input
               className="input"
-              placeholder="Production DB"
+              placeholder={t('Production DB')}
               value={name}
               onChange={(e) => setName(e.target.value)}
               onBlur={touch('name')}
@@ -424,14 +426,12 @@ export function AddDatabaseModal(): React.JSX.Element {
           </Field>
         </div>
         <div className="field">
-          <label className="field-label">Method</label>
+          <label className="field-label">{t('Method')}</label>
           <div className="segment">
             <button className={clsx('seg-btn', !useUri && 'active')} onClick={() => setMode('fields')}>
-              Fields
-            </button>
+              {t('Fields')}</button>
             <button className={clsx('seg-btn', useUri && 'active')} onClick={() => setMode('uri')}>
-              Connection string
-            </button>
+              {t('Connection string')}</button>
           </div>
         </div>
       </div>
@@ -439,7 +439,7 @@ export function AddDatabaseModal(): React.JSX.Element {
       {useUri ? (
         <>
           <Field
-            label="Connection string / URI"
+            label={t('Connection string / URI')}
             required={!editId}
             error={problem(
               'uri',
@@ -465,13 +465,13 @@ export function AddDatabaseModal(): React.JSX.Element {
               exactly a connection string's shape. */}
           {uriOptions.length > 0 && (
             <div className="field">
-              <label className="field-label">Connection string</label>
+              <label className="field-label">{t('Connection string')}</label>
               <select
                 className="input"
                 value={vaultUriEntryId}
                 onChange={(e) => setVaultUriEntryId(e.target.value)}
               >
-                <option value="">Enter a new one…</option>
+                <option value="">{t('Enter a new one…')}</option>
                 {uriOptions.map((e) => (
                   <option key={e.id} value={e.id}>
                     {e.name}
@@ -493,14 +493,13 @@ export function AddDatabaseModal(): React.JSX.Element {
                 checked={saveToVault}
                 onChange={(e) => setSaveToVault(e.target.checked)}
               />
-              Save this connection string to the vault as a reusable credential
-            </label>
+              {t('Save this connection string to the vault as a reusable credential')}</label>
           )}
 
           {kind === 'mongodb' && (
             <div className="field">
-              <label className="field-label">Database (optional — overrides the URI default)</label>
-              <input className="input" placeholder="from URI" value={database} onChange={(e) => setDatabase(e.target.value)} />
+              <label className="field-label">{t('Database (optional — overrides the URI default)')}</label>
+              <input className="input" placeholder={t('from URI')} value={database} onChange={(e) => setDatabase(e.target.value)} />
             </div>
           )}
         </>
@@ -508,7 +507,7 @@ export function AddDatabaseModal(): React.JSX.Element {
         <>
           <div className="field-row">
             <Field
-              label="Server / IP"
+              label={t('Server / IP')}
               required
               error={problem('host', host.trim() ? null : 'Name the host this database runs on.')}
             >
@@ -519,25 +518,25 @@ export function AddDatabaseModal(): React.JSX.Element {
                 onBlur={touch('host')}
               />
             </Field>
-            <Field label="Port">
+            <Field label={t('Port')}>
               <input className="input" value={port} onChange={(e) => setPort(e.target.value)} />
             </Field>
           </div>
 
           <div className="field-row">
             <div className="field">
-              <label className="field-label">Username</label>
+              <label className="field-label">{t('Username')}</label>
               <input className="input" value={username} onChange={(e) => setUsername(e.target.value)} />
             </div>
             {options.length > 0 && (
               <div className="field">
-                <label className="field-label">Credential</label>
+                <label className="field-label">{t('Credential')}</label>
                 <select
                   className="input"
                   value={vaultEntryId}
                   onChange={(e) => setVaultEntryId(e.target.value)}
                 >
-                  <option value="">Enter a new one…</option>
+                  <option value="">{t('Enter a new one…')}</option>
                   {options.map((e) => (
                     <option key={e.id} value={e.id}>
                       {e.name}
@@ -555,7 +554,7 @@ export function AddDatabaseModal(): React.JSX.Element {
 
             {!usingVault && (
             <div className="field">
-              <label className="field-label">Password</label>
+              <label className="field-label">{t('Password')}</label>
               <input
                 className="input"
                 type="password"
@@ -581,8 +580,7 @@ export function AddDatabaseModal(): React.JSX.Element {
                   checked={saveToVault}
                   onChange={(e) => setSaveToVault(e.target.checked)}
                 />
-                Save this to the vault as a reusable credential
-              </label>
+                {t('Save this to the vault as a reusable credential')}</label>
             </div>
             )}
           </div>
@@ -598,11 +596,11 @@ export function AddDatabaseModal(): React.JSX.Element {
               />
             </div>
             <div className="field">
-              <label className="field-label">TLS / SSL</label>
+              <label className="field-label">{t('TLS / SSL')}</label>
               <label className="row" style={{ height: 34, gap: 10 }}>
                 {/* Named for the setting: the words it sits beside are its
                     state, and "Disabled, switch, off" says nothing. */}
-                <Switch checked={ssl} label="TLS / SSL" onChange={setSsl} />
+                <Switch checked={ssl} label={t('TLS / SSL')} onChange={setSsl} />
                 <span className="muted">{ssl ? 'Enabled' : 'Disabled'}</span>
               </label>
             </div>
@@ -611,19 +609,17 @@ export function AddDatabaseModal(): React.JSX.Element {
       )}
 
       <div className="field">
-        <label className="field-label">SSH tunnel (optional)</label>
+        <label className="field-label">{t('SSH tunnel (optional)')}</label>
         <select className="input" value={sshServerId} onChange={(e) => setSshServerId(e.target.value)}>
-          <option value="">Connect directly</option>
+          <option value="">{t('Connect directly')}</option>
           {servers.map((s) => (
             <option key={s.id} value={s.id}>
-              via {s.name} ({s.username}@{s.host})
+              {t('via')}{' '}{s.name} ({s.username}@{s.host})
             </option>
           ))}
         </select>
         <span className="field-hint">
-          Reaches a database that is only routable from the bastion. The server and port above are
-          resolved on the server, not on this machine.
-          {kind === 'mongodb' && ' mongodb+srv:// strings cannot be tunnelled — use server/port.'}
+          {t('Reaches a database that is only routable from the bastion. The server and port above are resolved on the server, not on this machine.')}{kind === 'mongodb' && ' mongodb+srv:// strings cannot be tunnelled — use server/port.'}
         </span>
       </div>
 
@@ -637,7 +633,7 @@ export function AddDatabaseModal(): React.JSX.Element {
         }
       />
 
-      <span className="field-hint">Credentials are stored in OS secure storage, never in plaintext.</span>
+      <span className="field-hint">{t('Credentials are stored in OS secure storage, never in plaintext.')}</span>
     </Modal>
   )
 }

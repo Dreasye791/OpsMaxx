@@ -7,6 +7,7 @@ import type { AccessGroup, McpGlobalConfig } from '../../../../shared/mcp'
 import { PICKERLESS_MODE } from '../../../../shared/mcp'
 import { Switch } from '../common/Switch'
 import { ModePicker } from './ModePicker'
+import { useT } from '../../i18n'
 
 
 /**
@@ -53,6 +54,7 @@ function copy(text: string): void {
 }
 
 export function AiSecurity(): React.JSX.Element {
+  const t = useT()
   const [config, setConfig] = useState<McpGlobalConfig | null>(null)
   // For the Custom default profile's group.
   const [groups, setGroups] = useState<AccessGroup[]>([])
@@ -189,8 +191,8 @@ export function AiSecurity(): React.JSX.Element {
 
   return (
     <div className="settings-section">
-      <h2>Security</h2>
-      <div className="sub">Global configuration for the OpsMaxx MCP bridge itself.</div>
+      <h2>{t('Security')}</h2>
+      <div className="sub">{t('Global configuration for the OpsMaxx MCP bridge itself.')}</div>
 
       {/* The switch shows whether the bridge is LISTENING, not whether it is
           meant to be. With the port taken it was drawn on beside text saying
@@ -216,8 +218,8 @@ export function AiSecurity(): React.JSX.Element {
 
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Local port</div>
-          <div className="s-desc">Restart the bridge (toggle it off and on) after changing this.</div>
+          <div className="s-title">{t('Local port')}</div>
+          <div className="s-desc">{t('Restart the bridge (toggle it off and on) after changing this.')}</div>
         </div>
         <input
           className="input"
@@ -231,29 +233,26 @@ export function AiSecurity(): React.JSX.Element {
 
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Approval timeout</div>
-          <div className="s-desc">How long an ASK action waits for you before it is treated as denied.</div>
+          <div className="s-title">{t('Approval timeout')}</div>
+          <div className="s-desc">{t('How long an ASK action waits for you before it is treated as denied.')}</div>
         </div>
         <select
           className="input"
           value={config.approvalTimeoutSeconds}
           onChange={(e) => update({ approvalTimeoutSeconds: Number(e.target.value) })}
         >
-          <option value={60}>1 minute</option>
-          <option value={120}>2 minutes</option>
-          <option value={300}>5 minutes</option>
-          <option value={600}>10 minutes</option>
+          <option value={60}>{t('1 minute')}</option>
+          <option value={120}>{t('2 minutes')}</option>
+          <option value={300}>{t('5 minutes')}</option>
+          <option value={600}>{t('10 minutes')}</option>
         </select>
       </div>
 
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Default profile for new agent sessions</div>
+          <div className="s-title">{t('Default profile for new agent sessions')}</div>
           <div className="s-desc">
-            The profile a session starts in when nobody picks one — CLI-paired and OAuth sessions always start
-            in it. Until you set one they start on Custom with the default access group, which is no access at all
-            if there is none. Each session’s profile can be changed under Active Sessions.
-          </div>
+            {t('The profile a session starts in when nobody picks one — CLI-paired and OAuth sessions always start in it. Until you set one they start on Custom with the default access group, which is no access at all if there is none. Each session’s profile can be changed under Active Sessions.')}</div>
         </div>
         <ModePicker
           value={config.defaultSessionMode ?? PICKERLESS_MODE}
@@ -267,38 +266,32 @@ export function AiSecurity(): React.JSX.Element {
 
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">🚨 Stop all AI access</div>
+          <div className="s-title">{t('🚨 Stop all AI access')}</div>
           <div className="s-desc">
-            Immediately revokes every active session and denies every pending approval request.
-            {/* Says what it would actually do, before it is pressed. An
+            {t('Immediately revokes every active session and denies every pending approval request.')}{/* Says what it would actually do, before it is pressed. An
                 emergency stop that cannot tell you whether anything is running
                 is one you press to find out. */}
             {liveCount !== null && (
               <>
                 {' '}
-                Right now that is {liveCount.sessions} session(s) and {liveCount.pending} waiting
-                request(s).
-              </>
+                {t('Right now that is')}{' '}{liveCount.sessions} {t('session(s) and')}{' '}{liveCount.pending} {t('waiting request(s).')}</>
             )}
           </div>
         </div>
         <button className="btn danger outline" onClick={killAll}>
-          <Octagon size={14} /> Stop all AI access
-        </button>
+          <Octagon size={14} /> {t('Stop all AI access')}</button>
       </div>
 
-      <h3 style={{ marginTop: 24 }}>Connecting Claude Code</h3>
+      <h3 style={{ marginTop: 24 }}>{t('Connecting Claude Code')}</h3>
       <div className="setting-row" style={{ alignItems: 'flex-start' }}>
         <div className="s-info">
           <div className="s-desc">
-            This command needs a token, and a token comes from an agent session. Create one, then
-            paste the command into a terminal with that token in place of{' '}
+            {t('This command needs a token, and a token comes from an agent session. Create one, then paste the command into a terminal with that token in place of')}{' '}
             <code className="mono">&lt;token&gt;</code>.
           </div>
         </div>
         <button className="btn sm" onClick={() => openAi('agents')}>
-          <Plus size={13} /> Create a session
-        </button>
+          <Plus size={13} /> {t('Create a session')}</button>
       </div>
       <div className="setting-row">
         <code className="mono" style={{ flex: 1, wordBreak: 'break-all' }}>
@@ -309,10 +302,9 @@ export function AiSecurity(): React.JSX.Element {
         </button>
       </div>
 
-      <h3 style={{ marginTop: 18 }}>Connecting Codex, Gemini CLI or another MCP client</h3>
+      <h3 style={{ marginTop: 18 }}>{t('Connecting Codex, Gemini CLI or another MCP client')}</h3>
       <div className="s-desc">
-        Most MCP-compatible clients accept a Streamable HTTP server via JSON configuration, for example:
-      </div>
+        {t('Most MCP-compatible clients accept a Streamable HTTP server via JSON configuration, for example:')}</div>
       <div className="setting-row">
         <pre className="mono" style={{ flex: 1, whiteSpace: 'pre-wrap' }}>{jsonConfig}</pre>
         <button className="btn sm" onClick={() => copy(jsonConfig)}>
@@ -320,19 +312,14 @@ export function AiSecurity(): React.JSX.Element {
         </button>
       </div>
       <div className="s-desc">
-        Works the same way whether OpsMaxx is installed normally or running in portable mode — the
-        port and token are all any client needs.
-      </div>
+        {t('Works the same way whether OpsMaxx is installed normally or running in portable mode — the port and token are all any client needs.')}</div>
 
-      <h3 style={{ marginTop: 18 }}>Or skip typing tokens: the OpsMaxx CLI launcher</h3>
+      <h3 style={{ marginTop: 18 }}>{t('Or skip typing tokens: the OpsMaxx CLI launcher')}</h3>
       <div className="s-desc">
-        Install the CLI once (<code className="mono">npm install -g opsmaxx</code>, or{' '}
-        <code className="mono">npm install -g .</code> from this repo), then run{' '}
-        <code className="mono">opsmaxx claude</code> or <code className="mono">opsmaxx codex</code>. The
-        first run pops a one-time pairing code right here in OpsMaxx — type it into the terminal and the
-        session, token and MCP config are wired up for you. <code className="mono">opsmaxx run -- &lt;command&gt;</code>{' '}
-        works the same way for any other MCP-aware CLI.
-      </div>
+        {t('Install the CLI once (')}<code className="mono">{t('npm install -g opsmaxx')}</code>{t(', or')}{' '}
+        <code className="mono">{t('npm install -g .')}</code> {t('from this repo), then run')}{' '}
+        <code className="mono">{t('opsmaxx claude')}</code> {t('or')}{' '}<code className="mono">{t('opsmaxx codex')}</code>{t('. The first run pops a one-time pairing code right here in OpsMaxx — type it into the terminal and the session, token and MCP config are wired up for you.')}{' '}<code className="mono">opsmaxx run -- &lt;command&gt;</code>{' '}
+        {t('works the same way for any other MCP-aware CLI.')}</div>
     </div>
   )
 }

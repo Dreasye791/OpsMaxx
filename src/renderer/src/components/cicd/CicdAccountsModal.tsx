@@ -6,6 +6,7 @@ import { duration } from '../../lib/format'
 import { useApp } from '../../store/app'
 import { PROVIDER_LABEL, hostOf, useCicdConnectionList } from './state'
 import type { CicdConnection, CicdPanelState } from '../../../../shared/cicd'
+import { useT } from '../../i18n'
 
 /**
  * Every connected account in one list, with the two verbs the panel never had.
@@ -48,6 +49,7 @@ export function CicdAccountsModal({
   onEdit: (connection: CicdConnection) => void
   onClose: () => void
 }): React.JSX.Element {
+  const t = useT()
   const connections = useCicdConnectionList()
   const remove = useApp((s) => s.deleteCicdConnection)
   const [pendingDelete, setPendingDelete] = useState<CicdConnection | null>(confirmRemove ?? null)
@@ -63,7 +65,7 @@ export function CicdAccountsModal({
         // thing: the reader never asked for the list, so dropping them into it
         // would answer a question they did not put.
         onClose={() => (confirmRemove ? onClose() : setPendingDelete(null))}
-        cancelLabel="Keep it"
+        cancelLabel={t('Keep it')}
         confirm={{
           label: 'Remove',
           destructive: true,
@@ -79,36 +81,29 @@ export function CicdAccountsModal({
             disappearing from a list reads as reversible, and the credential it
             takes with it is not. */}
         <p className="s-desc">
-          OpsMaxx stops polling {hostOf(pendingDelete.baseUrl)} and deletes the stored token from
-          the vault. Nothing on {PROVIDER_LABEL[pendingDelete.provider]} itself changes — no
-          pipeline, no run and no build is touched, and the token stays valid until you revoke it
-          there.
-        </p>
+          {t('OpsMaxx stops polling')}{' '}{hostOf(pendingDelete.baseUrl)} {t('and deletes the stored token from the vault. Nothing on')}{' '}{PROVIDER_LABEL[pendingDelete.provider]} {t('itself changes — no pipeline, no run and no build is touched, and the token stays valid until you revoke it there.')}</p>
         <p className="s-desc">
-          The token cannot be recovered from OpsMaxx afterwards. Connecting the account again means
-          pasting it again.
-        </p>
+          {t('The token cannot be recovered from OpsMaxx afterwards. Connecting the account again means pasting it again.')}</p>
       </Modal>
     )
   }
 
   return (
     <Modal
-      title="CI/CD accounts"
+      title={t('CI/CD accounts')}
       subtitle="Every account this workspace polls. Connect as many as you like, including several of the same provider — each is polled and addressed on its own."
       size="lg"
       onClose={onClose}
-      cancelLabel="Done"
+      cancelLabel={t('Done')}
       footer={
         <button className="btn secondary size-28" onClick={onAdd}>
-          <Plus size={14} /> Connect an account
-        </button>
+          <Plus size={14} /> {t('Connect an account')}</button>
       }
     >
       {connections.length === 0 ? (
         <EmptyState
           compact
-          title="No CI account is connected"
+          title={t('No CI account is connected')}
           message="Nothing is polled until one exists."
         />
       ) : (
@@ -125,7 +120,7 @@ export function CicdAccountsModal({
                       /* Never implicit. The connect modal says so when it is set
                          and this list has to as well, or the only place the
                          weaker setting is visible is the form that set it. */
-                      <span className="state-alarm"> · certificate checking off</span>
+                      <span className="state-alarm"> {t('· certificate checking off')}</span>
                     )}
                   </div>
                 </div>
@@ -138,16 +133,14 @@ export function CicdAccountsModal({
                   title={`Change ${c.name}'s URL, route or token.`}
                   onClick={() => onEdit(c)}
                 >
-                  <Pencil size={13} /> Edit
-                </button>
+                  <Pencil size={13} /> {t('Edit')}</button>
                 <button
                   type="button"
                   className="btn secondary size-24"
                   title={`Stop polling ${c.name} and delete its stored token.`}
                   onClick={() => setPendingDelete(c)}
                 >
-                  <Trash2 size={13} /> Remove
-                </button>
+                  <Trash2 size={13} /> {t('Remove')}</button>
               </div>
             )
           })}

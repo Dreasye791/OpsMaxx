@@ -34,6 +34,7 @@ import { reportBug } from '../../lib/reportBug'
 import { fuzzyScore } from '../../lib/fuzzy'
 import { templateTerminalText, type JobTemplate } from '../../../../shared/jobCompose'
 import { httpPaletteCommands } from '../http/paletteCommands'
+import { useT } from '../../i18n'
 
 interface Cmd {
   id: string
@@ -45,6 +46,7 @@ interface Cmd {
 }
 
 export function CommandPalette(): React.JSX.Element {
+  const t = useT()
   const store = useApp()
   const close = (): void => store.togglePalette(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -341,12 +343,12 @@ export function CommandPalette(): React.JSX.Element {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             onKeyDown={onKey}
-            placeholder="Search servers, workspaces, tunnels, actions…"
+            placeholder={t('Search servers, workspaces, tunnels, actions…')}
           />
-          <span className="kbd">Esc</span>
+          <span className="kbd">{t('Esc')}</span>
         </div>
         <div className="palette-list">
-          {filtered.length === 0 && <div className="palette-empty">No results for “{q}”</div>}
+          {filtered.length === 0 && <div className="palette-empty">{t('No results for “')}{q}”</div>}
           {filtered.map((c, i) => {
             const showGroup = c.group !== lastGroup
             lastGroup = c.group

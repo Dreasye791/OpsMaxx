@@ -7,6 +7,7 @@ import { CodeEditor } from '../../common/CodeEditor'
 import { literalSecretsIn } from '../gql/graphqlLanguage'
 import { prettyJson } from './frames'
 import { beautifyWs, submitWs } from './wsActions'
+import { useT } from '../../../i18n'
 
 const sendKey = (): string => (isMac() ? '⌘↵' : 'Ctrl+Enter')
 
@@ -15,6 +16,7 @@ const sendKey = (): string => (isMac() ? '⌘↵' : 'Ctrl+Enter')
  * because the usual next message is a small edit of the last one.
  */
 export function Composer({ tabId }: { tabId: Id }): React.JSX.Element {
+  const t = useT()
   const composer = useWsSessions((s) => s.composers[tabId] ?? EMPTY_COMPOSER)
   const open = useWsSessions((s) => s.sessions[tabId]?.state === 'open')
   const setComposer = useWsSessions((s) => s.setComposer)
@@ -38,9 +40,7 @@ export function Composer({ tabId }: { tabId: Id }): React.JSX.Element {
           // Only "as typed": the composer and the frames live in memory, and
           // history never stores a WebSocket message (shared/httpHistory).
           <p className="hc-ws-composer-note" role="note">
-            {secrets.map((s) => s.key).join(', ')} {secrets.length === 1 ? 'looks' : 'look'} like a credential. It is sent
-            to the server as typed.
-          </p>
+            {secrets.map((s) => s.key).join(', ')} {secrets.length === 1 ? 'looks' : 'look'} {t('like a credential. It is sent to the server as typed.')}</p>
         )}
         {open ? (
           <button
@@ -49,12 +49,11 @@ export function Composer({ tabId }: { tabId: Id }): React.JSX.Element {
             disabled={composer.text === ''}
             onClick={() => void submitWs(tabId)}
           >
-            <Send size={13} aria-hidden /> Send <kbd className="hc-ws-kbd">{sendKey()}</kbd>
+            <Send size={13} aria-hidden /> {t('Send')}{' '}<kbd className="hc-ws-kbd">{sendKey()}</kbd>
           </button>
         ) : (
           <button type="button" className="btn sm" disabled>
-            Connect to send
-          </button>
+            {t('Connect to send')}</button>
         )}
       </div>
     </div>
@@ -63,18 +62,19 @@ export function Composer({ tabId }: { tabId: Id }): React.JSX.Element {
 
 /** Text ▾ · Beautify · ☐ Clear on send, in the request toolbar row. */
 export function ComposerToolbar({ tabId }: { tabId: Id }): React.JSX.Element {
+  const t = useT()
   const composer = useWsSessions((s) => s.composers[tabId] ?? EMPTY_COMPOSER)
   const setComposer = useWsSessions((s) => s.setComposer)
   return (
     <div className="hc-ws-toolbar">
       <select
         className="input"
-        aria-label="Message format"
+        aria-label={t('Message format')}
         value={composer.format}
         onChange={(e) => setComposer(tabId, { format: e.target.value as 'text' | 'json' })}
       >
-        <option value="text">Text</option>
-        <option value="json">JSON</option>
+        <option value="text">{t('Text')}</option>
+        <option value="json">{t('JSON')}</option>
       </select>
       <button
         type="button"
@@ -83,16 +83,14 @@ export function ComposerToolbar({ tabId }: { tabId: Id }): React.JSX.Element {
         disabled={prettyJson(composer.text) === null}
         onClick={() => beautifyWs(tabId)}
       >
-        Beautify
-      </button>
+        {t('Beautify')}</button>
       <label className="hc-ws-check">
         <input
           type="checkbox"
           checked={composer.clearOnSend}
           onChange={(e) => setComposer(tabId, { clearOnSend: e.target.checked })}
         />{' '}
-        Clear on send
-      </label>
+        {t('Clear on send')}</label>
     </div>
   )
 }

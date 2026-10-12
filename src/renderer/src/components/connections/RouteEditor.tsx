@@ -9,8 +9,10 @@ import { withVaultUnlock } from '../../lib/withVaultUnlock'
 import { classifyConnectionError, errorText } from '../../lib/connectionError'
 import { openSettings } from '../../store/nav'
 import type { Hop } from '../../types'
+import { useT } from '../../i18n'
 
 export function RouteEditor(): React.JSX.Element {
+  const t = useT()
   const setModal = useApp((s) => s.setModal)
   const serverId = useApp((s) => s.routeEditorServerId)
   const server = useApp((s) => s.servers.find((sv) => sv.id === serverId))
@@ -72,7 +74,7 @@ export function RouteEditor(): React.JSX.Element {
 
   return (
     <Modal
-      title="Connection Route"
+      title={t('Connection Route')}
       subtitle={server ? `Jump path to ${server.name}` : 'Jump path'}
       onClose={() => setModal(null)}
       size="lg"
@@ -83,8 +85,7 @@ export function RouteEditor(): React.JSX.Element {
           </button>
           <span className="spacer" />
           <button className="btn" onClick={() => setModal(null)}>
-            Cancel
-          </button>
+            {t('Cancel')}</button>
           <button
             className="btn primary"
             disabled={!serverId}
@@ -95,8 +96,7 @@ export function RouteEditor(): React.JSX.Element {
               setModal(null)
             }}
           >
-            Save route
-          </button>
+            {t('Save route')}</button>
         </>
       }
     >
@@ -123,8 +123,7 @@ export function RouteEditor(): React.JSX.Element {
               this path will connect again. */}
           {classifyConnectionError(result.detail) === 'host-key' && (
             <button className="btn sm" onClick={() => openSettings('security')}>
-              Review saved keys
-            </button>
+              {t('Review saved keys')}</button>
           )}
         </div>
       )}
@@ -135,8 +134,8 @@ export function RouteEditor(): React.JSX.Element {
             <Monitor size={16} />
           </span>
           <div className="r-body">
-            <div className="r-name">Local machine</div>
-            <div className="r-host">this device</div>
+            <div className="r-name">{t('Local machine')}</div>
+            <div className="r-host">{t('this device')}</div>
           </div>
           <CheckCircle2 size={16} style={{ color: 'var(--ok)' }} />
         </div>

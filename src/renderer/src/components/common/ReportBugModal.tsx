@@ -5,6 +5,7 @@ import { issueUrl } from '../../lib/reportBug'
 import { useApp } from '../../store/app'
 import { toast } from '../../store/toast'
 import type { DebugBundle } from '../../../../shared/debug'
+import { useT } from '../../i18n'
 
 /**
  * The dialog the bug button opens.
@@ -55,6 +56,7 @@ import type { DebugBundle } from '../../../../shared/debug'
  * logs already.
  */
 export function ReportBugModal(): React.JSX.Element {
+  const t = useT()
   const close = useApp((s) => s.setModal)
   const settings = useApp((s) => s.settings)
   const setSettings = useApp((s) => s.setSettings)
@@ -147,7 +149,7 @@ export function ReportBugModal(): React.JSX.Element {
 
   return (
     <Modal
-      title="Report a bug"
+      title={t('Report a bug')}
       subtitle="Nothing leaves this computer until you save the file and attach it yourself."
       onClose={() => close(null)}
       size="lg"
@@ -176,21 +178,14 @@ export function ReportBugModal(): React.JSX.Element {
         recording ? 'Reproduce it — recording was on' : 'Record what the app does',
         recording ? (
           <>
-            The recording was running, and opening this dialog stopped it. Everything the app did
-            between starting it and now is in the report below.
-          </>
+            {t('The recording was running, and opening this dialog stopped it. Everything the app did between starting it and now is in the report below.')}</>
         ) : (
           <>
-            A report without a recording says what this install <em>is</em> — versions, counts,
-            which features are on — but nothing about what it did. For anything that fails,
-            misbehaves or hangs, press <strong>Start recording</strong>, make the bug happen
-            again, then press the bug button again. Or send what is below as it stands.
-          </>
+            {t('A report without a recording says what this install')}{' '}<em>{t('is')}</em> {t('— versions, counts, which features are on — but nothing about what it did. For anything that fails, misbehaves or hangs, press')}{' '}<strong>{t('Start recording')}</strong>{t(', make the bug happen again, then press the bug button again. Or send what is below as it stands.')}</>
         ),
         recording ? undefined : (
           <button className="btn sm" onClick={startRecording}>
-            Start recording
-          </button>
+            {t('Start recording')}</button>
         )
       )}
 
@@ -198,13 +193,7 @@ export function ReportBugModal(): React.JSX.Element {
         2,
         'Read it',
         <>
-          The trace names the internal operations that ran and the errors they raised. Errors
-          routinely carry <strong>hostnames, usernames, file paths and command text</strong> from
-          your machine and your servers. Passwords, keys and tokens are filtered out before
-          anything is written; a hostname cannot be, because no rule tells one from an ordinary
-          word. Read it, and delete any line you would rather not publish once you have attached
-          it.
-        </>
+          {t('The trace names the internal operations that ran and the errors they raised. Errors routinely carry')}{' '}<strong>{t('hostnames, usernames, file paths and command text')}</strong> {t('from your machine and your servers. Passwords, keys and tokens are filtered out before anything is written; a hostname cannot be, because no rule tells one from an ordinary word. Read it, and delete any line you would rather not publish once you have attached it.')}</>
       )}
 
       <pre className="paste-preview selectable">
@@ -217,16 +206,10 @@ export function ReportBugModal(): React.JSX.Element {
         'Save it and attach it',
         savedPath === null ? (
           <>
-            <strong>Save report…</strong> writes one text file and opens the issue form with your
-            version and operating system already filled in. Drag the file into the issue — an
-            attachment stays inert, while pasted text is rendered as Markdown and read by
-            automation.
-          </>
+            <strong>{t('Save report…')}</strong> {t('writes one text file and opens the issue form with your version and operating system already filled in. Drag the file into the issue — an attachment stays inert, while pasted text is rendered as Markdown and read by automation.')}</>
         ) : (
           <>
-            Saved to <code>{savedPath}</code>. The issue form is open in your browser — drag that
-            file into it.
-          </>
+            {t('Saved to')}{' '}<code>{savedPath}</code>{t('. The issue form is open in your browser — drag that file into it.')}</>
         )
       )}
     </Modal>

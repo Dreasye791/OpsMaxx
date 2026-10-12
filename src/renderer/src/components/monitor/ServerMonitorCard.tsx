@@ -6,6 +6,7 @@ import type { Server } from '../../types'
 // Shared with the fleet health panel above, so a host listed there as low on
 // disk is exactly a host whose bar here is red.
 import { level } from './hostHealth'
+import { useT } from '../../i18n'
 
 export function ServerMonitorCard({
   server,
@@ -14,6 +15,7 @@ export function ServerMonitorCard({
   server: Server
   onOpen: () => void
 }): React.JSX.Element {
+  const t = useT()
   // No third argument on purpose. This card is rendered once per server in
   // the fleet grid, so lifting the prompt here would let one sweep raise a
   // dialog per host. Unreadable gauges plus the refusal text is the right
@@ -35,19 +37,17 @@ export function ServerMonitorCard({
 
       {off ? (
         <div className="faint" style={{ padding: '18px 0', textAlign: 'center' }}>
-          Offline
-        </div>
+          {t('Offline')}</div>
       ) : (
         <>
           <div className="row" style={{ gap: 16 }}>
             <div className="grow col" style={{ gap: 4 }}>
               <div className="row muted" style={{ justifyContent: 'space-between' }}>
                 <span>
-                  <Cpu size={11} /> CPU
-                </span>
+                  <Cpu size={11} /> {t('CPU')}</span>
                 <b style={{ color: 'var(--text)' }}>
                   {m.cpu.toFixed(0)}%
-                  {m.host ? <span className="faint"> · {m.host.cores} vCPU</span> : null}
+                  {m.host ? <span className="faint"> · {m.host.cores} {t('vCPU')}</span> : null}
                 </b>
               </div>
               <div className={clsx('bar', level(m.cpu))}>
@@ -57,8 +57,7 @@ export function ServerMonitorCard({
             <div className="grow col" style={{ gap: 4 }}>
               <div className="row muted" style={{ justifyContent: 'space-between' }}>
                 <span>
-                  <MemoryStick size={11} /> RAM
-                </span>
+                  <MemoryStick size={11} /> {t('RAM')}</span>
                 <b style={{ color: 'var(--text)' }}>
                   {m.host ? `${bytes(m.host.memUsed)} / ${bytes(m.host.memTotal)}` : `${m.ram.toFixed(0)}%`}
                 </b>
@@ -74,8 +73,7 @@ export function ServerMonitorCard({
           {m.host && (
             <div className="row muted" style={{ justifyContent: 'space-between' }}>
               <span>
-                <HardDrive size={11} /> Disk
-              </span>
+                <HardDrive size={11} /> {t('Disk')}</span>
               <b style={{ color: 'var(--text)' }}>
                 {bytes(m.host.diskUsed)} / {bytes(m.host.diskTotal)}
                 <span className="faint"> ({m.disk.toFixed(0)}%)</span>

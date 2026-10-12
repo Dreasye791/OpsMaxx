@@ -7,6 +7,7 @@ import { useApp } from '../../../store/app'
 import { Field, Modal } from '../../common/Modal'
 import { MoveToVaultDialog } from './MoveToVaultDialog'
 import '../nav.css'
+import { useT } from '../../../i18n'
 
 const NAME = /^[A-Za-z_][A-Za-z0-9_.-]{0,63}$/
 
@@ -70,6 +71,7 @@ export function SetVariableDialog({
   collectionId?: Id
   onClose: () => void
 }): React.JSX.Element {
+  const t = useT()
   const ws = useApp((s) => s.activeWorkspaceId)
   const envId = useApi((s) => (Object.hasOwn(s.workspace.activeEnvironment, ws) ? s.workspace.activeEnvironment[ws] : null))
   const env = useApi((s) => s.workspace.environments.find((e) => e.id === envId))
@@ -91,7 +93,7 @@ export function SetVariableDialog({
   ]
   return (
     <Modal
-      title="Set as variable"
+      title={t('Set as variable')}
       onClose={onClose}
       confirm={{
         label: 'Set variable',
@@ -101,24 +103,21 @@ export function SetVariableDialog({
       footer={
         secret ? (
           <button type="button" className="btn" disabled={!name || !!nameError} onClick={() => setVaulting(true)}>
-            Store in vault…
-          </button>
+            {t('Store in vault…')}</button>
         ) : undefined
       }
     >
-      <Field label="Name" error={nameError}>
+      <Field label={t('Name')} error={nameError}>
         <input className="input hc-mono" value={name} autoFocus onChange={(e) => setName(e.target.value)} />
       </Field>
-      <Field label="Value">
+      <Field label={t('Value')}>
         <input className="input hc-mono" value={value} onChange={(e) => setValue(e.target.value)} />
       </Field>
       {secret && (
         <p className="hc-warn-line" role="note">
-          This looks like a credential. As a variable it is saved and synced as plain text; Store in vault keeps only a
-          reference to it.
-        </p>
+          {t('This looks like a credential. As a variable it is saved and synced as plain text; Store in vault keeps only a reference to it.')}</p>
       )}
-      <div role="radiogroup" aria-label="Scope" className="hc-dest-list">
+      <div role="radiogroup" aria-label={t('Scope')} className="hc-dest-list">
         {scopes.map((s) => (
           <label key={s.id} className="hc-dest">
             <input

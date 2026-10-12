@@ -19,6 +19,7 @@ import { ResponseStatus, useElapsed, useResponse } from './ResponseStatus'
 import { CookiesView, HeadersView, TimelineView } from './ResponseTables'
 import { decodeText, headerValue, jsonNodeAt, suggestedFileName } from './bodyWindow'
 import './response.css'
+import { useT } from '../../../i18n'
 
 /** Reads `useHttp((s) => s.responses[tabId])` itself. */
 export interface ResponsePaneProps {
@@ -108,15 +109,15 @@ export function ResponsePane({ tabId }: ResponsePaneProps): React.JSX.Element {
 }
 
 function StateView({ tabId, r }: { tabId: Id; r: Exclude<ResponseState, { status: 'done' }> }): React.JSX.Element | null {
+  const t = useT()
   const elapsed = useElapsed(r.status === 'sending' ? r.startedAt : null)
   const tab = useHttp((s) => tabById(s, tabId))
 
-  if (r.status === 'idle') return <p className="hc-state-hint">Send the request to see the response · {mod()}↵</p>
+  if (r.status === 'idle') return <p className="hc-state-hint">{t('Send the request to see the response ·')}{' '}{mod()}↵</p>
   if (r.status === 'sending') {
     return (
       <p className="hc-state-hint">
-        <Loader2 size={16} className="spin" aria-hidden /> Waiting for response · {elapsed} · Esc cancels
-      </p>
+        <Loader2 size={16} className="spin" aria-hidden /> {t('Waiting for response ·')}{' '}{elapsed} {t('· Esc cancels')}</p>
     )
   }
   if (r.errorClass === 'prod-declined') return null
@@ -156,6 +157,7 @@ function StateView({ tabId, r }: { tabId: Id; r: Exclude<ResponseState, { status
 }
 
 function DoneView({ tabId, response, sent }: { tabId: Id; response: HttpResponseOk; sent: SentView }): React.JSX.Element {
+  const t = useT()
   const [tab, setTab] = useState<ResponseTab>('body')
   const [menu, setMenu] = useState<{ x: number; y: number } | null>(null)
   const [narrow, setNarrow] = useState(false)
@@ -253,8 +255,8 @@ function DoneView({ tabId, response, sent }: { tabId: Id; response: HttpResponse
           <>
             <button
               className="btn ghost sm"
-              aria-label="Wrap lines"
-              title="Wrap lines"
+              aria-label={t('Wrap lines')}
+              title={t('Wrap lines')}
               aria-pressed={wrap}
               onClick={() => setPrefs({ wrap: !wrap })}
             >
@@ -262,16 +264,16 @@ function DoneView({ tabId, response, sent }: { tabId: Id; response: HttpResponse
             </button>
             <button
               className="btn ghost sm"
-              aria-label="Copy response"
-              title="Copy response"
+              aria-label={t('Copy response')}
+              title={t('Copy response')}
               onClick={() => copy(fullText, 'Response')}
             >
               <Copy size={14} />
             </button>
             <button
               className="btn ghost sm"
-              aria-label="Save response to file"
-              title="Save response to file"
+              aria-label={t('Save response to file')}
+              title={t('Save response to file')}
               onClick={() => void save()}
             >
               <Download size={14} />
@@ -280,8 +282,8 @@ function DoneView({ tabId, response, sent }: { tabId: Id; response: HttpResponse
         )}
         <button
           className="btn ghost sm"
-          aria-label="More body actions"
-          title="More body actions"
+          aria-label={t('More body actions')}
+          title={t('More body actions')}
           onClick={(e) => {
             const rect = e.currentTarget.getBoundingClientRect()
             setMenu({ x: rect.left, y: rect.bottom })
@@ -309,7 +311,7 @@ function DoneView({ tabId, response, sent }: { tabId: Id; response: HttpResponse
       />
       {gqlErrors.length > 0 && tab === 'body' && (
         <div className="hc-strip hc-danger" role="note">
-          {gqlErrors.length} error{gqlErrors.length === 1 ? '' : 's'} · first: {gqlErrors[0]}
+          {gqlErrors.length} {t('error')}{gqlErrors.length === 1 ? '' : 's'} {t('· first:')}{' '}{gqlErrors[0]}
         </div>
       )}
       <div

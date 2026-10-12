@@ -5,6 +5,7 @@ import { vaultReference } from '../../../../../shared/apiSecrets'
 import { VAULT_MIN_PASSWORD } from '../../../../../shared/vault'
 import { Field, Modal } from '../../common/Modal'
 import '../nav.css'
+import { useT } from '../../../i18n'
 
 /**
  * Move a typed credential into the vault in one step (UX-M14): the same
@@ -23,6 +24,7 @@ export function MoveToVaultDialog({
   onMoved: (reference: string) => void
   onClose: () => void
 }): React.JSX.Element {
+  const t = useT()
   const exists = useVault((s) => s.exists)
   const unlocked = useVault((s) => s.unlocked)
   const busy = useVault((s) => s.busy)
@@ -65,7 +67,7 @@ export function MoveToVaultDialog({
 
   return (
     <Modal
-      title="Move to vault"
+      title={t('Move to vault')}
       subtitle="The value is stored in the vault and the field keeps only a reference to it."
       onClose={onClose}
       confirm={{
@@ -75,22 +77,22 @@ export function MoveToVaultDialog({
       }}
       footerNote={error ?? vaultError ?? undefined}
     >
-      <Field label="Entry name" error={name.trim() ? null : 'Name the entry.'}>
+      <Field label={t('Entry name')} error={name.trim() ? null : 'Name the entry.'}>
         <input className="input" value={name} autoFocus onChange={(e) => setName(e.target.value)} />
       </Field>
       {creating && (
         <>
-          <p>There is no vault on this machine yet. Choose its master password to create one.</p>
-          <Field label="Master password" error={pwError}>
+          <p>{t('There is no vault on this machine yet. Choose its master password to create one.')}</p>
+          <Field label={t('Master password')} error={pwError}>
             <input className="input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
           </Field>
-          <Field label="Master password again">
+          <Field label={t('Master password again')}>
             <input className="input" type="password" value={again} onChange={(e) => setAgain(e.target.value)} />
           </Field>
         </>
       )}
       {locked && (
-        <Field label="Vault password" hint="The vault is closed; this opens it.">
+        <Field label={t('Vault password')} hint={t('The vault is closed; this opens it.')}>
           <input className="input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </Field>
       )}

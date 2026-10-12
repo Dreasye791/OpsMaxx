@@ -7,6 +7,7 @@ import {
   type DockerReclaimPlan,
   type DockerReclaimResult
 } from '../../../../shared/docker'
+import { useT } from '../../i18n'
 
 // The dialog that stands between a list of checkboxes and a `docker rm`.
 //
@@ -66,22 +67,20 @@ export function ReclaimDialog({
   onConfirm: () => void
   onCancel: () => void
 }): React.JSX.Element {
+  const t = useT()
   const typedPhrase = plan.confirmation.kind === 'type-to-confirm' ? plan.confirmation.phrase : null
   const canConfirm = typedPhrase === null || phrase.trim() === typedPhrase
 
   if (diff !== null) {
     return (
       <div className="bc-confirm">
-        <div className="s-title">This server is not what the list said it was.</div>
+        <div className="s-title">{t('This server is not what the list said it was.')}</div>
         <div className="s-desc danger">
-          <TriangleAlert size={12} /> Nothing was removed. The disk was read again just before running, and
-          it disagrees with the list you approved — so the ids that would have been sent no longer describe
-          what you were looking at.
-        </div>
+          <TriangleAlert size={12} /> {t('Nothing was removed. The disk was read again just before running, and it disagrees with the list you approved — so the ids that would have been sent no longer describe what you were looking at.')}</div>
         {diff.ineligible.length > 0 && (
           <>
             <div className="row muted" style={{ fontSize: 11, marginTop: 8 }}>
-              <span className="grow">Still there, no longer removable</span>
+              <span className="grow">{t('Still there, no longer removable')}</span>
             </div>
             {diff.ineligible.map((c) => (
               <div key={`${c.item.kind} ${c.item.id}`} className="cron-row">
@@ -95,13 +94,13 @@ export function ReclaimDialog({
         {diff.gone.length > 0 && (
           <>
             <div className="row muted" style={{ fontSize: 11, marginTop: 8 }}>
-              <span className="grow">Already gone</span>
+              <span className="grow">{t('Already gone')}</span>
             </div>
             {diff.gone.map((i) => (
               <div key={`${i.kind} ${i.id}`} className="cron-row">
                 <span className="chip">{i.kind}</span>
                 <span className="mono cron-when">{i.label}</span>
-                <span className="faint cron-desc">something else removed it</span>
+                <span className="faint cron-desc">{t('something else removed it')}</span>
               </div>
             ))}
           </>
@@ -109,7 +108,7 @@ export function ReclaimDialog({
         {diff.changed.length > 0 && (
           <>
             <div className="row muted" style={{ fontSize: 11, marginTop: 8 }}>
-              <span className="grow">Not the figure you were shown</span>
+              <span className="grow">{t('Not the figure you were shown')}</span>
             </div>
             {diff.changed.map((c) => (
               <div key={`${c.item.kind} ${c.item.id}`} className="cron-row">
@@ -121,13 +120,10 @@ export function ReclaimDialog({
           </>
         )}
         <div className="faint" style={{ fontSize: 11, marginTop: 6 }}>
-          Close this and itemise again. The selection is not carried over on purpose: it was made against a
-          listing that has since been wrong about at least one thing.
-        </div>
+          {t('Close this and itemise again. The selection is not carried over on purpose: it was made against a listing that has since been wrong about at least one thing.')}</div>
         <div className="row" style={{ gap: 8, marginTop: 8 }}>
           <button className="btn" onClick={onCancel}>
-            Close
-          </button>
+            {t('Close')}</button>
         </div>
       </div>
     )
@@ -136,7 +132,7 @@ export function ReclaimDialog({
   return (
     <div className="bc-confirm">
       <div className="s-title">
-        Remove {plan.items.length === 1 ? 'this' : `these ${plan.items.length}`}
+        {t('Remove')}{' '}{plan.items.length === 1 ? 'this' : `these ${plan.items.length}`}
         {plan.items.length === 1 ? ' object' : ' objects'}?
       </div>
       {plan.items.map(itemRow)}
@@ -151,8 +147,7 @@ export function ReclaimDialog({
       {plan.caveats.length > 0 && (
         <div className="s-desc" style={{ marginTop: 4 }}>
           <div className="faint" style={{ fontSize: 11 }}>
-            Worth knowing before, rather than after:
-          </div>
+            {t('Worth knowing before, rather than after:')}</div>
           {plan.caveats.map((c) => (
             <div key={c} className="faint" style={{ fontSize: 11 }}>
               · {c}
@@ -176,11 +171,9 @@ export function ReclaimDialog({
           {checking ? 'Re-reading the disk…' : running ? 'Removing…' : 'Remove'}
         </button>
         <button className="btn ghost" disabled={running} onClick={onCancel}>
-          Cancel
-        </button>
+          {t('Cancel')}</button>
         <span className="faint" style={{ fontSize: 11 }}>
-          The disk is read once more first, and nothing runs if it disagrees with this list.
-        </span>
+          {t('The disk is read once more first, and nothing runs if it disagrees with this list.')}</span>
       </div>
     </div>
   )
@@ -194,6 +187,7 @@ export function ReclaimDialog({
  * one row rather than as a broken panel.
  */
 export function ReclaimOutcome({ result }: { result: DockerReclaimResult }): React.JSX.Element {
+  const t = useT()
   if (!result.ok) {
     return (
       <div className="s-desc danger">
@@ -203,9 +197,7 @@ export function ReclaimOutcome({ result }: { result: DockerReclaimResult }): Rea
         </div>
         {result.reason === 'permission-denied' && (
           <div className="faint" style={{ marginTop: 6 }}>
-            The socket refused this account, and nothing was retried as root on its own. A removal running
-            as root is a decision to make deliberately, not one to discover afterwards.
-          </div>
+            {t('The socket refused this account, and nothing was retried as root on its own. A removal running as root is a decision to make deliberately, not one to discover afterwards.')}</div>
         )}
       </div>
     )
@@ -215,7 +207,7 @@ export function ReclaimOutcome({ result }: { result: DockerReclaimResult }): Rea
   return (
     <div className={clsx('s-desc', stayed.length > 0 && 'danger')}>
       <div>
-        Removed {gone.length} of {result.outcomes.length}
+        {t('Removed')}{' '}{gone.length} {t('of')}{' '}{result.outcomes.length}
         {result.usedSudo ? ', as root' : ''}.
       </div>
       {stayed.map((o) => (
@@ -233,9 +225,7 @@ export function ReclaimOutcome({ result }: { result: DockerReclaimResult }): Rea
           shared. The honest number comes from re-reading `docker system df`. */}
       {gone.length > 0 && (
         <div className="faint" style={{ fontSize: 11 }}>
-          Read the disk again for the new totals — the freed bytes are not the sum of the rows above,
-          because images share layers.
-        </div>
+          {t('Read the disk again for the new totals — the freed bytes are not the sum of the rows above, because images share layers.')}</div>
       )}
     </div>
   )

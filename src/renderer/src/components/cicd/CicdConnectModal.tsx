@@ -5,6 +5,7 @@ import { clsx } from '../../lib/format'
 import { maskToken } from '../../../../shared/tokenDisplay'
 import { withoutVaultMarker } from '../../lib/withVaultUnlock'
 import type { CicdBridge, CicdConnection, CicdProvider, CicdRoute } from '../../../../shared/cicd'
+import { useT } from '../../i18n'
 
 /**
  * Connect a CI account. ONE modal, progressively revealed.
@@ -182,6 +183,7 @@ export function CicdConnectModal({
   existingNames?: readonly string[]
   bridge?: CicdBridge
 }): React.JSX.Element {
+  const t = useT()
   const servers = useWorkspaceServers()
   const vpns = useWorkspaceVpns()
   const workspaceId = useApp((s) => s.activeWorkspaceId)
@@ -356,7 +358,7 @@ export function CicdConnectModal({
       </div>
       <div className="field-hint cicd-seg-hint">{def.urlHint}</div>
 
-      <Field label="Name" required>
+      <Field label={t('Name')} required>
         <input
           className="input"
           value={name}
@@ -366,7 +368,7 @@ export function CicdConnectModal({
         />
       </Field>
 
-      <Field label="URL" required hint="As you would type it into a browser.">
+      <Field label={t('URL')} required hint={t('As you would type it into a browser.')}>
         <input
           className="input"
           value={baseUrl}
@@ -379,13 +381,13 @@ export function CicdConnectModal({
       </Field>
 
       {def.needsUsername && (
-        <Field label="Username" required hint="The Jenkins user the API token belongs to.">
+        <Field label={t('Username')} required hint={t('The Jenkins user the API token belongs to.')}>
           <input className="input" value={username} onChange={(e) => setUsername(e.target.value)} />
         </Field>
       )}
 
       <Field
-        label="Token"
+        label={t('Token')}
         required
         hint={
           token.trim()
@@ -414,7 +416,7 @@ export function CicdConnectModal({
        * tunnel the user opened themselves, which is just 127.0.0.1.
        */}
       <Field
-        label="Send from"
+        label={t('Send from')}
         hint={
           routeKind === 'server'
             ? 'Hostnames resolve on that server, so a private DNS name or its own loopback works.'
@@ -428,16 +430,16 @@ export function CicdConnectModal({
           value={routeKind}
           onChange={(e) => setRouteKind(e.target.value as CicdRoute['kind'])}
         >
-          <option value="direct">This machine</option>
-          <option value="server">A saved server</option>
-          <option value="vpn">A VPN profile</option>
+          <option value="direct">{t('This machine')}</option>
+          <option value="server">{t('A saved server')}</option>
+          <option value="vpn">{t('A VPN profile')}</option>
         </select>
       </Field>
 
       {routeKind === 'server' && (
-        <Field label="Server" required>
+        <Field label={t('Server')} required>
           <select className="input" value={serverId} onChange={(e) => setServerId(e.target.value)}>
-            <option value="">Choose a server…</option>
+            <option value="">{t('Choose a server…')}</option>
             {servers.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.name}
@@ -448,13 +450,13 @@ export function CicdConnectModal({
       )}
 
       {routeKind === 'vpn' && (
-        <Field label="VPN profile" required>
+        <Field label={t('VPN profile')} required>
           <select
             className="input"
             value={vpnProfileId}
             onChange={(e) => setVpnProfileId(e.target.value)}
           >
-            <option value="">Choose a profile…</option>
+            <option value="">{t('Choose a profile…')}</option>
             {vpns.map((v) => (
               <option key={v.id} value={v.id}>
                 {v.name}
@@ -470,14 +472,11 @@ export function CicdConnectModal({
           checked={insecureTls}
           onChange={(e) => setInsecureTls(e.target.checked)}
         />
-        <span className="grow">Skip certificate checking</span>
+        <span className="grow">{t('Skip certificate checking')}</span>
       </label>
       {insecureTls && (
         <div className="panel-note is-alarm">
-          Every request to this account will accept any certificate, including one an
-          attacker on the path presents. An internal certificate authority is the fix;
-          this is the fallback.
-        </div>
+          {t('Every request to this account will accept any certificate, including one an attacker on the path presents. An internal certificate authority is the fix; this is the fallback.')}</div>
       )}
     </Modal>
   )
@@ -491,10 +490,11 @@ export function CicdConnectModal({
  * token carries the whole account.
  */
 function ScopeHelp({ def, baseUrl }: { def: ProviderDef; baseUrl: string }): React.JSX.Element {
+  const t = useT()
   const href = def.tokenUrl(baseUrl)
   return (
     <div className="cicd-scopes">
-      <div className="ui-label">What the token needs</div>
+      <div className="ui-label">{t('What the token needs')}</div>
       {def.scopes === null ? (
         <div className="panel-note is-watch">{def.linkNote}</div>
       ) : (
@@ -531,8 +531,9 @@ function ScopeHelp({ def, baseUrl }: { def: ProviderDef; baseUrl: string }): Rea
  * is a form arguing for more access than the user chose to give.
  */
 function VerifyNote({ state, def }: { state: VerifyState; def: ProviderDef }): React.JSX.Element | null {
+  const t = useT()
   if (state.kind === 'idle') return <span className="field-hint">{def.verifyNote}</span>
-  if (state.kind === 'dialling') return <span className="field-hint">Dialling {def.label}…</span>
+  if (state.kind === 'dialling') return <span className="field-hint">{t('Dialling')}{' '}{def.label}…</span>
   if (state.kind === 'failed') return <span className="field-hint danger">{state.error}</span>
 
   const scopes = state.scopes
@@ -545,7 +546,7 @@ function VerifyNote({ state, def }: { state: VerifyState; def: ProviderDef }): R
   if (!scopes || scopes.length === 0) {
     return (
       <span className="field-hint state-ok">
-        Reached {def.label} as {state.identity}.
+        {t('Reached')}{' '}{def.label} {t('as')}{' '}{state.identity}.
         {def.scopes === null
           ? ' Jenkins reports no scopes, so what this token can do is whatever that account can do.'
           : ' The provider reported no scope list.'}
@@ -560,15 +561,15 @@ function VerifyNote({ state, def }: { state: VerifyState; def: ProviderDef }): R
   if (!canRead) {
     return (
       <span className="field-hint state-watch">
-        Reached {def.label} as {state.identity}, but the token is missing{' '}
-        <span className="mono">{def.readScope}</span> and cannot read runs.{expiry}
+        {t('Reached')}{' '}{def.label} {t('as')}{' '}{state.identity}{t(', but the token is missing')}{' '}
+        <span className="mono">{def.readScope}</span> {t('and cannot read runs.')}{expiry}
       </span>
     )
   }
 
   return (
     <span className={clsx('field-hint', canTrigger ? 'state-ok' : 'state-watch')}>
-      Reached {def.label} as {state.identity}.{' '}
+      {t('Reached')}{' '}{def.label} {t('as')}{' '}{state.identity}.{' '}
       {canTrigger
         ? 'This token can read runs and start them.'
         : `Read-only: without ${def.writeScope} this connection can watch pipelines but not start one. That is a fine way to use it.`}

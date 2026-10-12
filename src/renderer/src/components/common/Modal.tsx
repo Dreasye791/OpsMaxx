@@ -2,6 +2,7 @@ import { ReactNode, RefObject, useEffect, useLayoutEffect, useRef, useState } fr
 import { X } from 'lucide-react'
 import { approvalShowing, inLayerAbove, useClickOutside } from '../../hooks/useClickOutside'
 import { clsx } from '../../lib/format'
+import { useT } from '../../i18n'
 
 /**
  * The one dialog primitive.
@@ -249,6 +250,7 @@ export function Modal({
   priority = 0,
   dismissible = true
 }: ModalProps): React.JSX.Element {
+  const t = useT()
   const ref = useRef<HTMLDivElement>(null)
   const { layer, top } = useModalLayer(priority)
   // Only the dialog in front. Both of these listen on `document`, so without
@@ -265,7 +267,7 @@ export function Modal({
             <h2>{title}</h2>
             {subtitle && <div className="sub">{subtitle}</div>}
           </div>
-          <button className="icon-btn close" onClick={onClose} aria-label="Close">
+          <button className="icon-btn close" onClick={onClose} aria-label={t('Close')}>
             <X size={16} />
           </button>
         </div>
@@ -323,11 +325,12 @@ interface FieldProps {
  * colour. Here it is one prop.
  */
 export function Field({ label, required, error, hint, children }: FieldProps): React.JSX.Element {
+  const t = useT()
   return (
     <label className="field">
       <span className="field-label">
         {label}
-        {required && <span className="field-req">Required</span>}
+        {required && <span className="field-req">{t('Required')}</span>}
       </span>
       <span className={clsx('field-control', error && 'invalid')}>{children}</span>
       {error ? (

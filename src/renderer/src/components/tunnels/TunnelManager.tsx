@@ -14,6 +14,7 @@ import { classifyConnectionError, errorText } from '../../lib/connectionError'
 import { openSettings, useNav } from '../../store/nav'
 import type { Server, Tunnel, TunnelKind } from '../../types'
 import { bridgeHas } from '../../lib/bridge'
+import { useT } from '../../i18n'
 
 /** Said the same way about both endpoints. `parseEndpoint` accepts a bare
  *  port, a host:port and an interface:host:port, so naming only one of those
@@ -110,6 +111,7 @@ function tunnelFailure(
 }
 
 export function TunnelManager(): React.JSX.Element {
+  const t = useT()
   const tunnels = useWorkspaceTunnels()
   const servers = useWorkspaceServers()
   const deleteTunnel = useApp((s) => s.deleteTunnel)
@@ -236,13 +238,12 @@ export function TunnelManager(): React.JSX.Element {
   const header = (
     <div className="content-header">
       <div>
-        <h1>SSH Tunnels</h1>
+        <h1>{t('SSH Tunnels')}</h1>
         <div className="sub">Local &amp; remote port forwarding and SOCKS5 proxies</div>
       </div>
       <div className="spacer" />
       <button className="btn primary" onClick={() => setCreating(true)}>
-        <Plus size={15} /> Create tunnel
-      </button>
+        <Plus size={15} /> {t('Create tunnel')}</button>
     </div>
   )
 
@@ -251,12 +252,11 @@ export function TunnelManager(): React.JSX.Element {
       <div className="panel-body">
         <EmptyState
           icon={<Network size={26} />}
-          title="No tunnels"
+          title={t('No tunnels')}
           message="Create a secure SSH tunnel to forward a local or remote port through a server."
           action={
             <button className="btn primary" onClick={() => setCreating(true)}>
-              <Plus size={15} /> Create tunnel
-            </button>
+              <Plus size={15} /> {t('Create tunnel')}</button>
           }
         />
         {(creating || editing) && (
@@ -355,6 +355,7 @@ export function TunnelManager(): React.JSX.Element {
 }
 
 function TunnelForm({ tunnel, onClose }: { tunnel?: Tunnel | null; onClose: () => void }): React.JSX.Element {
+  const t = useT()
   const servers = useWorkspaceServers()
   const addTunnel = useApp((s) => s.addTunnel)
 
@@ -404,13 +405,13 @@ function TunnelForm({ tunnel, onClose }: { tunnel?: Tunnel | null; onClose: () =
       confirm={{ label: tunnel ? 'Save changes' : 'Create tunnel', disabled: !valid, onClick: save }}
     >
       <Field
-        label="Tunnel name"
+        label={t('Tunnel name')}
         required
         error={problem('name', name.trim() ? null : 'Give the tunnel a name.')}
       >
         <input
           className="input"
-          placeholder="web-db"
+          placeholder={t('web-db')}
           autoFocus
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -419,7 +420,7 @@ function TunnelForm({ tunnel, onClose }: { tunnel?: Tunnel | null; onClose: () =
       </Field>
 
       <div className="field">
-        <span className="field-label">Kind</span>
+        <span className="field-label">{t('Kind')}</span>
         <div className="row" style={{ gap: 6 }}>
           {(['local', 'remote', 'socks'] as TunnelKind[]).map((k) => (
             <button
@@ -445,7 +446,7 @@ function TunnelForm({ tunnel, onClose }: { tunnel?: Tunnel | null; onClose: () =
       </div>
 
       <Field
-        label="SSH server"
+        label={t('SSH server')}
         required
         error={
           servers.length === 0
@@ -459,7 +460,7 @@ function TunnelForm({ tunnel, onClose }: { tunnel?: Tunnel | null; onClose: () =
           onChange={(e) => setServerId(e.target.value)}
           onBlur={touch('serverId')}
         >
-          {servers.length === 0 && <option value="">No servers in this workspace</option>}
+          {servers.length === 0 && <option value="">{t('No servers in this workspace')}</option>}
           {servers.map((s) => (
             <option key={s.id} value={s.id}>
               {s.name} ({s.username}@{s.host})

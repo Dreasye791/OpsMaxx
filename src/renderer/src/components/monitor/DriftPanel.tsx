@@ -30,6 +30,7 @@ import {
   type DriftWatch,
   type HostDrift
 } from '../../../../shared/drift'
+import { useT } from '../../i18n'
 
 // Configuration drift — roadmap item 25, the panel.
 //
@@ -72,6 +73,7 @@ interface Entry {
 }
 
 function Rules({ watchId }: { watchId: string }): React.JSX.Element | null {
+  const t = useT()
   const watch = DRIFT_WATCHES.find((x) => x.id === watchId)
   if (!watch) return null
   // Rendered in the pipeline order, which is the order they actually run in —
@@ -80,10 +82,7 @@ function Rules({ watchId }: { watchId: string }): React.JSX.Element | null {
   const rules = DRIFT_RULE_ORDER.filter((id) => watch.rules.includes(id)).map(driftRule)
   return (
     <div className="panel-note" data-testid="drift-rules">
-      <b>{watch.path}</b> is compared after these rules are applied, in this order. Two files that
-      differ only in what these remove are reported as differing in ignored ways — never as
-      identical.
-      <ul style={{ margin: '6px 0 0', paddingLeft: 18 }}>
+      <b>{watch.path}</b> {t('is compared after these rules are applied, in this order. Two files that differ only in what these remove are reported as differing in ignored ways — never as identical.')}<ul style={{ margin: '6px 0 0', paddingLeft: 18 }}>
         {rules.map((r) => (
           <li key={r.id}>
             <b>{r.label}</b> — {r.detail}{' '}
@@ -109,12 +108,13 @@ function Row({
   pinned: boolean
   onPin: () => void
 }): React.JSX.Element {
+  const t = useT()
   return (
     <tr>
       <td>
         <button
           className={clsx('btn ghost sm', pinned && 'active')}
-          title="Compare every other server against this one"
+          title={t('Compare every other server against this one')}
           onClick={onPin}
         >
           <Pin size={11} />
@@ -128,9 +128,8 @@ function Row({
           // cause": proving which single rule is load-bearing would need both
           // files' contents, and not keeping those is the storage decision.
           <>
-            The bytes differ. After{' '}
-            {r.ignoredBy.map((id) => driftRule(id).label.toLowerCase()).join(', ')} they match.
-          </>
+            {t('The bytes differ. After')}{' '}
+            {r.ignoredBy.map((id) => driftRule(id).label.toLowerCase()).join(', ')} {t('they match.')}</>
         ) : r.verdict === 'unread' ? (
           <>{DRIFT_STATUS_HELP[r.status]}{r.detail ? ` (${r.detail})` : ''}</>
         ) : r.verdict === 'absent' ? (
@@ -160,6 +159,7 @@ const LOCAL_ID = 'local'
 const LOCAL_NAME = 'This machine'
 
 export function DriftPanel({ servers }: { servers: Server[] }): React.JSX.Element {
+  const t = useT()
   const [entries, setEntries] = useState<Record<string, Entry>>({})
   const [watchId, setWatchId] = useState<string>(DRIFT_WATCHES[0].id)
   // Item 46's operator-chosen watches, beside the catalogue rather than instead
@@ -296,13 +296,11 @@ export function DriftPanel({ servers }: { servers: Server[] }): React.JSX.Elemen
   return (
     <PanelShell
       icon={<FileDiff size={14} />}
-      title="Configuration drift"
+      title={t('Configuration drift')}
       about={
         <>
           <p>
-            Pick a watched file and see which servers still agree on it. Compared over hashes, and
-            read-only — OpsMaxx never pushes a file back.
-          </p>
+            {t('Pick a watched file and see which servers still agree on it. Compared over hashes, and read-only — OpsMaxx never pushes a file back.')}</p>
           {/* Behind the disclosure for the reason written out in PatchPanel:
               this states a limit of what the app WRITES, not a limit of what it
               read, so no number on the page becomes misleading without it. It
@@ -315,7 +313,7 @@ export function DriftPanel({ servers }: { servers: Server[] }): React.JSX.Elemen
         <>
           <select
             className="input sm"
-            aria-label="Watched file"
+            aria-label={t('Watched file')}
             value={watchId}
             onChange={(e) => setWatchId(e.target.value)}
           >
@@ -333,30 +331,30 @@ export function DriftPanel({ servers }: { servers: Server[] }): React.JSX.Elemen
               className="btn ghost sm"
               disabled={busy}
               onClick={() => void refresh()}
-              title="Re-reads every watched file now, ignoring the hourly clock. Nothing is written to any server by this."
+              title={t('Re-reads every watched file now, ignoring the hourly clock. Nothing is written to any server by this.')}
             >
               <RefreshCw size={13} className={clsx(busy && 'spin')} />
               {busy ? 'Checking…' : 'Check now'}
             </button>
-            <SweepProgress active={busy} label="Re-reading watched files" />
+            <SweepProgress active={busy} label={t('Re-reading watched files')} />
           </div>
         </>
       }
     >
       {adding && (
         <div className="list-row" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 6 }}>
-          <div className="r-title">Watch another file</div>
+          <div className="r-title">{t('Watch another file')}</div>
           <input
             className="input mono"
-            aria-label="Path"
+            aria-label={t('Path')}
             placeholder="/etc/logrotate.conf"
             value={draft.path}
             onChange={(e) => setDraft({ ...draft, path: e.target.value })}
           />
           <input
             className="input"
-            aria-label="Label"
-            placeholder="What it is, in one line"
+            aria-label={t('Label')}
+            placeholder={t('What it is, in one line')}
             value={draft.label}
             onChange={(e) => setDraft({ ...draft, label: e.target.value })}
           />
@@ -365,7 +363,7 @@ export function DriftPanel({ servers }: { servers: Server[] }): React.JSX.Elemen
               of them. */}
           {!check.ok ? (
             draft.path.trim() === '' ? (
-              <div className="s-note faint">A path under /etc.</div>
+              <div className="s-note faint">{t('A path under /etc.')}</div>
             ) : (
               <div className="s-note is-alarm">{check.detail}</div>
             )
@@ -388,8 +386,7 @@ export function DriftPanel({ servers }: { servers: Server[] }): React.JSX.Elemen
               disabled={!check.ok || !verifyDriftWatchApproval(draft.path.trim(), phrase)}
               onClick={addWatch}
             >
-              Add
-            </button>
+              {t('Add')}</button>
           </div>
         </div>
       )}
@@ -407,8 +404,7 @@ export function DriftPanel({ servers }: { servers: Server[] }): React.JSX.Elemen
                     aria-label={`Stop watching ${w.path}`}
                     onClick={() => removeWatch(w.path)}
                   >
-                    Stop watching
-                  </button>
+                    {t('Stop watching')}</button>
                 </td>
               </tr>
             ))}
@@ -421,7 +417,7 @@ export function DriftPanel({ servers }: { servers: Server[] }): React.JSX.Elemen
           subject="No configuration files have been read yet."
           busy={busy}
           onCheckNow={() => void refresh()}
-          note="The watched files are read, never written."
+          note={t('The watched files are read, never written.')}
         />
       ) : (
         <>
@@ -440,26 +436,21 @@ export function DriftPanel({ servers }: { servers: Server[] }): React.JSX.Elemen
               )}
             </span>
             <button className="btn ghost sm" onClick={() => setShowRules((v) => !v)}>
-              {showRules ? 'Hide' : 'Show'} the {watch.rules.length} rules this is compared under
-            </button>
+              {showRules ? 'Hide' : 'Show'} {t('the')}{' '}{watch.rules.length} {t('rules this is compared under')}</button>
           </div>
 
           {showRules && <Rules watchId={watch.id} />}
 
           {comparison.baselineServerId === null ? (
             <div className="panel-note is-unknown" data-testid="drift-no-baseline">
-              Nothing to compare against. {pinned
+              {t('Nothing to compare against.')}{' '}{pinned
                 ? 'The server you pinned could not be read, and another has NOT been substituted for it — a column of verdicts against a reference you did not choose would say less than nothing.'
                 : 'No server answered with a readable copy of this file.'}
             </div>
           ) : (
             comparison.baselineChosen && (
               <div className="panel-note" data-testid="drift-chosen-baseline">
-                Nobody pinned a baseline, so the largest group of matching servers was used and the
-                others are compared against it. That is a statement about the majority, not about
-                which side is correct: a server that was fixed first looks exactly like a server that
-                drifted. Pin one to compare against it instead.
-              </div>
+                {t('Nobody pinned a baseline, so the largest group of matching servers was used and the others are compared against it. That is a statement about the majority, not about which side is correct: a server that was fixed first looks exactly like a server that drifted. Pin one to compare against it instead.')}</div>
             )
           )}
 
@@ -473,9 +464,9 @@ export function DriftPanel({ servers }: { servers: Server[] }): React.JSX.Elemen
             <table className="table inv-table">
               <thead>
                 <tr>
-                  <th>Host</th>
-                  <th>Compared with the baseline</th>
-                  <th>Why</th>
+                  <th>{t('Host')}</th>
+                  <th>{t('Compared with the baseline')}</th>
+                  <th>{t('Why')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -499,12 +490,8 @@ export function DriftPanel({ servers }: { servers: Server[] }): React.JSX.Elemen
                 and one most people never ask. */}
             Comparison is over hashes — the configuration itself is never copied into OpsMaxx&rsquo;s
             store.
-            <NoteWhy summary="How the comparison works, and what is held">
-              OpsMaxx keeps two hashes and a status per file per server, so a divergence survives a
-              restart while the file does not. The first {DRIFT_PREVIEW_CHARS} characters of each
-              file are held in memory for this session only, after every redaction rule has run
-              over the whole of it.
-            </NoteWhy>
+            <NoteWhy summary={t('How the comparison works, and what is held')}>
+              {t('OpsMaxx keeps two hashes and a status per file per server, so a divergence survives a restart while the file does not. The first')}{' '}{DRIFT_PREVIEW_CHARS} {t('characters of each file are held in memory for this session only, after every redaction rule has run over the whole of it.')}</NoteWhy>
           </div>
         </>
       )}

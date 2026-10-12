@@ -3,6 +3,7 @@ import { RefreshCw, Check, AlertTriangle, Settings2 } from 'lucide-react'
 import { clsx } from '../../lib/format'
 import { openSettings } from '../../store/nav'
 import { SweepProgress } from './SweepProgress'
+import { useT } from '../../i18n'
 
 /**
  * "Check now", and a statement of what it did.
@@ -49,6 +50,7 @@ export function CheckNowButton({
   disabled = false,
   collects
 }: CheckNowButtonProps): React.JSX.Element {
+  const t = useT()
   const [phase, setPhase] = useState<Phase>({ kind: 'idle' })
   const working = phase.kind === 'working'
 
@@ -159,7 +161,7 @@ export function CheckNowButton({
             phase.answered === phase.servers ? (
               <>
                 <Check size={12} />
-                Collected from {phase.servers} {phase.servers === 1 ? 'server' : 'servers'}
+                {t('Collected from')}{' '}{phase.servers} {phase.servers === 1 ? 'server' : 'servers'}
               </>
             ) : (
               <>
@@ -190,8 +192,7 @@ export function CheckNowButton({
        */}
       {phase.kind === 'refused' && phase.fix === 'monitoring-settings' && (
         <button className="btn ghost sm" onClick={() => openSettings('monitoring')}>
-          <Settings2 size={13} /> Open Monitoring settings
-        </button>
+          <Settings2 size={13} /> {t('Open Monitoring settings')}</button>
       )}
     </div>
   )

@@ -16,6 +16,7 @@ import {
   previewDoc,
   type BodyKind
 } from './bodyWindow'
+import { useT } from '../../../i18n'
 
 type View = 'pretty' | 'raw' | 'preview'
 type LanguageChoice = 'auto' | 'json' | 'xml' | 'html' | 'yaml' | 'text'
@@ -31,6 +32,7 @@ export interface BodyViewerProps {
 }
 
 export function BodyViewer({ response, wrap, editorRef, onSave, onCopyAll }: BodyViewerProps): React.JSX.Element {
+  const t = useT()
   const u8 = useMemo(() => new Uint8Array(response.body), [response])
   const contentType = headerValue(response.headers, 'content-type')
   const detected = useMemo(() => bodyKind(contentType, u8), [contentType, u8])
@@ -50,11 +52,10 @@ export function BodyViewer({ response, wrap, editorRef, onSave, onCopyAll }: Bod
       return (
         <div className="hc-body-note">
           <p>
-            A {detected === 'image' ? 'image' : 'binary'} body, {u8.length} bytes ({contentType ?? 'no Content-Type'}).
+            A {detected === 'image' ? 'image' : 'binary'} {t('body,')}{' '}{u8.length} {t('bytes (')}{contentType ?? 'no Content-Type'}).
           </p>
           <button className="btn sm" onClick={onSave}>
-            Save to file…
-          </button>
+            {t('Save to file…')}</button>
         </div>
       )
     }
@@ -74,7 +75,7 @@ export function BodyViewer({ response, wrap, editorRef, onSave, onCopyAll }: Bod
   return (
     <div className="hc-body">
       <div className="hc-body-bar">
-        <div className="hc-seg" role="group" aria-label="Body view">
+        <div className="hc-seg" role="group" aria-label={t('Body view')}>
           {(['pretty', 'raw', 'preview'] as const).map((v) => (
             <button
               key={v}
@@ -90,7 +91,7 @@ export function BodyViewer({ response, wrap, editorRef, onSave, onCopyAll }: Bod
         {view === 'pretty' && (
           <select
             className="hc-body-lang"
-            aria-label="Highlight as"
+            aria-label={t('Highlight as')}
             value={choice}
             onChange={(e) => setChoice(e.target.value as LanguageChoice)}
           >
@@ -106,21 +107,17 @@ export function BodyViewer({ response, wrap, editorRef, onSave, onCopyAll }: Bod
         <div className="hc-strip" role="note">
           <span>Showing the first 32 MB (the response was cut at OpsMaxx&rsquo;s limit).</span>
           <button className="btn sm" onClick={onSave}>
-            Save to file…
-          </button>
+            {t('Save to file…')}</button>
         </div>
       )}
       {win.windowed && view !== 'preview' && (
         <div className="hc-strip" role="note">
           <span>
-            Showing {bytes(win.shownBytes)} of {bytes(win.totalBytes)}, with long lines split.
-          </span>
+            {t('Showing')}{' '}{bytes(win.shownBytes)} {t('of')}{' '}{bytes(win.totalBytes)}{t(', with long lines split.')}</span>
           <button className="btn sm" onClick={onSave}>
-            Save to file…
-          </button>
+            {t('Save to file…')}</button>
           <button className="btn sm" onClick={onCopyAll}>
-            Copy all
-          </button>
+            {t('Copy all')}</button>
         </div>
       )}
       <div className="hc-body-content">{content()}</div>
@@ -139,24 +136,25 @@ function Preview({
   text: string
   contentType: string | undefined
 }): React.JSX.Element {
+  const t = useT()
   if (kind === 'html') {
     return (
       <div className="hc-body-preview">
-        <p className="hc-preview-note">Preview is offline: scripts and remote resources are blocked.</p>
+        <p className="hc-preview-note">{t('Preview is offline: scripts and remote resources are blocked.')}</p>
         {/* sandbox="" allows nothing: no scripts, no forms, no navigation of this window. */}
-        <iframe className="hc-preview-frame" sandbox="" srcDoc={previewDoc(text)} title="HTML preview" />
+        <iframe className="hc-preview-frame" sandbox="" srcDoc={previewDoc(text)} title={t('HTML preview')} />
       </div>
     )
   }
   if ((kind === 'image' || kind === 'svg') && contentType) {
     if (u8.length > PREVIEW_IMAGE_MAX_BYTES) {
-      return <p className="hc-body-note">Too large to preview ({bytes(u8.length)}; the limit is 10 MiB).</p>
+      return <p className="hc-body-note">{t('Too large to preview (')}{bytes(u8.length)}{t('; the limit is 10 MiB).')}</p>
     }
     return (
       <div className="hc-body-preview">
-        <img className="hc-preview-img" src={imageDataUrl(u8, contentType)} alt="Response body as an image" />
+        <img className="hc-preview-img" src={imageDataUrl(u8, contentType)} alt={t('Response body as an image')} />
       </div>
     )
   }
-  return <p className="hc-body-note">No preview for this content type.</p>
+  return <p className="hc-body-note">{t('No preview for this content type.')}</p>
 }
