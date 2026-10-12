@@ -136,20 +136,60 @@ function quote(text) {
   return `'${text.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\r?\n/g, '\\n')}'`
 }
 
-/** The outermost function containing a node — the component, not its callbacks. */
-function outermostFunction(node) {
-  let found = null
-  for (let cur = node.parent; cur; cur = cur.parent) {
-    if (
-      ts.isFunctionDeclaration(cur) ||
-      ts.isFunctionExpression(cur) ||
-      ts.isArrowFunction(cur) ||
-      ts.isMethodDeclaration(cur)
-    ) {
-      found = cur
-    }
+/** Is this node a function of any kind? */
+function isFn(n) {
+  return (
+    ts.isFunctionDeclaration(n) ||
+    ts.isFunctionExpression(n) ||
+    ts.isArrowFunction(n) ||
+    ts.isMethodDeclaration(n)
+  )
+}
+
+/** The name a function is known by, including the const or property it is assigned to. */
+function fnName(fn) {
+  if ((ts.isFunctionDeclaration(fn) || ts.isFunctionExpression(fn)) && fn.name) {
+    return fn.name.text
   }
-  return found
+  const p = fn.parent
+  if (p && ts.isVariableDeclaration(p) && ts.isIdentifier(p.name)) return p.name.text
+  if (p && ts.isPropertyAssignment(p) && ts.isIdentifier(p.name)) return p.name.text
+  return null
+}
+
+/**
+ * The component a piece of JSX belongs to — the NEAREST enclosing function that
+ * is named like one, not the outermost function.
+ *
+ * "Outermost" was the first thing tried and it is wrong, in a way that only
+ * shows up at runtime:
+ *
+ *   - `deferredView()` in lib/deferredView.tsx is a FACTORY. It builds the lazy
+ *     views and is called at module scope by App.tsx, so a hook inserted there
+ *     runs during module evaluation — where React has no dispatcher — and takes
+ *     the entire bundle down before anything paints. The JSX that needed the
+ *     translator lives in the inner `View`, which is the component.
+ *   - A class component's `render()` is a MethodDeclaration inside a class, so
+ *     walking up finds no function at all and the node is skipped. That is the
+ *     right outcome: `useT()` in a class throws `Invalid hook call`, and the one
+ *     class here is the ROOT error boundary — the component with nothing above
+ *     it to catch the throw. It rendered a black window.
+ *
+ * The convention React itself uses is the rule: a function whose name starts
+ * with a capital letter is a component, and `useXxx` is a hook. Both may call
+ * hooks. Anything else — a factory, a helper, an anonymous callback — cannot,
+ * and is skipped and reported rather than guessed at.
+ *
+ * Nested callbacks still work: `.map(x => <li>…)` inside a component finds the
+ * component, because the arrow has no name to match.
+ */
+function componentOwner(node) {
+  for (let cur = node.parent; cur; cur = cur.parent) {
+    if (!isFn(cur)) continue
+    const name = fnName(cur)
+    if (name && (/^[A-Z]/.test(name) || /^use[A-Z]/.test(name))) return cur
+  }
+  return null
 }
 
 /** Every name bound by a binding pattern. */
@@ -223,11 +263,6 @@ function tBinding(fn, sf) {
  * visible rather than silent.
  */
 function shadowedBetween(node, owner, sf) {
-  const isFn = (n) =>
-    ts.isFunctionDeclaration(n) ||
-    ts.isFunctionExpression(n) ||
-    ts.isArrowFunction(n) ||
-    ts.isMethodDeclaration(n)
   for (let cur = node.parent; cur && cur !== owner; cur = cur.parent) {
     if (isFn(cur)) {
       for (const p of cur.parameters ?? []) {
@@ -259,6 +294,7 @@ function processFile(file) {
   const owners = new Set()
   const skipped = []
   let shadowed = 0
+  let noOwner = 0
 
   const replace = (node, text) => edits.push({ start: node.getStart(sf), end: node.getEnd(), text })
 
@@ -268,9 +304,10 @@ function processFile(file) {
       const rendered = normalizeJsxText(node.getText(sf))
       const core = rendered.trim()
       if (!isCopy(core)) return
-      const owner = outermostFunction(node)
+      const owner = componentOwner(node)
       if (!owner) {
-        skipped.push(`module-scope JSX: "${core.slice(0, 40)}"`)
+        noOwner += 1
+        skipped.push(`no owning component: "${core.slice(0, 44)}"`)
         return
       }
       if (shadowedBetween(node, owner, sf)) {
@@ -293,9 +330,10 @@ function processFile(file) {
     if (ts.isJsxAttribute(node) && node.initializer && ts.isStringLiteral(node.initializer)) {
       const name = node.name.getText(sf)
       if (COPY_ATTRS.has(name) && isCopy(node.initializer.text)) {
-        const owner = outermostFunction(node)
+        const owner = componentOwner(node)
         if (!owner) {
-          skipped.push(`module-scope attribute ${name}`)
+          noOwner += 1
+          skipped.push(`no owning component: attribute ${name}`)
           return
         }
         if (shadowedBetween(node, owner, sf)) {
@@ -312,7 +350,9 @@ function processFile(file) {
   }
   visit(sf)
 
-  if (edits.length === 0) return { file, skipped: skipped.length ? 'no transformable copy' : null, shadowed }
+  if (edits.length === 0) {
+    return { file, skipped: skipped.length ? 'no transformable copy' : null, shadowed, noOwner }
+  }
 
   // Only a genuine conflict stops the whole file: a parameter or local named
   // `t` at the component's own top level means there is nowhere to put the
@@ -323,7 +363,8 @@ function processFile(file) {
       file,
       skipped: `component already binds \`t\` (${conflicted.length})`,
       count: edits.length,
-      shadowed
+      shadowed,
+      noOwner
     }
   }
 
@@ -370,7 +411,15 @@ function processFile(file) {
   let out = source
   for (const e of edits) out = out.slice(0, e.start) + e.text + out.slice(e.end)
 
-  return { file, count: edits.length - owners.size - (hasImport ? 0 : 1), owners: owners.size, out, skipped, shadowed }
+  return {
+    file,
+    count: edits.length - owners.size - (hasImport ? 0 : 1),
+    owners: owners.size,
+    out,
+    skipped,
+    shadowed,
+    noOwner
+  }
 }
 
 // ── Walk
@@ -402,6 +451,7 @@ const skipped = results.filter((r) => r.skipped && !r.out && r.count !== undefin
 const errors = results.filter((r) => r.error)
 const callSites = changed.reduce((n, r) => n + (r.count ?? 0), 0)
 const shadowedTotal = results.reduce((n, r) => n + (r.shadowed ?? 0), 0)
+const noOwnerTotal = results.reduce((n, r) => n + (r.noOwner ?? 0), 0)
 
 console.log('i18n codemod%s', WRITE ? ' — WRITING' : ' — dry run (pass --write to apply)')
 console.log('  .tsx scanned        : %d', targets.length)
@@ -410,6 +460,12 @@ console.log('  strings wrapped     : ~%d', callSites)
 console.log('  components hooked   : %d', changed.reduce((n, r) => n + (r.owners ?? 0), 0))
 if (shadowedTotal) {
   console.log('  left alone          : %d string(s) sit inside a scope that binds `t`', shadowedTotal)
+}
+if (noOwnerTotal) {
+  console.log(
+    '  left alone          : %d string(s) have no owning component (module scope, a class method, or a factory)',
+    noOwnerTotal
+  )
 }
 console.log('')
 

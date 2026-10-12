@@ -2,7 +2,13 @@ import { Component, type ErrorInfo, type ReactNode } from 'react'
 import { AlertTriangle, Copy, RotateCcw } from 'lucide-react'
 import { bridgeHas } from '../../lib/bridge'
 import { forwardDebugError } from '../../lib/debugForward'
-import { useT } from '../../i18n'
+// `t`, NOT `useT`. This is the one class component in the renderer — an error
+// boundary has to be one — and a hook in a class throws `Invalid hook call`,
+// which would leave the app with no boundary at all. The imported `t` reads the
+// current language at call time, so it is correct; what it cannot do is make a
+// mounted component re-render when the language changes, and this screen is
+// never up while somebody is changing it in Settings.
+import { t } from '../../i18n'
 
 interface Props {
   children: ReactNode
@@ -86,7 +92,6 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   render(): ReactNode {
-  const t = useT()
     const { error, diagnostics } = this.state
     if (!error) return this.props.children
 

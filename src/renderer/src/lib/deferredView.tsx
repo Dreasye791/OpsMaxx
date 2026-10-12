@@ -31,7 +31,6 @@ import { useT } from '../i18n'
 export function deferredView<P extends object>(
   load: () => Promise<ComponentType<P>>
 ): { View: (props: P) => React.JSX.Element | null; preload: () => Promise<void> } {
-  const t = useT()
   let Loaded: ComponentType<P> | null = null
   let failed: unknown = null
   let pending: Promise<void> | null = null
@@ -51,6 +50,12 @@ export function deferredView<P extends object>(
       }
     ))
   function View(props: P): React.JSX.Element | null {
+    // The hook belongs HERE, not in `deferredView`. That function is a factory,
+    // called at module scope by App.tsx to build the lazy views — a hook call
+    // in it would run during module evaluation, where React has no dispatcher,
+    // and would take the whole bundle down before anything painted. `View`, the
+    // function actually rendered, is where it works and where it is legal.
+    const t = useT()
     const [, rerender] = useState(0)
     // Whether THIS view mounted empty, decided at render rather than read in
     // the effect. The chunk can land between a render that returned nothing
