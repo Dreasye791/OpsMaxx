@@ -135,7 +135,7 @@ export function UpdatePanel(): React.JSX.Element {
 
   return (
     <div className="settings-section">
-      <h2>About &amp; Updates</h2>
+      <h2>{t('About & Updates')}</h2>
       <div className="setting-row">
         <div className="s-info">
           <div className="s-title">

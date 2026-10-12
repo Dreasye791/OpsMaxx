@@ -336,7 +336,7 @@ export function SessionAccess({
           {rows && rows.length > 0 && (
             <div>
               <button className="linklike" onClick={() => setDetail((v) => !v)} aria-expanded={detail}>
-                {detail ? 'Hide' : 'Show'} {t('why, per capability')}</button>
+                {t(detail ? 'Hide' : 'Show')} {t('why, per capability')}</button>
               {detail && (
                 <table className="mini-table" style={{ width: '100%', marginTop: 6 }}>
                   <thead>

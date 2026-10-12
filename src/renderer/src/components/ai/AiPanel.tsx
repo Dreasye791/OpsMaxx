@@ -56,7 +56,11 @@ function Overview(): React.JSX.Element {
       <div className="card-grid" style={{ marginTop: 18 }}>
         <div className="card">
           <div className="s-title">{t('Bridge status')}</div>
-          <div className="s-desc">{status.running ? `Running on 127.0.0.1:${status.port}` : 'Disabled'}</div>
+          <div className="s-desc">
+            {status.running
+              ? t('Running on 127.0.0.1:{port}', { port: status.port ?? '—' })
+              : t('Disabled')}
+          </div>
         </div>
         <div className="card">
           <div className="s-title">{t('Active sessions')}</div>
@@ -86,6 +90,7 @@ function Overview(): React.JSX.Element {
 }
 
 export function AiPanel(): React.JSX.Element {
+  const t = useT()
   // Held in the nav store rather than locally so a message elsewhere in the app
   // can send the user straight to the page that fixes it.
   const section = useNav((s) => s.aiSection)
@@ -102,7 +107,7 @@ export function AiPanel(): React.JSX.Element {
               onClick={() => setSection(id)}
             >
               {SECTION_ICONS[id]}
-              {AI_SECTION_LABELS[id]}
+              {t(AI_SECTION_LABELS[id])}
             </button>
           ))}
         </nav>

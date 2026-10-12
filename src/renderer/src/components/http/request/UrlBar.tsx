@@ -249,7 +249,7 @@ export function UrlBar({ tabId, ghost }: UrlBarProps): React.JSX.Element | null 
           onChange={(url) => update(syncFromUrl(req, url))}
           chain={chain}
           ariaLabel="URL"
-          placeholder={isGhost ? 'Paste a URL or a curl command' : 'https://api.example.com/path'}
+          placeholder={isGhost ? t('Paste a URL or a curl command') : 'https://api.example.com/path'}
           onSubmit={() => void doSend()}
           onPaste={onPaste}
         />
@@ -258,7 +258,7 @@ export function UrlBar({ tabId, ghost }: UrlBarProps): React.JSX.Element | null 
       <TlsChip tabId={tabId} compact={layout.tlsIcon} />
       <div className="hc-send">
         <SplitButton
-          label={sending ? 'Cancel' : 'Send'}
+          label={t(sending ? 'Cancel' : 'Send')}
           icon={sending ? undefined : <Play size={14} />}
           variant={sending ? 'danger' : 'primary'}
           busy={sending}

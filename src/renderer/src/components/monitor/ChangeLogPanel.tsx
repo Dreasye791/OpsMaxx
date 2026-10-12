@@ -480,7 +480,7 @@ export function ChangeLogPanel({ servers }: { servers: Server[] }): React.JSX.El
               <option value="any">{t('Everything')}</option>
               {CHANGELOG_KINDS.map((k) => (
                 <option key={k} value={k}>
-                  {KIND_LABEL[k]}
+                  {t(KIND_LABEL[k])}
                 </option>
               ))}
             </select>

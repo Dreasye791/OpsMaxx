@@ -366,7 +366,7 @@ export function ApprovalDialog({
                     data-testid="approval-mode"
                     title={t('The session’s mode when it asked')}
                   >
-                    {t('Asked under:')}{' '}{sessionModeLabel(sessionModeOf({ mode: request.sessionMode }), request.sessionGroupName)}
+                    {t('Asked under:')}{' '}{t(sessionModeLabel(sessionModeOf({ mode: request.sessionMode }), request.sessionGroupName))}
                   </span>
                 )}
                 {request.protectedTarget && (

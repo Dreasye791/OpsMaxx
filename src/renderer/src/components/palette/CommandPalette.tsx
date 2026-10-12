@@ -160,17 +160,17 @@ export function CommandPalette(): React.JSX.Element {
     }
     store
       .workspaceTunnels()
-      .forEach((t) =>
+      .forEach((tun) =>
         list.push({
-          id: `t-${t.id}`,
-          group: 'Tunnels',
-          title: t.name,
-          sub: `${t.listen} → ${t.target}`,
+          id: `t-${tun.id}`,
+          group: t('Tunnels'),
+          title: tun.name,
+          sub: `${tun.listen} → ${tun.target}`,
           icon: <Network size={16} />,
           // The entry is titled with this tunnel's name, so it has to land on
           // this tunnel. Opening the page and leaving the user to find it again
           // in the list is what a row named after one thing must not do.
-          run: () => openTunnels({ kind: 'select', tunnelId: t.id })
+          run: () => openTunnels({ kind: 'select', tunnelId: tun.id })
         })
       )
 
@@ -276,24 +276,27 @@ export function CommandPalette(): React.JSX.Element {
     // and Approvals and Active Sessions had no pointer anywhere in the app.
     const aiPages: Cmd[] = AI_SECTIONS.map((id) => ({
       id: `ai-${id}`,
-      group: 'AI & MCP',
-      title: AI_SECTION_LABELS[id],
-      sub: 'AI & MCP',
+      group: t('AI & MCP'),
+      title: t(AI_SECTION_LABELS[id]),
+      sub: t('AI & MCP'),
       icon: <Bot size={16} />,
       run: () => openAi(id)
     }))
 
     const settingsPages: Cmd[] = SETTINGS_SECTIONS.map((id) => ({
       id: `set-${id}`,
-      group: 'Settings',
-      title: SETTINGS_SECTION_LABELS[id],
-      sub: 'Settings',
+      group: t('Settings'),
+      title: t(SETTINGS_SECTION_LABELS[id]),
+      sub: t('Settings'),
       icon: <Settings size={16} />,
       run: () => openSettings(id)
     }))
 
     return [...actions, ...destinations, ...modules, ...aiPages, ...settingsPages, ...list, ...httpPaletteCommands(store)]
-  }, [store, templates])
+    // `t` is in the deps because the labels above are translated at build time
+    // of this list: a language change has to rebuild it, or the palette keeps
+    // the language it was opened in.
+  }, [store, templates, t])
 
   const filtered = useMemo(() => {
     const query = q.trim()

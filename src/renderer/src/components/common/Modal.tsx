@@ -243,7 +243,7 @@ export function Modal({
   onClose,
   children,
   confirm,
-  cancelLabel = 'Cancel',
+  cancelLabel,
   footerNote,
   footer,
   size = 'md',
@@ -278,7 +278,7 @@ export function Modal({
             {footer}
             {cancelLabel !== null && (
               <button className="btn secondary size-28" onClick={onClose}>
-                {cancelLabel}
+                {cancelLabel ?? t('Cancel')}
               </button>
             )}
             {confirm && (

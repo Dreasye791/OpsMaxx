@@ -210,6 +210,7 @@ const isCollectionGone = (route: Route): boolean =>
 
 /** The production confirm (§2.18). A's send layer raises it; this answers it. */
 function ProductionPrompt(): React.JSX.Element | null {
+  const t = useT()
   const prompt = useHttpRuntime((s) => s.prompt)
   const [skip, setSkip] = useState(false)
   if (!prompt) return null
@@ -221,7 +222,7 @@ function ProductionPrompt(): React.JSX.Element | null {
     <Modal
       title={`Send ${prompt.action} to production (${prompt.target}${prompt.via ? `, via ${prompt.via}` : ''})?`}
       onClose={() => answer(false)}
-      confirm={{ label: 'Send', onClick: () => answer(true), destructive: true }}
+      confirm={{ label: t('Send'), onClick: () => answer(true), destructive: true }}
     >
       <label className="row">
         <input type="checkbox" checked={skip} onChange={(e) => setSkip(e.target.checked)} /> {prompt.skipLabel}

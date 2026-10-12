@@ -11,6 +11,7 @@ import {
   Save,
   Send
 } from 'lucide-react'
+import { t } from '../../i18n'
 import type { ApiCollectionV2, Id, Item, RequestKind } from '../../../../shared/apiModel'
 import { httpHotkey, useHttp } from '../../store/http'
 import { useApi } from '../../store/api'
@@ -153,7 +154,7 @@ export function httpPaletteCommands(app: AppState): PaletteCommand[] {
   // Actions on the open tab, offered only where they can act: in the HTTP view,
   // with its workbench mounted.
   const onTab: [string, string, React.ReactNode][] = [
-    ['http-send', 'Send', <Send size={16} key="i" />],
+    ['http-send', t('Send'), <Send size={16} key="i" />],
     ['http-save', 'Save Request', <Save size={16} key="i" />],
     ['http-copy-curl', 'Copy as cURL', <FileText size={16} key="i" />],
     ['http-toggle-response', 'Toggle Response', <LayoutPanelLeft size={16} key="i" />],

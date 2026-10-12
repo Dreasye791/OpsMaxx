@@ -153,7 +153,7 @@ export function ReportBugModal(): React.JSX.Element {
       subtitle="Nothing leaves this computer until you save the file and attach it yourself."
       onClose={() => close(null)}
       size="lg"
-      cancelLabel={savedPath === null ? 'Cancel' : 'Done'}
+      cancelLabel={t(savedPath === null ? 'Cancel' : 'Done')}
       confirm={
         savedPath === null
           ? {

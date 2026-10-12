@@ -232,14 +232,14 @@ export function ConnectAgent({ onConnected }: { onConnected?: () => void }): Rea
       )}
 
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 4 }}>
-        {TARGETS.map((t) => (
+        {TARGETS.map((tg) => (
           <button
-            key={t.id}
+            key={tg.id}
             className="btn sm primary"
             disabled={busy !== null}
-            onClick={() => void connect(t.id, t.agentName)}
+            onClick={() => void connect(tg.id, tg.agentName)}
           >
-            {t.icon} {busy === t.id ? 'Connecting…' : t.label}
+            {tg.icon} {busy === tg.id ? t('Connecting…') : t(tg.label)}
           </button>
         ))}
       </div>

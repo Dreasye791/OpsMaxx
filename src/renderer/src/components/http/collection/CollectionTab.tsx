@@ -78,10 +78,10 @@ export function CollectionTab({ tabId }: CollectionTabProps): React.JSX.Element 
         ariaLabel="Collection settings"
         idPrefix={`hc-col-${c.id}`}
         tabs={[
-          { id: 'overview', label: 'Overview' },
-          { id: 'variables', label: 'Variables', count: c.variables.filter((v) => v.enabled).length },
-          { id: 'auth', label: 'Auth', dot: c.auth.type !== 'none' ? 'set' : undefined },
-          { id: 'connection', label: 'Connection', dot: c.insecureTls ? 'problem' : undefined }
+          { id: 'overview', label: t('Overview') },
+          { id: 'variables', label: t('Variables'), count: c.variables.filter((v) => v.enabled).length },
+          { id: 'auth', label: t('Auth'), dot: c.auth.type !== 'none' ? 'set' : undefined },
+          { id: 'connection', label: t('Connection'), dot: c.insecureTls ? 'problem' : undefined }
         ]}
         active={section}
         onChange={(id) => setSection(id as Section)}

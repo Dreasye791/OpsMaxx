@@ -121,7 +121,7 @@ function Row({
         </button>{' '}
         {r.serverName}
       </td>
-      <td className={VERDICT_CLASS[r.verdict]}>{VERDICT_LABEL[r.verdict]}</td>
+      <td className={VERDICT_CLASS[r.verdict]}>{t(VERDICT_LABEL[r.verdict])}</td>
       <td className="faint">
         {r.verdict === 'ignored-difference' && r.ignoredBy?.length ? (
           // The sentence this whole item turns on. "Candidates" and not "the
@@ -324,7 +324,7 @@ export function DriftPanel({ servers }: { servers: Server[] }): React.JSX.Elemen
             ))}
           </select>
           <button className="btn ghost sm" onClick={() => setAdding((a) => !a)}>
-            {adding ? 'Cancel' : 'Watch a file'}
+            {t(adding ? 'Cancel' : 'Watch a file')}
           </button>
           <div className="check-now">
             <button
@@ -436,7 +436,7 @@ export function DriftPanel({ servers }: { servers: Server[] }): React.JSX.Elemen
               )}
             </span>
             <button className="btn ghost sm" onClick={() => setShowRules((v) => !v)}>
-              {showRules ? 'Hide' : 'Show'} {t('the')}{' '}{watch.rules.length} {t('rules this is compared under')}</button>
+              {t(showRules ? 'Hide' : 'Show')} {t('the')}{' '}{watch.rules.length} {t('rules this is compared under')}</button>
           </div>
 
           {showRules && <Rules watchId={watch.id} />}

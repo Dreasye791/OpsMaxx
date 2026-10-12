@@ -9,7 +9,7 @@ import { DEFAULT_SESSION_MODE, resolveDefaultSessionGroup, sessionModeLabel, ses
 import { ModePicker } from './ModePicker'
 import { maskToken } from '../../../../shared/tokenDisplay'
 import { Switch } from '../common/Switch'
-import { useT } from '../../i18n'
+import { t, useT } from '../../i18n'
 
 interface WorkspaceOpt {
   id: string
@@ -53,7 +53,7 @@ async function buildsClause(): Promise<string> {
 }
 
 function fmtTime(iso: string | null): string {
-  if (!iso) return 'Never'
+  if (!iso) return t('Never')
   return new Date(iso).toLocaleString()
 }
 
@@ -456,7 +456,7 @@ export function AiAgents({ sessionsOnly = false }: { sessionsOnly?: boolean }): 
                   <>
                     {' '}
                     <span className="chip" data-testid="session-mode-chip" title={t('Profile')}>
-                      {sessionModeLabel(sessionModeOf(s), s.groupName)}
+                      {t(sessionModeLabel(sessionModeOf(s), s.groupName))}
                     </span>
                   </>
                 )}

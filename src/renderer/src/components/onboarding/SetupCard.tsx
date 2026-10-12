@@ -202,9 +202,9 @@ export function SetupCard(): React.JSX.Element | null {
             <QuestionStep
               key={question.id}
               headingRef={headingRef}
-              question={question.question}
-              detail={question.detail}
-              cost={question.cost}
+              question={t(question.question)}
+              detail={t(question.detail)}
+              cost={question.cost ? t(question.cost) : question.cost}
               value={answers[question.id] === true}
               onAnswer={(v) => answer(question.id, v)}
             />
@@ -242,7 +242,7 @@ export function SetupCard(): React.JSX.Element | null {
                 {/* Skip, not Next, while nothing has been picked -- the persona is
                     optional and the button should say so rather than implying an
                     answer is owed. */}
-                {step === 0 && persona === null ? 'Skip' : 'Next'}
+                {t(step === 0 && persona === null ? 'Skip' : 'Next')}
                 <ArrowRight size={14} />
               </>
             )}
@@ -283,8 +283,8 @@ function PersonaStep({
             aria-pressed={persona === p.id}
             onClick={() => onChoose(p.id)}
           >
-            <span className="setup-persona-title">{p.label}</span>
-            <span className="setup-persona-detail">{p.detail}</span>
+            <span className="setup-persona-title">{t(p.label)}</span>
+            <span className="setup-persona-detail">{t(p.detail)}</span>
           </button>
         ))}
       </div>
@@ -374,8 +374,8 @@ function ReviewStep({
           return (
             <li key={q.id}>
               <button type="button" className="setup-review-row" onClick={() => onGoToQuestion(n)}>
-                <span className="setup-review-q">{q.question}</span>
-                <span className={clsx('setup-review-a', on && 'on')}>{on ? 'Yes' : 'No'}</span>
+                <span className="setup-review-q">{t(q.question)}</span>
+                <span className={clsx('setup-review-a', on && 'on')}>{t(on ? 'Yes' : 'No')}</span>
               </button>
             </li>
           )
@@ -400,12 +400,12 @@ function ReviewStep({
             onToggle={(e) => onToggleGroup(g.id, (e.target as HTMLDetailsElement).open)}
           >
             <summary className="setup-group-head">
-              <span className="setup-group-title">{g.label}</span>
+              <span className="setup-group-title">{t(g.label)}</span>
               {/* The current value in the closed header, so the group can be read
                   without opening it. */}
-              <span className="setup-group-value">{prefSummary(g, prefs)}</span>
+              <span className="setup-group-value">{t(prefSummary(g, prefs))}</span>
             </summary>
-            <p className="setup-group-detail">{g.detail}</p>
+            <p className="setup-group-detail">{t(g.detail)}</p>
             {g.controls
               .filter((c) => prefAvailable(c, prefs))
               .map((c) => (
@@ -468,17 +468,18 @@ function PrefRow({
   prefs: PrefAnswers
   onPick: (v: string | number | boolean) => void
 }): React.JSX.Element {
+  const t = useT()
   const current = prefValue(control, prefs)
   const asRadios = control.options.length <= 3
 
   return (
     <div className="setup-pref">
       <div className="setup-pref-info">
-        <span className="setup-pref-title">{control.label}</span>
-        <span className="setup-pref-detail">{control.detail}</span>
+        <span className="setup-pref-title">{t(control.label)}</span>
+        <span className="setup-pref-detail">{t(control.detail)}</span>
       </div>
       {asRadios ? (
-        <div className="setup-pref-opts" role="radiogroup" aria-label={control.label}>
+        <div className="setup-pref-opts" role="radiogroup" aria-label={t(control.label)}>
           {control.options.map((o) => (
             <button
               key={String(o.value)}
@@ -487,16 +488,16 @@ function PrefRow({
               aria-checked={current === o.value}
               className={clsx('setup-opt', current === o.value && 'on')}
               onClick={() => onPick(o.value)}
-              title={o.detail}
+              title={o.detail ? t(o.detail) : undefined}
             >
-              {o.label}
+              {t(o.label)}
             </button>
           ))}
         </div>
       ) : (
         <select
           className="setup-pref-select"
-          aria-label={control.label}
+          aria-label={t(control.label)}
           value={String(current)}
           onChange={(e) => {
             // The option carries the real value; the DOM only ever has strings,
@@ -509,7 +510,7 @@ function PrefRow({
         >
           {control.options.map((o) => (
             <option key={String(o.value)} value={String(o.value)}>
-              {o.label}
+              {t(o.label)}
             </option>
           ))}
         </select>

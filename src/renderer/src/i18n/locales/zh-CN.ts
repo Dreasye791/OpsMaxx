@@ -816,6 +816,151 @@ export const zhCN: Record<string, string> = {
   'Disk usage': '磁盘用量',
   'Entry name': '条目名称',
   Everything: '全部',
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 按实际渲染清单补齐（来源：渲染遍历，非按长度猜测）
+  // 这一批覆盖首屏、空状态、AI 与 MCP、同步与设备、HTTP 客户端、问题反馈。
+  // ─────────────────────────────────────────────────────────────────────────
+
+  'Not yet': '尚未',
+  'Read it': '先读一读',
+  Off: '关闭',
+  None: '无',
+  Auto: '自动',
+  Disabled: '已禁用',
+  characters: '个字符',
+  'not read yet': '尚未读取',
+  'Not reported': '未上报',
+  'You are here': '你在这里',
+  'Where you are': '你当前的位置',
+  'Sync runs': '同步记录',
+  'AI Agents': 'AI 代理',
+  'No tunnels': '没有隧道',
+  'Start here': '从这里开始',
+  'New session': '新建会话',
+  'New GraphQL': '新建 GraphQL',
+  'This machine': '本机',
+  'Session tabs': '会话标签页',
+  'Add Database': '添加数据库',
+  'Sync summary': '同步摘要',
+  'Create vault': '创建保险库',
+  'Create your vault': '创建你的保险库',
+  'How it works': '工作原理',
+  'Report a bug': '反馈问题',
+  'Save report…': '保存报告…',
+  'Create tunnel': '创建隧道',
+  'New WebSocket': '新建 WebSocket',
+  'New WebSocket or GraphQL request': '新建 WebSocket 或 GraphQL 请求',
+  'Send (Ctrl+↵)': '发送（Ctrl+↵）',
+  'More {label} options': '{label}的更多选项',
+  'About {title}': '关于{title}',
+  'Sync & devices': '同步与设备',
+  'About & Updates': '关于与更新',
+
+  // AI 会话配置（shared/mcp.ts 的 SESSION_MODES，在渲染处翻译）
+  'Read only': '只读',
+  'Ask first': '先询问',
+  'Bypass permissions': '放行（不询问）',
+  'Look around, never change anything': '只查看，不做任何修改',
+  'Approve every change before it runs': '每次变更执行前都需批准',
+  'Routine work runs; sudo and risky actions ask': '常规操作直接执行；sudo 与有风险的操作先询问',
+  'No prompts or blocks, except on Protected targets': '不弹提示、不拦截，受保护的目标除外',
+  'Use an access group, exactly as written': '按访问组原样执行',
+  'Connecting…': '正在连接…',
+  'Running on 127.0.0.1:{port}': '运行于 127.0.0.1:{port}',
+  'Access Groups': '访问组',
+  'Bridge status': '桥接状态',
+  'Connect Codex': '连接 Codex',
+  'Connect Claude Code': '连接 Claude Code',
+  'Connect Claude Desktop': '连接 Claude Desktop',
+  'Connect an agent': '连接一个代理',
+  'Profile: Auto': '配置：自动',
+  'Command Prompt': '命令提示符',
+  'Windows PowerShell (default)': 'Windows PowerShell（默认）',
+  'New local shell': '新建本地 shell',
+  'Reverse proxies': '反向代理',
+  'Active Sessions': '活动会话',
+  'Active sessions': '活动会话',
+  'Start recording': '开始录制',
+  'Record what the app does': '录制应用的行为',
+  '0 traced events': '0 条追踪事件',
+  'Pending approvals': '待决审批',
+  'action(s) waiting on you': '个操作等待你处理',
+  'connected agent session(s)': '个已连接的代理会话',
+  'Nothing to monitor': '没有可监控的内容',
+  'Nothing to operate on': '没有可运维的对象',
+  'engine not running': '引擎未运行',
+  'Both devices agree': '两台设备一致',
+  'Search connections…': '搜索连接…',
+  'Route: This machine': '路径：本机',
+  'No database selected': '未选择数据库',
+  'No servers yet': '还没有服务器',
+  'No environment': '无环境',
+  'Environment: No environment': '环境：无环境',
+  'Environment (Ctrl+E)': '环境（Ctrl+E）',
+  'Send a request': '发送请求',
+  'This device joins it': '本设备加入该账户',
+  'This is my first device': '这是我的第一台设备',
+  'A second device pairs with it': '第二台设备与它配对',
+  'I already use OpsMaxx on another machine': '我已经在另一台机器上使用 OpsMaxx',
+  'My other devices are gone': '我的其他设备都没了',
+  'About Sync & devices': '关于同步与设备',
+  'An account on a relay': '中继上的账户',
+  'no account on this device': '本设备上没有账户',
+  'nothing has synced yet': '还没有任何内容同步过',
+  'Save it and attach it': '保存后附带提交',
+  'Confirm master password': '确认主密码',
+  'Master password (min 12 characters)': '主密码（至少 12 个字符）',
+  'Layout (panels and splits)': '布局（面板与分栏）',
+  'Open tabs and recently closed': '打开的标签页与最近关闭',
+  'New HTTP request (Ctrl+Shift+T)': '新建 HTTP 请求（Ctrl+Shift+T）',
+  'Ctrl+Shift+T new tab · F6 move focus': 'Ctrl+Shift+T 新建标签页 · F6 切换焦点',
+  'Which of these is this machine?': '哪一台是本机？',
+  'Paste a URL or a curl command': '粘贴 URL 或 curl 命令',
+  'Nothing can be said about this until sync runs.': '同步运行之前无法判断这一点。',
+  'Add a database connection, then select it to run queries.': '添加一个数据库连接，然后选中它即可执行查询。',
+  'Add a connection to get started, or import the ones you already have from ~/.ssh/config.':
+    '添加一个连接即可开始，也可以从 ~/.ssh/config 导入你已有的连接。',
+  'Add a server to start streaming live CPU, memory, disk and network metrics.':
+    '添加一台服务器，即可开始接收实时的 CPU、内存、磁盘与网络指标。',
+  'Add a server before running commands or installing updates across the estate.':
+    '先添加一台服务器，才能对资产批量执行命令或安装更新。',
+  'Create a secure SSH tunnel to forward a local or remote port through a server.':
+    '创建一条安全的 SSH 隧道，通过服务器转发本地或远程端口。',
+  'Requests leave from this machine or through any server’s SSH connection.':
+    '请求从本机发出，或经由任一服务器的 SSH 连接发出。',
+  'Nothing leaves this computer until you save the file and attach it yourself.':
+    '在你亲自保存文件并附带提交之前，任何内容都不会离开这台电脑。',
+  'Approve or deny actions as they come up — the AI waits for your answer.':
+    '操作出现时逐条批准或拒绝 —— AI 会等待你的答复。',
+  'What the agent may do, and how much it asks first. Change it any time under Active Sessions.':
+    '代理可以做什么，以及事前需要征得多少同意。任何时候都可以在「活动会话」下修改。',
+  "Point Claude Code, Codex or another MCP client at OpsMaxx's local MCP server with that token.":
+    '把 Claude Code、Codex 或其他 MCP 客户端指向 OpsMaxx 的本地 MCP 服务器，并使用该令牌。',
+  'Create an AI Agent session scoped to one or more workspaces with that profile, and copy its token.':
+    '按该配置创建一个限定在一个或多个工作区内的 AI 代理会话，并复制其令牌。',
+  'Both machines have to be open at the same time; one shows a code and both compare the same emoji.':
+    '两台机器必须同时在线；其中一台显示验证码，两台比对同一组表情。',
+  'Happens when the account is created, or when this device is paired with one that already has an account.':
+    '账户创建时会发生这一步；本设备与一台已有账户的设备配对时也会。',
+  'The sync engine is not running. Pairing and the account are unaffected; nothing is moving between devices.':
+    '同步引擎未运行。配对与账户不受影响，但设备之间不会有任何数据流动。',
+  'Joins the account that machine already has, by pairing with it. No invite, and nothing to ask anybody for.':
+    '与该机器配对即可加入它已有的账户。不需要邀请，也不必向任何人索取。',
+  'Nothing of mine is on this relay yet. Creates the account — the only step in the whole product that needs an invite.':
+    '这个中继上还没有我的任何数据。此处会创建账户 —— 这是整个产品中唯一需要邀请的一步。',
+  'Back in with the twelve words you wrote down. This is the only way in when there is no other machine left to pair with.':
+    '用你抄下的十二个单词重新进入。当再没有其他机器可配对时，这是唯一的进入方式。',
+  'Waiting for the device list from the relay. It arrives the next time this device reaches it — nothing is wrong with the account.':
+    '正在等待中继返回设备列表。本设备下次连通时会收到 —— 账户没有问题。',
+  'Pick a profile — Read only, Ask first, Auto (routine work runs, risky actions ask) or Bypass; or Custom, to use an access group instead.':
+    '选择一个配置 —— 只读、先询问、自动（常规操作直接执行，有风险的操作先询问）或放行；也可以选「自定义」改用访问组。',
+  'Turns on the bridge, creates a session across your workspaces and hands it to the client. The session does not expire — revoke it under Active Sessions.':
+    '开启桥接，在你的工作区范围内创建一个会话并交给客户端。会话不会过期 —— 请在「活动会话」下撤销。',
+  'Name the relay you run and create an account on it. The twelve-word recovery phrase is shown once, during this step, and nothing on this machine keeps a copy.':
+    '为你自己运行的中继命名，并在其上创建账户。十二个单词的恢复短语只在这一步显示一次，本机不会保留副本。',
+  'addy is a relay you run yourself. It carries your data between your devices and cannot read any of it — every object is sealed before it leaves, and the server holds no key.':
+    'addy 是你自己运行的中继。它在你的设备之间搬运数据，却读不了其中任何内容 —— 每个对象在离开前就已封装，服务器不持有密钥。',
 }
 
 /**
