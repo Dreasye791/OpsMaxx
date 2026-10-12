@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { ChevronDown, Plus, Settings2, Eye, EyeOff, Check } from 'lucide-react'
 import { useApp } from '../../store/app'
+import { useT } from '../../i18n'
 import { useClickOutside } from '../../hooks/useClickOutside'
 import { switchableWorkspaces } from '../../hooks/useHotkeys'
 import type { WorkspaceColor } from '../../types'
@@ -18,6 +19,7 @@ const colorVar: Record<WorkspaceColor, string> = {
 const mod = navigator.platform.toLowerCase().includes('mac') ? '⌘' : 'Ctrl '
 
 export function WorkspaceSwitcher(): React.JSX.Element {
+  const t = useT()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   useClickOutside(ref, () => setOpen(false), open)
@@ -43,7 +45,7 @@ export function WorkspaceSwitcher(): React.JSX.Element {
   const badge = (id: string): React.JSX.Element | null => {
     const n = numberOf(id)
     return n === null ? null : (
-      <span className="kbd" title={`Switch with Ctrl+${n}`}>
+      <span className="kbd" title={t('Switch with Ctrl+{n}', { n })}>
         {mod}
         {n}
       </span>
@@ -60,7 +62,7 @@ export function WorkspaceSwitcher(): React.JSX.Element {
 
       {open && (
         <div className="menu" style={{ top: 34, left: 0, width: 260 }}>
-          <div className="menu-label">Workspaces</div>
+          <div className="menu-label">{t('Workspaces')}</div>
           {visible.map((w) => (
             <button
               key={w.id}
@@ -106,7 +108,7 @@ export function WorkspaceSwitcher(): React.JSX.Element {
               ) : (
                 <div className="menu-item" style={{ cursor: 'default', color: 'var(--text-faint)' }}>
                   <Eye size={14} />
-                  <span>Hidden workspaces</span>
+                  <span>{t('Hidden workspaces')}</span>
                   <span className="spacer" />
                   <span className="chip">{hidden.length}</span>
                 </div>
@@ -123,7 +125,7 @@ export function WorkspaceSwitcher(): React.JSX.Element {
             }}
           >
             <Plus size={14} />
-            <span>New workspace</span>
+            <span>{t('New workspace')}</span>
           </button>
           <button
             className="menu-item"
@@ -133,7 +135,7 @@ export function WorkspaceSwitcher(): React.JSX.Element {
             }}
           >
             <Settings2 size={14} />
-            <span>Manage workspaces</span>
+            <span>{t('Manage workspaces')}</span>
           </button>
         </div>
       )}

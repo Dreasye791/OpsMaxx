@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Search, Minus, Square, Copy, X, Compass } from 'lucide-react'
 import { useApp } from '../../store/app'
+import { useT } from '../../i18n'
 import { WorkspaceSwitcher } from './WorkspaceSwitcher'
 import { useShortcutHint } from '../../hooks/useShortcutHint'
 import { bridgeOn } from '../../lib/bridge'
 
 export function TitleBar(): React.JSX.Element {
+  const t = useT()
   const togglePalette = useApp((s) => s.togglePalette)
   // Ctrl+K does not reach the app from inside a terminal — the shell owns it —
   // so the chip advertises the terminal binding whenever focus is in one.
@@ -40,7 +42,7 @@ export function TitleBar(): React.JSX.Element {
       <div className="titlebar-search">
         <button className="cmd-trigger" onClick={() => togglePalette(true)}>
           <Search size={13} />
-          <span>Search or run a command…</span>
+          <span>{t('Search or run a command…')}</span>
           <span className="cmd-keys">
             {paletteKeys.map((k, i) => (
               <span className="kbd" key={i}>
@@ -53,13 +55,17 @@ export function TitleBar(): React.JSX.Element {
 
       {!isMac && (
         <div className="win-controls">
-          <button className="win-btn" onClick={() => ctrl('minimize')} aria-label="Minimize">
+          <button className="win-btn" onClick={() => ctrl('minimize')} aria-label={t('Minimize')}>
             <Minus size={15} />
           </button>
-          <button className="win-btn" onClick={() => ctrl('toggle-maximize')} aria-label="Maximize">
+          <button
+            className="win-btn"
+            onClick={() => ctrl('toggle-maximize')}
+            aria-label={maximized ? t('Restore') : t('Maximize')}
+          >
             {maximized ? <Copy size={12} /> : <Square size={12} />}
           </button>
-          <button className="win-btn close" onClick={() => ctrl('close')} aria-label="Close">
+          <button className="win-btn close" onClick={() => ctrl('close')} aria-label={t('Close')}>
             <X size={16} />
           </button>
         </div>

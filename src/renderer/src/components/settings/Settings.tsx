@@ -16,9 +16,11 @@ import {
   Keyboard,
   Bell,
   Wrench,
-  DatabaseBackup, Compass, Lock, LockOpen, Blocks } from 'lucide-react'
+  DatabaseBackup, Compass, Lock, LockOpen, Blocks, Languages } from 'lucide-react'
 import { useApp } from '../../store/app'
 import type { ThemeMode } from '../../store/app'
+import { useT } from '../../i18n'
+import { LanguagePanel } from './LanguagePanel'
 import { useNav, SETTINGS_SECTIONS, SETTINGS_SECTION_LABELS } from '../../store/nav'
 import { isLoopbackHostKeyId } from '../../../../shared/ssh'
 import type { SettingsSection } from '../../store/nav'
@@ -110,6 +112,7 @@ const THEME_OPTIONS: [ThemeMode, string][] = [
 const SECTION_ICONS: Record<SettingsSection, React.JSX.Element> = {
   general: <Sliders size={16} />,
   appearance: <Palette size={16} />,
+  language: <Languages size={16} />,
   terminal: <TerminalSquare size={16} />,
   connections: <Server size={16} />,
   ssh: <KeyRound size={16} />,
@@ -132,6 +135,7 @@ const SECTION_META = Object.fromEntries(
 const SECTIONS: SettingsSection[] = [
   'general',
   'appearance',
+  'language',
   'terminal',
   'connections',
   'ssh',
@@ -392,13 +396,21 @@ function SettingSwitch({
   checked: boolean
   onChange: (v: boolean) => void
 }): React.JSX.Element {
+  // The twenty-odd rows built from this helper are translated here rather than
+  // at each call site, for the reason EmptyState gives at more length: the key
+  // of a translation is its own English text, so a label already in the
+  // catalogue comes back translated, a label that is not comes back as written,
+  // and neither needs the caller to remember anything. `Switch` gets the same
+  // string because it is the switch's accessible name — an untranslated one is
+  // a control a screen reader announces in the wrong language.
+  const t = useT()
   return (
     <div className="setting-row">
       <div className="s-info">
-        <div className="s-title">{label}</div>
-        <div className="s-desc">{desc}</div>
+        <div className="s-title">{t(label)}</div>
+        <div className="s-desc">{t(desc)}</div>
       </div>
-      <Switch checked={checked} label={label} onChange={onChange} />
+      <Switch checked={checked} label={t(label)} onChange={onChange} />
     </div>
   )
 }
@@ -838,6 +850,7 @@ function DiagnosticsPanel(): React.JSX.Element {
 }
 
 export function Settings(): React.JSX.Element {
+  const t = useT()
   // Held in the nav store so an error raised anywhere in the app can send the
   // user to the page that resolves it — a host-key mismatch to Security, a
   // too-old build to General — rather than to Settings in general.
@@ -898,18 +911,23 @@ export function Settings(): React.JSX.Element {
           <input
             className="input settings-search"
             type="search"
-            placeholder="Search settings"
-            aria-label="Search settings"
+            placeholder={t('Search settings')}
+            aria-label={t('Search settings')}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
           {query.trim() !== '' && (
-            <div className="settings-results" role="listbox" aria-label="Search results">
+            <div
+              className="settings-results"
+              role="listbox"
+              aria-label={t('Search results')}
+            >
               {results.length === 0 ? (
                 // Said, rather than an empty box that looks broken.
                 <div className="field-hint" style={{ padding: 'var(--sp-2) var(--sp-3)' }}>
-                  No setting matches that. Try a word from what it does — “webhook”, “vault”,
-                  “background”.
+                  {t(
+                    'No setting matches that. Try a word from what it does — “webhook”, “vault”, “background”.'
+                  )}
                 </div>
               ) : (
                 results.map((e) => (
@@ -927,7 +945,7 @@ export function Settings(): React.JSX.Element {
                     }}
                   >
                     <span className="result-title">{e.title}</span>
-                    <span className="result-section">{SECTION_META[e.section].label}</span>
+                    <span className="result-section">{t(SECTION_META[e.section].label)}</span>
                   </button>
                 ))
               )}
@@ -940,28 +958,30 @@ export function Settings(): React.JSX.Element {
               onClick={() => setSection(id)}
             >
               {SECTION_META[id].icon}
-              {SECTION_META[id].label}
+              {t(SECTION_META[id].label)}
             </button>
           ))}
         </nav>
 
         <div className="settings-content">
           {section === 'general' && <UpdatePanel />}
+          {section === 'language' && <LanguagePanel />}
 
           {section === 'general' && (
             <div className="settings-section">
-              <h2>Walkthrough</h2>
-              <div className="sub">A short tour of what is here and where it lives.</div>
+              <h2>{t('Walkthrough')}</h2>
+              <div className="sub">{t('A short tour of what is here and where it lives.')}</div>
               <div className="setting-row">
                 <div className="s-info">
-                  <div className="s-title">Show the walkthrough</div>
+                  <div className="s-title">{t('Show the walkthrough')}</div>
                   <div className="s-desc">
-                    Runs once on a first launch. Reopen it here whenever you want — it switches to
-                    each feature as it describes it, so nothing is hidden while you read.
+                    {t(
+                      'Runs once on a first launch. Reopen it here whenever you want — it switches to each feature as it describes it, so nothing is hidden while you read.'
+                    )}
                   </div>
                 </div>
                 <button className="btn sm" onClick={() => startTour()}>
-                  <Compass size={13} /> Start walkthrough
+                  <Compass size={13} /> {t('Start walkthrough')}
                 </button>
               </div>
             </div>
@@ -969,23 +989,27 @@ export function Settings(): React.JSX.Element {
 
           {section === 'appearance' && (
             <div className="settings-section">
-              <h2>Appearance</h2>
-              <div className="sub">Theme and visual density.</div>
+              <h2>{t('Appearance')}</h2>
+              <div className="sub">{t('Theme and visual density.')}</div>
               <div className="setting-row">
                 <div className="s-info">
-                  <div className="s-title">Theme</div>
+                  <div className="s-title">{t('Theme')}</div>
                   <div className="s-desc">
-                    OpsMaxx is the default look. The classic dark and light themes are still here.
+                    {t(
+                      'OpsMaxx is the default look. The classic dark and light themes are still here.'
+                    )}
                   </div>
                 </div>
                 <div className="segment">
-                  {THEME_OPTIONS.map(([t, label]) => (
+                  {/* `id`, not `t`: the arrow's parameter would shadow the
+                      translator for every line inside this map. */}
+                  {THEME_OPTIONS.map(([id, label]) => (
                     <button
-                      key={t}
-                      className={clsx('seg-btn', theme === t && 'active')}
-                      onClick={() => setTheme(t)}
+                      key={id}
+                      className={clsx('seg-btn', theme === id && 'active')}
+                      onClick={() => setTheme(id)}
                     >
-                      {label}
+                      {t(label)}
                     </button>
                   ))}
                 </div>

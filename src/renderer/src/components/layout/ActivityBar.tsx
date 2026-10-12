@@ -17,6 +17,7 @@ import {
   Satellite
 } from 'lucide-react'
 import { useApp } from '../../store/app'
+import { useT } from '../../i18n'
 import { clsx } from '../../lib/format'
 import { reportBug } from '../../lib/reportBug'
 import { openMonitor, openOperations, useNav } from '../../store/nav'
@@ -128,6 +129,7 @@ const PROMOTED_TITLES: Record<string, string> = {
 const items = ACTIVITY_ITEMS
 
 export function ActivityBar(): React.JSX.Element {
+  const t = useT()
   const activity = useApp((s) => s.activity)
   const setActivity = useApp((s) => s.setActivity)
   const toggleSidebar = useApp((s) => s.toggleSidebar)
@@ -165,12 +167,12 @@ export function ActivityBar(): React.JSX.Element {
     <div className="activitybar">
       <button
         className="activity-btn"
-        title="Toggle sidebar"
-        aria-label="Toggle sidebar"
+        title={t('Toggle sidebar')}
+        aria-label={t('Toggle sidebar')}
         onClick={toggleSidebar}
       >
         <PanelLeft size={20} />
-        <RailLabel>Sidebar</RailLabel>
+        <RailLabel>{t('Sidebar')}</RailLabel>
       </button>
       <div style={{ height: 8 }} />
       {/* The destinations scroll; the sidebar toggle above and Report a bug and
@@ -215,20 +217,20 @@ export function ActivityBar(): React.JSX.Element {
                 'activity-btn',
                 activity === 'monitor' && rail === 'monitor' && !onPromotedTab && 'active'
               )}
-              title="Monitoring — reading the estate"
-              aria-label="Monitoring — reading the estate"
+              title={t('Monitoring — reading the estate')}
+              aria-label={t('Monitoring — reading the estate')}
               onClick={() => openMonitor(onPromotedTab ? 'overview' : monitorTab)}
             >
               <Activity size={20} />
-              <RailLabel>Monitoring</RailLabel>
+              <RailLabel>{t('Monitoring')}</RailLabel>
             </button>
             <button
               className={clsx(
                 'activity-btn',
                 activity === 'monitor' && rail === 'operations' && 'active'
               )}
-              title="Operations — changing the estate"
-              aria-label="Operations — changing the estate"
+              title={t('Operations — changing the estate')}
+              aria-label={t('Operations — changing the estate')}
               onClick={() => openOperations(operationsTab)}
             >
               {/* A spanner rather than another waveform. The two rails differ by
@@ -236,7 +238,7 @@ export function ActivityBar(): React.JSX.Element {
                   than hue — an operator glancing at a 44px column reads the
                   silhouette and nothing else. */}
               <Wrench size={20} />
-              <RailLabel>Operations</RailLabel>
+              <RailLabel>{t('Operations')}</RailLabel>
             </button>
             {/* The promoted modules, immediately after the two fleet buttons.
                 Here rather than at the top of the rail because they ARE fleet
@@ -252,12 +254,12 @@ export function ActivityBar(): React.JSX.Element {
                   'activity-btn',
                   activity === 'monitor' && rail === 'monitor' && monitorTab === m.id && 'active'
                 )}
-                title={PROMOTED_TITLES[m.id] ?? m.label}
-                aria-label={PROMOTED_TITLES[m.id] ?? m.label}
+                title={t(PROMOTED_TITLES[m.id] ?? m.label)}
+                aria-label={t(PROMOTED_TITLES[m.id] ?? m.label)}
                 onClick={() => openMonitor(m.id)}
               >
                 {PROMOTED_ICONS[m.id]}
-                <RailLabel>{PROMOTED_RAIL[m.id] ?? m.label}</RailLabel>
+                <RailLabel>{t(PROMOTED_RAIL[m.id] ?? m.label)}</RailLabel>
               </button>
             ))}
           </div>
@@ -265,12 +267,12 @@ export function ActivityBar(): React.JSX.Element {
           <button
             key={it.id}
             className={clsx('activity-btn', activity === it.id && 'active')}
-            title={it.label}
-            aria-label={it.label}
+            title={t(it.label)}
+            aria-label={t(it.label)}
             onClick={() => setActivity(it.id)}
           >
             {it.icon}
-            <RailLabel>{it.rail ?? it.label}</RailLabel>
+            <RailLabel>{t(it.rail ?? it.label)}</RailLabel>
           </button>
         )
       )}
@@ -301,19 +303,23 @@ export function ActivityBar(): React.JSX.Element {
         // that turns it off is the one it is attached to.
         title={
           recording
-            ? 'Report a bug — debug mode is recording what the app does. Press to stop recording and build a report.'
-            : 'Report a bug — collects a report you can read before you send it'
+            ? t(
+                'Report a bug — debug mode is recording what the app does. Press to stop recording and build a report.'
+              )
+            : t('Report a bug — collects a report you can read before you send it')
         }
         aria-label={
           recording
-            ? 'Report a bug — debug mode is recording what the app does. Press to stop recording and build a report.'
-            : 'Report a bug — collects a report you can read before you send it'
+            ? t(
+                'Report a bug — debug mode is recording what the app does. Press to stop recording and build a report.'
+              )
+            : t('Report a bug — collects a report you can read before you send it')
         }
         onClick={() => reportBug()}
       >
         <Bug size={20} />
         {recording && <span className="activity-badge" aria-hidden />}
-        <RailLabel>Report bug</RailLabel>
+        <RailLabel>{t('Report bug')}</RailLabel>
       </button>
       <button
         className={clsx('activity-btn', activity === 'settings' && 'active')}
@@ -329,19 +335,23 @@ export function ActivityBar(): React.JSX.Element {
         // status-bar chip is the one that lands on the page.
         title={
           backupDirty
-            ? 'Settings — backup out of date: stored connections have changed since the last export'
-            : 'Settings'
+            ? t(
+                'Settings — backup out of date: stored connections have changed since the last export'
+              )
+            : t('Settings')
         }
         aria-label={
           backupDirty
-            ? 'Settings — backup out of date: stored connections have changed since the last export'
-            : 'Settings'
+            ? t(
+                'Settings — backup out of date: stored connections have changed since the last export'
+              )
+            : t('Settings')
         }
         onClick={() => setActivity('settings')}
       >
         <Settings size={20} />
         {backupDirty && <span className="activity-badge" aria-hidden />}
-        <RailLabel>Settings</RailLabel>
+        <RailLabel>{t('Settings')}</RailLabel>
       </button>
     </div>
   )

@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ErrorBoundary } from './components/common/ErrorBoundary'
+import { LocaleBridge } from './i18n/LocaleBridge'
 import App from './App'
 import { installDebugForwarding } from './lib/debugForward'
 import './styles/global.css'
@@ -18,6 +19,10 @@ installDebugForwarding()
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary>
+      {/* Outside App, not inside it: App returns early for a revoked device,
+          and the screen that says so is one a user has to be able to read in
+          their own language. See LocaleBridge for the rest. */}
+      <LocaleBridge />
       <App />
     </ErrorBoundary>
   </StrictMode>

@@ -9,6 +9,7 @@ import {
   BellOff
 } from 'lucide-react'
 import { useUpdater } from '../../store/updater'
+import { useT } from '../../i18n'
 import { Modal } from '../common/Modal'
 import {
   channelOfVersion,
@@ -43,16 +44,20 @@ function SettingSwitch({
   disabled?: boolean
   onChange: (v: boolean) => void
 }): React.JSX.Element {
+  // Translated here for the same reason Settings' copy of this helper does it:
+  // the key is the English source, so this covers the three rows below without
+  // three call sites having to agree about anything.
+  const t = useT()
   return (
     <div className="setting-row">
       <div className="s-info">
-        <div className="s-title">{label}</div>
-        <div className="s-desc">{desc}</div>
+        <div className="s-title">{t(label)}</div>
+        <div className="s-desc">{t(desc)}</div>
       </div>
       <Switch
         checked={checked && !disabled}
         disabled={disabled}
-        label={label}
+        label={t(label)}
         onChange={onChange}
       />
     </div>
@@ -91,6 +96,7 @@ function noSelfInstallReason(caps: UpdaterCapabilities): string {
 }
 
 export function UpdatePanel(): React.JSX.Element {
+  const t = useT()
   const status = useUpdater((s) => s.status)
   const prefs = useUpdater((s) => s.prefs)
   const caps = useUpdater((s) => s.capabilities)
@@ -204,7 +210,7 @@ export function UpdatePanel(): React.JSX.Element {
         <div className="backup-banner warn">
           <AlertTriangle size={16} />
           <div style={{ flex: 1 }}>
-            <div className="s-title">Update check failed</div>
+            <div className="s-title">{t('Update check failed')}</div>
             <div className="s-desc">{status.message} — you can always grab the latest release directly.</div>
           </div>
           <button className="btn sm" onClick={() => void window.opsmaxx?.updater.openReleasePage()}>
@@ -213,13 +219,14 @@ export function UpdatePanel(): React.JSX.Element {
         </div>
       )}
 
-      <div className="backup-h">Update channel</div>
+      <div className="backup-h">{t('Update channel')}</div>
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Channel</div>
+          <div className="s-title">{t('Channel')}</div>
           <div className="s-desc">
-            Stable is the released build. Beta gets new features earlier, and gets their bugs earlier
-            too — it is the build that has not been through as many hands yet.
+            {t(
+              'Stable is the released build. Beta gets new features earlier, and gets their bugs earlier too — it is the build that has not been through as many hands yet.'
+            )}
           </div>
         </div>
         <select
@@ -228,12 +235,12 @@ export function UpdatePanel(): React.JSX.Element {
           value={prefs.channel}
           onChange={(e) => selectChannel(e.target.value as UpdateChannel)}
         >
-          <option value="stable">Stable</option>
-          <option value="beta">Beta</option>
+          <option value="stable">{t('Stable')}</option>
+          <option value="beta">{t('Beta')}</option>
         </select>
       </div>
 
-      <div className="backup-h">Automatic updates</div>
+      <div className="backup-h">{t('Automatic updates')}</div>
       <SettingSwitch
         label="Check for updates automatically"
         desc="Off means OpsMaxx only looks when you press Check for updates."
@@ -242,10 +249,11 @@ export function UpdatePanel(): React.JSX.Element {
       />
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">How often to check</div>
+          <div className="s-title">{t('How often to check')}</div>
           <div className="s-desc">
-            Every check happens at launch as well. A longer interval only affects an app that stays
-            open for days.
+            {t(
+              'Every check happens at launch as well. A longer interval only affects an app that stays open for days.'
+            )}
           </div>
         </div>
         <select
@@ -257,9 +265,9 @@ export function UpdatePanel(): React.JSX.Element {
             setPrefs({ checkIntervalHours: Number(e.target.value) as CheckIntervalHours })
           }
         >
-          <option value={0}>Only at launch</option>
-          <option value={6}>Every 6 hours</option>
-          <option value={24}>Every 24 hours</option>
+          <option value={0}>{t('Only at launch')}</option>
+          <option value={6}>{t('Every 6 hours')}</option>
+          <option value={24}>{t('Every 24 hours')}</option>
         </select>
       </div>
       <SettingSwitch

@@ -11,6 +11,14 @@ import { isDemo } from './portable'
 // else references the module.
 import { installDemo } from './demo'
 import { parseAddyLink, ADDY_LINK_SCHEME, type AddyLink } from '../shared/addyLink'
+import {
+  applyLanguageSwitch,
+  menuLabel,
+  rememberLanguage,
+  setResolvedLocale,
+  type LanguagePreference,
+  type LocaleCode
+} from './uiPrefs'
 import { app, shell, BrowserWindow, clipboard, globalShortcut, ipcMain, nativeTheme, dialog, session, Menu, Notification, powerMonitor, webContents } from 'electron'
 import { join, resolve} from 'node:path'
 import { readFileSync, existsSync, writeFileSync } from 'node:fs'
@@ -587,6 +595,13 @@ if (isWSL()) {
   app.commandLine.appendSwitch('disable-dev-shm-usage')
 }
 
+// Chromium picks its `locales/*.pak` bundle from this switch and never looks
+// again, so it has to be appended here — module scope, before whenReady — and
+// not when the renderer reports its language a moment later. See uiPrefs.ts for
+// what it buys: every `role:` menu item, the selection context menu and the
+// find bar, all of which come from that bundle rather than from this codebase.
+applyLanguageSwitch()
+
 // Content-Security-Policy applied via response headers.
 // Dev needs inline/eval for the Vite dev server + React fast-refresh; prod is strict.
 //
@@ -934,6 +949,33 @@ ipcMain.handle('theme:set', (_e, mode: unknown) => {
     nativeTheme.themeSource = mode
   }
   return nativeTheme.shouldUseDarkColors
+})
+
+/**
+ * The renderer's language, for the parts of the app this process owns.
+ *
+ * Both arguments are validated against a whitelist rather than trusted, and the
+ * whitelist is the whole of what a compromised renderer could do here: no path,
+ * no command, no string that reaches a shell. `locale` decides what to draw now
+ * and `preference` decides what to remember, because only the second one knows
+ * the difference between "English" and "whatever the system says", and writing
+ * the resolved locale down as a preference is how a user who had chosen
+ * "follow system" ends up pinned to English for good the first time they launch
+ * on an English machine.
+ *
+ * The menu is rebuilt here rather than at the next launch. Its two literal
+ * labels were read once, when the template was built, so without this a live
+ * switch would leave "Edit" sitting above a submenu that had already turned
+ * Chinese -- the half-translated state that reads as a bug rather than as an
+ * unfinished translation.
+ */
+ipcMain.handle('i18n:set', (_e, locale: unknown, preference: unknown) => {
+  const resolved: LocaleCode = locale === 'zh-CN' ? 'zh-CN' : 'en'
+  const pref: LanguagePreference =
+    preference === 'en' || preference === 'zh-CN' ? preference : 'system'
+  setResolvedLocale(resolved)
+  rememberLanguage(pref)
+  installMenu()
 })
 
 ipcMain.handle('ssh:defaultKeys', () => listDefaultKeys())
@@ -6143,7 +6185,7 @@ function installMenu(): void {
   const menu = Menu.buildFromTemplate([
     ...(isMac ? [{ role: 'appMenu' as const }] : []),
     {
-      label: 'Edit',
+      label: menuLabel('edit'),
       submenu: [
         { role: 'undo' as const },
         { role: 'redo' as const },
@@ -6157,7 +6199,7 @@ function installMenu(): void {
       ]
     },
     {
-      label: 'View',
+      label: menuLabel('view'),
       submenu: [
         // No 'reload' role. Its Ctrl+R accelerator is swallowed app-wide and
         // shells bind Ctrl+R to reverse history search — losing that, and
