@@ -635,6 +635,49 @@ export const zhCN: Record<string, string> = {
     '点击可排序。此列没有值的服务器始终排在最后。',
 
   // ─────────────────────────────────────────────────────────────────────────
+  // 首次设置向导的选项标签（onboarding/setupQuestions.ts）。
+  //
+  // 该文件的渲染点（SetupCard 的 PrefRow）**本来就在渲染处翻译**：
+  // `{t(o.label)}`、`t(control.label)`、`t(o.detail)` —— 所以这里只需补词条，
+  // 不必接线。向导是首次运行必经之路，且审计完全走不到（demo profile 会跳过）。
+  // ─────────────────────────────────────────────────────────────────────────
+
+  'Look & feel': '外观与体验',
+  'Density': '紧凑度',
+  'Comfortable': '宽松',
+  'Compact': '紧凑',
+  'Match my system': '跟随我的系统',
+  'Updates & releases': '更新与版本发布',
+  'Which builds to be offered': '提供哪些构建',
+  'Stable only': '仅稳定版',
+  'Beta and stable': '测试版与稳定版',
+  'Earlier features, less proving.': '功能更新，验证更少。',
+  'Check automatically': '自动检查',
+  'Download in the background': '后台下载',
+  'Watching the estate': '持续监控资产',
+  'Sample servers in the background': '在后台采样服务器',
+  'Only while I am looking': '仅在我查看时',
+  'Keep watching in the background': '继续在后台监控',
+  'Every minute': '每分钟',
+  'Every 2 minutes': '每 2 分钟',
+  'Every 5 minutes': '每 5 分钟',
+  'Every 15 minutes': '每 15 分钟',
+  'Once a day': '每天一次',
+  'Tell me first': '先告诉我',
+  'Tell me when a server is struggling': '服务器吃力时告诉我',
+  'No alerts': '不提醒',
+  'At what point': '在什么程度',
+  '70% — tell me early': '70% —— 早点提醒我',
+  '90% — only when it is serious': '90% —— 只在严重时提醒',
+  'No — I will check': '不 —— 我会自己检查',
+  'DevOps engineer': 'DevOps 工程师',
+  'Cloud / platform engineer': '云 / 平台工程师',
+  'Infrastructure / sysadmin': '基础设施 / 系统管理',
+  'SRE / on-call': 'SRE / 值班',
+  'Docker and Kubernetes panels on every server.': '每台服务器上的 Docker 与 Kubernetes 面板。',
+  'The AppArmor module is present and switched off.': 'AppArmor 模块存在但已关闭。',
+
+  // ─────────────────────────────────────────────────────────────────────────
   // 界面部件：按钮、表头、状态名、字段标签
   //
   // 这一批由 scripts/i18n/codemod.mjs 自动包上 t() 之后，从工作单里按长度升序

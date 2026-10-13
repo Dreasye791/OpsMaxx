@@ -870,8 +870,8 @@ export function PosturePanel({
                 <tr>
                   <th>{t('Host')}</th>
                   {COLUMNS.map((c) => (
-                    <th key={c.id} title={c.help}>
-                      {c.label}
+                    <th key={c.id} title={c.help ? t(c.help) : undefined}>
+                      {t(c.label)}
                     </th>
                   ))}
                 </tr>
