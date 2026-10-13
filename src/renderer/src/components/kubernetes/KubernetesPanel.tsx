@@ -2099,7 +2099,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
       {drainCheck && (
         <div className="s-card" style={{ marginTop: 8 }}>
           <div className="s-title">
-            <ShieldQuestion size={12} /> {t('Can')}{' '}{drainCheck.node} {t('be drained?')}</div>
+            <ShieldQuestion size={12} /> {t('Can {node} be drained?', { node: drainCheck.node })}</div>
           {drainCheck.loading && <div className="s-desc faint">{t('Reading pods, budgets and endpoints…')}</div>}
           {!drainCheck.loading && !drainCheck.assessment && (
             <div className="s-desc danger">{NOT_WIRED}</div>
@@ -2115,8 +2115,11 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                   denied read looks exactly like a cluster with no budgets. */}
               {drainCheck.assessment.unchecked.map((u) => (
                 <div key={u.read} className="s-desc danger">
-                  <TriangleAlert size={12} /> {t('The')}{' '}{u.read} {t('read did not answer, so nobody can say')}{' '}
-                  {u.meaning}
+                  <TriangleAlert size={12} />{' '}
+                  {t('The {read} read did not answer, so nobody can say {meaning}', {
+                    read: u.read,
+                    meaning: t(u.meaning)
+                  })}
                   <div className="mono faint" style={{ marginTop: 2 }}>
                     {u.detail}
                   </div>

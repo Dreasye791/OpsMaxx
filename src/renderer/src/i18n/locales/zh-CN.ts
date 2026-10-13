@@ -793,6 +793,95 @@ export const zhCN: Record<string, string> = {
   'the env files could not be read': '环境变量文件无法读取',
 
   // ─────────────────────────────────────────────────────────────────────────
+  // Kubernetes 面板（components/kubernetes/KubernetesPanel.tsx）。
+  //
+  // 这一屏渲染审计**永远走不到**（演示环境没有集群），所以它的正确性由
+  // `npm run i18n:coverage` 复核：译文一加，该文件在「已接线未翻译」清单里少几条
+  // 就是几条 —— 比看屏幕更确定。
+  //
+  // 不译的：Kubernetes 资源类型名（Deployments、StatefulSets、
+  // PersistentVolumeClaims）与命令、参数（kubectl top、--ignore-daemonsets、
+  // rollout restart）—— 它们是 API 名称，译了反而不认得。
+  // ─────────────────────────────────────────────────────────────────────────
+  'Put this back under its pod’s row': '把它移回其 Pod 那一行下方',
+  'Diagnosis ·': '诊断 ·',
+  'No events for this pod. They expire after about an hour, so this is not proof nothing happened.':
+    '此 Pod 没有事件。事件约一小时后过期，所以这不能证明什么都没发生过。',
+  'Previous container': '上一个容器',
+  'Kubernetes host': 'Kubernetes 主机',
+  'Kubernetes context': 'Kubernetes 上下文',
+  'Scopes the cluster and usage reads. Nodes are cluster-scoped and are never namespace-filtered.':
+    '限定集群与用量的读取范围。节点属于集群级资源，永远不会按命名空间过滤。',
+  'all namespaces': '所有命名空间',
+  'No server in this workspace is connected — reading the kubeconfig on this machine. Any saved server can still be picked above.':
+    '此工作区没有服务器处于连接状态 —— 正在读取本机的 kubeconfig。仍可在上方选择任意已保存的服务器。',
+  'on the selected server, using whatever kubeconfig that server already has. Reading only, with one exception:':
+    '在所选服务器上，使用该服务器已有的 kubeconfig。除一处例外，均为只读：',
+  ', which asks first. It never switches your context, never execs into a pod, and never deletes anything.':
+    '，它会先询问。它绝不会切换你的上下文、不会 exec 进入 Pod，也不会删除任何东西。',
+  'one namespace only — this account cannot list across the cluster':
+    '仅一个命名空间 —— 此账户无法跨集群列出',
+  'in': '位于',
+  'Filter pods…': '筛选 Pod…',
+  'Run a command in this pod': '在此 Pod 中运行命令',
+  'Run a command in': '在以下 Pod 中运行命令：',
+  'e.g. cat /etc/nginx/nginx.conf': '例如 cat /etc/nginx/nginx.conf',
+  'container (optional — kubectl picks the default and says which)':
+    '容器（可选 —— kubectl 会选默认容器并说明是哪个）',
+  'One command, no TTY and no stdin: a program that waits for input will hang until the timeout rather than prompt. This is not a shell session.':
+    '只执行一条命令，没有 TTY 也没有 stdin：等待输入的程序会一直挂起直到超时，而不会弹出提示。这不是一个 shell 会话。',
+  'Type EXEC to run it': '输入 EXEC 以运行',
+  'Checked every two minutes from': '每两分钟检查一次，来源：',
+  'Watching this cluster for restarting pods.': '正在监视此集群中反复重启的 Pod。',
+  'Stop watching': '停止监视',
+  'Not watching this cluster. Nothing is polled until you say which server to ask, because nothing else can know which of them holds a kubeconfig.':
+    '未监视此集群。在你指定询问哪台服务器之前不会有任何轮询，因为没有别的办法知道哪台服务器持有 kubeconfig。',
+  'Watch for restarting pods': '监视反复重启的 Pod',
+  'Check drain': '检查排空',
+  'Events, newest first': '事件（最新在前）',
+  'No events. The API server keeps them for about an hour, so a quiet list can also mean nothing has happened recently.':
+    '没有事件。API 服务器只保留约一小时，所以列表为空也可能是最近什么都没发生。',
+  '— needs a Metrics API in the cluster': '—— 需要集群中有 Metrics API',
+  'Requested against allocatable — what the scheduler has promised, not what is being used. Every namespace, whichever one is selected above.':
+    '请求量对可分配量 —— 这是调度器已承诺的量，而不是正在使用的量。统计所有命名空间，与上方选中哪个无关。',
+  'Requested-against-allocatable could not be read:': '无法读取「请求量对可分配量」：',
+  'Not scheduled anywhere:': '未调度到任何节点：',
+  '— ClusterRoleBindings and the API scan are cluster-wide either way':
+    '—— 无论如何，ClusterRoleBindings 与 API 扫描都是全集群范围的',
+  'No ingresses': '没有 Ingress',
+  'Role bindings': '角色绑定',
+  'Secrets — names and key names only': 'Secret —— 仅名称与键名',
+  'No value is read. The query lists key names and cannot reach what is behind them.':
+    '不会读取任何值。该查询只列出键名，无法触及它们背后的内容。',
+  'Cluster review': '集群审查',
+  'Nothing was read:': '未读取任何内容：',
+  'was not read, so nothing here says anything about it:':
+    '未被读取，因此这里没有任何结论与它相关：',
+  'Deprecated APIs': '已弃用的 API',
+  'Nothing in the table is still being served.': '表中的内容都已不再被提供。',
+  'What this did not check:': '本次未检查的内容：',
+  'Helm releases': 'Helm 发布记录',
+  'helm answered and has no releases.': 'helm 有响应，且没有任何发布记录。',
+  'This changes the cluster —': '这会改动集群 ——',
+  'Nothing changed — the node was already in that state before this click. Somebody else may be working on it.':
+    '没有任何改动 —— 点击之前该节点就已经是这个状态。可能是别人正在处理它。',
+  'Reading pods, budgets and endpoints…': '正在读取 Pod、预算与端点…',
+  'pod(s) would move;': '个 Pod 会被迁移；',
+  'DaemonSet pod(s) stay where they are.': 'DaemonSet 的 Pod 会留在原处。',
+  'Type DRAIN to drain this node': '输入 DRAIN 以排空此节点',
+  'This drain will not be offered while any of the above is true. Fix the cause, or read the budget yourself — nothing here overrides it.':
+    '只要上述任何一条成立，就不会提供这个排空操作。先解决原因，或者你自行判断预算 —— 这里没有任何东西会覆盖它。',
+  'This drain is PARTIAL:': '这次排空是局部的：',
+  'pod(s) were already evicted before it stopped, and the node has been cordoned. It is not untouched.':
+    '个 Pod 在它停止之前就已被驱逐，且该节点已被封锁。它并非未受影响。',
+  'Still held by a PodDisruptionBudget:': '仍被 PodDisruptionBudget 拦住：',
+  // 这两句原本是「片段夹一个值」（`t('Can')` + 节点名 + `t('be drained?')`），中文里
+  // 值的位置和英文不同，所以改成模板键：槽位由译文的语序决定。
+  'Can {node} be drained?': '能否排空 {node}？',
+  'The {read} read did not answer, so nobody can say {meaning}':
+    '{read} 读取没有返回结果，因此无法判断{meaning}。',
+
+  // ─────────────────────────────────────────────────────────────────────────
   // 界面部件：按钮、表头、状态名、字段标签
   //
   // 这一批由 scripts/i18n/codemod.mjs 自动包上 t() 之后，从工作单里按长度升序
