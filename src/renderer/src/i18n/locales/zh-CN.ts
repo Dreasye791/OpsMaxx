@@ -870,13 +870,247 @@ export const zhCN: Record<string, string> = {
   'Running on 127.0.0.1:{port}': '运行于 127.0.0.1:{port}',
 
   // ─────────────────────────────────────────────────────────────────────────
+  // 已接线、只差词条的页面说明。来源：i18n:coverage 的 WIRED BUT
+  // UNTRANSLATED ∩ i18n:render 的可见清单。全部是完整句，可直接翻译；
+  // 被 JSX 拆开的片段一律不在此列（翻译片段会得到中英混排）。
+  // ─────────────────────────────────────────────────────────────────────────
+  'Let AI agents like Claude Code, Codex, Gemini CLI and other MCP-compatible clients operate your servers through OpsMaxx — without ever seeing an SSH password, private key or database credential. OpsMaxx resolves the friendly names, enforces access-group policy and asks for your approval on anything sensitive.':
+    '让 Claude Code、Codex、Gemini CLI 等兼容 MCP 的客户端通过 OpsMaxx 操作你的服务器 —— 它们永远看不到 SSH 密码、私钥或数据库凭据。OpsMaxx 负责解析友好名称、执行访问组策略，并在涉及敏感操作时征求你的批准。',
+  'The profile a session starts in when nobody picks one — CLI-paired and OAuth sessions always start in it. Until you set one they start on Custom with the default access group, which is no access at all if there is none. Each session’s profile can be changed under Active Sessions.':
+    '无人指定时，会话启动所用的配置 —— CLI 配对与 OAuth 会话总是从它开始。在你设置之前，它们以「自定义」和默认访问组启动；若没有默认访问组，就等于完全没有权限。每个会话的配置都可以在「活动会话」下修改。',
+  'On: the actions below still ask even where a capability says Allow. Off: Allow means allow (a command whose program is computed at run time still asks unless Sudo is Allow). Applies to agents on the Custom profile using this group; the predefined profiles carry their own.':
+    '开启：即使某项能力标为「允许」，下列操作仍会征求同意。关闭：「允许」就是允许（程序名在运行时才确定的命令仍会询问，除非「sudo 权限」为允许）。适用于使用本组、配置为「自定义」的代理；预定义配置各自带有自己的设置。',
+  'A client that asked to connect over OAuth waits here. Nothing is granted until you choose what it may do — there is no default, and the client cannot choose for itself. Approving creates a session exactly as if you had made one by hand.':
+    '通过 OAuth 请求连接的客户端会在此等待。在你选定它可以做什么之前，不会授予任何权限 —— 没有默认值，客户端也无法自行选择。批准后创建的会话，与你手工创建的完全一样。',
+  'The most specific matching pattern wins; anything unmatched falls back to Read/Write Files above. Sudo -i/su/bash-style unrestricted shells are blocked on every profile except Bypass, and are not configurable here.':
+    '匹配最具体的规则生效；未匹配到的回退到上方的「读/写文件」。除「绕过」外，所有配置都会拦截 sudo -i、su、bash 这类无限制 shell，此处不可配置。',
+  "Optional: under Access Groups, hold a workspace or server below every session's group with an assignment, or mark it Protected so agents there are held at Ask first — for production.":
+    '可选：在「访问组」下用一条指派把某个工作区或服务器压到所有会话的组之下，或把它标记为「受保护」，让针对它的代理一律先询问 —— 用于生产环境。',
+  'A restriction narrows every profile except Bypass. To hold this target even against Bypass, mark it Protected. No AI Access holds for every profile.':
+    '限制会收紧除「绕过」以外的所有配置。若要连「绕过」也拦住，请把它标记为「受保护」。「禁止 AI 访问」对所有配置一律生效。',
+  'What this agent may do, and how much it asks first. Custom uses an access group instead. You can change a running session’s profile at any time.':
+    '这个代理可以做什么，以及事前需要征得多少同意。「自定义」改用访问组。运行中的会话可随时更改配置。',
+  'Works the same way whether OpsMaxx is installed normally or running in portable mode — the port and token are all any client needs.':
+    '无论 OpsMaxx 是常规安装还是便携运行，方式都一样 —— 客户端只需要端口和令牌。',
+  'Actions an access group marked ASK wait here for your decision. An AI agent can never approve its own request — only this UI can.':
+    '被访问组标记为「询问」的操作会在此等待你决定。AI 代理永远不能批准自己的请求 —— 只有这个界面可以。',
+  'Every AI action OpsMaxx processed, whether allowed, approved, denied or failed. Never includes passwords, keys or other secrets.':
+    'OpsMaxx 处理过的每一个 AI 操作，无论是允许、批准、拒绝还是失败。绝不包含密码、密钥或其他机密。',
+  'This session only ever sees servers inside the workspace(s) selected here — pick as many as this agent needs.':
+    '这个会话只能看到此处所选工作区内的服务器 —— 按这个代理的需要选即可。',
+  'Most MCP-compatible clients accept a Streamable HTTP server via JSON configuration, for example:':
+    '大多数兼容 MCP 的客户端都支持通过 JSON 配置接入 Streamable HTTP 服务器，例如：',
+  'Every agent is held at Ask first here, whatever its profile; Read only stays read only.':
+    '此处所有代理一律先询问，无论其配置为何；「只读」仍是只读。',
+  'Immediately revokes every active session and denies every pending approval request.':
+    '立即吊销所有活动会话，并拒绝所有待决的批准请求。',
+  'What each one allows, asks about, or refuses — read from the groups themselves.':
+    '每一组允许、询问与拒绝的范围 —— 直接读自各组自身。',
+  'How long an ASK action waits for you before it is treated as denied.':
+    '标记为「询问」的操作等待多久后被视为拒绝。',
+  'A label for the Active Sessions list — e.g. "Claude Code", "Codex".':
+    '「活动会话」列表里显示的标签 —— 例如 "Claude Code"、"Codex"。',
+  'Restart the bridge (toggle it off and on) after changing this.':
+    '修改后需要重启桥接（关闭再开启）。',
+  'Global configuration for the OpsMaxx MCP bridge itself.':
+    'OpsMaxx MCP 桥接自身的全局配置。',
+  'Connecting Codex, Gemini CLI or another MCP client':
+    '接入 Codex、Gemini CLI 或其他 MCP 客户端',
+  'Or skip typing tokens: the OpsMaxx CLI launcher': '或者省去手动输入令牌：使用 OpsMaxx CLI 启动器',
+  'Somewhere for a backup to go that is not this machine, written on a schedule and checked after every write. Each generation is read back off the destination and decrypted before the run is called a success, and older generations are only deleted once the new one has passed both.':
+    '存放备份的地方，不在本机，按计划写入并在每次写入后校验。每一代备份都会从目标端读回并解密，之后这次运行才算成功；只有新一代通过了这两项检查，更早的备份才会被删除。',
+  'New sessions, file browsing and monitoring reuse an existing authenticated connection instead of logging in again. On servers with two-factor authentication, a code is only requested when no connection is being reused — so this sets how often you are asked.':
+    '新建会话、浏览文件和监控会复用已有的已认证连接，而不是重新登录。在启用双因素认证的服务器上，只有在没有连接可复用时才会要求验证码 —— 所以这一项决定了你被询问的频率。',
+  'Writes a single encrypted file containing your workspaces, servers, databases, tunnels, stored credentials, vault and trusted host keys. Credentials are re-encrypted under this passphrase, so the file restores on any machine — and is unreadable without it.':
+    '写出一个加密文件，内含你的工作区、服务器、数据库、隧道、已保存的凭据、保险库和可信主机密钥。凭据会用这个口令重新加密，因此该文件可在任何机器上恢复 —— 没有口令则无法读取。',
+  'It carries what Alerts raises, so that switch has to be on too. And nothing is raised while you are elsewhere unless servers are checked in the background — so with that off, this stays silent in exactly the case you set it up for.':
+    '它传递的是「警报」所产生的通知，所以那个开关也必须开启。若未开启后台检查，你在别处时就不会收到任何通知 —— 也就是说，关掉后台检查后，恰恰在你配置它要提醒的场景里它不会出声。',
+  'A script, a dev server or an agent calls a third-party API through OpsMaxx without ever holding the key. Point its base URL at the address below; the credential is added here, on the way out, and never comes back in a response.':
+    '脚本、开发服务器或代理可以经由 OpsMaxx 调用第三方 API，而无需持有密钥。把它的 base URL 指向下方地址即可；凭据在出口处由这里附加，且绝不会随响应返回。',
+  'Destination, rule, outcome and how long it took. Never the body, the headers or the query string — a rule that puts the key in a query parameter is exactly the rule whose query string must not be written down.':
+    '记录目标、规则、结果与耗时。绝不记录请求体、请求头或查询串 —— 把密钥放进查询参数的规则，恰恰正是其查询串绝不能落盘的规则。',
+  'Every file written here contains your stored credentials, your vault and your trusted host keys, encrypted under one passphrase. Choosing a destination is choosing somewhere for those to live.':
+    '此处写出的每个文件都含你保存的凭据、保险库与可信主机密钥，并用同一个口令加密。选择目标位置，就是为这些东西选择存放之处。',
+  'Reads a Bitwarden or Vaultwarden vault into this one, once. It does not keep the two in step afterwards, and nothing is sent anywhere else: this machine talks to that server directly.':
+    '把 Bitwarden 或 Vaultwarden 保险库一次性导入这里。导入后两者不再保持同步，也不会有任何数据发往别处：本机直接与该服务器通信。',
+  'Starts an SSH agent that offers the keys stored here to git, ansible, rsync and anything else that looks for one. Nothing is signed without asking you first.':
+    '启动一个 SSH 代理，把这里保存的密钥提供给 git、ansible、rsync 以及其他需要它的程序。任何签名都必须先征得你的同意。',
+  'Nothing is intercepted and no certificate is installed — a caller opts in by pointing at us, which is why an unconfigured tool is unaffected.':
+    '不会拦截任何流量，也不会安装证书 —— 调用方需主动指向我们才算接入，因此未配置的工具不受影响。',
+  'One destination, one credential, one way of sending it. Nothing applies by default: a destination with no rule is refused, never forwarded.':
+    '一个目标、一份凭据、一种发送方式。默认什么都不放行：没有规则的目标会被拒绝，绝不会被转发。',
+  'Choose a passphrase you can find again — there is no way to open the file without it, and nothing here can reset it.':
+    '请选一个你还能再想起来的口令 —— 没有它就无法打开文件，这里也无法重置。',
+  'No tokens, so every request is refused. Create one above and give it to the script that needs it.':
+    '还没有令牌，因此所有请求都会被拒绝。在上方创建一个，交给需要它的脚本。',
+  'No rules yet, so the proxy will refuse everything. That is the safe state, not a broken one.':
+    '还没有规则，因此代理会拒绝一切。这是安全状态，不是故障。',
+  'An alert with no resolution leaves the reader working out whether it is still happening.':
+    '没有解除条件的警报，会让读者自己去判断它是否还在持续。',
+  'Sends one sample alert now, so a wrong URL is found here rather than during an incident.':
+    '立即发送一条示例警报，这样 URL 填错会在这里被发现，而不是在事故当中。',
+  'No SSH keys in the vault yet. Add one with its private key and it appears here.':
+    '保险库里还没有 SSH 密钥。添加一个并附上私钥，它就会出现在这里。',
+  'Click a shortcut and press the keys you want. Backspace clears it, Esc cancels.':
+    '点击一个快捷键，然后按下你想要的组合键。退格清除，Esc 取消。',
+  'Give each script or agent its own, so revoking one does not stop the others.':
+    '给每个脚本或代理各发一份，这样吊销其中一个不会影响其他。',
+  'Optional end date. A token with no end date never expires.':
+    '可选的到期日期。不设到期日期的令牌永不过期。',
+  'Proxy port': '代理端口',
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 设置 › 模块的说明文字（shared/modules.ts 的 detail，23 条）。
+  'Search systemd units, listening ports and servers across the workspace, from data the monitor already collects.':
+    '在工作区内搜索 systemd 单元、监听端口和服务器，数据来自监控已经采集的内容。',
+  'What every server is — distribution, architecture, CPU, virtualisation — and what it needs: pending updates, security updates where the distribution publishes them, and whether a reboot is owed. Read-only, and nothing is refreshed: package caches are read, never updated, and their age is reported alongside the counts.':
+    '每台服务器是什么 —— 发行版、架构、CPU、虚拟化方式 —— 以及它需要什么：待安装的更新、发行版公布的安全更新，以及是否欠一次重启。只读，且不做任何刷新：包缓存只读取、绝不更新，其数据的新旧程度会与统计数字一并列出。',
+  'What every server needs — pending updates, security updates where the distribution publishes them, and whether a reboot is owed — and applying them in waves, with a health check between waves and a hard refusal to restart a server other servers connect through. It never patches on a schedule and never decides for you.':
+    '每台服务器需要什么 —— 待安装的更新、发行版公布的安全更新、是否欠一次重启 —— 并分批应用它们，批次之间做健康检查，且硬性拒绝重启那些有其他服务器连接的服务器。它绝不按计划打补丁，也绝不替你决定。',
+  'Which key opens which server and whose it is: every authorized_keys file across the estate, fingerprinted, with locked and expired accounts and administrative group membership alongside. A server whose files could not be read is shown as unreadable and excluded from every count — never as a server with no keys. Reading is the whole of it: nothing on this tab writes to a server, and removing a key is a separate module on the Operations side.':
+    '哪把密钥能打开哪台服务器、它属于谁：整个资产范围内所有 authorized_keys 文件，带指纹，并附上被锁定与已过期的账户以及管理组成员关系。文件读不到的服务器会标为不可读，并从所有统计中排除 —— 绝不会被当作一台没有密钥的服务器。读取就是它的全部：这个标签页上的任何操作都不会写入服务器，移除密钥是运维侧另一个独立模块。',
+  'Remove one SSH key from every account across the estate that trusts it. Each server takes a timestamped backup, arms its own rollback before OpsMaxx lets go, and keeps the change only once a second, independent session has authenticated against the changed file. Accounts it may not touch are listed by name with the reason, and a key is never reported as gone from an estate that could not be fully read.':
+    '从整个资产范围内所有信任某把 SSH 密钥的账户上移除它。每台服务器都会做一次带时间戳的备份，在 OpsMaxx 放手之前先准备好自己的回滚，并且只有在第二个独立会话针对改动后的文件完成认证之后，才保留这次变更。它不能触碰的账户会连原因一并以名称列出；在一份无法完整读取的资产上，绝不会报告某把密钥已经移除。',
+  'How full a server is getting and when it runs out — "this disk fills in eleven days" — drawn from the samples the monitor already writes. It stores nothing of its own, schedules nothing and evaluates nothing in the background: every line is derived on demand from history that exists whether or not this is on. A forecast is never stated without the window it was drawn from and how much of that window was sampled. A gap where nothing was measured is left as a hole in the line rather than drawn across; disk and memory are still forecast ACROSS such gaps, because a disk keeps filling while nobody is watching, while CPU is not.':
+    '服务器还有多满、什么时候会用尽 —— 「这个磁盘十一天后满」—— 取自监控已经在写入的样本。它自己不存储任何东西、不排定任何任务，也不在后台做任何计算：每一行都是按需从历史记录推导出来的，而那些历史无论此模块是否开启都存在。给出预测时，必定同时给出它取自哪个时间窗口、该窗口被采样的比例。没有测量到的空档会在曲线上留成缺口，而不是直接连过去；磁盘与内存仍会跨越这种空档继续预测，因为无人看守时磁盘照样在填满，CPU 却不是。',
+  '"What did I change on Tuesday" — one timeline over four records that already exist: shells run on this machine, what you confirmed before a job or a broadcast ran, what an agent did through the MCP bridge, and the alerts, jobs and store events the durable history keeps. Metadata only: commands and targets, never output. It reads; it stores nothing of its own and writes nothing.':
+    '「我周二改了什么」—— 一条时间线，覆盖四种已经存在的记录：本机运行过的 shell、你在某个作业或广播运行前确认过的内容、某个代理通过 MCP 桥接做过的事，以及持久历史保存的警报、作业与存储事件。只含元数据：命令与目标，绝不含输出。它只读取；自己不存储任何东西，也不写入任何东西。',
+  'When an alert fires, run a job or post to the webhook — with a ceiling on how often it may act. A rule runs the job it was confirmed with, on the servers it was confirmed for, and refuses if either has changed. It is not a workflow language: one trigger, one filter, one action, one rate limit.':
+    '警报触发时运行某个作业，或向 webhook 发帖 —— 并对它的行动频率设有上限。规则会用它被确认时使用的那个作业、在它被确认时选定的那些服务器上运行，只要其中任何一项已经变更就拒绝执行。它不是工作流语言：一个触发器、一个过滤器、一个动作、一个频率上限。',
+  'Compare a watched configuration file across the estate and say where it diverges — "all twelve web servers have this nginx.conf, three do not". Every file is compared under normalisation rules that are named on screen, so two files that differ and are called the same say which rule ate the difference. A server that could not be read is never reported as a server that matches. Read-only: it never writes a file back to bring a server into line.':
+    '比较一台被监视的配置文件在整个资产范围内的差异，并指出哪里有分歧 —— 「十二台 Web 服务器都有这个 nginx.conf，三台没有」。每个文件都在屏幕上具名的规范化规则下比较，因此两个内容不同却被视为相同的文件，会说明是哪条规则吃掉了差异。读不到的服务器绝不会被报告为「一致」。只读：它绝不把文件写回去让服务器对齐。',
+  "What every server already knows about its own exposure: which firewall is active and the shape of its rules, whether SELinux or AppArmor is enforcing, how sshd compares with a hardening baseline, and how many logins have failed. Read-only, and emphatically not a vulnerability scanner — the pending security update count comes from the Inventory probe, which asks the server's own package manager, rather than from a CVE feed. A check that could not run is shown as unread, never as passed.":
+    '每台服务器对自己的暴露面已经知道的事：哪个防火墙在生效、其规则大致是什么形状、SELinux 还是 AppArmor 处于强制模式、sshd 与加固基线的差距，以及有多少次登录失败。只读，且明确不是漏洞扫描器 —— 待安装的安全更新数量来自「清单」探针，它问的是服务器自己的包管理器，而不是某个 CVE 源。无法执行的检查会显示为未读取，绝不会显示为通过。',
+  'Run one command across selected servers, with confirmation that scales to how many servers and how dangerous the command is.':
+    '在选定的服务器上运行同一条命令，确认流程会随服务器数量和命令的危险程度而升级。',
+  'Watch any URL from the outside and see whether it answers, how fast, and how often it has been up. External on purpose: a server can be perfectly healthy while the service in front of it returns 502.':
+    '从外部监视任意 URL，看它是否响应、响应多快、可用率如何。刻意从外部发起：一台服务器可以完全健康，而它前面的服务却返回 502。',
+  'Run ping and traceroute from this machine or from any server. "Can this server reach that service" is a different question from "can my laptop reach it", and it is usually the one that matters.':
+    '从本机或任意服务器运行 ping 与 traceroute。「这台服务器能否访问那个服务」与「我的笔记本能否访问」是两个不同的问题，而通常要紧的是前者。',
+  'Follow a systemd unit or a log file on several servers at once, interleaved by server.':
+    '同时跟踪多台服务器上的一个 systemd 单元或一个日志文件，按服务器交错显示。',
+  'Read crontabs, /etc/cron.d and systemd timers across the estate, and say which of those sources this account was actually allowed to read. Read-only: changing a schedule is a write, and it lives on the Operations side under Jobs.':
+    '在整个资产范围内读取 crontab、/etc/cron.d 与 systemd 定时器，并说明这些来源中哪些是当前账户实际有权读取的。只读：修改计划属于写入，它位于运维侧的「作业」下。',
+  'Compose a multi-step job, pick the servers, run it in waves and watch it. Every job asks for the confirmation its own risk demands, and the answer is recorded before anything runs.':
+    '编排一个多步骤作业、选定服务器、分批运行并观察它。每个作业都会按其自身风险要求确认，而且在任何东西开始运行之前，先记录下确认结果。',
+  'Read what each server supervises for your account with `systemd --user` — what is running, what has failed, and whether it survives you logging out. Read-only: nothing is started, stopped or written, and installing a new unit is a write that lives on the Operations side under Jobs.':
+    '用 `systemd --user` 读取每台服务器为你的账户托管了什么 —— 哪些在运行、哪些已经失败，以及它们能否在你登出后存活。只读：不会启动、停止或写入任何东西；安装新单元属于写入，位于运维侧的「作业」下。',
+  'Run, watch, restart and read the logs of a long-lived process on THIS machine — a dev server, a worker, a script that should outlive its terminal. Restart policies, exponential backoff, crash-loop detection and a bounded log ring, from the supervisor that already keeps VPN engines alive. Nothing runs on a remote server, nothing starts by itself, and a value that looks like a secret has to come from the vault rather than the process list.':
+    '在**本机**上运行、观察、重启并读取某个长期存活进程的日志 —— 开发服务器、工作进程、本该比终端活得更久的脚本。重启策略、指数退避、崩溃循环检测和有界日志环形缓冲，都来自那个已经在维持 VPN 引擎存活的监管进程。不会有任何东西在远程服务器上运行，不会有任何东西自行启动，而看起来像机密的值必须来自保险库，而不是进程列表。',
+  'List containers on a server, read their logs, and open a shell inside a running one. Uses the docker binary already on the server — a container shell is arbitrary code execution there.':
+    '列出服务器上的容器、读取它们的日志，并在运行中的容器里打开一个 shell。使用服务器上已有的 docker 二进制文件 —— 容器内的 shell 在那台机器上等同于任意代码执行。',
+  'Connect a Jenkins, GitLab or GitHub Actions account and read what it did: pipelines, run history, and the log of the step that failed, beside the server the run changed. This module reads only. Starting a build, cancelling one, and enabling or disabling a job are the separate "Start a build" module, and its controls appear on this tab only while that one is switched on.':
+    '连接 Jenkins、GitLab 或 GitHub Actions 账户，读取它做过什么：流水线、运行历史、失败步骤的日志，并与该次运行所改动的服务器并列显示。这个模块只读取。启动构建、取消构建、启用或禁用任务属于另一个独立的「开始构建」模块，只有那个模块开启时，它的控件才会出现在这个标签页上。',
+  'Start, re-run and cancel builds on a CI server OpsMaxx does not administer, and enable or disable a job. What runs is the pipeline definition already in that repository — not anything composed here — so it can deploy, migrate or restart whatever that file says. Once a run has started OpsMaxx cannot stop it: cancelling is a request to a third party that may already have finished.':
+    '在 OpsMaxx 并不管理的 CI 服务器上启动、重跑和取消构建，以及启用或禁用某个任务。实际运行的是那个仓库里已有的流水线定义 —— 不是在这里编排的任何东西 —— 因此它可能部署、迁移或重启那个文件所说的一切。一旦运行开始，OpsMaxx 就无法停止它：取消只是向第三方发出的请求，而对方可能早已完成。',
+  'List contexts, namespaces and pods and read pod logs, using the kubectl already on the server. Reading only: it never switches your context, never execs into a pod, and never applies or deletes anything.':
+    '列出上下文、命名空间与 Pod 并读取 Pod 日志，使用服务器上已有的 kubectl。仅读取：它绝不切换你的上下文，绝不 exec 进入 Pod，也绝不 apply 或删除任何东西。',
+  'Your own machines, and what has reached them. OpsMaxx can carry servers, workspaces, tunnels and the vault between your devices through an addy relay you run yourself — every object sealed before it leaves, and the relay holding no key. This panel is the readout and the way in: which relay this device is enrolled on, which devices are on the account, when each was last seen, and when anything last synced. It reads only, and it touches no server in the estate.':
+    '你自己的机器，以及什么东西已经到达了它们。OpsMaxx 可以通过你自己运营的 addy 中继，在你的设备之间传递服务器、工作区、隧道和保险库 —— 每个对象在离开之前都已密封，中继不持有任何密钥。这个面板既是读数也是入口：本设备注册在哪个中继上、账户上有哪些设备、每台设备最后一次出现是什么时候，以及最后一次同步发生在何时。它只读取，也不触碰资产中的任何服务器。',
+
+  // 设置 › 模块：分组名与页首说明。数据来自 Settings.tsx 的 MODULE_GROUPS ——
+  // 属"数据表的值被渲染"，接线必须落在**渲染处**（定义处包 t() 会在模块加载时
+  // 求值，那时语言还没定）。模块名与模块说明（detail）另成一批。
+  // ─────────────────────────────────────────────────────────────────────────
+  'Features that ship with OpsMaxx but stay off until you turn them on. Everything here is first-party code in the same repo, reviewed the same way — this is about not carrying what you do not use, not about running anyone else’s code.':
+    '这些功能随 OpsMaxx 一起发布，但在你启用之前一直关闭。这里的一切都是同一仓库中的第一方代码，审查标准完全相同 —— 这是为了不背负你用不到的东西，而不是为了运行别人的代码。',
+  'A module added by an update stays off on an existing install until you enable it here.':
+    '更新新增的模块在已有安装中保持关闭，直到你在此启用它。',
+  'These have their own icon in the sidebar on the left. Switching one off here removes its icon as well as its panel.':
+    '这些模块在左侧边栏有自己的图标。在此关闭其中一个，会连图标一并移除，而不只是移除面板。',
+  'Panels under Monitoring. These read the estate rather than changing it — except Rules, which can run a job you approved in advance, on the servers you picked, while nobody is watching.':
+    '「监控」下的面板。它们读取资产而不做变更 —— 但「规则」例外：它可以在无人值守时，在你选定的服务器上运行你事先批准过的作业。',
+  'Panels under Operations. These exist to write to servers: running commands across the fleet, installing updates, removing access. Every one ships off.':
+    '「运维」下的面板。它们的存在就是为了写入服务器：在整个资产范围内运行命令、安装更新、移除访问权限。每一个默认都是关闭的。',
+
+  'A relay you run yourself, which carries your data between your devices and cannot read any of it.': '由你自己运营的中继，它在你的设备之间传递数据，却读不到其中任何内容。',
+  'Alerts, background checking, webhook delivery, and the monitor strip.': '警报、后台检查、webhook 投递，以及监控条。',
+  "Applies to open terminals immediately. A scheme without its own background keeps the app's, so it follows light and dark.": '立即应用到已打开的终端。没有自带背景色的配色会沿用应用的背景，因此会跟随浅色/深色模式。',
+  'Clears the vault from this screen and asks for your master password before showing it again. Nothing else stops — connections, background checks, pipeline polling and scheduled backups keep using the credentials in it. The vault locks completely when you quit or your machine sleeps. The timer counts vault inactivity, not time since you started the app, and background work does not postpone it.': '在此界面清空保险库，并在你再次查看前要求输入主密码。除此之外不会中断任何东西 —— 连接、后台检查、流水线轮询和计划备份仍会使用库中的凭据。退出应用或机器休眠时，保险库会完全锁定。计时器统计的是保险库的空闲时间，而不是应用启动以来的时间，后台任务也不会推迟它。',
+  'Export an encrypted copy of everything, or restore from one.': '把全部内容导出为一份加密副本，或从这样的副本恢复。',
+  'Let a script or an agent call a third-party API without ever holding the key.': '让脚本或代理在完全不持有密钥的情况下调用第三方 API。',
+  'Measured from the end of one pass to the start of the next, so a slow estate slows the cadence instead of overlapping checks.': '从上一次遍历结束到下一次开始计时，因此响应慢的资产会让节奏放慢，而不是让检查彼此重叠。',
+  'Other tools on this machine can use the SSH keys in your vault, without a second copy of them sitting in ~/.ssh.': '本机的其他工具可以使用你保险库里的 SSH 密钥，而无需在 ~/.ssh 再留一份副本。',
+  "Passwords and key passphrases go to the vault, or to this platform's secure store when no vault is set up. Neither path writes plaintext to disk, and there is no setting that changes it.": '密码与密钥口令会存入保险库；未设置保险库时，则存入本平台的安全存储。两条路径都不会把明文写到磁盘上，也没有任何设置能改变这一点。',
+  'Record a combination by clicking a shortcut. Conflicts are highlighted.': '点击某个快捷键，再按下你想要的组合键即可录制。冲突项会被高亮。',
+  'Sample every server in this workspace on a schedule, even when the monitor is not open, so failures and resource alerts are noticed while you are elsewhere. Opens one SSH exec channel per server per pass, separately from the monitor, so it is real load on the estate rather than a reuse of what is already sampled. Needs the vault unlocked; while it is locked, checking pauses rather than failing.': '按计划对工作区内每台服务器采样，即使监控没有打开，这样你不在时也能发现故障与资源警报。每一轮会为每台服务器单独开一条 SSH exec 通道，与监控彼此独立，因此这是对资产的真实负载，而不是复用已有的采样。需要保险库处于解锁状态；锁定时检查会暂停，而不是失败。',
+  'Standing permissions that let this machine keep working while nobody is here — and the only place to take one back.': '让这台机器在无人值守时继续工作的长期授权 —— 也是唯一能收回授权的地方。',
+  'The encrypted store for passwords, SSH keys and API keys.': '存放密码、SSH 密钥与 API 密钥的加密存储。',
+  'Your app version and update channel, this platform and its Electron, Chrome and Node versions, how many servers, workspaces, databases, tunnels and VPN profiles exist, which optional modules are on, and whether each configurable feature is switched on and actually set up. Counts and on/off states only — no names, hostnames, addresses, usernames, paths or credentials, and nothing read from any server. The crash screen copies this same report with the error text added, which is worth a glance before posting. Nothing is saved to disk.': '你的应用版本与更新通道、本平台及其 Electron、Chrome、Node 版本，有多少服务器、工作区、数据库、隧道和 VPN 配置，哪些可选模块已开启，以及每个可配置功能是否已打开并真正配置好。只含计数与开关状态 —— 不含名称、主机名、地址、用户名、路径或凭据，也不读取任何服务器。崩溃界面会复制同一份报告并附上错误文本，发布前值得看一眼。不会写入磁盘。',
+
+  'Live CPU, memory, disk and network docked below the session. Sampling only runs for the visible tab.': '在会话下方停靠显示实时的 CPU、内存、磁盘与网络。只有当前可见的标签页才会采样。',
+  'Double-clicking a file in the Files view uses the external editor instead of the built-in inline editor.': '在「文件」视图里双击文件时，使用外部编辑器，而不是内置的行内编辑器。',
+  'When on, hidden workspaces take their place in the numbering and can be switched to by shortcut. When off, they are skipped and the numbers close up around them.': '开启后，隐藏的工作区仍占用编号位置，也可以用快捷键切换过去。关闭后，它们会被跳过，编号随之收拢。',
+  'Typing exit ends the session, so the pane goes with it — the same as every other terminal. A shell that stopped for a reason keeps its pane and says why, whatever this is set to.': '输入 exit 会结束会话，面板随之关闭 —— 与其他终端一致。因故停止的 shell 会保留面板并说明原因，无论这一项如何设置。',
+  'Click inside the line you are typing to put the shell cursor there. Needs shell integration, so it does nothing in a session without it, and stays out of the way while a command is running or a full-screen program is open.': '在你正在输入的那一行内点击，即可把 shell 光标移到该处。这依赖 shell 集成，因此在没有集成的会话里不起作用；当有命令正在运行或打开了全屏程序时，它也不会干扰。',
+  'Once an hour, ask each stored database connection for its size and keep the number, so growth can be charted and a disk filling up has a cause beside it. Off by default: unlike a server check, this opens a CONNECTION on the database itself.': '每小时向每个已保存的数据库连接询问一次大小并记下该数字，这样就能绘制增长曲线，磁盘被填满时旁边也有原因可查。默认关闭：与服务器检查不同，这会在数据库本身上建立连接。',
+  'Open a shell on this computer, and offer it alongside your servers in the Docker, Kubernetes, cron, Files and monitoring panels. When off, every one of those refuses locally and open local file sessions are closed. Never available to the AI bridge either way.': '在本机上打开 shell，并在 Docker、Kubernetes、cron、文件和监控面板中把它与你的服务器并列提供。关闭后，这些面板一律拒绝本地目标，已打开的本地文件会话会被关闭。无论开关如何，AI 桥接都不可用它。',
+  'Whenever the vault has to be unlocked — opening the Vault, or anything that needs a stored credential — raise the fingerprint prompt without waiting for a click. Cancel it and the master password field is right there. Does nothing unless you have already set up biometric unlock.': '每当需要解锁保险库时 —— 打开保险库，或任何需要已保存凭据的操作 —— 直接弹出指纹验证，不必再点一下。取消后，主密码输入框就在那里。除非你已经配置过生物识别解锁，否则此项不起作用。',
+  "Start local shells so they report where each prompt begins and what each command exited with. Uses the shell's own startup options for the session OpsMaxx starts — your shell config files are never modified, and turning this off restores the previous behaviour exactly. zsh and bash get prompt and command marks; fish gets command marks only; a login bash and PowerShell are not supported.": '启动本地 shell 时让它们报告每个提示符从哪里开始、每条命令以什么状态退出。使用 shell 自身的启动选项来创建 OpsMaxx 所启动的会话 —— 你的 shell 配置文件绝不会被修改，关闭此项会完全恢复之前的行为。zsh 和 bash 会得到提示符标记与命令标记；fish 只有命令标记；登录式 bash 与 PowerShell 不支持。',
+  'Record which internal operations run and which fail, so a bug report can say what the app did and not only what it is. You do not need this page to start one — the bug icon in the left rail offers it, which is where a report begins. Those messages come from this machine and your servers, and they routinely name hostnames, usernames, file paths and commands; passwords, keys and tokens are filtered out before anything is written, a hostname cannot be. Nothing is sent anywhere: the trace stays on this computer, you read the whole report before it is written, and starting a new recording clears the old one.': '记录哪些内部操作在运行、哪些失败了，这样反馈报告能说明应用做了什么，而不只是它是什么。你不需要这个页面来开始记录 —— 左侧活动栏的 bug 图标就能提供，报告也从那里开始。这些消息来自本机和你的服务器，其中经常出现主机名、用户名、文件路径和命令；密码、密钥和令牌会在写入之前被过滤掉，主机名则不能。任何内容都不会被发送出去：记录留在本机，你可以在写出之前通读整份报告，开始新一次记录会清掉旧的。',
+  'The master switch. Covers CPU and memory at or above the threshold, a root filesystem more than 85% full by blocks OR by inodes, a load average at or above 2 per core, and systemd units that have failed — and, since every webhook is sent from an alert, webhook delivery too. CPU, memory and load repeat once a minute while the condition lasts; a full disk or inode table repeats every six hours, or sooner if it gets 5 points worse. They clear themselves on recovery: a filesystem as soon as it is back to 85% or below, CPU and memory once they are 5 points under the threshold, so a server sitting exactly on the line does not flicker on and off. A server that crosses the same line five times in six hours is announced once more and then held quiet until it has gone six hours without crossing again. Anything the server could not measure — no inode accounting, no /proc/loadavg, no df — raises nothing and clears nothing, because a reading nobody could take is not a reading of zero. Switching this off also takes down any alerts already showing.': '总开关。涵盖达到或超过阈值的 CPU 与内存、按块数或 inode 数计算超过 85% 已用的根文件系统、每核平均负载达到或超过 2，以及已失败的 systemd 单元 —— 另外，由于每条 webhook 都由警报发出，它也包括 webhook 投递。条件持续期间，CPU、内存与负载每分钟重复一次；磁盘或 inode 表满每六小时重复一次，若再恶化 5 个点则更早。恢复后它们会自行解除：文件系统一旦回到 85% 或以下、CPU 与内存一旦低于阈值 5 个点即解除，因此正好压在临界线上的服务器不会来回闪烁。若一台服务器在六小时内五次越过同一条线，会再通告一次，然后保持安静，直到它连续六小时不再越线。服务器无法测量的东西 —— 没有 inode 统计、没有 /proc/loadavg、没有 df —— 既不触发也不解除，因为没人能取到的读数不等于零。关闭这个开关也会撤下已经显示出来的警报。',
+
+  // 文件路径规则里的权限下拉：显式带占位符，否则 option 会被拆成两个文本节点。
+  'read: {perm}': '读取：{perm}',
+  'write: {perm}': '写入：{perm}',
+  // 字号说明被 <b> 快捷键名拆成的两段。中文里接快捷键名是自然的，照译即可。
+  'Applies to open terminals immediately. Also': '立即应用到已打开的终端。也可用',
+  ', or Ctrl+scroll inside a terminal.': '，或在终端内按住 Ctrl 滚动。',
+
+  'Lets an agent see that this server exists and read the permissions it has on it. Hostnames, usernames and keys are never disclosed.': '让代理看到这台服务器存在，并读取它对这台服务器拥有的权限。主机名、用户名和密钥永不披露。',
+  "Runs shell commands over SSH. Unrestricted privilege-escalation shells (sudo -i, su, sudo bash) are refused whatever this is set to, in every mode but Bypass. While the group's Confirm risky actions is on, a destructive, elevated or run-time-computed command still asks even when this is allow. It also governs pod_command, one command run inside a Kubernetes container, which is checked against the same command rules and asked for on every call even when this is allow (only the Bypass profile skips it).": '通过 SSH 运行 shell 命令。无限制的提权 shell（sudo -i、su、sudo bash）在任何设置下、除「绕过」外的所有模式中一律拒绝。当该组的「确认风险操作」开启时，破坏性、提权或程序名在运行时才确定的命令即使标为允许也会询问。它还管辖 pod_command —— 在 Kubernetes 容器内运行的一条命令，按同一套命令规则检查，且即使标为允许也会每次询问（只有「绕过」配置会跳过）。',
+  'Reads file contents and lists directories. The path rules below can widen or narrow this per path.': '读取文件内容并列出目录。下方的路径规则可以按路径放宽或收紧这一项。',
+  'Creates, overwrites, renames and deletes files, and creates directories. The path rules below can widen or narrow this per path.': '创建、覆盖、重命名和删除文件，以及创建目录。下方的路径规则可以按路径放宽或收紧这一项。',
+  'The transport underneath reading. Applied on top of the path rules, so denying it blocks every path regardless of what they say.': '读取所依赖的传输层。它叠加在路径规则之上，因此拒绝它会封堵所有路径，无论那些规则怎么写。',
+  'The transport underneath writing. Denying it blocks every path regardless of what the rules say.': '写入所依赖的传输层。拒绝它会封堵所有路径，无论那些规则怎么写。',
+  "Lists tunnels, defines and removes them, and opens or closes a forward. A local forward and a SOCKS proxy listen on this machine; a remote forward listens on the SERVER, where a non-loopback address publishes the port to that server’s network. Defining one does not start it. While the group's Confirm risky actions is on, defining, removing and opening all ask even when this is allow.": '列出隧道、定义和删除隧道，以及打开或关闭转发。本地转发和 SOCKS 代理监听本机；远程转发监听的是服务器，在那里非回环地址会把端口发布到该服务器的网络中。定义一条隧道并不会启动它。当该组的「确认风险操作」开启时，即使标为允许，定义、删除和打开也都会询问。',
+  'Lists databases and runs queries against them through the server.': '列出数据库，并经由服务器对它们执行查询。',
+  'Commands beginning with sudo, checked on top of Execute terminal commands. Path rules still apply — sudo does not waive them.': '以 sudo 开头的命令，在「执行终端命令」之上另行检查。路径规则仍然适用 —— sudo 不会豁免它们。',
+  'CPU, memory, disk and uptime — and also every failed systemd unit and every listening port with the process that owns it. That is a service and port inventory of the server, not only its capacity.': 'CPU、内存、磁盘与运行时长 —— 还有每一个失败的 systemd 单元，以及每个监听端口及其所属进程。这是服务器的服务与端口清单，而不只是它的容量。',
+  'Distribution and version, CPU model, architecture, virtualisation type, package manager, how many updates are pending, how many of those are SECURITY updates, and whether the server is waiting on a reboot. That is a patch-status report: it tells an agent which of your servers are unpatched and against what.': '发行版与版本、CPU 型号、架构、虚拟化类型、包管理器、有多少待安装的更新、其中有多少是安全更新，以及服务器是否在等待重启。这是一份补丁状态报告：它告诉代理你的哪些服务器尚未打补丁、缺的是哪些补丁。',
+  'The rule lines themselves, as ufw, firewalld, nft or iptables print them — every address, port and protocol named in them, capped and stripped of control characters on the server. That is an inventory of what this server is exposed on and to whom, which is the thing an attacker would otherwise have to scan for. No agent can read it whatever this is set to: it is not behind any MCP tool. Setting it to allow lets OpsMaxx COLLECT the rules for this server, for a person to read in Security posture; anything else and they are never asked for.': '防火墙规则本身，即 ufw、firewalld、nft 或 iptables 打印出来的样子 —— 其中提到的每个地址、端口和协议，在服务器上会被截断并剔除控制字符。这相当于一份该服务器对外开放了什么、对谁开放的清单，而攻击者本来需要扫描才能得到它。无论这一项怎么设置，任何代理都无法读取它：它不在任何 MCP 工具之后。设为允许后，OpsMaxx 会为该服务器采集这些规则，供人在「安全态势」中查看；设为其他值则永远不会去取。',
+  'The rules in /etc/sudoers and /etc/sudoers.d — which accounts and groups may run which commands as root, and which of them need no password. OpsMaxx reads it to replace a guess it makes today, that anyone in wheel or sudo has root, which is wrong in both directions. It is also the shortest description of how to take this machine, so it is asked for separately and never by an agent: no MCP tool exposes it whatever this is set to. Setting it to allow lets OpsMaxx COLLECT it for a person to read in Keys and access; anything else and it is never asked for.': '/etc/sudoers 与 /etc/sudoers.d 中的规则 —— 哪些账户和组能以 root 运行哪些命令，以及其中哪些不需要密码。OpsMaxx 读取它是为了取代目前的一个猜测：只要在 wheel 或 sudo 组里就有 root 权限 —— 而这个猜测两个方向上都可能出错。它同时也是「如何拿下这台机器」最短的说明，因此需要单独申请，且任何代理都无法取得：无论这一项怎么设置，都没有 MCP 工具会暴露它。设为允许后，OpsMaxx 会采集它，供人在「密钥与访问」中查看；设为其他值则永远不会去取。',
+  "Adds a server to the workspace, changes a saved one — including where it points, which account it uses and which other saved server it jumps through — and removes one. It does not grant any access to the servers it manages. While the group's Confirm risky actions is on, adding is the only part allow makes silent: changing and removing an existing connection still ask. When a change asks, approving it covers further changes to that same server for the rest of that agent session and nothing else; each removal is asked for on its own. With Confirm risky actions off, allow is a standing permission to repoint or delete what is already saved. The same applies to saved database connections, including which saved server a database is reached through; querying a database is Database access, not this.": '向工作区添加服务器、修改已保存的服务器 —— 包括它指向哪里、使用哪个账户、经由哪台已保存的服务器跳转 —— 以及删除服务器。它不会授予对它所管理的服务器的任何访问权限。当该组的「确认风险操作」开启时，只有「添加」会被允许静默执行：修改和删除已有连接仍会询问。当某次修改询问时，批准它会覆盖该代理会话余下时间里对同一台服务器的后续修改，除此之外不覆盖任何东西；每一次删除都单独询问。关闭「确认风险操作」后，允许就是一项长期授权，可以重新指向或删除已保存的内容。同样的规则适用于已保存的数据库连接，包括经由哪台已保存的服务器访问某个数据库；而查询数据库属于「数据库访问」，不是这一项。',
+  "Lists VPN profiles and reverse proxies, and starts or stops the VPNs. While the group's Confirm risky actions is on, starting a VPN, or stopping one live sessions depend on, asks even when this is allow. Reverse proxies are refused to an agent whatever this is set to; only a session you have put in Bypass mode can start or stop one.": '列出 VPN 配置与反向代理，并启动或停止 VPN。当该组的「确认风险操作」开启时，即使标为允许，启动一个 VPN、或停止一个正被活动会话依赖的 VPN 也会询问。无论这一项怎么设置，反向代理都对代理拒绝；只有你置于「绕过」模式的会话才能启动或停止它。',
+  "Lists containers with their image, state, ports, uptime and compose project, and reads container logs. The logs are the part to weigh: an application writes its own connection strings, tokens and customer records to stdout, and this returns them as the container emitted them. It reads only — starting and stopping is a separate permission. It also covers the Kubernetes cluster a server's kubeconfig reaches: pods, workloads, nodes, events, pod logs, Helm releases, and which secrets exist and who is bound to what (names only, never a secret's value — but together a map of how to escalate).": '列出容器的镜像、状态、端口、运行时长与 compose 项目，并读取容器日志。日志是需要权衡的部分：应用会把自己的连接串、令牌和客户记录写到 stdout，而这一项会按容器输出的原样返回。它只读取 —— 启动和停止是另一项独立权限。它还覆盖服务器 kubeconfig 所能到达的 Kubernetes 集群：Pod、工作负载、节点、事件、Pod 日志、Helm 发布，以及存在哪些 Secret、谁绑定了什么（只给名称，绝不给 Secret 的值 —— 但合起来就是一张如何提权的图）。',
+  'Restarts, stops and starts containers, and brings compose projects up and down. Stopping a container is an outage for whatever it serves, so this is separate from reading the list: an agent that may see what is running does not thereby get to stop it. In Kubernetes it covers a rolling restart of one workload and cordoning, uncordoning or draining one node; each is asked for on every call even when this is allow (only the Bypass profile skips it), and a drain refuses whenever its own preflight finds a blocker.': '重启、停止和启动容器，以及启停 compose 项目。停止一个容器就是中断它对外提供的服务，因此这一项与「读取列表」分开：能看到有什么在运行的代理，并不因此就可以停止它。在 Kubernetes 中，它涵盖对单个工作负载的滚动重启，以及对单个节点的 cordon、uncordon 或 drain；即使标为允许，每次调用也都会询问（只有「绕过」配置跳过），而 drain 在其自身预检发现阻塞项时一律拒绝。',
+  'Reads the backup destinations and how each is doing — the last successful run, how late it is, and any alarm raised against it. It names destinations and their kind, never their credentials. Running a backup and restoring one are not here at any setting: a run outlives the approval that started it, and a restore overwrites data.': '读取备份目标以及各自的状况 —— 上一次成功运行、滞后了多久，以及针对它发出的任何告警。它会给出目标名称与类型，绝不给凭据。运行备份与恢复备份在任何设置下都不在此列：一次运行会超出启动它的那次审批的时效，而恢复会覆盖数据。',
+  'Answers questions over everything already collected rather than one host at a time — the inventory, search across it, drift, alerts and the running process list. One call can return data from every server in the workspace, so the reach is the workspace and not the server this is set on.': '针对已经采集到的全部内容回答问题，而不是一台主机一台主机地问 —— 清单、跨清单搜索、配置漂移、告警以及运行中的进程列表。一次调用可以返回工作区内每台服务器的数据，因此其触及范围是整个工作区，而不是这一项所设置的那台服务器。',
+  'Lists the CI connections, the pipelines on them and their recent runs, and reads the output a run produced. The output is the part to weigh, the same way container logs are: a build prints whatever its steps echo — access tokens, deploy keys, the contents of a test fixture — and this returns it as the runner recorded it. It is also written by whoever opened the merge request that ran it, so it is the least trustworthy text the bridge can hand an agent.': '列出 CI 连接、其上的流水线与最近的运行，并读取某次运行产生的输出。输出是需要权衡的部分，和容器日志同理：构建会打印其步骤所回显的一切 —— 访问令牌、部署密钥、测试夹具的内容 —— 而这一项会按运行器记录的原样返回。它也是由发起那次运行的合并请求的人写入的，因此这是桥接交给代理的文本中最不可信的一类。',
+  "Starts a pipeline run on the CI server, cancels one, or re-runs it. What that run then does is defined on the provider and not here: OpsMaxx cannot read the pipeline definition before it starts, and cannot see what it deploys or where. Stopping AI access takes away the agent's cancel along with everything else, so a run already accepted is then yours to stop — from the Stop button on that run in CI/CD, or in the provider. While the group's Confirm risky actions is on, starting, cancelling and re-running ask even when this is allow, and one approval never covers the next call; with it off in Auto mode, or in a Bypass session, a build starts unasked — except on a Protected workspace, and Ask first always asks.": '在 CI 服务器上启动一次流水线运行、取消一次运行或重新运行。那次运行随后做什么由服务商定义，而不在这里：OpsMaxx 无法在它开始之前读取流水线定义，也看不到它部署了什么、部署到哪里。关闭 AI 访问会连同其他一切一起收回代理的取消权限，因此已经被接受的运行就交给你来停止 —— 在 CI/CD 中该次运行上的停止按钮，或到服务商处操作。当该组的「确认风险操作」开启时，即使标为允许，启动、取消和重新运行也会询问，而且一次批准绝不含盖下一次调用；关闭后，在「自动」模式或「绕过」会话中，构建会不经询问直接开始 —— 但在「受保护」的工作区上例外，且「先询问」总是会询问。',
+  'No AI Access': '禁止 AI 访问',
+
+  // ─────────────────────────────────────────────────────────────────────────
   // 设置页正文（15 个分区）。行文案由 SettingSwitch / SettingRow 的 helper
   // 翻译，所以这一节是纯词条工作——加条目即生效，无需改代码。
   // 来源：npm run i18n:render 的真实渲染清单。
   // ─────────────────────────────────────────────────────────────────────────
 
   // 外观 / 通用
-  'Reset defaults for this section.': '恢复本节默认值。',
+  'Restore defaults for this section.': '恢复本节默认值。',
+  // 设置页里没有真实内容的 4 个分区（连接 / 语言 / SFTP / 通知）用的占位句。
+  // 整句带占位符，否则 React 会把 {section} 渲染成独立文本节点，句子被拆开。
+  'Configure {section} preferences for this workspace.': '配置本工作区的{section}偏好设置。',
+  'Reset {section}': '重置{section}',
+  'Nothing to reset — {section} has no saved settings yet.': '{section} 还没有可重置的保存设置。',
+  'Every shortcut is back to its default.': '所有快捷键已恢复默认。',
+  // 状态栏：版本行 tooltip 与更新 chip。都是模板串，占位符必须保留。
+  'OpsMaxx v{version}{beta}.': 'OpsMaxx v{version}{beta}。',
+  'OpsMaxx.': 'OpsMaxx。',
+  ' (beta build)': ' （测试版）',
+  'Update available': '有可用更新',
+  'Downloading {percent}%': '正在下载 {percent}%',
+  'Restart to update': '重启以更新',
+  'Download v{version}': '下载 v{version}',
+  'Checking for updates.': '正在检查更新。',
+  'Version {version} is available.': '版本 {version} 已可用。',
+  'Downloading version {version} — {percent}% done.': '正在下载版本 {version} —— 已完成 {percent}%。',
+  'Version {version} has been downloaded and installs when you restart.': '版本 {version} 已下载，重启后自动安装。',
+  'Version {version} is available, but this build cannot install it itself.': '版本 {version} 已可用，但当前构建无法自行安装。',
+  'The last update check failed: {message}': '上次检查更新失败：{message}',
+  'This is the latest version.': '已是最新版本。',
+  'No update is waiting.': '当前没有待处理的更新。',
+  'Click to open update settings.': '点击打开更新设置。',
   'Colour scheme': '配色方案',
   'Font size': '字号',
   'Font family': '字体',
@@ -910,10 +1144,36 @@ export const zhCN: Record<string, string> = {
   'This shortcut cannot be changed': '此快捷键不可更改',
   'Include hidden workspaces in Ctrl+1…9': '把隐藏的工作区纳入 Ctrl+1…9',
   'Switch to Workspace 1–9': '切换到工作区 1–9',
-  '· Plain Backspace never deletes.': '· 单独按 Backspace 永不删除。',
-  '· In a URL or value field, at the caret.': '· 在 URL 或值输入框中，作用于光标处。',
-  '· Only for workspaces that have a password set.': '· 仅对设置了密码的工作区生效。',
-  '· Secrets are masked.': '· 密钥类内容已遮盖。',
+  // 快捷键页的注解（Command.hint）。键是源码里的原文，不带渲染时前缀的「· 」——
+  // 那个分隔符留在 t() 外面，否则改一次提示语就多一个孤儿条目。
+  'Plain Backspace never deletes.': '单独按 Backspace 永不删除。',
+  'In a URL or value field, at the caret.': '在 URL 或值输入框中，作用于光标处。',
+  'Only for workspaces that have a password set.': '仅对设置了密码的工作区生效。',
+  'Secrets are masked.': '密钥类内容已遮盖。',
+  'Ctrl+B is backward-char and the tmux prefix, so terminals need a second binding.':
+    'Ctrl+B 在 shell 里是 backward-char，也是 tmux 的前缀键，所以终端需要另一个绑定。',
+  'Ctrl+K is kill-line in a shell, so terminals need a second binding.':
+    'Ctrl+K 在 shell 里是 kill-line，所以终端需要另一个绑定。',
+  'In the HTTP client Ctrl+1…9 are request tabs, not workspaces.':
+    '在 HTTP 客户端里，Ctrl+1…9 是请求标签页，不是工作区。',
+  'Numbering follows the sidebar order. In the HTTP client these keys go to request tabs.':
+    '编号跟随侧边栏顺序。在 HTTP 客户端里，这些按键作用于请求标签页。',
+  'On a connected WebSocket it sends the message; it never disconnects.':
+    '在已连接的 WebSocket 上，它发送消息；绝不会断开连接。',
+  'Opens a shell on this machine, not on a server.': '在本机打开一个 shell，而不是在服务器上。',
+  'Reconnects a fresh session on the same target; scrollback is not restored.':
+    '在同一目标上重连一个新会话；回滚缓冲区不会恢复。',
+  'The last tab, whatever the count — the same as every browser.':
+    '最后一个标签页，无论有多少个 —— 与所有浏览器的行为一致。',
+  'The shifted form of the same key, which is how "Ctrl +" is usually typed.':
+    '同一个键的 Shift 形式，这也是输入 "Ctrl +" 时通常的按法。',
+  'Tree, URL, request tabs, response. Needs fn on a Mac laptop.':
+    '树、URL、请求标签页、响应。在 Mac 笔记本上需要按 fn。',
+  'In the HTTP client this replaces {names}': '在 HTTP 客户端里，它会取代 {names}',
+  'Shadowed in the HTTP client by {name}': '在 HTTP 客户端里被 {name} 遮蔽',
+  '{name} uses the same keys — go to it': '{name} 使用了相同的按键 —— 前往查看',
+  'Restore default ({keys})': '恢复默认（{keys}）',
+  'Press keys…': '请按下按键…',
   'Find': '查找',
   'Find in Terminal': '在终端中查找',
   'Find in Terminal (alternate)': '在终端中查找（备用键）',
@@ -978,7 +1238,6 @@ export const zhCN: Record<string, string> = {
   'Lock Workspace': '锁定工作区',
   'Start a build': '开始构建',
   'Duplicate': '复制一份',
-  'Configure': '配置',
   'Send test': '发送测试',
   'Test delivery': '测试投递',
   'Import a file': '导入文件',
@@ -1171,7 +1430,7 @@ export const zhCN: Record<string, string> = {
   'Active sessions': '活动会话',
   'Start recording': '开始录制',
   'Record what the app does': '录制应用的行为',
-  '0 traced events': '0 条追踪事件',
+  '{count} traced events': '{count} 条追踪事件',
   'Pending approvals': '待决审批',
   'action(s) waiting on you': '个操作等待你处理',
   'connected agent session(s)': '个已连接的代理会话',
@@ -1219,6 +1478,17 @@ export const zhCN: Record<string, string> = {
     '请求从本机发出，或经由任一服务器的 SSH 连接发出。',
   'Nothing leaves this computer until you save the file and attach it yourself.':
     '在你亲自保存文件并附带提交之前，任何内容都不会离开这台电脑。',
+  'Reproduce it — recording was on': '复现问题 —— 录制已开启',
+  'Saving…': '正在保存…',
+  'Collecting…': '正在收集…',
+  'The report could not be collected.': '报告收集失败。',
+  'The report could not be collected. Settings → Advanced has the version block to paste by hand.':
+    '报告收集失败。可在「设置 → 高级」中找到版本信息块，手工粘贴。',
+  'Attach the saved file to the issue — do not paste it.': '把保存的文件作为附件提交，不要直接粘贴内容。',
+  'Report not saved — you cancelled the dialog.': '报告未保存 —— 你取消了保存对话框。',
+  'Could not save the report: {error}': '无法保存报告：{error}',
+  'Recording. Reproduce the problem, then press the bug button again.':
+    '正在录制。请复现问题，然后再次点击反馈按钮。',
   'Approve or deny actions as they come up — the AI waits for your answer.':
     '操作出现时逐条批准或拒绝 —— AI 会等待你的答复。',
   'What the agent may do, and how much it asks first. Change it any time under Active Sessions.':

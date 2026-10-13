@@ -200,7 +200,7 @@ export function AiSecurity(): React.JSX.Element {
           again. Now a press from off always asks main to start it. */}
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Enable AI & MCP access</div>
+          <div className="s-title">{t('Enable AI & MCP access')}</div>
           <div className={clsx('s-desc', config.enabled && !status.running && 'state-alarm')}>
             {status.running
               ? `Listening on 127.0.0.1:${port} — never reachable from outside this machine.`

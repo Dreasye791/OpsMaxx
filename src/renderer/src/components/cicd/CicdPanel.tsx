@@ -369,7 +369,7 @@ export function CicdPanel({
   return (
     <PanelShell
       icon={<Activity size={16} />}
-      title="CI/CD"
+      title={t('CI/CD')}
       about={
         <>
           <p className="ui-note">

@@ -725,14 +725,14 @@ function AddyKpis({
           <span className="kpi-label">{t('Last sync')}</span>
         </div>
         <div className="kpi-value">
-          {sync?.lastSyncAt ? ago(sync.lastSyncAt) : sync?.lastSyncAt === null ? 'Never' : '—'}
+          {sync?.lastSyncAt ? ago(sync.lastSyncAt) : sync?.lastSyncAt === null ? t('Never') : '—'}
         </div>
         <div className="kpi-sub">
           {sync?.lastSyncAt
-            ? 'ago'
+            ? t('ago')
             : sync?.lastSyncAt === null
-              ? 'nothing has synced yet'
-              : 'not reported by this build'}
+              ? t('nothing has synced yet')
+              : t('not reported by this build')}
         </div>
       </div>
 
@@ -774,6 +774,7 @@ const STEP_WORD: Record<AddyStep['state'], string> = {
 }
 
 function JourneyStep({ step }: { step: AddyStep }): React.JSX.Element {
+  const t = useT()
   return (
     <li className={clsx('addy-step', step.state)}>
       <span className="addy-step-mark" aria-hidden>
@@ -781,10 +782,10 @@ function JourneyStep({ step }: { step: AddyStep }): React.JSX.Element {
       </span>
       <div className="addy-step-body">
         <div className="addy-step-title">
-          {step.title}
-          <span className="chip addy-step-state">{STEP_WORD[step.state]}</span>
+          {t(step.title)}
+          <span className="chip addy-step-state">{t(STEP_WORD[step.state])}</span>
         </div>
-        <div className="addy-step-detail ui-note">{step.detail}</div>
+        <div className="addy-step-detail ui-note">{t(step.detail)}</div>
       </div>
     </li>
   )

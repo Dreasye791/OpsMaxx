@@ -813,15 +813,7 @@ function DiagnosticsPanel(): React.JSX.Element {
       <div className="setting-row">
         <div className="s-info">
           <div className="s-title">{t('Copy diagnostics')}</div>
-          <div className="s-desc">
-            Your app version and update channel, this platform and its Electron, Chrome and Node
-            versions, how many servers, workspaces, databases, tunnels and VPN profiles exist, which
-            optional modules are on, and whether each configurable feature is switched on and
-            actually set up. Counts and on/off states only — no names, hostnames, addresses,
-            usernames, paths or credentials, and nothing read from any server. The crash screen
-            copies this same report with the error text added, which is worth a glance before
-            posting. Nothing is saved to disk.
-          </div>
+          <div className="s-desc">{t('Your app version and update channel, this platform and its Electron, Chrome and Node versions, how many servers, workspaces, databases, tunnels and VPN profiles exist, which optional modules are on, and whether each configurable feature is switched on and actually set up. Counts and on/off states only — no names, hostnames, addresses, usernames, paths or credentials, and nothing read from any server. The crash screen copies this same report with the error text added, which is worth a glance before posting. Nothing is saved to disk.')}</div>
         </div>
         <button
           className="btn sm"
@@ -1016,8 +1008,8 @@ export function Settings(): React.JSX.Element {
 
           {section === 'terminal' && (
             <div className="settings-section">
-              <h2>Terminal</h2>
-              <div className="sub">Font, cursor and scrollback behaviour.</div>
+              <h2>{t('Terminal')}</h2>
+              <div className="sub">{t('Font, cursor and scrollback behaviour.')}</div>
               <SettingSwitch
                 label="Close the pane when the shell exits"
                 desc="Typing exit ends the session, so the pane goes with it — the same as every other terminal. A shell that stopped for a reason keeps its pane and says why, whatever this is set to."
@@ -1026,8 +1018,8 @@ export function Settings(): React.JSX.Element {
               />
               <div className="setting-row">
                 <div className="s-info">
-                  <div className="s-title">Font family</div>
-                  <div className="s-desc">Monospace font used in the terminal.</div>
+                  <div className="s-title">{t('Font family')}</div>
+                  <div className="s-desc">{t('Monospace font used in the terminal.')}</div>
                 </div>
                 <select
                   className="select"
@@ -1035,7 +1027,7 @@ export function Settings(): React.JSX.Element {
                   value={settings.terminalFontFamily}
                   onChange={(e) => setSettings({ terminalFontFamily: e.target.value })}
                 >
-                  <option value="">App default</option>
+                  <option value="">{t('App default')}</option>
                   <option value="JetBrains Mono">JetBrains Mono</option>
                   <option value="SF Mono">SF Mono</option>
                   <option value="Cascadia Code">Cascadia Code</option>
@@ -1044,7 +1036,7 @@ export function Settings(): React.JSX.Element {
               </div>
               <div className="setting-row">
                 <div className="s-info">
-                  <div className="s-title">Font size</div>
+                  <div className="s-title">{t('Font size')}</div>
                   <div className="s-desc">
                     Applies to open terminals immediately. Also <b>Ctrl +</b> / <b>Ctrl -</b> /{' '}
                     <b>Ctrl 0</b>, or Ctrl+scroll inside a terminal.
@@ -1061,19 +1053,16 @@ export function Settings(): React.JSX.Element {
                     +
                   </button>
                   <button className="btn sm" onClick={() => zoomTerminal('reset')}>
-                    Reset
+                    {t('Reset')}
                   </button>
                 </div>
               </div>
               <div className="setting-row wrap">
                 <div className="s-info">
                   <div className="s-title" id="terminal-scheme-title">
-                    Colour scheme
+                    {t('Colour scheme')}
                   </div>
-                  <div className="s-desc">
-                    Applies to open terminals immediately. A scheme without its own background keeps
-                    the app&apos;s, so it follows light and dark.
-                  </div>
+                  <div className="s-desc">{t('Applies to open terminals immediately. A scheme without its own background keeps the app\'s, so it follows light and dark.')}</div>
                 </div>
                 <div className="row" style={{ gap: 6 }}>
                   <button
@@ -1103,7 +1092,7 @@ export function Settings(): React.JSX.Element {
                       })()
                     }}
                   >
-                    Import a file
+                    {t('Import a file')}
                   </button>
                 </div>
                 <SchemePicker
@@ -1152,8 +1141,8 @@ export function Settings(): React.JSX.Element {
 
           {section === 'shortcuts' && (
             <div className="settings-section">
-              <h2>Keyboard Shortcuts</h2>
-              <div className="sub">Record a combination by clicking a shortcut. Conflicts are highlighted.</div>
+              <h2>{t('Keyboard Shortcuts')}</h2>
+              <div className="sub">{t('Record a combination by clicking a shortcut. Conflicts are highlighted.')}</div>
               <SettingSwitch
                 label="Include hidden workspaces in Ctrl+1…9"
                 desc="When on, hidden workspaces take their place in the numbering and can be switched to by shortcut. When off, they are skipped and the numbers close up around them."
@@ -1166,11 +1155,11 @@ export function Settings(): React.JSX.Element {
 
           {section === 'editor' && (
             <div className="settings-section">
-              <h2>Editor</h2>
-              <div className="sub">How remote files open from the Files view.</div>
+              <h2>{t('Editor')}</h2>
+              <div className="sub">{t('How remote files open from the Files view.')}</div>
               <div className="setting-row">
                 <div className="s-info">
-                  <div className="s-title">External editor command</div>
+                  <div className="s-title">{t('External editor command')}</div>
                   <div className="s-desc">
                     Run to open a remote file — <code>code</code> for VS Code, <code>subl</code>,{' '}
                     <code>nvim</code>, and so on. Leave empty to use the system default for the file
@@ -1180,7 +1169,7 @@ export function Settings(): React.JSX.Element {
                 <input
                   className="input"
                   style={{ width: 180 }}
-                  placeholder="system default"
+                  placeholder={t('system default')}
                   value={settings.externalEditorCommand}
                   onChange={(e) => setSettings({ externalEditorCommand: e.target.value })}
                 />
@@ -1196,18 +1185,19 @@ export function Settings(): React.JSX.Element {
 
           {section === 'modules' && (
             <>
-              <h2>Modules</h2>
+              <h2>{t('Modules')}</h2>
               <p className="muted">
-                Features that ship with OpsMaxx but stay off until you turn them on. Everything
-                here is first-party code in the same repo, reviewed the same way — this is about not
-                carrying what you do not use, not about running anyone else&rsquo;s code.
+                {t(
+                  'Features that ship with OpsMaxx but stay off until you turn them on. Everything here is first-party code in the same repo, reviewed the same way — this is about not carrying what you do not use, not about running anyone else’s code.'
+                )}
               </p>
               {/* A module added by an update is off until you switch it on,
                   even though a new install would have it on. An upgrade is not
                   consent — see backfillModules. */}
               <p className="muted">
-                A module added by an update stays off on an existing install until you enable it
-                here.
+                {t(
+                  'A module added by an update stays off on an existing install until you enable it here.'
+                )}
               </p>
               {/* Grouped by what a module DOES to a server, which is the one
                   division this registry already commits to: `surface` is
@@ -1225,17 +1215,17 @@ export function Settings(): React.JSX.Element {
                 if (rows.length === 0) return null
                 return (
                   <div key={g.id} className="settings-group">
-                    <h3 className="settings-group-title">{g.label}</h3>
-                    <p className="muted settings-group-detail">{g.detail}</p>
+                    <h3 className="settings-group-title">{t(g.label)}</h3>
+                    <p className="muted settings-group-detail">{t(g.detail)}</p>
                     {rows.map((m) => (
                       <div className="setting-row" key={m.id}>
                         <div className="s-info">
-                          <div className="s-title">{m.label}</div>
-                          <div className="s-desc">{m.detail}</div>
+                          <div className="s-title">{t(m.label)}</div>
+                          <div className="s-desc">{t(m.detail)}</div>
                         </div>
                         <Switch
                           checked={moduleEnabled(settings.modules, m.id)}
-                          label={m.label}
+                          label={t(m.label)}
                           onChange={(v) =>
                             setSettings({ modules: { ...settings.modules, [m.id]: v } })
                           }
@@ -1250,10 +1240,8 @@ export function Settings(): React.JSX.Element {
 
           {section === 'monitoring' && (
             <div className="settings-section">
-              <h2>Monitoring</h2>
-              <div className="sub">
-                Alerts, background checking, webhook delivery, and the monitor strip.
-              </div>
+              <h2>{t('Monitoring')}</h2>
+              <div className="sub">{t('Alerts, background checking, webhook delivery, and the monitor strip.')}</div>
               {/* The settings KEY stays `resourceAlertsEnabled` so saved settings
                   still load, but the label was only ever half true: this switch
                   gates checkUnitAlerts as well as checkResourceAlerts, and every
@@ -1266,7 +1254,7 @@ export function Settings(): React.JSX.Element {
               />
               <div className="setting-row">
                 <div className="s-info">
-                  <div className="s-title">Alert threshold</div>
+                  <div className="s-title">{t('Alert threshold')}</div>
                   <div className="s-desc">
                     The same figure applies to CPU and to memory. Disk has its own, fixed at{' '}
                     <strong>85%</strong>: a root filesystem past that alerts, which is the same
@@ -1296,21 +1284,14 @@ export function Settings(): React.JSX.Element {
                   desc. Same markup, so it stays visually identical. */}
               <div className="setting-row">
                 <div className="s-info">
-                  <div className="s-title">Check servers in the background</div>
-                  <div className="s-desc">
-                    Sample every server in this workspace on a schedule, even when the monitor is
-                    not open, so failures and resource alerts are noticed while you are elsewhere.
-                    Opens one SSH exec channel per server per pass, separately from the monitor, so
-                    it is real load on the estate rather than a reuse of what is already sampled.
-                    Needs the vault unlocked; while it is locked, checking pauses rather than
-                    failing.
-                  </div>
+                  <div className="s-title">{t('Check servers in the background')}</div>
+                  <div className="s-desc">{t('Sample every server in this workspace on a schedule, even when the monitor is not open, so failures and resource alerts are noticed while you are elsewhere. Opens one SSH exec channel per server per pass, separately from the monitor, so it is real load on the estate rather than a reuse of what is already sampled. Needs the vault unlocked; while it is locked, checking pauses rather than failing.')}</div>
                   {/* Stated before the switch is touched rather than after,
                       because this is the cost of turning it on and the whole
                       point is that it used to happen invisibly. */}
                   <div className="s-desc">
                     While this is on, each checked server&rsquo;s connection is held open and never
-                    goes idle, so <strong>Keep authenticated connection</strong> under SSH sessions
+                    goes idle, so <strong>{t('Keep authenticated connection')}</strong> under SSH sessions
                     stops applying to them at any setting. On a server with two-factor
                     authentication that means no new code is requested until you turn this off or
                     quit.
@@ -1325,11 +1306,8 @@ export function Settings(): React.JSX.Element {
               </div>
               <div className="setting-row">
                 <div className="s-info">
-                  <div className="s-title">How often</div>
-                  <div className="s-desc">
-                    Measured from the end of one pass to the start of the next, so a slow estate
-                    slows the cadence instead of overlapping checks.
-                  </div>
+                  <div className="s-title">{t('How often')}</div>
+                  <div className="s-desc">{t('Measured from the end of one pass to the start of the next, so a slow estate slows the cadence instead of overlapping checks.')}</div>
                 </div>
                 <div className="segment">
                   {[
@@ -1367,8 +1345,8 @@ export function Settings(): React.JSX.Element {
 
           {section === 'ssh' && (
             <div className="settings-section">
-              <h2>SSH</h2>
-              <div className="sub">Connection reuse and re-authentication policy.</div>
+              <h2>{t('SSH')}</h2>
+              <div className="sub">{t('Connection reuse and re-authentication policy.')}</div>
               <SshSessions />
               {/* Spelled out rather than summarised, because it is the one
                   setting here that decides whether OpsMaxx writes anything
@@ -1383,39 +1361,29 @@ export function Settings(): React.JSX.Element {
                 onChange={(v) => setSettings({ jobsDetached: v })}
               />
 
-              <h3>SSH agent</h3>
-              <div className="sub">
-                Other tools on this machine can use the SSH keys in your vault, without a second
-                copy of them sitting in ~/.ssh.
-              </div>
+              <h3>{t('SSH agent')}</h3>
+              <div className="sub">{t('Other tools on this machine can use the SSH keys in your vault, without a second copy of them sitting in ~/.ssh.')}</div>
               <AgentPanel />
             </div>
           )}
 
           {section === 'backup' && (
             <div className="settings-section">
-              <h2>Backup &amp; Restore</h2>
-              <div className="sub">Export an encrypted copy of everything, or restore from one.</div>
+              <h2>{t('Backup & Restore')}</h2>
+              <div className="sub">{t('Export an encrypted copy of everything, or restore from one.')}</div>
               <BackupPanel />
             </div>
           )}
 
           {section === 'security' && (
             <div className="settings-section">
-              <h2>Vault</h2>
-              <div className="sub">The encrypted store for passwords, SSH keys and API keys.</div>
+              <h2>{t('Vault')}</h2>
+              <div className="sub">{t('The encrypted store for passwords, SSH keys and API keys.')}</div>
               <VaultState />
               <div className="setting-row">
                 <div className="s-info">
-                  <div className="s-title">Secure after inactivity</div>
-                  <div className="s-desc">
-                    Clears the vault from this screen and asks for your master password before
-                    showing it again. Nothing else stops — connections, background checks,
-                    pipeline polling and scheduled backups keep using the credentials in it. The
-                    vault locks completely when you quit or your machine sleeps. The timer counts
-                    vault inactivity, not time since you started the app, and background work does
-                    not postpone it.
-                  </div>
+                  <div className="s-title">{t('Secure after inactivity')}</div>
+                  <div className="s-desc">{t('Clears the vault from this screen and asks for your master password before showing it again. Nothing else stops — connections, background checks, pipeline polling and scheduled backups keep using the credentials in it. The vault locks completely when you quit or your machine sleeps. The timer counts vault inactivity, not time since you started the app, and background work does not postpone it.')}</div>
                 </div>
                 <select
                   className="input"
@@ -1427,7 +1395,7 @@ export function Settings(): React.JSX.Element {
                   <option value={15}>15 minutes</option>
                   <option value={30}>30 minutes</option>
                   <option value={60}>1 hour</option>
-                  <option value={0}>Never</option>
+                  <option value={0}>{t('Never')}</option>
                 </select>
               </div>
               <SettingSwitch
@@ -1444,19 +1412,16 @@ export function Settings(): React.JSX.Element {
               next to each other. */}
           {section === 'security' && (
             <div className="settings-section">
-              <h2>Works without your master password</h2>
-              <div className="sub">
-                Standing permissions that let this machine keep working while nobody is here — and
-                the only place to take one back.
-              </div>
+              <h2>{t('Works without your master password')}</h2>
+              <div className="sub">{t('Standing permissions that let this machine keep working while nobody is here — and the only place to take one back.')}</div>
               <MachineGrants />
             </div>
           )}
 
           {section === 'security' && (
             <div className="settings-section">
-              <h2>Security</h2>
-              <div className="sub">Credential storage and workspace locking.</div>
+              <h2>{t('Security')}</h2>
+              <div className="sub">{t('Credential storage and workspace locking.')}</div>
               {/* Filed here rather than under Appearance, where it was. This
                   grants permission to rewrite authorized_keys on servers, and
                   a reader looking for it went to Security, found nothing, and
@@ -1478,14 +1443,10 @@ export function Settings(): React.JSX.Element {
                   absent, because the user believes they turned it off. */}
               <div className="setting-row">
                 <div className="s-info">
-                  <div className="s-title">Credential storage</div>
-                  <div className="s-desc">
-                    Passwords and key passphrases go to the vault, or to this platform's secure
-                    store when no vault is set up. Neither path writes plaintext to disk, and
-                    there is no setting that changes it.
-                  </div>
+                  <div className="s-title">{t('Credential storage')}</div>
+                  <div className="s-desc">{t('Passwords and key passphrases go to the vault, or to this platform\'s secure store when no vault is set up. Neither path writes plaintext to disk, and there is no setting that changes it.')}</div>
                 </div>
-                <span className="pill ok">Always on</span>
+                <span className="pill ok">{t('Always on')}</span>
               </div>
             </div>
           )}
@@ -1496,17 +1457,12 @@ export function Settings(): React.JSX.Element {
               answers for SSH. */}
           {section === 'security' && (
             <div className="settings-section">
-              <h2>API credential proxy</h2>
-              <div className="sub">
-                Let a script or an agent call a third-party API without ever holding the key.
-              </div>
+              <h2>{t('API credential proxy')}</h2>
+              <div className="sub">{t('Let a script or an agent call a third-party API without ever holding the key.')}</div>
               <CredProxyPanel />
 
               <h3>addy</h3>
-              <div className="sub">
-                A relay you run yourself, which carries your data between your devices and cannot
-                read any of it.
-              </div>
+              <div className="sub">{t('A relay you run yourself, which carries your data between your devices and cannot read any of it.')}</div>
               {/* GUARDED, like the panel's. Unguarded, this was a second door
                   to minting an account on a machine that already has one —
                   and `createAccount` overwrites the account and the enrolment
@@ -1517,15 +1473,15 @@ export function Settings(): React.JSX.Element {
                   file, so it silently took the device off the first one. */}
               <AddySetup />
 
-              <h3>Import from another password manager</h3>
+              <h3>{t('Import from another password manager')}</h3>
               <BitwardenImport />
             </div>
           )}
 
           {section === 'advanced' && (
             <div className="settings-section">
-              <h2>Diagnostics</h2>
-              <div className="sub">What to include when you report a problem.</div>
+              <h2>{t('Diagnostics')}</h2>
+              <div className="sub">{t('What to include when you report a problem.')}</div>
               <DebugPanel />
               <DiagnosticsPanel />
             </div>
@@ -1552,18 +1508,30 @@ export function Settings(): React.JSX.Element {
             'advanced'
           ].includes(section) && (
             <div className="settings-section">
-              <h2>{SECTION_META[section].label}</h2>
-              <div className="sub">Configure {section} preferences for this workspace.</div>
+              <h2>{t(SECTION_META[section].label)}</h2>
+              <div className="sub">
+                {t('Configure {section} preferences for this workspace.', {
+                  section: t(SECTION_META[section].label)
+                })}
+              </div>
               <div className="setting-row">
                 <div className="s-info">
-                  <div className="s-title">Reset {section}</div>
-                  <div className="s-desc">Restore defaults for this section.</div>
+                  <div className="s-title">
+                    {t('Reset {section}', { section: t(SECTION_META[section].label) })}
+                  </div>
+                  <div className="s-desc">{t('Restore defaults for this section.')}</div>
                 </div>
                 <button
                   className="btn sm"
-                  onClick={() => toast(`Nothing to reset — ${SECTION_META[section].label} has no saved settings yet.`)}
+                  onClick={() =>
+                    toast(
+                      t('Nothing to reset — {section} has no saved settings yet.', {
+                        section: t(SECTION_META[section].label)
+                      })
+                    )
+                  }
                 >
-                  Reset
+                  {t('Reset')}
                 </button>
               </div>
             </div>

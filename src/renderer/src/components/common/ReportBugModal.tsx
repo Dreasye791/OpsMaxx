@@ -109,8 +109,8 @@ export function ReportBugModal(): React.JSX.Element {
       window.open(issueUrl(bundle.version, bundle.os), '_blank', 'noopener,noreferrer')
       return
     }
-    if ('cancelled' in res) toast('Report not saved — you cancelled the dialog.', 'info')
-    else toast(`Could not save the report: ${res.error}`, 'error')
+    if ('cancelled' in res) toast(t('Report not saved — you cancelled the dialog.'), 'info')
+    else toast(t('Could not save the report: {error}', { error: res.error }), 'error')
   }
 
   // A step may carry its own control, which is the whole point of step 1: the
@@ -144,20 +144,20 @@ export function ReportBugModal(): React.JSX.Element {
   const startRecording = (): void => {
     setSettings({ debugLogEnabled: true })
     close(null)
-    toast('Recording. Reproduce the problem, then press the bug button again.', 'ok')
+    toast(t('Recording. Reproduce the problem, then press the bug button again.'), 'ok')
   }
 
   return (
     <Modal
       title={t('Report a bug')}
-      subtitle="Nothing leaves this computer until you save the file and attach it yourself."
+      subtitle={t('Nothing leaves this computer until you save the file and attach it yourself.')}
       onClose={() => close(null)}
       size="lg"
       cancelLabel={t(savedPath === null ? 'Cancel' : 'Done')}
       confirm={
         savedPath === null
           ? {
-              label: busy ? 'Saving…' : 'Save report…',
+              label: busy ? t('Saving…') : t('Save report…'),
               onClick: () => void save(),
               disabled: bundle === null || busy
             }
@@ -167,15 +167,17 @@ export function ReportBugModal(): React.JSX.Element {
         savedPath === null
           ? bundle === null
             ? failed
-              ? 'The report could not be collected. Settings \u2192 Advanced has the version block to paste by hand.'
-              : 'Collecting…'
-            : `${bundle.events} traced events`
-          : 'Attach the saved file to the issue — do not paste it.'
+              ? t(
+                  'The report could not be collected. Settings → Advanced has the version block to paste by hand.'
+                )
+              : t('Collecting…')
+            : t('{count} traced events', { count: bundle.events })
+          : t('Attach the saved file to the issue — do not paste it.')
       }
     >
       {step(
         1,
-        recording ? 'Reproduce it — recording was on' : 'Record what the app does',
+        recording ? t('Reproduce it — recording was on') : t('Record what the app does'),
         recording ? (
           <>
             {t('The recording was running, and opening this dialog stopped it. Everything the app did between starting it and now is in the report below.')}</>
@@ -191,19 +193,19 @@ export function ReportBugModal(): React.JSX.Element {
 
       {step(
         2,
-        'Read it',
+        t('Read it'),
         <>
           {t('The trace names the internal operations that ran and the errors they raised. Errors routinely carry')}{' '}<strong>{t('hostnames, usernames, file paths and command text')}</strong> {t('from your machine and your servers. Passwords, keys and tokens are filtered out before anything is written; a hostname cannot be, because no rule tells one from an ordinary word. Read it, and delete any line you would rather not publish once you have attached it.')}</>
       )}
 
       <pre className="paste-preview selectable">
         {bundle?.text ??
-          (failed ? 'The report could not be collected.' : 'Collecting…')}
+          (failed ? t('The report could not be collected.') : t('Collecting…'))}
       </pre>
 
       {step(
         3,
-        'Save it and attach it',
+        t('Save it and attach it'),
         savedPath === null ? (
           <>
             <strong>{t('Save report…')}</strong> {t('writes one text file and opens the issue form with your version and operating system already filled in. Drag the file into the issue — an attachment stays inert, while pasted text is rendered as Markdown and read by automation.')}</>

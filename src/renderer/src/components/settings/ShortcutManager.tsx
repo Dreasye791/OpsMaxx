@@ -124,7 +124,7 @@ export function ShortcutManager(): React.JSX.Element {
           className="btn sm"
           onClick={() => {
             resetShortcuts()
-            toast('Every shortcut is back to its default.', 'ok')
+            toast(t('Every shortcut is back to its default.'), 'ok')
           }}
         >
           <RotateCcw size={13} /> {t('Reset')}</button>
@@ -136,7 +136,7 @@ export function ShortcutManager(): React.JSX.Element {
 
       {groups.map(({ group, ids }) => (
         <div key={group}>
-          <div className="palette-group">{group}</div>
+          <div className="palette-group">{t(group)}</div>
           {ids.map((id) => {
             const cmd = COMMANDS_BY_ID.get(id)
             if (!cmd) return null
@@ -148,9 +148,11 @@ export function ShortcutManager(): React.JSX.Element {
             const shadows = shadowed.get(id)?.map((x) => COMMANDS_BY_ID.get(x)?.name).filter(Boolean)
             const shadowedBy = [...shadowed].find(([, apps]) => apps.includes(id))?.[0]
             const shadowNote = shadows?.length
-              ? `In the HTTP client this replaces ${shadows.join(', ')}`
+              ? t('In the HTTP client this replaces {names}', { names: shadows.join(', ') })
               : shadowedBy
-                ? `Shadowed in the HTTP client by ${COMMANDS_BY_ID.get(shadowedBy)?.name}`
+                ? t('Shadowed in the HTTP client by {name}', {
+                    name: COMMANDS_BY_ID.get(shadowedBy)?.name ?? ''
+                  })
                 : null
             return (
               <div
@@ -160,10 +162,10 @@ export function ShortcutManager(): React.JSX.Element {
                 style={jumpedTo === id ? { background: 'var(--accent-soft)' } : undefined}
               >
                 <span className="sc-name">
-                  {cmd.name}
+                  {t(cmd.name)}
                   <span className="faint" style={{ marginLeft: 8, fontSize: 11 }}>
-                    {SCOPE_LABEL[cmd.scope]}
-                    {cmd.hint ? ` · ${cmd.hint}` : ''}
+                    {t(SCOPE_LABEL[cmd.scope])}
+                    {cmd.hint ? ` · ${t(cmd.hint)}` : ''}
                     {shadowNote ? ` · ${shadowNote}` : ''}
                   </span>
                 </span>
@@ -184,7 +186,9 @@ export function ShortcutManager(): React.JSX.Element {
                 {overridden && (
                   <button
                     className="icon-btn"
-                    title={`Restore default (${displayCombo(defaultKeys(cmd)).join(' ')})`}
+                    title={t('Restore default ({keys})', {
+                      keys: displayCombo(defaultKeys(cmd)).join(' ')
+                    })}
                     onClick={() => setShortcut(id, null)}
                   >
                     <RotateCcw size={12} />
@@ -193,12 +197,14 @@ export function ShortcutManager(): React.JSX.Element {
                 <button
                   className={`sc-record${recording === id ? ' recording' : ''}`}
                   disabled={cmd.fixed}
-                  title={cmd.fixed ? 'This shortcut cannot be changed' : 'Click, then press keys'}
+                  title={
+                    cmd.fixed ? t('This shortcut cannot be changed') : t('Click, then press keys')
+                  }
                   onClick={() => !cmd.fixed && setRecording(id)}
                   style={clash ? { borderColor: 'var(--danger)', color: 'var(--danger)' } : undefined}
                 >
                   {recording === id ? (
-                    'Press keys…'
+                    t('Press keys…')
                   ) : keys ? (
                     displayCombo(keys).map((k, i) => (
                       <span className="kbd" key={i}>

@@ -308,7 +308,7 @@ export function UpdatePanel(): React.JSX.Element {
         (status.state === 'available' || status.state === 'downloaded' || status.state === 'manual') && (
           <div className="setting-row">
             <div className="s-info">
-              <div className="s-title">Not now</div>
+              <div className="s-title">{t('Not now')}</div>
               <div className="s-desc">
                 Hide the status-bar indicator for v{status.version}. Updates stay on, and the next
                 version will say so.

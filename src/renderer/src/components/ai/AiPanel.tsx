@@ -49,7 +49,7 @@ function Overview(): React.JSX.Element {
 
   return (
     <div className="settings-section">
-      <h2>AI & MCP</h2>
+      <h2>{t('AI & MCP')}</h2>
       <div className="sub">
         {t('Let AI agents like Claude Code, Codex, Gemini CLI and other MCP-compatible clients operate your servers through OpsMaxx — without ever seeing an SSH password, private key or database credential. OpsMaxx resolves the friendly names, enforces access-group policy and asks for your approval on anything sensitive.')}</div>
 

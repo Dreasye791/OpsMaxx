@@ -276,13 +276,13 @@ function GroupEditor({ group, summary, onChange, onSave, onDelete }: {
           {AI_CAPABILITIES.map(({ id, label, detail }) => (
             <div className="setting-row" key={id}>
               <div className="s-info">
-                <div className="s-title">{label}</div>
+                <div className="s-title">{t(label)}</div>
                 {/* The label alone is not enough to consent to. "Server metrics"
                     read as CPU and memory while the tool behind it also returned
                     the host's failed units and its whole listening-port table —
                     a grant nobody was asked about a second time, because the row
                     still said what it had always said. */}
-                <div className="s-desc">{detail}</div>
+                <div className="s-desc">{t(detail)}</div>
               </div>
               {/* Absent means denied to the policy engine, so show DENY rather
                   than an empty segment on a group that predates a capability. */}
@@ -320,7 +320,7 @@ function GroupEditor({ group, summary, onChange, onSave, onDelete }: {
                 <option value="">{t('read: —')}</option>
                 {PERM_OPTIONS.map((p) => (
                   <option key={p} value={p}>
-                    read: {p}
+                    {t('read: {perm}', { perm: t(p) })}
                   </option>
                 ))}
               </select>
@@ -334,7 +334,7 @@ function GroupEditor({ group, summary, onChange, onSave, onDelete }: {
                 <option value="">{t('write: —')}</option>
                 {PERM_OPTIONS.map((p) => (
                   <option key={p} value={p}>
-                    write: {p}
+                    {t('write: {perm}', { perm: t(p) })}
                   </option>
                 ))}
               </select>
@@ -466,7 +466,7 @@ function ServerAssignment({ groups }: { groups: AccessGroup[] }): React.JSX.Elem
 
   return (
     <div id="ai-assignments">
-      <h2>Server & workspace assignment</h2>
+      <h2>{t('Server & workspace assignment')}</h2>
       <div className="sub">
         {t('Nothing here is needed to give an agent access — a session\'s own access group is the grant, and a workspace with no assignment leaves it exactly as written. What an assignment does is hold a workspace')}{' '}<i>{t('below')}</i> {t('that grant, whatever group an agent was issued. A server with no override inherits its workspace\'s assignment.')}</div>
       <div className="sub">

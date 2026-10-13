@@ -89,7 +89,7 @@ export function SchemePicker({
             // Named outright rather than from the card's contents: the preview
             // is aria-hidden, but a tool that reads text still ran it into the
             // name as "$ lsDracula".
-            aria-label={o.name}
+            aria-label={t(o.name)}
             aria-checked={selected}
             tabIndex={selected ? 0 : -1}
             className={clsx('scheme-card', selected && 'selected')}
@@ -115,7 +115,7 @@ export function SchemePicker({
             </div>
             <div className="scheme-name">
               {selected && <Check size={12} aria-hidden="true" />}
-              <span>{o.name}</span>
+              <span>{t(o.name)}</span>
             </div>
           </div>
         )
