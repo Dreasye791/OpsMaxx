@@ -177,7 +177,15 @@ export function setLanguagePreference(next: LanguagePreference): boolean {
 export type Vars = Record<string, string | number>
 export type TFunction = (source: string, vars?: Vars) => string
 
-const PLACEHOLDER = /\{(\w+)\}/g
+/**
+ * What a `{name}` slot looks like.
+ *
+ * Exported because `Trans` (./Trans.tsx) splits a template on the same boundary
+ * this substitutes on. Two copies of this pattern that disagreed by a character
+ * would send a slot down one path and not the other, and the symptom would be a
+ * stray `{strong}` in the middle of a translated sentence.
+ */
+export const PLACEHOLDER = /\{(\w+)\}/g
 
 /**
  * `{name}` substitution.

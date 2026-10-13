@@ -6,6 +6,7 @@ import { useApp } from '../../store/app'
 import { toast } from '../../store/toast'
 import type { DebugBundle } from '../../../../shared/debug'
 import { useT } from '../../i18n'
+import { Trans } from '../../i18n/Trans'
 
 /**
  * The dialog the bug button opens.
@@ -183,7 +184,10 @@ export function ReportBugModal(): React.JSX.Element {
             {t('The recording was running, and opening this dialog stopped it. Everything the app did between starting it and now is in the report below.')}</>
         ) : (
           <>
-            {t('A report without a recording says what this install')}{' '}<em>{t('is')}</em> {t('— versions, counts, which features are on — but nothing about what it did. For anything that fails, misbehaves or hangs, press')}{' '}<strong>{t('Start recording')}</strong>{t(', make the bug happen again, then press the bug button again. Or send what is below as it stands.')}</>
+            <Trans
+              source="A report without a recording says what this install {em} — versions, counts, which features are on — but nothing about what it did. For anything that fails, misbehaves or hangs, press {strong}, make the bug happen again, then press the bug button again. Or send what is below as it stands."
+              components={{ em: <em>{t('is')}</em>, strong: <strong>{t('Start recording')}</strong> }}
+            /></>
         ),
         recording ? undefined : (
           <button className="btn sm" onClick={startRecording}>
@@ -195,7 +199,12 @@ export function ReportBugModal(): React.JSX.Element {
         2,
         t('Read it'),
         <>
-          {t('The trace names the internal operations that ran and the errors they raised. Errors routinely carry')}{' '}<strong>{t('hostnames, usernames, file paths and command text')}</strong> {t('from your machine and your servers. Passwords, keys and tokens are filtered out before anything is written; a hostname cannot be, because no rule tells one from an ordinary word. Read it, and delete any line you would rather not publish once you have attached it.')}</>
+          <Trans
+            source="The trace names the internal operations that ran and the errors they raised. Errors routinely carry {strong} from your machine and your servers. Passwords, keys and tokens are filtered out before anything is written; a hostname cannot be, because no rule tells one from an ordinary word. Read it, and delete any line you would rather not publish once you have attached it."
+            components={{
+              strong: <strong>{t('hostnames, usernames, file paths and command text')}</strong>
+            }}
+          /></>
       )}
 
       <pre className="paste-preview selectable">
@@ -208,10 +217,16 @@ export function ReportBugModal(): React.JSX.Element {
         t('Save it and attach it'),
         savedPath === null ? (
           <>
-            <strong>{t('Save report…')}</strong> {t('writes one text file and opens the issue form with your version and operating system already filled in. Drag the file into the issue — an attachment stays inert, while pasted text is rendered as Markdown and read by automation.')}</>
+            <Trans
+              source="{strong} writes one text file and opens the issue form with your version and operating system already filled in. Drag the file into the issue — an attachment stays inert, while pasted text is rendered as Markdown and read by automation."
+              components={{ strong: <strong>{t('Save report…')}</strong> }}
+            /></>
         ) : (
           <>
-            {t('Saved to')}{' '}<code>{savedPath}</code>{t('. The issue form is open in your browser — drag that file into it.')}</>
+            <Trans
+              source="Saved to {path}. The issue form is open in your browser — drag that file into it."
+              components={{ path: <code>{savedPath}</code> }}
+            /></>
         )
       )}
     </Modal>

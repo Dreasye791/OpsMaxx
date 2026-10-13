@@ -680,7 +680,6 @@ export const zhCN: Record<string, string> = {
   'Route to': '路由到',
   'Run from': '运行于',
   'Save to…': '保存到…',
-  'Saved to': '已保存到',
   Schedule: '计划',
   'Show log': '显示日志',
   Snoozing: '已暂停提醒',
@@ -1650,6 +1649,24 @@ export const zhCN: Record<string, string> = {
   'Could not save the report: {error}': '无法保存报告：{error}',
   'Recording. Reproduce the problem, then press the bug button again.':
     '正在录制。请复现问题，然后再次点击反馈按钮。',
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 反馈报告三个步骤的正文：句子被 <em>/<strong>/<code> 打断，改用 <Trans>
+  // （src/renderer/src/i18n/Trans.tsx）。键仍是英文原句，标记写成 {槽位名}，
+  // 中文可以把槽位挪到自己的语序上 —— 这正是「拆成多段 t()」做不到的事。
+  // 槽位里的词仍然是各自的词条（'is'、'Start recording'），只是位置由整句决定。
+  // ─────────────────────────────────────────────────────────────────────────
+
+  'is': '是',
+  'hostnames, usernames, file paths and command text': '主机名、用户名、文件路径和命令文本',
+  'A report without a recording says what this install {em} — versions, counts, which features are on — but nothing about what it did. For anything that fails, misbehaves or hangs, press {strong}, make the bug happen again, then press the bug button again. Or send what is below as it stands.':
+    '没有录制的报告只能说明这个安装{em}什么 —— 版本、数量、开了哪些功能 —— 但不能说明它做了什么。遇到失败、异常或卡死的情况，请按{strong}，复现问题后再按一次反馈按钮。也可以直接提交下面的内容。',
+  'The trace names the internal operations that ran and the errors they raised. Errors routinely carry {strong} from your machine and your servers. Passwords, keys and tokens are filtered out before anything is written; a hostname cannot be, because no rule tells one from an ordinary word. Read it, and delete any line you would rather not publish once you have attached it.':
+    '这份记录会列出运行过的内部操作，以及它们抛出的错误。错误信息里经常带有{strong}，来自你的机器和你的服务器。密码、密钥和令牌在写入之前都会被过滤掉；主机名则不能，因为没有任何规则能把主机名和普通单词区分开。请先读一遍，把你不愿公开的行删掉，再附带提交。',
+  '{strong} writes one text file and opens the issue form with your version and operating system already filled in. Drag the file into the issue — an attachment stays inert, while pasted text is rendered as Markdown and read by automation.':
+    '{strong}会写一个文本文件，并打开问题表单，其中已经填好你的版本与操作系统。把该文件拖进问题里 —— 附件是惰性的，而粘贴的文本会被渲染成 Markdown，也会被自动化程序读取。',
+  'Saved to {path}. The issue form is open in your browser — drag that file into it.':
+    '已保存到{path}。问题表单已在你的浏览器中打开 —— 把该文件拖进去。',
   'Approve or deny actions as they come up — the AI waits for your answer.':
     '操作出现时逐条批准或拒绝 —— AI 会等待你的答复。',
   'What the agent may do, and how much it asks first. Change it any time under Active Sessions.':
