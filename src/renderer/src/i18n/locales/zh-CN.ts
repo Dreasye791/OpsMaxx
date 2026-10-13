@@ -678,6 +678,70 @@ export const zhCN: Record<string, string> = {
   'The AppArmor module is present and switched off.': 'AppArmor 模块存在但已关闭。',
 
   // ─────────────────────────────────────────────────────────────────────────
+  // 向导里选项与开关的说明句（同样在 PrefRow 渲染处翻译）。
+  //
+  // 这些是**多行字面量**，上一版扫描只认单行 `prop: '…'`，所以它们一直没进过
+  // 工单 —— 修正扫描（把值的所有引号片段拼起来）后才浮出来。见 CODEBUDDY.md §9。
+  // ─────────────────────────────────────────────────────────────────────────
+
+  'Inventory, drift, a change log and security posture across the workspace.':
+    '整个工作区的资产清单、漂移、变更日志与安全态势。',
+  'Run commands across many servers, apply package updates, leave jobs running.':
+    '在多台服务器上运行命令、应用软件包更新、让作业持续运行。',
+  'Jenkins, GitLab CI or GitHub Actions, beside the server the run changed.':
+    'Jenkins、GitLab CI 或 GitHub Actions，就放在这次运行所改动的服务器旁边。',
+  'How OpsMaxx finds and takes new versions. Everything here is also in Settings › General.':
+    'OpsMaxx 如何查找并获取新版本。这里的一切在「设置 › 通用」中也有。',
+  'Beta cascades — a beta user is offered betas and stable releases, whichever is newer.':
+    '测试版级联 —— 选择测试版的用户会同时收到测试版与稳定版，取其中较新的一个。',
+  'Off means OpsMaxx only ever looks when you press the button.':
+    '关闭后，OpsMaxx 只在你按下按钮时才查看。',
+  'Zero means only at launch; anything else is additionally re-checked while open.':
+    '0 表示只在启动时检查；其他值还会在应用打开期间额外复查。',
+  'Nothing installs itself either way — applying an update is always a separate press.':
+    '两种情况都不会自动安装 —— 应用更新永远需要单独按一次。',
+  'Whether OpsMaxx samples your servers when nobody is looking at them. Off by default, and this is the switch worth understanding before you leave it.':
+    'OpsMaxx 是否在无人查看时对服务器采样。默认关闭；在你决定放着不管之前，这是最值得弄明白的一个开关。',
+  'On means OpsMaxx keeps connections to every server in the workspace open on a schedule, whether or not the monitor is on screen — so alerts and capacity trends keep working while the window is closed. Off means a server is only measured while you are looking at it.':
+    '开启后，OpsMaxx 会按计划保持与工作区内每台服务器的连接，无论监控是否在屏幕上 —— 因此窗口关闭时，警报与容量趋势仍然有效。关闭后，只有你正在看着某台服务器时才会对它采样。',
+  'Every sample is one connection per server. More often is not more accurate.':
+    '每次采样对每台服务器建立一条连接。更频繁并不等于更准确。',
+  'The master switch for every alert and every webhook: CPU and memory over the threshold, full disks, failed systemd units, load average.':
+    '所有警报与 webhook 的总开关：CPU 与内存超阈值、磁盘写满、systemd 单元失败、负载均值。',
+  'Covers failed units and full disks as well as CPU and memory. Switching it off also takes down any alerts already showing.':
+    '除 CPU 与内存外，也覆盖失败的单元和写满的磁盘。关闭它还会同时撤下已在显示的警报。',
+  'The same figure applies to CPU and to memory. Disk has its own, fixed at 85%. Per-server overrides live in Settings.':
+    '同一个数值同时适用于 CPU 与内存。磁盘另有自己的阈值，固定为 85%。按服务器的覆盖设置位于「设置」中。',
+  'Both of these are instant and both are in Settings › Appearance afterwards.':
+    '两者都会立即生效，之后也都能在「设置 › 外观」中找到。',
+  'System follows your operating system, including when it changes at sunset.':
+    '跟随系统即跟随你的操作系统，包括它在日落时自动切换的情况。',
+  'Compact tightens row heights and padding across every table in the app.':
+    '紧凑会压缩应用内所有表格的行高与内边距。',
+  'Containers and pipelines, and you change the servers as well as watching them.':
+    '容器与流水线；你不仅观察这些服务器，还会改动它们。',
+  'Mostly Kubernetes, with an eye on what the estate is made of and where it is heading.':
+    '以 Kubernetes 为主，同时关注整个资产的构成与走向。',
+  'You own the machines: what is on them, what needs patching, who can get in.':
+    '这些机器归你管：上面装了什么、哪些需要打补丁、谁能进得去。',
+  'You need to know something is wrong before somebody tells you. Mostly reading.':
+    '你要在别人告诉你之前就知道出了问题。主要是查看。',
+
+  // AI 审计结果里的「超时」明细（`title={t(outcome.detail)}` 已接线）
+  'Nobody answered before the approval timeout, so OpsMaxx denied it. That is the fail-closed default, not a decision somebody made.':
+    '在审批超时之前无人作答，因此 OpsMaxx 拒绝了它。这是故障时的默认拒绝，不是某个人做出的决定。',
+
+  // 演示 shell 的提示与补丁页的占位文案
+  'Simulated shell. Try: ls, pwd, whoami, uptime, echo <text>, clear':
+    '模拟 shell。可以试试：ls、pwd、whoami、uptime、echo <text>、clear',
+  'This build cannot list security updates. Restart the app to rebuild it.':
+    '此构建无法列出安全更新。重启应用以重建。',
+
+  // 两处裸渲染的表头/能力标签
+  'Collections': '集合',
+  'Server metrics': '服务器指标',
+
+  // ─────────────────────────────────────────────────────────────────────────
   // 界面部件：按钮、表头、状态名、字段标签
   //
   // 这一批由 scripts/i18n/codemod.mjs 自动包上 t() 之后，从工作单里按长度升序
