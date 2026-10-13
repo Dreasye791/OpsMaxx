@@ -188,8 +188,14 @@ const PLACEHOLDER = /\{(\w+)\}/g
  * gets scrolled past. Substitution is on the TRANSLATED string, so a catalogue
  * entry is free to move `{name}` to wherever the target grammar wants it —
  * which is the whole reason placeholders exist instead of concatenation.
+ *
+ * Exported because a module that COMPOSES a sentence has to substitute at
+ * composition time, and it needs the same rule rather than a second copy of
+ * it. See `identity` in components/ai/accessGroupSummary.ts: that default has
+ * to reproduce exactly what this does on a catalogue miss, or the two paths
+ * through the same sentence disagree.
  */
-function interpolate(text: string, vars?: Vars): string {
+export function interpolate(text: string, vars?: Vars): string {
   if (!vars) return text
   return text.replace(PLACEHOLDER, (whole, key: string) =>
     Object.prototype.hasOwnProperty.call(vars, key) ? String(vars[key]) : whole

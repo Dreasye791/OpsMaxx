@@ -510,7 +510,7 @@ export const zhCN: Record<string, string> = {
   docker: 'docker',
   failed: '失败',
   global: '全局',
-  groups: '分组',
+  groups: '个组',
   'in use': '使用中',
   linked: '已关联',
   locked: '已锁定',
@@ -1389,7 +1389,6 @@ export const zhCN: Record<string, string> = {
   'Create a session': '创建一个会话',
   'New AI agent session': '新建 AI 代理会话',
   'No sessions yet.': '还没有会话。',
-  'Editing Read Only': '正在编辑「只读」',
   'Per-server overrides': '按服务器覆盖',
   'What counts as risky': '什么算有风险的操作',
   'Protected from agents': '禁止代理访问',
@@ -1402,7 +1401,169 @@ export const zhCN: Record<string, string> = {
   'No servers in this workspace.': '此工作区中没有服务器。',
   'Nothing waiting on you right now.': '当前没有等待你处理的事项。',
   'No client is waiting to be authorized.': '没有客户端在等待授权。',
-  'Asks you first before using sudo.': '使用 sudo 前会先询问你。',
+  // ─────────────────────────────────────────────────────────────────────────
+  // 访问组卡片上的摘要句（components/ai/accessGroupSummary.ts）。
+  //
+  // 这里曾经放的是「整句」译文（`'Asks you first before using sudo.'`、`'Editing Read
+  // Only'`），但摘要句是拿能力表实时拼出来的，句形随组的设置变化，整句词条永远对不上
+  // —— 两条孤儿词条已删。改成「碎片 + 占位符」：动词、连接词、句框各成一条，标点归句框。
+  //
+  // PHRASING 里是小写的动词短语，能力表里是名词化标签，两者是**不同的键**：小写那条
+  // 用来读成一句话（「可以运行命令」），大写那条是表头（「执行终端命令」），不能互换。
+  // ─────────────────────────────────────────────────────────────────────────
+
+  // PHRASING：动词（`Can {verbs}` / `Cannot {verbs}`）与动名词（`Asks you first before {gerunds}.`）
+  'see server details': '查看服务器详情',
+  'showing server details': '查看服务器详情',
+  'run commands': '运行命令',
+  'running commands': '运行命令',
+  'read files': '读取文件',
+  'reading files': '读取文件',
+  'write files': '写入文件',
+  'writing files': '写入文件',
+  'download files': '下载文件',
+  'downloading files': '下载文件',
+  'upload files': '上传文件',
+  'uploading files': '上传文件',
+  'define and open SSH tunnels': '定义并打开 SSH 隧道',
+  'defining and opening SSH tunnels': '定义并打开 SSH 隧道',
+  'query databases': '查询数据库',
+  'querying databases': '查询数据库',
+  'use sudo': '使用 sudo',
+  'using sudo': '使用 sudo',
+  'list containers and read their logs': '列出容器并读取其日志',
+  'reading containers': '读取容器',
+  'start and stop containers': '启动和停止容器',
+  'controlling containers': '控制容器',
+  'read CI pipelines and build output': '读取 CI 流水线与构建输出',
+  'reading CI pipelines and build output': '读取 CI 流水线与构建输出',
+  'start and cancel CI pipelines': '启动和取消 CI 流水线',
+  'starting and cancelling CI pipelines': '启动和取消 CI 流水线',
+  'read across the fleet': '跨资产读取',
+  'reading across the fleet': '跨资产读取',
+  'see backup health': '查看备份健康状况',
+  'reading backup health': '查看备份健康状况',
+  'read server metrics': '读取服务器指标',
+  'reading server metrics': '读取服务器指标',
+  'read the server inventory and its pending security updates': '读取服务器清单及其待装安全更新',
+  'reading the server inventory and its pending security updates': '读取服务器清单及其待装安全更新',
+  'collect this server’s sudoers rules': '收集此服务器的 sudoers 规则',
+  'collecting this server’s sudoers rules': '收集此服务器的 sudoers 规则',
+  'collect this server’s firewall rule list': '收集此服务器的防火墙规则列表',
+  'collecting this server’s firewall rule list': '收集此服务器的防火墙规则列表',
+  'add, change and remove servers in the workspace': '在工作区中添加、更改和移除服务器',
+  'adding, changing and removing servers in the workspace': '在工作区中添加、更改和移除服务器',
+  'start and stop VPNs, and list reverse proxies': '启动和停止 VPN，并列出反向代理',
+  'starting and stopping VPNs, and listing reverse proxies': '启动和停止 VPN，并列出反向代理',
+
+  // 连接词。英文保留牛津逗号，所以「两项之间」与「多项末尾」是两条不同的键；
+  // 中文用「、」分隔、「和」收尾，两条都映射到同一串，正好得到 `a、b和c`。
+  '{a} and {b}': '{a}和{b}',
+  '{a} or {b}': '{a}或{b}',
+  '{a}, {b}': '{a}、{b}',
+  '{a}, and {b}': '{a}和{b}',
+  '{a}, or {b}': '{a}或{b}',
+
+  // 句框
+  'Can {verbs} without asking.': '可以{verbs}，无需询问。',
+  'Asks you first before {gerunds}.': '{gerunds}前会先询问你。',
+  'Cannot {verbs}.': '不能{verbs}。',
+  'Allows nothing — every AI request against the server is refused.':
+    '不授予任何权限 —— 对该服务器的所有 AI 请求都会被拒绝。',
+  'Allows nothing except the file paths below — every other AI request against the server is refused.':
+    '除下列文件路径外不授予任何权限 —— 对该服务器的其他 AI 请求都会被拒绝。',
+  'Can do everything without asking — including {including}.':
+    '可以不经询问执行任何操作 —— 包括{including}。',
+  'Can do everything without asking except the file paths below — including {including}.':
+    '除下列文件路径外，可以不经询问执行任何操作 —— 包括{including}。',
+  'Can {verb} without asking': '可以{verb}，无需询问',
+  'Asks you first before {gerund}': '{gerund}前会先询问你',
+  'Cannot {verb}': '不能{verb}',
+  '{base} — except {exceptions}.': '{base} —— 但{exceptions}。',
+
+  // 路径规则被点名成例外时：`{base} —— 但 19 条路径规则会阻止它。`
+  // 值开头的空格是给句框里的「但」「和」留的：英文键不能带（测试逐字断言英文），
+  // 而中文在数字前需要一个空格，否则会读成「但19」。
+  '{count} path rule that {verb}': ' {count} 条路径规则{verb}',
+  '{count} path rules that {verb}': ' {count} 条路径规则{verb}',
+  '{count} that {verb}': ' {count} 条{verb}',
+  'allows it': '会允许它',
+  'allow it': '会允许它',
+  'asks you first': '会先询问你',
+  'ask you first': '会先询问你',
+  'blocks it': '会阻止它',
+  'block it': '会阻止它',
+
+  // 存储里是非法权限值时（手改过策略文件才会出现）
+  '{label} ("{value}")': '{label}（"{value}"）',
+  '{names} is set to a value OpsMaxx does not recognise, so the policy engine allows it. Set it again below.':
+    '{names} 被设为一个 OpsMaxx 无法识别的值，因此策略引擎会放行。请在下方重新设置。',
+  '{names} are set to values OpsMaxx does not recognise, so the policy engine allows them. Set them again below.':
+    '{names} 被设为 OpsMaxx 无法识别的值，因此策略引擎会放行。请在下方重新设置。',
+
+  // 「文件路径规则」那一行的摘要
+  'No path rules — every file follows the read and write settings above.':
+    '没有路径规则 —— 所有文件都遵循上方的读取与写入设置。',
+  '{count} blocking access': '{count} 条阻止访问',
+  '{count} asking first': '{count} 条先询问',
+  ' — {parts}': ' —— {parts}',
+  ' {count} grants more than the capabilities above, and the path rule wins.':
+    '{count} 条比上方的能力更宽松，路径优先。',
+  ' {count} grant more than the capabilities above, and the path rule wins.':
+    '{count} 条比上方的能力更宽松，路径优先。',
+  '{count} path rule': '{count} 条路径规则',
+  '{count} path rules': '{count} 条路径规则',
+  '{head}.{tail}': '{head}。{tail}',
+
+  // 「什么算有风险的操作」——与 policyEngine 把哪些操作升级为 ASK 一一对应
+  'Still confirms risky actions it allows — destructive commands, database writes, tunnels, server changes, VPNs and CI runs.':
+    '对已放行的有风险操作仍会请求确认 —— 破坏性命令、数据库写入、隧道、服务器变更、VPN 与 CI 运行。',
+  'destructive or elevated commands (rm -rf, mkfs, reboot, package installs, service restarts) — a destructive one also asks with the switch off unless Write files is Allow, and stopping or removing containers unless Container control is Allow':
+    '破坏性或提权命令（rm -rf、mkfs、reboot、安装软件包、重启服务）—— 即使开关关闭，破坏性命令也会询问，除非「写入文件」为允许；停止或移除容器同理，除非「容器控制」为允许',
+  'commands whose program is computed at run time (these also ask with the switch off, unless Sudo is Allow), and unshare -r':
+    '程序在运行时才确定的命令（即使开关关闭也会询问，除非「sudo / 提权」为允许），以及 unshare -r',
+  'database writes and schema changes': '数据库写入与表结构变更',
+  'opening, defining or deleting SSH tunnels': '打开、定义或删除 SSH 隧道',
+  'changing or removing saved servers': '更改或移除已保存的服务器',
+  'starting a VPN, or stopping one other sessions depend on': '启动 VPN，或停止其他会话所依赖的 VPN',
+  'starting, cancelling or re-running CI/CD pipelines': '启动、取消或重新运行 CI/CD 流水线',
+
+  // 这一页的控制与提示。toast 只在操作后出现，渲染审计走不到，但它们是真实文案。
+  'individually': '项可逐项设置',
+  'Editing {name}': '正在编辑「{name}」',
+  'Pick a group to edit': '选择一个组进行编辑',
+  'Saved {name}': '已保存{name}',
+  '{name} could not be deleted.': '无法删除{name}。',
+  'Deleted {name}. Anything assigned to it is now No AI Access.':
+    '已删除{name}。原本分配给它的对象现在都是「禁止 AI 访问」。',
+  'Review assignments': '查看分配情况',
+  '{name} was not deleted: {error}. It may reappear when OpsMaxx restarts.':
+    '{name} 未能删除：{error}。OpsMaxx 重启后它可能会重新出现。',
+  '{name} was not created: {error}': '{name} 未能创建：{error}',
+  'Created {name}. It is not open yet — you have unsaved changes here.':
+    '已创建{name}。它尚未打开 —— 你在这里有未保存的更改。',
+  'Created {name}. Read what its card says it allows before you assign it to anything.':
+    '已创建{name}。在把它分配给任何对象之前，先读一读它的卡片说它允许什么。',
+  '{name} was not saved: {error}': '{name} 未能保存：{error}',
+  'That change was not saved: {error}': '该更改未保存：{error}',
+  'another group': '另一个组',
+
+  // JSX 拆开的句子片段：键按实际边界取，中文按语序重写。内嵌的 <b>/<i> 之间由
+  // JSX 补的空格会留在中文里（如「处于 自定义配置」），这是片段方案本身的代价 ——
+  // 真正的解法是 <Trans> 式组件，见 CODEBUDDY.md。
+  'Access groups are for when the predefined profiles do not fit: an agent on the':
+    '预定义的配置不合适时，就该用访问组：处于',
+  'profile does exactly what its group says, per capability, and a group assigned to a workspace or server restricts every agent there. Each card describes itself from its own settings. Pick one to change it, or create your own (Logs Only, Production Read Only, ...).':
+    '配置的代理会严格按自己的能力设置行事，而分配给工作区或服务器的组会限制该处的所有代理。每张卡片都根据自身设置来描述自己。选一个来修改，或创建你自己的（例如「仅日志」「生产只读」……）。',
+  "Nothing here is needed to give an agent access — a session's own access group is the grant, and a workspace with no assignment leaves it exactly as written. What an assignment does is hold a workspace below that grant, whatever group an agent was issued. A server with no override inherits its workspace's assignment.":
+    '要授予代理访问权限，这里什么都不用设置 —— 会话自身的访问组就是授权，而未做分配的工作区则完全按访问组所写执行。分配的作用是让工作区低于该授权，无论代理拿到的是哪个组。没有覆盖设置的服务器会继承其工作区的分配。',
+  'is the other optional restriction, for production: every agent is held at Ask first there, whatever its profile; Read only stays read only.':
+    '是另一项可选的限制，用于生产环境：无论代理是什么配置，在那里一律先询问；只读仍然是只读。',
+  'The card shows them, but nothing is stored until you save — the policy engine is still enforcing the old settings. Opening':
+    '卡片会显示这些更改，但在你保存之前什么都没有写入 —— 策略引擎仍在执行旧设置。现在打开',
+  'now discards them.': '将丢弃它们。',
+  'Capabilities — set each of the': '能力 —— 这',
+  'File path rules — {summary}': '文件路径规则 —— {summary}',
   'Access group for the Custom profile': '自定义配置所用的访问组',
   'Default profile for new agent sessions': '新代理会话的默认配置',
   'Default access group for this workspace': '此工作区的默认访问组',

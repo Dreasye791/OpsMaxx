@@ -36,6 +36,7 @@ function PermSegment({
   value: PermissionValue
   onChange: (v: PermissionValue) => void
 }): React.JSX.Element {
+  const t = useT()
   return (
     <div className="segment">
       {PERM_OPTIONS.map((p) => (
@@ -45,7 +46,7 @@ function PermSegment({
           onClick={() => onChange(p)}
           type="button"
         >
-          {p.toUpperCase()}
+          {t(p).toUpperCase()}
         </button>
       ))}
     </div>
@@ -83,7 +84,8 @@ function PermSegment({
 // Rendered as `allow` / `ask` / `deny` verbatim rather than as ticks and
 // crosses: `ask` is the value that matters most on this screen and it has no
 // natural glyph, and a two-symbol scheme would have to round it to one of the
-// other two.
+// other two. The words are translated (the catalogue carries `allow`, `ask`
+// and `deny`); what must not change is that they are words.
 const PERM_TONE: Record<PermissionValue, string> = {
   allow: 'danger',
   ask: 'warn',
@@ -125,7 +127,7 @@ function TierMatrix({ groups }: { groups: AccessGroup[] }): React.JSX.Element | 
                   const v = g.capabilities[c.id] ?? 'deny'
                   return (
                     <td key={g.id}>
-                      <span className={clsx('chip', PERM_TONE[v])}>{v}</span>
+                      <span className={clsx('chip', PERM_TONE[v])}>{t(v)}</span>
                     </td>
                   )
                 })}
@@ -153,7 +155,7 @@ function GroupCard({
   return (
     <button type="button" className={`ag-card ${selected ? 'selected' : ''}`} aria-pressed={selected} onClick={onSelect}>
       <div className="ag-card-head">
-        <span className="ag-card-name">{group.name}</span>
+        <span className="ag-card-name">{t(group.name)}</span>
         {group.builtIn && <span className="chip">{t('Built-in')}</span>}
         {group.confirmRisky !== false && <span className="chip warn">{t('Confirms risky actions')}</span>}
         {summary.elevated.length > 0 && (
@@ -182,7 +184,7 @@ function GroupEditor({ group, summary, onChange, onSave, onDelete }: {
   // MORE than the grid above does. evaluateFilePath returns the most specific
   // matching rule before it ever looks at the blanket capability, so that
   // number is not a footnote — it is the set of rules that outrank the grid.
-  const files = summariseFilePolicies(group.filePolicies, group.capabilities)
+  const files = summariseFilePolicies(group.filePolicies, group.capabilities, t)
   const setCap = (cap: AiCapability, value: PermissionValue): void => {
     onChange({ ...group, capabilities: { ...group.capabilities, [cap]: value } })
   }
@@ -248,7 +250,7 @@ function GroupEditor({ group, summary, onChange, onSave, onDelete }: {
               {t('What counts as risky')}</summary>
             <ul className="s-desc" style={{ margin: '4px 0 0', paddingLeft: 18 }}>
               {RISKY_ACTIONS.map((a) => (
-                <li key={a}>{a}</li>
+                <li key={a}>{t(a)}</li>
               ))}
             </ul>
           </details>
@@ -296,7 +298,7 @@ function GroupEditor({ group, summary, onChange, onSave, onDelete }: {
         <summary className="disclosure-head">
           <ChevronRight size={14} className="chev" />
           <FolderTree size={13} />
-          {t('File path rules —')}{' '}{files.sentence}
+          {t('File path rules — {summary}', { summary: files.sentence })}
         </summary>
         <div className="disclosure-body" style={{ gap: 0 }}>
           <div className="s-desc">
@@ -404,10 +406,13 @@ function ServerAssignment({ groups }: { groups: AccessGroup[] }): React.JSX.Elem
     try {
       await change()
     } catch (err) {
-      toast(`That change was not saved: ${err instanceof Error ? err.message : String(err)}`, 'error', {
-        label: 'Try again',
-        run: retry
-      })
+      toast(
+        t('That change was not saved: {error}', {
+          error: err instanceof Error ? err.message : String(err)
+        }),
+        'error',
+        { label: t('Try again'), run: retry }
+      )
     }
     load()
   }
@@ -468,7 +473,10 @@ function ServerAssignment({ groups }: { groups: AccessGroup[] }): React.JSX.Elem
     <div id="ai-assignments">
       <h2>{t('Server & workspace assignment')}</h2>
       <div className="sub">
-        {t('Nothing here is needed to give an agent access — a session\'s own access group is the grant, and a workspace with no assignment leaves it exactly as written. What an assignment does is hold a workspace')}{' '}<i>{t('below')}</i> {t('that grant, whatever group an agent was issued. A server with no override inherits its workspace\'s assignment.')}</div>
+        {t(
+          "Nothing here is needed to give an agent access — a session's own access group is the grant, and a workspace with no assignment leaves it exactly as written. What an assignment does is hold a workspace below that grant, whatever group an agent was issued. A server with no override inherits its workspace's assignment."
+        )}
+      </div>
       <div className="sub">
         <b>{t('Protected from agents')}</b> {t('is the other optional restriction, for production: every agent is held at Ask first there, whatever its profile; Read only stays read only.')}</div>
 
@@ -649,21 +657,30 @@ export function AiAccessGroups(): React.JSX.Element {
       // third way to lose unsaved edits, after the card click and the deep link.
       if (dirty) {
         setPendingId(g.id)
-        toast(`Created ${t(g.name)}. It is not open yet — you have unsaved changes here.`, 'ok')
+        toast(
+          t('Created {name}. It is not open yet — you have unsaved changes here.', { name: t(g.name) }),
+          'ok'
+        )
       } else {
         setSelectedId(g.id)
         // Deliberately not "created, you're done": a new group is not empty, it
         // arrives with defaults, and the summary showing them is right below.
         toast(
-          `Created ${t(g.name)}. Read what its card says it allows before you assign it to anything.`,
+          t('Created {name}. Read what its card says it allows before you assign it to anything.', {
+            name: t(g.name)
+          }),
           'ok'
         )
       }
     } catch (err) {
-      toast(`${name} was not created: ${err instanceof Error ? err.message : String(err)}`, 'error', {
-        label: 'Try again',
-        run: () => void createGroup()
-      })
+      toast(
+        t('{name} was not created: {error}', {
+          name,
+          error: err instanceof Error ? err.message : String(err)
+        }),
+        'error',
+        { label: t('Try again'), run: () => void createGroup() }
+      )
     }
   }
 
@@ -671,17 +688,21 @@ export function AiAccessGroups(): React.JSX.Element {
     if (!draft) return false
     try {
       await window.opsmaxx?.aiPolicy.saveGroup(draft)
-      toast(`Saved ${draft.name}`, 'ok')
+      toast(t('Saved {name}', { name: t(draft.name) }), 'ok')
       load()
       return true
     } catch (err) {
       // Reload so the editor shows what is actually stored — leaving unsaved
       // edits on screen next to a failure reads as if they took effect.
       load()
-      toast(`${draft.name} was not saved: ${err instanceof Error ? err.message : String(err)}`, 'error', {
-        label: 'Try again',
-        run: () => void saveGroup()
-      })
+      toast(
+        t('{name} was not saved: {error}', {
+          name: t(draft.name),
+          error: err instanceof Error ? err.message : String(err)
+        }),
+        'error',
+        { label: t('Try again'), run: () => void saveGroup() }
+      )
       return false
     }
   }
@@ -696,7 +717,7 @@ export function AiAccessGroups(): React.JSX.Element {
       // as success and toasted "Deleted X" over a call that never happened.
       if (!result) throw new Error('OpsMaxx is not available in this window.')
       if (!result.ok) {
-        toast(result.error ?? `${name} could not be deleted.`, 'error')
+        toast(result.error ?? t('{name} could not be deleted.', { name: t(name) }), 'error')
         return
       }
       setSelectedId(null)
@@ -704,8 +725,8 @@ export function AiAccessGroups(): React.JSX.Element {
       load()
       // Deleting a group is not neutral: everything assigned to it drops to No AI
       // Access, which the user finds out about later as agents being refused.
-      toast(`Deleted ${name}. Anything assigned to it is now No AI Access.`, 'ok', {
-        label: 'Review assignments',
+      toast(t('Deleted {name}. Anything assigned to it is now No AI Access.', { name: t(name) }), 'ok', {
+        label: t('Review assignments'),
         run: showAssignments
       })
     } catch (err) {
@@ -716,9 +737,12 @@ export function AiAccessGroups(): React.JSX.Element {
       // that, rather than letting the user discover it a week later.
       load()
       toast(
-        `${name} was not deleted: ${err instanceof Error ? err.message : String(err)}. It may reappear when OpsMaxx restarts.`,
+        t('{name} was not deleted: {error}. It may reappear when OpsMaxx restarts.', {
+          name: t(name),
+          error: err instanceof Error ? err.message : String(err)
+        }),
         'error',
-        { label: 'Try again', run: () => void deleteGroupById(id, name) }
+        { label: t('Try again'), run: () => void deleteGroupById(id, name) }
       )
     }
   }
@@ -728,7 +752,7 @@ export function AiAccessGroups(): React.JSX.Element {
     await deleteGroupById(draft.id, draft.name)
   }
 
-  const pendingName = groups.find((g) => g.id === pendingId)?.name ?? 'another group'
+  const pendingName = groups.find((g) => g.id === pendingId)?.name ?? t('another group')
   const switchTo = (id: string): void => {
     setPendingId(null)
     setSelectedId(id)
@@ -748,7 +772,7 @@ export function AiAccessGroups(): React.JSX.Element {
             // The card for the group being edited reads from the draft, so the
             // sentence answers "what did that change actually do" while the
             // grid below is still open — before anything is saved.
-            summary={summariseAccessGroup(draft?.id === g.id ? draft : g)}
+            summary={summariseAccessGroup(draft?.id === g.id ? draft : g, t)}
             selected={selectedId === g.id}
             onSelect={() => selectGroup(g.id)}
           />
@@ -765,9 +789,9 @@ export function AiAccessGroups(): React.JSX.Element {
         <div className="setting-row" style={{ alignItems: 'flex-start' }}>
           <div className="s-info">
             <div className="s-title">
-              <TriangleAlert size={13} /> {draft.name} {t('has unsaved changes')}</div>
+              <TriangleAlert size={13} /> {t(draft.name)} {t('has unsaved changes')}</div>
             <div className="s-desc">
-              {t('The card shows them, but nothing is stored until you save — the policy engine is still enforcing the old settings. Opening')}{' '}{pendingName} {t('now discards them.')}</div>
+              {t('The card shows them, but nothing is stored until you save — the policy engine is still enforcing the old settings. Opening')}{' '}{t(pendingName)} {t('now discards them.')}</div>
           </div>
           <button
             className="btn sm primary"
@@ -786,7 +810,9 @@ export function AiAccessGroups(): React.JSX.Element {
 
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">{draft ? `Editing ${draft.name}` : 'Pick a group to edit'}</div>
+          <div className="s-title">
+            {draft ? t('Editing {name}', { name: t(draft.name) }) : t('Pick a group to edit')}
+          </div>
         </div>
         <button className="btn sm" onClick={() => setNewName('')}>
           <Plus size={13} /> {t('New group')}</button>
@@ -821,7 +847,7 @@ export function AiAccessGroups(): React.JSX.Element {
       {draft && (
         <GroupEditor
           group={draft}
-          summary={summariseAccessGroup(draft)}
+          summary={summariseAccessGroup(draft, t)}
           onChange={setDraft}
           onSave={saveGroup}
           onDelete={deleteGroup}

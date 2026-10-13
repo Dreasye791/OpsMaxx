@@ -14,6 +14,8 @@
 // /var/log/** is not a shorter description of the policy, it is a false one.
 
 import { AI_CAPABILITIES } from '../../../../shared/mcp'
+import { interpolate } from '../../i18n'
+import type { TFunction } from '../../i18n'
 import type {
   AccessGroup,
   AiCapability,
@@ -21,6 +23,24 @@ import type {
   FilePathRule,
   PermissionValue
 } from '../../../../shared/mcp'
+
+/**
+ * Why the translator arrives as an argument rather than being imported.
+ *
+ * This module composes sentences — the verbs in PHRASING, the glue that joins
+ * them, and the clause each result lands in. Importing `t` would be shorter and
+ * would make the English sentence unreachable, and
+ * tests/accessGroupSummary.test.ts asserts those sentences word for word: it is
+ * the one place the policy engine's behaviour and the card's claim are checked
+ * against each other, so it has to keep reading English.
+ *
+ * Identity is therefore the default — and it is not quite `(s) => s`, because
+ * these templates carry placeholders. It has to do what `t` does on a
+ * catalogue miss, which is substitute and keep the source wording; sharing
+ * `interpolate` is what keeps the two paths through one sentence from
+ * disagreeing.
+ */
+const identity: TFunction = (source, vars) => interpolate(source, vars)
 
 interface Phrasing {
   /** Bare infinitive — "Can run commands", "Cannot run commands". */
@@ -221,12 +241,30 @@ function sortForSentence(ids: AiCapability[]): AiCapability[] {
   return [...ids].sort((a, b) => rank(a) - rank(b))
 }
 
-/** "a", "a and b", "a, b, and c" — Oxford comma, matching the app's copy. */
-function join(items: string[], conjunction: 'and' | 'or'): string {
+/**
+ * "a", "a and b", "a, b, and c" — Oxford comma, matching the app's copy.
+ *
+ * The three pieces of glue are catalogue entries rather than literals, because
+ * a joined list cannot be translated as a whole: the items are translated
+ * phrases and the way they are strung together is grammar. English keeps the
+ * Oxford comma (`,` before `and`), which is why the last two items use a
+ * different key from the middle of a longer list — a language that separates
+ * with 、 and joins with 和 needs that split to end up with `a、b和c` rather
+ * than `a、b、和c`.
+ */
+function join(items: string[], conjunction: 'and' | 'or', t: TFunction): string {
   if (items.length === 0) return ''
   if (items.length === 1) return items[0]
-  if (items.length === 2) return `${items[0]} ${conjunction} ${items[1]}`
-  return `${items.slice(0, -1).join(', ')}, ${conjunction} ${items[items.length - 1]}`
+  if (items.length === 2) {
+    return t(conjunction === 'and' ? '{a} and {b}' : '{a} or {b}', { a: items[0], b: items[1] })
+  }
+  const head = items
+    .slice(0, -1)
+    .reduce((acc, item, i) => (i === 0 ? item : t('{a}, {b}', { a: acc, b: item })), '')
+  return t(conjunction === 'and' ? '{a}, and {b}' : '{a}, or {b}', {
+    a: head,
+    b: items[items.length - 1]
+  })
 }
 
 // "1 path rule that allows it and 3 that block it" — the noun is carried by the
@@ -237,37 +275,57 @@ const EXCEPTION_VERB: Record<PermissionValue, { one: string; many: string }> = {
   deny: { one: 'blocks it', many: 'block it' }
 }
 
-function exceptionTail(exceptions: FileRuleException[]): string {
+function exceptionTail(exceptions: FileRuleException[], t: TFunction): string {
   return join(
     exceptions.map(({ value, count }, i) => {
-      const verb = count === 1 ? EXCEPTION_VERB[value].one : EXCEPTION_VERB[value].many
-      const noun = i === 0 ? `path ${count === 1 ? 'rule' : 'rules'} ` : ''
-      return `${count} ${noun}that ${verb}`
+      const verb = t(count === 1 ? EXCEPTION_VERB[value].one : EXCEPTION_VERB[value].many)
+      // The count with the noun is the first part only; later parts read
+      // "19 that block it", which is why only the first one names what is
+      // being counted. Both forms are separate keys for the same reason the
+      // glue is: English marks the plural and a reader of the translation
+      // needs the full phrase in their own grammar.
+      if (i === 0) {
+        return t(count === 1 ? '{count} path rule that {verb}' : '{count} path rules that {verb}', {
+          count,
+          verb
+        })
+      }
+      return t('{count} that {verb}', { count, verb })
     }),
-    'and'
+    'and',
+    t
   )
 }
 
 function fileCapabilityClause(
   id: AiCapability,
   value: PermissionValue,
-  exceptions: FileRuleException[]
+  exceptions: FileRuleException[],
+  t: TFunction
 ): string {
   const { verb, gerund } = PHRASING[id]
   const base =
     value === 'allow'
-      ? `Can ${verb} without asking`
+      ? t('Can {verb} without asking', { verb: t(verb) })
       : value === 'ask'
-        ? `Asks you first before ${gerund}`
-        : `Cannot ${verb}`
-  return `${base} — except ${exceptionTail(exceptions)}.`
+        ? t('Asks you first before {gerund}', { gerund: t(gerund) })
+        : t('Cannot {verb}', { verb: t(verb) })
+  return t('{base} — except {exceptions}.', { base, exceptions: exceptionTail(exceptions, t) })
 }
 
-function unrecognisedClause(items: CapabilityDecision[]): string {
-  const named = items.map((d) => `${d.label} ("${d.unrecognised}")`)
+function unrecognisedClause(items: CapabilityDecision[], t: TFunction): string {
+  const named = items.map((d) =>
+    t('{label} ("{value}")', { label: t(d.label), value: d.unrecognised ?? '' })
+  )
   return items.length === 1
-    ? `${named[0]} is set to a value OpsMaxx does not recognise, so the policy engine allows it. Set it again below.`
-    : `${join(named, 'and')} are set to values OpsMaxx does not recognise, so the policy engine allows them. Set them again below.`
+    ? t(
+        '{names} is set to a value OpsMaxx does not recognise, so the policy engine allows it. Set it again below.',
+        { names: named[0] }
+      )
+    : t(
+        '{names} are set to values OpsMaxx does not recognise, so the policy engine allows them. Set them again below.',
+        { names: join(named, 'and', t) }
+      )
 }
 
 /** The card's word for RISKY_ACTIONS, qualifying every "without asking" above it. */
@@ -302,8 +360,12 @@ export interface AccessGroupSummary {
  * the shipped "Read Only" group misdescribe itself: `writeFiles: 'deny'` with
  * two seeded `write: 'ask'` rules produced "Cannot ... write files" on the same
  * card as "2 asking first".
+ *
+ * `t` translates the verbs, the glue and the clause templates; the shape of
+ * the sentence is decided here either way. See `identity` for why it is a
+ * parameter rather than an import.
  */
-export function summariseAccessGroup(group: AccessGroup): AccessGroupSummary {
+export function summariseAccessGroup(group: AccessGroup, t: TFunction = identity): AccessGroupSummary {
   const decisions = capabilityDecisions(group)
   const byId = new Map(decisions.map((d) => [d.id, d]))
   const rules = group.filePolicies ?? []
@@ -343,45 +405,63 @@ export function summariseAccessGroup(group: AccessGroup): AccessGroupSummary {
 
   // First, not last: a capability being enforced as allow because its stored
   // value is unreadable outranks anything the rest of the sentence says.
-  if (unrecognised.length > 0) clauses.push(unrecognisedClause(unrecognised))
+  if (unrecognised.length > 0) clauses.push(unrecognisedClause(unrecognised, t))
 
   if (counts.deny === decisions.length) {
     // The state a brand-new install is in until a group is assigned, and the
     // one that makes an agent look broken rather than restricted.
     clauses.push(
       overridden.length > 0
-        ? 'Allows nothing except the file paths below — every other AI request against the server is refused.'
-        : 'Allows nothing — every AI request against the server is refused.'
+        ? t(
+            'Allows nothing except the file paths below — every other AI request against the server is refused.'
+          )
+        : t('Allows nothing — every AI request against the server is refused.')
     )
   } else if (counts.allow === decisions.length) {
     // Listing all twelve here reads as a wall of text at the exact moment the
     // reader most needs to notice one fact, so name the dangerous three.
     const including = join(
-      ELEVATED_CAPABILITIES.map((id) => PHRASING[id].gerund),
-      'and'
+      ELEVATED_CAPABILITIES.map((id) => t(PHRASING[id].gerund)),
+      'and',
+      t
     )
     clauses.push(
       overridden.length > 0
-        ? `Can do everything without asking except the file paths below — including ${including}.`
-        : `Can do everything without asking — including ${including}.`
+        ? t(
+            'Can do everything without asking except the file paths below — including {including}.',
+            { including }
+          )
+        : t('Can do everything without asking — including {including}.', { including })
     )
   } else {
     if (allowed.length > 0) {
-      clauses.push(`Can ${join(allowed.map((id) => PHRASING[id].verb), 'and')} without asking.`)
+      clauses.push(
+        t('Can {verbs} without asking.', {
+          verbs: join(allowed.map((id) => t(PHRASING[id].verb)), 'and', t)
+        })
+      )
     }
     if (asked.length > 0) {
-      clauses.push(`Asks you first before ${join(asked.map((id) => PHRASING[id].gerund), 'and')}.`)
+      clauses.push(
+        t('Asks you first before {gerunds}.', {
+          gerunds: join(asked.map((id) => t(PHRASING[id].gerund)), 'and', t)
+        })
+      )
     }
     if (denied.length > 0) {
-      clauses.push(`Cannot ${join(denied.map((id) => PHRASING[id].verb), 'or')}.`)
+      clauses.push(
+        t('Cannot {verbs}.', {
+          verbs: join(denied.map((id) => t(PHRASING[id].verb)), 'or', t)
+        })
+      )
     }
   }
 
-  for (const o of overridden) clauses.push(fileCapabilityClause(o.id, o.value, o.exceptions))
+  for (const o of overridden) clauses.push(fileCapabilityClause(o.id, o.value, o.exceptions, t))
 
   // Absent reads as ON, as it does to the policy engine (confirmsRisky). Only
   // said when something is allowed: it qualifies an Allow and nothing else.
-  if (group.confirmRisky !== false && counts.allow > 0) clauses.push(RISKY_CLAUSE)
+  if (group.confirmRisky !== false && counts.allow > 0) clauses.push(t(RISKY_CLAUSE))
 
   return {
     sentence: clauses.join(' '),
@@ -417,7 +497,8 @@ export interface FilePolicySummary {
  */
 export function summariseFilePolicies(
   rules: FilePathRule[],
-  capabilities?: Partial<AiCapabilityPolicy>
+  capabilities?: Partial<AiCapabilityPolicy>,
+  t: TFunction = identity
 ): FilePolicySummary {
   const has = (r: FilePathRule, v: PermissionValue): boolean => r.read === v || r.write === v
   const denying = rules.filter((r) => has(r, 'deny')).length
@@ -439,7 +520,7 @@ export function summariseFilePolicies(
 
   if (rules.length === 0) {
     return {
-      sentence: 'No path rules — every file follows the read and write settings above.',
+      sentence: t('No path rules — every file follows the read and write settings above.'),
       total: 0,
       denying: 0,
       asking: 0,
@@ -448,15 +529,26 @@ export function summariseFilePolicies(
   }
 
   const parts: string[] = []
-  if (denying > 0) parts.push(`${denying} blocking access`)
-  if (asking > 0) parts.push(`${asking} asking first`)
-  const detail = parts.length > 0 ? ` — ${join(parts, 'and')}` : ''
+  if (denying > 0) parts.push(t('{count} blocking access', { count: denying }))
+  if (asking > 0) parts.push(t('{count} asking first', { count: asking }))
+  const detail = parts.length > 0 ? t(' — {parts}', { parts: join(parts, 'and', t) }) : ''
   const widened =
     widening > 0
-      ? ` ${widening} ${widening === 1 ? 'grants' : 'grant'} more than the capabilities above, and the path rule wins.`
+      ? t(
+          widening === 1
+            ? ' {count} grants more than the capabilities above, and the path rule wins.'
+            : ' {count} grant more than the capabilities above, and the path rule wins.',
+          { count: widening }
+        )
       : ''
+  const count = t(rules.length === 1 ? '{count} path rule' : '{count} path rules', {
+    count: rules.length
+  })
+  // The full stop belongs to the template rather than to the concatenation:
+  // the sentence is the same shape in every language, but the mark that ends a
+  // clause is not.
   return {
-    sentence: `${rules.length} path ${rules.length === 1 ? 'rule' : 'rules'}${detail}.${widened}`,
+    sentence: t('{head}.{tail}', { head: `${count}${detail}`, tail: widened }),
     total: rules.length,
     denying,
     asking,
