@@ -64,7 +64,7 @@ export function SshSessions(): React.JSX.Element {
               className={clsx('seg-btn', settings.sshMasterIdleMinutes === c.minutes && 'active')}
               onClick={() => setSettings({ sshMasterIdleMinutes: c.minutes })}
             >
-              {c.label}
+              {t(c.label)}
             </button>
           ))}
         </div>

@@ -101,8 +101,8 @@ export function BitwardenImport(): React.JSX.Element {
       </label>
 
       <button className="btn" disabled={busy || !email || !password} onClick={() => void fetchPreview()}>
-        {busy ? <Loader2 size={14} className="spin" /> : <Download size={14} />}
-        {busy ? ' Reading…' : ' Show me what would be imported'}
+        {busy ? <Loader2 size={14} className="spin" /> : <Download size={14} />}{' '}
+        {busy ? t('Reading…') : t('Show me what would be imported')}
       </button>
 
       {error && (

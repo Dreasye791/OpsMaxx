@@ -429,7 +429,7 @@ export function AiAgents({ sessionsOnly = false }: { sessionsOnly?: boolean }): 
 
   return (
     <div className="settings-section">
-      <h2>{sessionsOnly ? 'Active Sessions' : 'AI Agents'}</h2>
+      <h2>{sessionsOnly ? t('Active Sessions') : t('AI Agents')}</h2>
       <div className="sub">
         {sessionsOnly
           ? 'Every agent currently authorized to talk to OpsMaxx, with its workspace(s) and access group.'

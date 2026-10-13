@@ -654,15 +654,15 @@ function AddyKpis({
           </span>
           <span className="kpi-label">{t('Account')}</span>
         </div>
-        <div className="kpi-value">{!supported ? '—' : enrolled ? 'On' : 'None'}</div>
+        <div className="kpi-value">{!supported ? '—' : enrolled ? t('On') : t('None')}</div>
         <div className="kpi-sub" title={relay ?? undefined}>
           {!supported
             ? relay
-              ? `relay ${relay} — enrolment not reported`
-              : 'not reported by this build'
+              ? t('relay {relay} — enrolment not reported', { relay })
+              : t('not reported by this build')
             : enrolled
-              ? (relay ?? 'relay not reported')
-              : 'no account on this device'}
+              ? (relay ?? t('relay not reported'))
+              : t('no account on this device')}
         </div>
       </div>
 
@@ -677,9 +677,9 @@ function AddyKpis({
         <div className="kpi-sub">
           {devices
             ? devices.some((d) => d.self)
-              ? 'including this one'
-              : 'on this account'
-            : 'not read yet'}
+              ? t('including this one')
+              : t('on this account')
+            : t('not read yet')}
         </div>
       </div>
 
@@ -691,7 +691,7 @@ function AddyKpis({
           <span className="kpi-label">{t('Sync')}</span>
         </div>
         <div className="kpi-value">
-          {sync === undefined ? '—' : !sync.running ? 'Off' : sync.connected ? 'Live' : 'Idle'}
+          {sync === undefined ? '—' : !sync.running ? t('Off') : sync.connected ? t('Live') : t('Idle')}
         </div>
         {/* The trend, only where there is one. A flat line drawn from a missing
             history is a claim that nothing synced, which is a different thing
@@ -708,12 +708,12 @@ function AddyKpis({
         )}
         <div className="kpi-sub">
           {sync === undefined
-            ? 'not reported by this build'
+            ? t('not reported by this build')
             : !sync.running
-              ? 'engine not running'
+              ? t('engine not running')
               : sync.connected
-                ? 'connected to the relay'
-                : 'not connected right now'}
+                ? t('connected to the relay')
+                : t('not connected right now')}
         </div>
       </div>
 

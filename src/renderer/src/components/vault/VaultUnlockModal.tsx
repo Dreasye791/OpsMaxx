@@ -174,12 +174,12 @@ export function VaultUnlockModal(): React.JSX.Element | null {
     <Modal
       title={
         damaged
-          ? 'Vault file unreadable'
+          ? t('Vault file unreadable')
           : checking
-            ? 'Vault'
+            ? t('Vault')
             : creating
-              ? 'Create your vault'
-              : 'Vault locked'
+              ? t('Create your vault')
+              : t('Vault locked')
       }
       subtitle={damaged ? undefined : reason}
       onClose={() => close(false)}
@@ -249,7 +249,7 @@ export function VaultUnlockModal(): React.JSX.Element | null {
           }}
           onKeyDown={(e) => e.key === 'Enter' && void submit()}
         />
-        <button className="icon-btn" title={show ? 'Hide' : 'Show'} onClick={() => setShow((v) => !v)}>
+        <button className="icon-btn" title={show ? t('Hide') : t('Show')} onClick={() => setShow((v) => !v)}>
           {show ? <EyeOff size={16} /> : <Eye size={16} />}
         </button>
       </div>

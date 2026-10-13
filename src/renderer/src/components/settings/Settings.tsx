@@ -662,12 +662,12 @@ function VaultState(): React.JSX.Element {
         <div className="s-title">
           {unlocked ? <LockOpen size={13} /> : <Lock size={13} />}{' '}
           {exists === null
-            ? 'Checking for a vault…'
+            ? t('Checking for a vault…')
             : !exists
-              ? 'No vault on this computer yet'
+              ? t('No vault on this computer yet')
               : unlocked
-                ? 'Vault unlocked'
-                : 'Vault locked'}
+                ? t('Vault unlocked')
+                : t('Vault locked')}
         </div>
         <div className="s-desc">
           {exists === null

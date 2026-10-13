@@ -203,15 +203,20 @@ export function AiSecurity(): React.JSX.Element {
           <div className="s-title">{t('Enable AI & MCP access')}</div>
           <div className={clsx('s-desc', config.enabled && !status.running && 'state-alarm')}>
             {status.running
-              ? `Listening on 127.0.0.1:${port} — never reachable from outside this machine.`
+              ? t('Listening on 127.0.0.1:{port} — never reachable from outside this machine.', {
+                  port
+                })
               : config.enabled
-                ? `Not listening: OpsMaxx could not open 127.0.0.1:${config.port}. No AI agent can reach it until it does — pick another port, or turn this on again once the port is free.`
-                : 'Off. No AI agent can reach OpsMaxx while disabled.'}
+                ? t(
+                    'Not listening: OpsMaxx could not open 127.0.0.1:{port}. No AI agent can reach it until it does — pick another port, or turn this on again once the port is free.',
+                    { port: config.port }
+                  )
+                : t('Off. No AI agent can reach OpsMaxx while disabled.')}
           </div>
         </div>
         <Switch
           checked={status.running}
-          label="Enable AI & MCP access"
+          label={t('Enable AI & MCP access')}
           onChange={(v) => update({ enabled: v })}
         />
       </div>

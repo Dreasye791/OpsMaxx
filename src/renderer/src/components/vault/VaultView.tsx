@@ -199,13 +199,19 @@ function VaultGate({ mode }: { mode: 'create' | 'unlock' }): React.JSX.Element {
     <div className="main vault-gate">
       <div className="vault-gate-card">
         <div className="vault-gate-icon">{creating ? <ShieldCheck size={26} /> : <Lock size={26} />}</div>
-        <h2>{creating ? 'Create your vault' : secured ? 'Vault secured' : 'Vault locked'}</h2>
+        <h2>{creating ? t('Create your vault') : secured ? t('Vault secured') : t('Vault locked')}</h2>
         <p className="faint">
           {creating
-            ? 'The vault keeps passwords, SSH keys and other secrets encrypted on this machine, so OpsMaxx can use them without you retyping them. Pick a master password to protect it — it is never stored anywhere, so if you lose it the contents cannot be recovered.'
+            ? t(
+                'The vault keeps passwords, SSH keys and other secrets encrypted on this machine, so OpsMaxx can use them without you retyping them. Pick a master password to protect it — it is never stored anywhere, so if you lose it the contents cannot be recovered.'
+              )
             : secured
-              ? 'The entries were cleared from this screen after a spell of inactivity. Nothing else stopped — your connections, background checks and scheduled work are still running on the credentials in here. Enter your master password to look at them again.'
-              : 'Enter the master password you chose for this vault. It stays open until you lock it, quit OpsMaxx, or your machine goes to sleep.'}
+              ? t(
+                  'The entries were cleared from this screen after a spell of inactivity. Nothing else stopped — your connections, background checks and scheduled work are still running on the credentials in here. Enter your master password to look at them again.'
+                )
+              : t(
+                  'Enter the master password you chose for this vault. It stays open until you lock it, quit OpsMaxx, or your machine goes to sleep.'
+                )}
         </p>
 
         {canUseBio && (
@@ -226,7 +232,11 @@ function VaultGate({ mode }: { mode: 'create' | 'unlock' }): React.JSX.Element {
             type={show ? 'text' : 'password'}
             autoFocus
             style={{ flex: 1 }}
-            placeholder={creating ? `Master password (min ${MIN_PASSWORD} characters)` : 'Master password'}
+            placeholder={
+              creating
+                ? t('Master password (min {count} characters)', { count: MIN_PASSWORD })
+                : t('Master password')
+            }
             aria-describedby={creating ? 'vault-password-rules' : undefined}
             aria-invalid={creating && password.length > 0 && password.length < MIN_PASSWORD}
             value={password}
@@ -236,7 +246,7 @@ function VaultGate({ mode }: { mode: 'create' | 'unlock' }): React.JSX.Element {
             }}
             onKeyDown={(e) => e.key === 'Enter' && void submit()}
           />
-          <button className="icon-btn" title={show ? 'Hide' : 'Show'} onClick={() => setShow((v) => !v)}>
+          <button className="icon-btn" title={show ? t('Hide') : t('Show')} onClick={() => setShow((v) => !v)}>
             {show ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
         </div>
@@ -327,7 +337,7 @@ function VaultGate({ mode }: { mode: 'create' | 'unlock' }): React.JSX.Element {
           onClick={() => void submit()}
         >
           {creating ? <ShieldCheck size={15} /> : <Unlock size={15} />}
-          {creating ? 'Create vault' : 'Unlock'}
+          {creating ? t('Create vault') : t('Unlock')}
         </button>
       </div>
     </div>

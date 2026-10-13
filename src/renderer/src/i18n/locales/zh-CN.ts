@@ -335,6 +335,44 @@ export const zhCN: Record<string, string> = {
     '在你安装那次更新之前不会有任何变化，而且你可以先切回 beta。',
 
   // ─────────────────────────────────────────────────────────────────────────
+  // 「译文早就在词表里、只是渲染处没包 t()」那一类的补齐部分。
+  //
+  // 2026-10-13 把审计剩余英文按成因分桶后，53 条属于这一类（键已存在），只有下面这批
+  // 是真正新增的。包含保险库门/解锁弹窗、addy 面板的 KPI 取值、AI 安全开关的状态句、
+  // 工作区删除提示。
+  // ─────────────────────────────────────────────────────────────────────────
+
+  'Hide': '隐藏',
+  'Vault secured': '保险库已保护',
+  'Vault locked': '保险库已锁定',
+  'Vault unlocked': '保险库已解锁',
+  'Vault file unreadable': '保险库文件无法读取',
+  'Checking for a vault…': '正在检查保险库…',
+  'The vault keeps passwords, SSH keys and other secrets encrypted on this machine, so OpsMaxx can use them without you retyping them. Pick a master password to protect it — it is never stored anywhere, so if you lose it the contents cannot be recovered.':
+    '保险库把密码、SSH 密钥和其他机密加密保存在这台机器上，这样 OpsMaxx 就能直接使用它们，不必由你反复输入。请设置一个主密码来保护它 —— 主密码不保存在任何地方，一旦丢失，里面的内容就无法恢复。',
+  'The entries were cleared from this screen after a spell of inactivity. Nothing else stopped — your connections, background checks and scheduled work are still running on the credentials in here. Enter your master password to look at them again.':
+    '闲置一段时间后，这些条目会从本屏幕上清除。其他一切照常运行 —— 你的连接、后台检查与计划任务仍然使用这里的凭据在跑。输入主密码即可再次查看。',
+  'Enter the master password you chose for this vault. It stays open until you lock it, quit OpsMaxx, or your machine goes to sleep.':
+    '输入你为此保险库设置的主密码。它会一直保持打开，直到你锁定它、退出 OpsMaxx，或这台机器进入睡眠。',
+  'On': '开启',
+  'Live': '实时',
+  'Idle': '空闲',
+  'including this one': '包括本机',
+  'on this account': '在此账户上',
+  'relay not reported': '未报告中继',
+  'not reported by this build': '此构建未报告',
+  'relay {relay} — enrolment not reported': '中继 {relay} —— 未报告注册状态',
+  'connected to the relay': '已连接到中继',
+  'not connected right now': '当前未连接',
+  'Pick the backup file to read': '选择要读取的备份文件',
+  'Listening on 127.0.0.1:{port} — never reachable from outside this machine.':
+    '正在监听 127.0.0.1:{port} —— 从这台机器外部永远无法访问。',
+  'Not listening: OpsMaxx could not open 127.0.0.1:{port}. No AI agent can reach it until it does — pick another port, or turn this on again once the port is free.':
+    '未在监听：OpsMaxx 无法打开 127.0.0.1:{port}。在它成功之前，任何 AI 代理都无法访问 —— 请换一个端口，或等端口空闲后再打开一次。',
+  'Off. No AI agent can reach OpsMaxx while disabled.': '已关闭。关闭期间任何 AI 代理都无法访问 OpsMaxx。',
+  'The last workspace cannot be deleted': '最后一个工作区不能删除',
+
+  // ─────────────────────────────────────────────────────────────────────────
   // 界面部件：按钮、表头、状态名、字段标签
   //
   // 这一批由 scripts/i18n/codemod.mjs 自动包上 t() 之后，从工作单里按长度升序
@@ -1682,7 +1720,7 @@ export const zhCN: Record<string, string> = {
   'nothing has synced yet': '还没有任何内容同步过',
   'Save it and attach it': '保存后附带提交',
   'Confirm master password': '确认主密码',
-  'Master password (min 12 characters)': '主密码（至少 12 个字符）',
+  'Master password (min {count} characters)': '主密码（至少 {count} 个字符）',
   'Layout (panels and splits)': '布局（面板与分栏）',
   'Open tabs and recently closed': '打开的标签页与最近关闭',
   'New HTTP request (Ctrl+Shift+T)': '新建 HTTP 请求（Ctrl+Shift+T）',

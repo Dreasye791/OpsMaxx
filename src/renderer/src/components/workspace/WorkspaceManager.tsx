@@ -154,7 +154,7 @@ export function WorkspaceManager(): React.JSX.Element {
         </button>
         <button
           className="icon-btn sm"
-          title={workspaces.length <= 1 ? 'The last workspace cannot be deleted' : 'Delete'}
+          title={workspaces.length <= 1 ? t('The last workspace cannot be deleted') : t('Delete')}
           disabled={workspaces.length <= 1}
           onClick={() => setConfirming(id)}
         >

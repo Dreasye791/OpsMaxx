@@ -246,7 +246,7 @@ export function BackupPanel(): React.JSX.Element {
         <button
           className="btn"
           disabled={!importPw || busy !== null}
-          title={importPw ? 'Pick the backup file to read' : 'Type the backup passphrase first'}
+          title={importPw ? t('Pick the backup file to read') : t('Type the backup passphrase first')}
           onClick={() => void runInspect()}
         >
           {busy === 'inspect' ? <Loader2 size={14} className="spin" /> : <Upload size={14} />}
