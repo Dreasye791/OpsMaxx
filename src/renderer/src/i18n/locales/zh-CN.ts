@@ -270,6 +270,71 @@ export const zhCN: Record<string, string> = {
   'Update check failed': '检查更新失败',
 
   // ─────────────────────────────────────────────────────────────────────────
+  // 更新面板（components/settings/UpdatePanel.tsx）。
+  //
+  // 这一面板原先只有源码里的裸字符串：更新失败、已下载、手动安装、降级确认这几个
+  // 状态**渲染审计基本走不到**（沙箱没有网络，检查会失败；下载/安装不会发生），
+  // 所以「渲染占比」一直没把它们算进来。它们占全屏英文的大部分。
+  //
+  // 英文单复数各成一条键（'Last checked {count} minute ago.' 与 '...minutes...'）：
+  // t 没有 ICU 复数，两条各归其位，中文两条映射到同一串即可。
+  // ─────────────────────────────────────────────────────────────────────────
+
+  'Not checked yet.': '尚未检查。',
+  'Last checked just now.': '刚刚检查过。',
+  'Last checked {count} minute ago.': '{count} 分钟前检查过。',
+  'Last checked {count} minutes ago.': '{count} 分钟前检查过。',
+  'Last checked {count} hour ago.': '{count} 小时前检查过。',
+  'Last checked {count} hours ago.': '{count} 小时前检查过。',
+  'Last checked {count} day ago.': '{count} 天前检查过。',
+  'Last checked {count} days ago.': '{count} 天前检查过。',
+  'Checking for updates…': '正在检查更新…',
+  "You're on the latest version. {ago}": '已是最新版本。{ago}',
+  'v{version} found — starting download…': '发现 v{version} —— 开始下载…',
+  'v{version} is available.': '有可用版本 v{version}。',
+  'v{version} is available': '有可用版本 v{version}',
+  'Downloading update… {percent}%': '正在下载更新… {percent}%',
+  'v{version} is ready to install.': 'v{version} 已可安装。',
+  'Could not check for updates: {message}': '检查更新失败：{message}',
+  'Update ready': '更新已就绪',
+  'OpsMaxx will restart to finish installing v{version}.': 'OpsMaxx 将重启以完成安装 v{version}。',
+  'v{version} has been downloaded, but this build cannot install it itself.':
+    'v{version} 已下载，但这个构建无法自行安装。',
+  '{message} — you can always grab the latest release directly.':
+    '{message} —— 你随时可以直接下载最新版本。',
+  'Restart & update': '重启并更新',
+  'Releases page': '版本发布页',
+  'Ignoring v{version}': '已忽略 v{version}',
+  'The status bar stays quiet about this version. A newer one brings the indicator back on its own.':
+    '状态栏不会再提示这个版本。出现更新的版本时，指示器会自己回来。',
+  'Stop ignoring': '不再忽略',
+  'Hide the status-bar indicator for v{version}. Updates stay on, and the next version will say so.':
+    '不再为 v{version} 显示状态栏指示器。更新仍然开启，出现下一个版本时会照常提示。',
+  'Ignore this version': '忽略此版本',
+  'Unavailable on this build. {reason}': '此构建不可用。{reason}',
+  'Unavailable until OpsMaxx knows what this build can install.':
+    '在 OpsMaxx 得知此构建能安装什么之前不可用。',
+  'macOS builds here are not notarized, so OpsMaxx cannot safely replace itself automatically — download the new version and open it the same way as the first install.':
+    '这里的 macOS 构建未经公证，OpsMaxx 无法安全地自动替换自身 —— 请下载新版本，并像首次安装那样打开它。',
+  'This is the portable build, which runs from wherever you put it — OpsMaxx cannot replace its own executable, so download the new version and swap it in.':
+    '这是便携版，从你放置的位置运行 —— OpsMaxx 无法替换自己的可执行文件，请下载新版本并手动替换。',
+  'This build cannot install updates itself — download the new version from the releases page.':
+    '此构建无法自行安装更新 —— 请从版本发布页下载新版本。',
+  'Restart to finish updating?': '重启以完成更新？',
+  'OpsMaxx closes and reopens on the new version.': 'OpsMaxx 将关闭，并在新版本上重新打开。',
+  'Every open SSH session, tunnel and file transfer ends when the app closes. Anything running on a server keeps running there, but OpsMaxx will not be watching it.':
+    '应用关闭时，所有打开的 SSH 会话、隧道与文件传输都会结束。服务器上正在运行的东西会继续运行，但 OpsMaxx 不会再盯着它。',
+  'Switch to the stable channel?': '切换到稳定通道？',
+  'You are running v{version}, a beta build.': '你正在运行 v{version}，一个 beta 构建。',
+  'Stay on beta': '留在 beta',
+  'Switch to stable': '切换到稳定版',
+  'The newest stable release is probably older than the beta you are on. OpsMaxx will offer it as an update and installing it moves this app {b} a version, taking the beta-only features with it.':
+    '最新的稳定版很可能比你正在使用的 beta 更旧。OpsMaxx 会把它作为更新提供，而安装它会把本应用{b}一个版本，beta 专属功能也会随之消失。',
+  'down': '下调',
+  'Nothing changes until you install that update, and you can switch back to beta first.':
+    '在你安装那次更新之前不会有任何变化，而且你可以先切回 beta。',
+
+  // ─────────────────────────────────────────────────────────────────────────
   // 界面部件：按钮、表头、状态名、字段标签
   //
   // 这一批由 scripts/i18n/codemod.mjs 自动包上 t() 之后，从工作单里按长度升序
