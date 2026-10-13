@@ -742,6 +742,57 @@ export const zhCN: Record<string, string> = {
   'Server metrics': '服务器指标',
 
   // ─────────────────────────────────────────────────────────────────────────
+  // 安全态势表的悬停说明（PosturePanel 的 `help`）。
+  //
+  // 这些是全库最长的一批文案，也是**唯一一类「读起来像技术文档」的界面文字**：
+  // 每一条都在解释「这个数字是怎么来的、以及它不是什么」。翻译时保留了这种
+  // 「说明而非口号」的语气，包括原文里的引号与破折号 —— 它们是论证结构的一部分
+  // （`"ufw is inactive"` 不是 `"nothing is filtering"`），去掉就只剩下结论。
+  // ─────────────────────────────────────────────────────────────────────────
+  'Neither SELinux nor AppArmor is on this server, and that was checked rather than assumed. Plenty of estates run this way deliberately.':
+    '这台服务器上既没有 SELinux 也没有 AppArmor，这是检查得出的结论，而不是默认假设。许多环境是刻意这样运行的。',
+  'Which firewall is active and how many rules it lists. Both the front end and the kernel tables underneath are read, because "ufw is inactive" is not "nothing is filtering".':
+    '哪个防火墙在生效，以及它列出多少条规则。前端界面与底层的内核表都会读取，因为「ufw 未启用」并不等于「没有任何过滤」。',
+  'Whether mandatory access control is enforcing. A server with neither is a finding, not a gap — and it is shown differently from a server that could not be asked.':
+    '强制访问控制是否处于强制模式。两者都没有的服务器是一项发现，而不是一个缺口 —— 它和「无法查询的服务器」会以不同方式呈现。',
+  'Seven directives against a hardening baseline. A directive that could not be read is never counted as passing.':
+    '对照加固基线的七项指令。读不到的指令绝不会被算作通过。',
+  'How many failed attempts the server recorded and how many distinct account names they tried. Counts only: every field on a failed-login record is text an attacker chose.':
+    '服务器记录了多少次失败尝试，以及尝试了多少个不同的账户名。只取计数：登录失败记录里的每个字段都是攻击者自选的文本。',
+  'Pending security updates as the server’s own package manager counts them. Collected by the Inventory probe and shown here unchanged — OpsMaxx computes nothing from a CVE feed.':
+    '按服务器自己的包管理器统计的待装安全更新。由资产清点探针收集并原样显示 —— OpsMaxx 不会从 CVE 数据源推算任何东西。',
+  'Processes the kernel reaped for memory in the last 24 hours. Only the journal can be asked for a window — a count read from dmesg or kern.log is real, and a ZERO read from either is not a statement about a day and is not drawn as one.':
+    '过去 24 小时内内核为回收内存而终止的进程。只有 journal 能回答一个时间窗口 —— 从 dmesg 或 kern.log 读到的计数是真实的，而从任一处读到的零并不代表一整天的情况，因此也不会被画成那样。',
+  'Days left on the soonest certificate in a bounded set of named directories on this server. Not a TLS scanner: nothing is fetched over the network, the distribution trust store is deliberately not searched, and a directory that could not be entered is never rendered as a server with no certificates.':
+    '这台服务器上若干指定目录中最早到期证书的剩余天数。这不是 TLS 扫描器：不会从网络获取任何东西，发行版的信任库是刻意不查的，无法进入的目录也绝不会被呈现为「服务器没有证书」。',
+
+  // Addy 同步状态（`addyStatus.ts`，说明句在渲染处翻译）
+  'Nothing syncs to one device. Open OpsMaxx on the other machine, start pairing here, and compare the emoji on both.':
+    '没有任何设备与之同步。在另一台机器上打开 OpsMaxx，在这里发起配对，然后比对两边的表情符号。',
+  'Nothing is carrying data between devices yet: this build does not run the engine that would.':
+    '目前还没有任何东西在设备之间传输数据：此构建不运行负责这件事的引擎。',
+  'The last pass failed, so some changes have not been carried. The reason is below.':
+    '上一次同步失败，因此有些更改尚未传过去。原因见下方。',
+  'Only this device is on the account, so there is nothing to agree with yet. Everything it knows about has been carried to the relay and is waiting there.':
+    '该账户下只有这一台设备，因此还没有可与之达成一致的对象。它知道的一切都已传到中继并在那里等待。',
+
+  // 采样器状态（`fleetStatus.ts`）。原文用 `\n\n` 把「发生了什么」与「点击做什么」
+  // 分成两段 —— 保留了，中文同样分两段。
+  'Every server being checked authenticates with a credential in the vault, and the vault is locked — so nothing is being checked and no alerts can be raised.\n\nClick to unlock.':
+    '所有被检查的服务器都用保险库中的凭据认证，而保险库已锁定 —— 因此没有任何检查在进行，也无法发出警报。\n\n点击解锁。',
+  'Some servers are not being checked: their credential is in the vault, and the vault is locked. Everything else is still being checked and can still raise an alert.\n\nClick to unlock.':
+    '有些服务器没有被检查：它们的凭据在保险库中，而保险库已锁定。其余服务器仍在被检查，也仍能发出警报。\n\n点击解锁。',
+  'Background checking is on, but this workspace has no servers that can be sampled, so no alerts can be raised.\n\nClick to open Monitoring settings.':
+    '后台检查已开启，但此工作区没有可采样的服务器，因此无法发出警报。\n\n点击打开「监控」设置。',
+  'Background checking is switched on but nothing is scheduled, so no alerts can be raised. Turn it off and on again to restart it.\n\nClick to open Monitoring settings.':
+    '后台检查已开启，但没有任何排期，因此无法发出警报。把它关掉再打开即可重新启动。\n\n点击打开「监控」设置。',
+
+  // 资产清点：待装更新的说明与组合面板的环境文件报错
+  'Updates the local package cache knows about. OpsMaxx never refreshes that cache — refreshing is a network operation and on some package managers it can break the server — so read this next to the metadata age.':
+    '本地包缓存所知的更新。OpsMaxx 从不刷新该缓存 —— 刷新是一次网络操作，在某些包管理器上还可能弄坏服务器 —— 所以要结合元数据的新旧程度一起看。',
+  'the env files could not be read': '环境变量文件无法读取',
+
+  // ─────────────────────────────────────────────────────────────────────────
   // 界面部件：按钮、表头、状态名、字段标签
   //
   // 这一批由 scripts/i18n/codemod.mjs 自动包上 t() 之后，从工作单里按长度升序
@@ -1524,9 +1575,9 @@ export const zhCN: Record<string, string> = {
   // 文件路径规则里的权限下拉：显式带占位符，否则 option 会被拆成两个文本节点。
   'read: {perm}': '读取：{perm}',
   'write: {perm}': '写入：{perm}',
-  // 字号说明被 <b> 快捷键名拆成的两段。中文里接快捷键名是自然的，照译即可。
-  'Applies to open terminals immediately. Also': '立即应用到已打开的终端。也可用',
-  ', or Ctrl+scroll inside a terminal.': '，或在终端内按住 Ctrl 滚动。',
+  // 字号说明（<Trans>：整句一个键，三个快捷键名是槽位 —— 槽位里是键名，不译）
+  'Applies to open terminals immediately. Also {plus} / {minus} / {zero}, or Ctrl+scroll inside a terminal.':
+    '立即应用到已打开的终端。也可用 {plus} / {minus} / {zero}，或在终端内按住 Ctrl 滚动。',
 
   'Lets an agent see that this server exists and read the permissions it has on it. Hostnames, usernames and keys are never disclosed.': '让代理看到这台服务器存在，并读取它对这台服务器拥有的权限。主机名、用户名和密钥永不披露。',
   "Runs shell commands over SSH. Unrestricted privilege-escalation shells (sudo -i, su, sudo bash) are refused whatever this is set to, in every mode but Bypass. While the group's Confirm risky actions is on, a destructive, elevated or run-time-computed command still asks even when this is allow. It also governs pod_command, one command run inside a Kubernetes container, which is checked against the same command rules and asked for on every call even when this is allow (only the Bypass profile skips it).": '通过 SSH 运行 shell 命令。无限制的提权 shell（sudo -i、su、sudo bash）在任何设置下、除「绕过」外的所有模式中一律拒绝。当该组的「确认风险操作」开启时，破坏性、提权或程序名在运行时才确定的命令即使标为允许也会询问。它还管辖 pod_command —— 在 Kubernetes 容器内运行的一条命令，按同一套命令规则检查，且即使标为允许也会每次询问（只有「绕过」配置会跳过）。',
@@ -2000,7 +2051,6 @@ export const zhCN: Record<string, string> = {
   'starting, cancelling or re-running CI/CD pipelines': '启动、取消或重新运行 CI/CD 流水线',
 
   // 这一页的控制与提示。toast 只在操作后出现，渲染审计走不到，但它们是真实文案。
-  'individually': '项可逐项设置',
   'Editing {name}': '正在编辑「{name}」',
   'Pick a group to edit': '选择一个组进行编辑',
   'Saved {name}': '已保存{name}',
@@ -2019,21 +2069,23 @@ export const zhCN: Record<string, string> = {
   'That change was not saved: {error}': '该更改未保存：{error}',
   'another group': '另一个组',
 
-  // JSX 拆开的句子片段：键按实际边界取，中文按语序重写。内嵌的 <b>/<i> 之间由
-  // JSX 补的空格会留在中文里（如「处于 自定义配置」），这是片段方案本身的代价 ——
-  // 真正的解法是 <Trans> 式组件，见 CODEBUDDY.md。
-  'Access groups are for when the predefined profiles do not fit: an agent on the':
-    '预定义的配置不合适时，就该用访问组：处于',
-  'profile does exactly what its group says, per capability, and a group assigned to a workspace or server restricts every agent there. Each card describes itself from its own settings. Pick one to change it, or create your own (Logs Only, Production Read Only, ...).':
-    '配置的代理会严格按自己的能力设置行事，而分配给工作区或服务器的组会限制该处的所有代理。每张卡片都根据自身设置来描述自己。选一个来修改，或创建你自己的（例如「仅日志」「生产只读」……）。',
+  // ─────────────────────────────────────────────────────────────────────────
+  // 带标记的整句（`<Trans>`，见 src/renderer/src/i18n/Trans.tsx）。
+  //
+  // 这里曾经是**拆开的片段**（`…an agent on the` + `<b>Custom</b>` + `profile does…`）。
+  // 片段方案能翻，但翻不好：JSX 补的空格会留在中文里（「处于 自定义配置」），而且
+  // 槽位的位置被英文语序钉死。现在整句是一个键，`{槽位名}` 由译文的语序决定放在哪 ——
+  // 所以中文是「处于{b}配置的代理」，槽位前后不需要空格。
+  // ─────────────────────────────────────────────────────────────────────────
+  'Access groups are for when the predefined profiles do not fit: an agent on the {b} profile does exactly what its group says, per capability, and a group assigned to a workspace or server restricts every agent there. Each card describes itself from its own settings. Pick one to change it, or create your own (Logs Only, Production Read Only, ...).':
+    '预定义的配置不合适时，就该用访问组：处于{b}配置的代理会严格按自己的能力设置行事，而分配给工作区或服务器的组会限制该处的所有代理。每张卡片都根据自身设置来描述自己。选一个来修改，或创建你自己的（例如「仅日志」「生产只读」……）。',
   "Nothing here is needed to give an agent access — a session's own access group is the grant, and a workspace with no assignment leaves it exactly as written. What an assignment does is hold a workspace below that grant, whatever group an agent was issued. A server with no override inherits its workspace's assignment.":
     '要授予代理访问权限，这里什么都不用设置 —— 会话自身的访问组就是授权，而未做分配的工作区则完全按访问组所写执行。分配的作用是让工作区低于该授权，无论代理拿到的是哪个组。没有覆盖设置的服务器会继承其工作区的分配。',
-  'is the other optional restriction, for production: every agent is held at Ask first there, whatever its profile; Read only stays read only.':
-    '是另一项可选的限制，用于生产环境：无论代理是什么配置，在那里一律先询问；只读仍然是只读。',
-  'The card shows them, but nothing is stored until you save — the policy engine is still enforcing the old settings. Opening':
-    '卡片会显示这些更改，但在你保存之前什么都没有写入 —— 策略引擎仍在执行旧设置。现在打开',
-  'now discards them.': '将丢弃它们。',
-  'Capabilities — set each of the': '能力 —— 这',
+  '{b} is the other optional restriction, for production: every agent is held at Ask first there, whatever its profile; Read only stays read only.':
+    '{b} 是另一项可选的限制，用于生产环境：无论代理是什么配置，在那里一律先询问；只读仍然是只读。',
+  'The card shows them, but nothing is stored until you save — the policy engine is still enforcing the old settings. Opening {group} now discards them.':
+    '卡片会显示这些更改，但在你保存之前什么都没有写入 —— 策略引擎仍在执行旧设置。现在打开{group}就会丢弃这些更改。',
+  'Capabilities — set each of the {n} individually': '能力 —— 这 {n} 项可逐项设置',
   'File path rules — {summary}': '文件路径规则 —— {summary}',
   'Access group for the Custom profile': '自定义配置所用的访问组',
   'Default profile for new agent sessions': '新代理会话的默认配置',

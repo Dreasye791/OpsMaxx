@@ -20,6 +20,7 @@ import {
 import { useApp } from '../../store/app'
 import type { ThemeMode } from '../../store/app'
 import { useT } from '../../i18n'
+import { Trans } from '../../i18n/Trans'
 import { LanguagePanel } from './LanguagePanel'
 import { useNav, SETTINGS_SECTIONS, SETTINGS_SECTION_LABELS } from '../../store/nav'
 import { isLoopbackHostKeyId } from '../../../../shared/ssh'
@@ -1038,8 +1039,14 @@ export function Settings(): React.JSX.Element {
                 <div className="s-info">
                   <div className="s-title">{t('Font size')}</div>
                   <div className="s-desc">
-                    Applies to open terminals immediately. Also <b>Ctrl +</b> / <b>Ctrl -</b> /{' '}
-                    <b>Ctrl 0</b>, or Ctrl+scroll inside a terminal.
+                    <Trans
+                      source="Applies to open terminals immediately. Also {plus} / {minus} / {zero}, or Ctrl+scroll inside a terminal."
+                      components={{
+                        plus: <b>Ctrl +</b>,
+                        minus: <b>Ctrl -</b>,
+                        zero: <b>Ctrl 0</b>
+                      }}
+                    />
                   </div>
                 </div>
                 <div className="row" style={{ gap: 6 }}>

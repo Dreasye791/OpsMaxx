@@ -26,6 +26,7 @@ import type {
   PolicyScope
 } from '../../../../shared/mcp'
 import { useT } from '../../i18n'
+import { Trans } from '../../i18n/Trans'
 
 const PERM_OPTIONS: PermissionValue[] = ['allow', 'ask', 'deny']
 
@@ -266,7 +267,9 @@ function GroupEditor({ group, summary, onChange, onSave, onDelete }: {
         <summary className="disclosure-head">
           <ChevronRight size={14} className="chev" />
           <SlidersHorizontal size={13} />
-          {t('Capabilities — set each of the')}{' '}{AI_CAPABILITIES.length} {t('individually')}<span className="ag-counts">
+          {t('Capabilities — set each of the {n} individually', {
+            n: AI_CAPABILITIES.length
+          })}<span className="ag-counts">
             {/* A zero is noise here: "0 ask" makes the reader look for
                 something that is not there. */}
             {summary.counts.allow > 0 && <span className="chip ok">{summary.counts.allow} {t('allow')}</span>}
@@ -478,7 +481,11 @@ function ServerAssignment({ groups }: { groups: AccessGroup[] }): React.JSX.Elem
         )}
       </div>
       <div className="sub">
-        <b>{t('Protected from agents')}</b> {t('is the other optional restriction, for production: every agent is held at Ask first there, whatever its profile; Read only stays read only.')}</div>
+        <Trans
+          source="{b} is the other optional restriction, for production: every agent is held at Ask first there, whatever its profile; Read only stays read only."
+          components={{ b: <b>{t('Protected from agents')}</b> }}
+        />
+      </div>
 
       <div className="setting-row">
         <div className="s-info">
@@ -762,7 +769,11 @@ export function AiAccessGroups(): React.JSX.Element {
     <div className="settings-section">
       <h2>{t('Access Groups')}</h2>
       <div className="sub">
-        {t('Access groups are for when the predefined profiles do not fit: an agent on the')}{' '}<b>{t('Custom')}</b> {t('profile does exactly what its group says, per capability, and a group assigned to a workspace or server restricts every agent there. Each card describes itself from its own settings. Pick one to change it, or create your own (Logs Only, Production Read Only, ...).')}</div>
+        <Trans
+          source="Access groups are for when the predefined profiles do not fit: an agent on the {b} profile does exactly what its group says, per capability, and a group assigned to a workspace or server restricts every agent there. Each card describes itself from its own settings. Pick one to change it, or create your own (Logs Only, Production Read Only, ...)."
+          components={{ b: <b>{t('Custom')}</b> }}
+        />
+      </div>
 
       <div className="ag-grid">
         {groups.map((g) => (
@@ -791,7 +802,11 @@ export function AiAccessGroups(): React.JSX.Element {
             <div className="s-title">
               <TriangleAlert size={13} /> {t(draft.name)} {t('has unsaved changes')}</div>
             <div className="s-desc">
-              {t('The card shows them, but nothing is stored until you save — the policy engine is still enforcing the old settings. Opening')}{' '}{t(pendingName)} {t('now discards them.')}</div>
+              <Trans
+                source="The card shows them, but nothing is stored until you save — the policy engine is still enforcing the old settings. Opening {group} now discards them."
+                values={{ group: t(pendingName) }}
+              />
+            </div>
           </div>
           <button
             className="btn sm primary"
