@@ -1105,6 +1105,102 @@ export const zhCN: Record<string, string> = {
     '会显示在此账户下每台设备的设备列表中。',
 
   // ─────────────────────────────────────────────────────────────────────────
+  // Docker 面板（components/docker/DockerPanel.tsx）。
+  // ─────────────────────────────────────────────────────────────────────────
+  'Logs ·': '日志 ·',
+  'Timestamps': '时间戳',
+  'Read this in the larger panel at the bottom': '在底部更大的面板中查看',
+  "Put this back under its container's row": '把它移回其容器那一行下方',
+  'What is running under Docker on one host — state, ports, disk and live stats.':
+    '一台主机上 Docker 里运行着什么 —— 状态、端口、磁盘与实时统计。',
+  'Docker host': 'Docker 主机',
+  'No server in this workspace is connected — showing Docker on this machine.':
+    '此工作区没有服务器处于连接状态 —— 正在显示本机的 Docker。',
+  'Any saved server can still be picked above — reading one dials it. Connect a server from the sidebar to work on it properly, or press':
+    '仍可在上方选择任意已保存的服务器 —— 读取它就会去拨号。要正式使用某台服务器，请从侧边栏连接它，或按',
+  'Read containers': '读取容器',
+  'for the daemon running here.': '以查看在这里运行的守护进程。',
+  'on the selected server, using the docker binary already installed there. Reading only — nothing is started, stopped or removed until you ask for it.':
+    '在所选服务器上，使用那里已安装的 docker 可执行文件。只读 —— 在你要求之前，不会启动、停止或移除任何东西。',
+  'Retry with sudo': '用 sudo 重试',
+  'This account has passwordless sudo on that server, so containers can be read as root.':
+    '此账户在那台服务器上有免密 sudo，因此可以以 root 身份读取容器。',
+  'sudo would need a password here, and there is no terminal to type it into. Add this user to the docker group on the server, or configure passwordless sudo for it.':
+    '这里执行 sudo 需要密码，而没有终端可以输入。请把该用户加入服务器上的 docker 组，或为它配置免密 sudo。',
+  'Stop using sudo': '停止使用 sudo',
+  'This runtime did not report compose labels, so containers are not grouped by project.':
+    '此运行时没有报告 compose 标签，因此容器未按项目分组。',
+  'Every image, container, volume and cache entry, largest first — and where something can be removed, a checkbox for it.':
+    '所有镜像、容器、卷与缓存条目，按体积从大到小 —— 可移除的条目旁有勾选框。',
+  'By id, one docker command per kind — never a prune. No size is totalled here: image layers are shared, so adding the rows up would overstate what comes back.':
+    '按 id 给出，每类一条 docker 命令 —— 从不执行 prune。这里不做体积合计：镜像层是共享的，把各行相加会高估能回收的空间。',
+  'Docker is running and has no containers.': 'Docker 正在运行，且没有任何容器。',
+  'Filter containers…': '筛选容器…',
+  'No container matches “': '没有容器匹配「',
+  'are running or stopped on this host.': '个正在运行或已停止于此主机。',
+  'Restart project': '重启项目',
+  'cpu ·': 'CPU ·',
+  'Ports, mounts, restart policy, health': '端口、挂载、重启策略、健康检查',
+  'The socket refused this account. Nothing was retried as root on its own — an action running as root is a decision to make deliberately, not one to discover afterwards. Turn sudo on above and try again if that is what you want.':
+    '套接字拒绝了这个账户。系统没有自行改用 root 重试 —— 以 root 身份执行操作应当是一个刻意的决定，而不是事后才发现的事。如果你确实想这样做，请在上方打开 sudo 后重试。',
+  'read as root': '以 root 读取',
+  'Tick what should go. Nothing is ticked for you, there is no select-all, and a row with a dot instead of a box says why on hover — that is docker refusing, not this panel being cautious.':
+    '勾选要清理的项目。不会替你勾选任何东西，也没有全选；某一行显示圆点而不是勾选框时，悬停会说明原因 —— 那是 docker 在拒绝，而不是这个面板过分谨慎。',
+  'Writable layer, not the image': '可写层，不含镜像',
+  'no containers': '无容器',
+  '· last used': '· 上次使用',
+  'Docker answered, and every table it printed was empty: there is nothing stored on this server. That is the reading, not a read that failed.':
+    'Docker 有响应，但它打印的每张表都是空的：这台服务器上没有任何东西。这是一个读数，不是读取失败。',
+  'This runtime did not report a build cache.': '此运行时没有报告构建缓存。',
+  'of this listing could not be read, so': '项列表内容无法读取，因此',
+  'missing above rather than guessed at.': '在上方是缺失的，而不是猜出来的。',
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 备份目的地（components/settings/BackupDestinations.tsx）。
+  // ─────────────────────────────────────────────────────────────────────────
+  'Your destinations could not be read': '你的目的地无法读取',
+  'Saving a destination from here moves the unreadable file aside rather than writing over it, so what was in it stays recoverable by hand.':
+    '从这里保存目的地时，会把无法读取的那个文件移到一边，而不是覆盖它，因此其中的内容仍可手动恢复。',
+  'Reading your backup destinations…': '正在读取备份目的地…',
+  '· last attempt': '· 上次尝试',
+  'Back up now': '立即备份',
+  'Restore from here': '从此处恢复',
+  'Removes this destination from OpsMaxx. The backups already at it are left alone.':
+    '从 OpsMaxx 中移除此目的地。已经存放在那里的备份保持不动。',
+  'Dump a database here…': '把数据库导出到这里…',
+  'A dump is plain SQL, written alongside the backups and encrypted by nothing. Retention does not touch it, and a restore cannot read it — it is for the database, not for this app.':
+    '导出文件是纯 SQL，与备份放在一起且没有任何加密。保留策略不会动它，恢复功能也读不了它 —— 它是给数据库用的，不是给本应用用的。',
+  'No OpsMaxx backups at this destination yet.': '此目的地还没有 OpsMaxx 备份。',
+  'Replace current data?': '替换当前数据？',
+  '· created': '· 创建于',
+  'servers ·': '台服务器 ·',
+  'workspaces ·': '个工作区 ·',
+  'databases ·': '个数据库 ·',
+  'credentials': '项凭据',
+  'Restore and restart': '恢复并重启',
+  'Name this destination': '给此目的地命名',
+  'Folder to write backups into': '写入备份的文件夹',
+  'Remote directory, e.g. /srv/opsmaxx-backups': '远程目录，例如 /srv/opsmaxx-backups',
+  'The bundle is encrypted with the passphrase like every other destination, and sealed a second time under your account key on the way out — so the relay holds something it cannot read even if the passphrase leaks.':
+    '这个打包文件与其他目的地一样用口令加密，并在发出时再用你的账户密钥封装一次 —— 因此即使口令泄露，中继持有的东西它也读不了。',
+  'Endpoint, e.g. https://s3.eu-west-1.amazonaws.com':
+    '端点，例如 https://s3.eu-west-1.amazonaws.com',
+  'Key prefix (optional)': '键前缀（可选）',
+  'Path-style': '路径风格',
+  'Vault entry holding the access key…': '存放访问密钥的保险库条目…',
+  'Test-restore every write': '每次写入都试恢复',
+  'Passphrase from the vault': '口令来自保险库',
+  'Keep it on this machine': '只保存在这台机器上',
+  'Vault entry holding the backup passphrase…': '存放备份口令的保险库条目…',
+  'Nobody is present at 3am to type a passphrase, so a scheduled run reads one from the vault. The vault keeps resolving after the idle timeout, so this survives a screen left alone — but not a restart, until somebody unlocks. A run skipped for that reason says so in the status bar rather than quietly not happening.':
+    '凌晨三点没有人在场输入口令，所以计划任务会从保险库读取口令。空闲超时之后保险库仍能解析，因此界面放着不管不会中断 —— 但重启会，直到有人解锁。因这个原因被跳过的运行会在状态栏里说明，而不是悄悄地没有发生。',
+  'restoring onto another machine does not bring it back':
+    '恢复到另一台机器上不会把它带回来',
+  '. Write it down somewhere a lost laptop does not take with it. Anyone with this machine can open every generation this destination has written.':
+    '。请抄写到即使笔记本丢失也不会随之消失的地方。任何拿到这台机器的人都能打开此目的地写出的每一代备份。',
+  'Save destination': '保存目的地',
+
+  // ─────────────────────────────────────────────────────────────────────────
   // 界面部件：按钮、表头、状态名、字段标签
   //
   // 这一批由 scripts/i18n/codemod.mjs 自动包上 t() 之后，从工作单里按长度升序
