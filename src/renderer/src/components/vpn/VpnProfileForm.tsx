@@ -338,7 +338,13 @@ export function VpnProfileForm({ profile, onClose, focus }: VpnProfileFormProps)
           <details className="disclosure">
             <summary className="disclosure-head">
               <ScrollText size={13} />
-              {stripped.length} {stripped.length === 1 ? 'directive was' : 'directives were'} {t('removed when this profile was imported')}</summary>
+              {stripped.length === 1
+                ? t('{count} directive was removed when this profile was imported', {
+                    count: stripped.length
+                  })
+                : t('{count} directives were removed when this profile was imported', {
+                    count: stripped.length
+                  })}</summary>
             <div className="disclosure-body">
               {stripped.map((d, i) => (
                 <div key={`${d.directive}-${i}`} className="col" style={{ gap: 2 }}>
@@ -905,8 +911,9 @@ function InterfaceKeyField({
             {inVault ? 'Replace the stored key' : 'Use this key'}
           </button>
           <span className="field-hint">
-            {t('Until you do, this profile still uses')}{' '}
-            {inVault ? 'the key already in the vault' : 'no key at all'}.
+            {t('Until you do, this profile still uses {key}.', {
+              key: inVault ? t('the key already in the vault') : t('no key at all')
+            })}
           </span>
         </div>
       )}

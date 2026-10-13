@@ -883,8 +883,10 @@ export function AddServerModal(): React.JSX.Element {
           onChange={(e) => setTagsText(e.target.value)}
         />
         <span className="field-hint">
-          {t('Comma-separated, up to')}{' '}{MAX_TAGS}. Shown on the connection&apos;s row and matched by the
-          sidebar search.
+          {t(
+            "Comma-separated, up to {count}. Shown on the connection's row and matched by the sidebar search.",
+            { count: MAX_TAGS }
+          )}
         </span>
       </div>
 
@@ -1040,7 +1042,9 @@ export function AddServerModal(): React.JSX.Element {
       {auth !== 'agent' && descriptors !== null && usableEntries.length === 0 && (
         <div className="field">
           <span className="field-hint">
-            {t('No saved')}{' '}{usesKeyFile ? 'SSH key' : 'login'} {t('in the vault yet — type one below and it will be saved there.')}</span>
+            {t('No saved {kind} in the vault yet — type one below and it will be saved there.', {
+              kind: usesKeyFile ? t('SSH key') : t('login')
+            })}</span>
         </div>
       )}
 

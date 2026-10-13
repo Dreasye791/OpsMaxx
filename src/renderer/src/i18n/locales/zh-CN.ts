@@ -882,6 +882,229 @@ export const zhCN: Record<string, string> = {
     '{read} 读取没有返回结果，因此无法判断{meaning}。',
 
   // ─────────────────────────────────────────────────────────────────────────
+  // VPN 配置表单（components/vpn/VpnProfileForm.tsx）。
+  //
+  // 不译的：MTU、`internal-sftp`、示例地址 `10.0.0.2/32, fd00::2/128` —— 技术
+  // 标识与示例值，译了反而看不清按什么格式填。
+  // ─────────────────────────────────────────────────────────────────────────
+  'Connect automatically when OpsMaxx starts': 'OpsMaxx 启动时自动连接',
+  'Give this profile a name.': '给此配置取一个名字。',
+  'Each address needs a prefix length, e.g. 10.0.0.2/32.':
+    '每个地址都需要前缀长度，例如 10.0.0.2/32。',
+  'Peer public key': '对端公钥',
+  'Remove peer': '移除对端',
+  'Keepalive (s)': '保活（秒）',
+  'Endpoints are host:port, or [v6-address]:port.':
+    '端点为 host:port，或 [v6-address]:port。',
+  'Allowed IPs — 0.0.0.0/0, ::/0': '允许的 IP —— 0.0.0.0/0、::/0',
+  'Interface key': '接口密钥',
+  'Generate keypair': '生成密钥对',
+  'Copy private key': '复制私钥',
+  'Copy public key': '复制公钥',
+  'Give this to your VPN provider, or add it to your server’s [Peer] section. It is not a secret — the private key above is.':
+    '把这个交给你的 VPN 服务商，或添加到服务器的 [Peer] 段落。它不是机密 —— 上面的私钥才是。',
+  'Local listeners': '本地监听',
+  'Add listener': '添加监听',
+  'Remove listener': '移除监听',
+  'In userspace mode these are the only way traffic reaches the tunnel — nothing is routed system-wide.':
+    '在用户态模式下，这是流量进入隧道的唯一途径 —— 不会有任何系统级路由。',
+  'HTTP proxy': 'HTTP 代理',
+  'Target server inside the tunnel': '隧道内的目标服务器',
+  'Target port': '目标端口',
+  'OpsMaxx joins your tailnet itself — there is nothing to install. This profile is its own device, with its own key, so it neither uses nor disturbs a Tailscale app you may also be running on this machine.':
+    'OpsMaxx 会自己加入你的 tailnet —— 无需安装任何东西。此配置本身就是一台独立设备，有自己的密钥，因此既不会使用、也不会打扰你在这台电脑上可能同时运行着的 Tailscale 应用。',
+  'Device name, on every computer': '设备名（在所有电脑上都相同）',
+  '. Give the second computer a name of its own below.':
+    '。请在下方为第二台电脑单独取一个名字。',
+  'Name on this computer only': '仅在这台电脑上使用的名称',
+  'This computer will appear as': '这台电脑将显示为',
+  'List the devices on this tailnet. Read-only — it changes what OpsMaxx shows, never the tailnet itself. Off by default, because a device list is information about a network you may not want mirrored here.':
+    '列出此 tailnet 上的设备。只读 —— 它改变的是 OpsMaxx 显示什么，绝不改动 tailnet 本身。默认关闭，因为设备列表是某个网络的信息，你可能并不希望它被镜像到这里。',
+  'Credentials live in the vault and are handed to OpenVPN over its management socket — never written to a file, never passed on the command line.':
+    '凭据存放在保险库中，并通过 OpenVPN 的管理套接字交给它 —— 绝不写入文件，也绝不出现在命令行上。',
+  'Taken from the imported profile.': '取自导入的配置。',
+  'Send all traffic through this VPN. Off by default: a downloaded profile asking for your default route is not a good enough reason to give it.':
+    '通过此 VPN 发送所有流量。默认关闭：一份下载来的配置要求接管你的默认路由，这算不上充分的理由。',
+  'Static challenge': '静态挑战',
+  'OpenVPN binary': 'OpenVPN 可执行文件',
+  'Detected automatically': '自动检测',
+  'Server address': '服务器地址',
+  'Server port': '服务器端口',
+  'Corporate proxy': '企业代理',
+  'Encrypt the control connection with TLS': '用 TLS 加密控制连接',
+  'Send the control connection unencrypted. Anyone on the path can read the token and the traffic.':
+    '以未加密方式发送控制连接。路径上的任何人都能读到令牌与流量。',
+  'An frp client with no proxies connects and exposes nothing.':
+    '没有配置任何代理的 frp 客户端只会连接，不暴露任何东西。',
+  // 两处原本是「裸英文三元字面量」夹在片段之间（`'directive was'` / `'the key already
+  // in the vault'`）—— 既不在词表里，coverage 也看不见。改成模板键。
+  '{count} directive was removed when this profile was imported':
+    '导入此配置时移除了 {count} 条指令',
+  '{count} directives were removed when this profile was imported':
+    '导入此配置时移除了 {count} 条指令',
+  'Until you do, this profile still uses {key}.': '在此之前，此配置仍使用{key}。',
+  'the key already in the vault': '保险库中已有的密钥',
+  'no key at all': '不使用任何密钥',
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 添加服务器对话框（components/connections/AddServerModal.tsx）。
+  //
+  // 不译的：示例值 `CORP`（域名示例）。`prod, eu-west, db` 是标签示例，译成中文
+  // 反而看不出该填什么，但保留了顿号 —— 它示范的是「用逗号分隔」这件事本身。
+  // ─────────────────────────────────────────────────────────────────────────
+  'Connection Name': '连接名称',
+  'Production API': '生产 API',
+  'prod, eu-west, db': 'prod、eu-west、db',
+  'Connection Type': '连接类型',
+  'The desktop, and only the desktop. No shell, no files and no monitoring — those all need SSH, so a machine that serves both is two connections.':
+    '只有桌面，仅此而已。没有 shell、没有文件、也没有监控 —— 那些都需要 SSH，所以同时提供两者的机器要建两个连接。',
+  'Saved when one connection could be both. It keeps its desktop; new connections are one protocol each. Choose RDP above to make this one the desktop only.':
+    '这是在过去一个连接可以兼做两者时保存下来的。它保留桌面；新建的连接每种协议各一个。若要把它改成只做桌面，请在上方选择 RDP。',
+  'Server / IP': '服务器 / IP',
+  'Authentication': '认证方式',
+  'Enter a new one…': '输入一个新的…',
+  'Agent socket': 'Agent 套接字',
+  'Where your agent listens, e.g.': '你的 agent 监听的位置，例如',
+  '. Leave blank to use the agent this app was started with, which is not always the one holding your keys.':
+    '。留空则使用启动本应用时的 agent，而它未必就是持有你密钥的那一个。',
+  'The OpenSSH certificate your CA signed for the key below. It is read from disk on every connection, so re-signing it in place needs no edit here.':
+    '你的 CA 为下方密钥签发的 OpenSSH 证书。每次连接都会从磁盘读取，所以就地重新签发无需在此修改。',
+  'Private key': '私钥',
+  'Found in ~/.ssh:': '在 ~/.ssh 中找到：',
+  'Save the key itself to the vault, so it travels with a backup':
+    '把密钥本身也保存到保险库，这样它会随备份一起迁移',
+  'Key passphrase (optional)': '密钥口令（可选）',
+  'Save this to the vault as a reusable credential': '把它作为可复用凭据保存到保险库',
+  'Encrypted with the OS keychain. Unlock the vault first to save it as a reusable credential instead.':
+    '用操作系统钥匙串加密。若想改为保存为可复用凭据，请先解锁保险库。',
+  'Second factor': '第二因素',
+  'Files only (no shell)': '仅文件（无 shell）',
+  'For accounts restricted to SFTP — sshd forcing':
+    '适用于被限制为 SFTP 的账户 —— sshd 强制使用',
+  ', often chrooted. The server opens on Files, and Terminal and Monitor are not offered because they need to run commands.':
+    '，通常还带 chroot。这类服务器会直接打开「文件」，不提供「终端」与「监控」，因为它们都需要执行命令。',
+  'RDP password': 'RDP 密码',
+  'Domain (optional)': '域（可选）',
+  'Network Level Authentication': '网络级身份验证',
+  'Leave on for Windows, which normally requires it. Turn it off for':
+    'Windows 请保持开启，它通常要求如此。以下系统请关闭：',
+  'on Linux, which is not a CredSSP server and refuses the connection with it on.':
+    '在 Linux 上，它不是 CredSSP 服务器，开启时会拒绝连接。',
+  'The VPN is the outer transport: any jump hosts below are dialled through it, and so is everything that rides this server — terminals, SFTP, metrics, remote desktops and its SSH tunnels.':
+    'VPN 是最外层的传输通道：下方任何跳板机都经由它拨号，依附于此服务器的一切也同样如此 —— 终端、SFTP、指标、远程桌面及其 SSH 隧道。',
+  'Advanced options': '高级选项',
+  'Connection timeout (s)': '连接超时（秒）',
+  'Environment variables': '环境变量',
+  'Keep-alive': '保活',
+  'Compression': '压缩',
+  'Strict host key verification': '严格主机密钥校验',
+  "Comma-separated, up to {count}. Shown on the connection's row and matched by the sidebar search.":
+    '以逗号分隔，最多 {count} 个。它会显示在连接的这一行上，并可被侧边栏搜索匹配。',
+  'No saved {kind} in the vault yet — type one below and it will be saved there.':
+    '保险库中还没有已保存的{kind} —— 在下方输入一个，它就会被保存到那里。',
+  'SSH key': 'SSH 密钥',
+  'login': '登录',
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 规则面板（components/monitor/RulesPanel.tsx）。
+  //
+  // 这里的「片段」是值夹在两段中文之间（`它会在` + 3 + `台服务器上同时运行`），
+  // 语序与英文一致，所以照译即可 —— 需要改成模板键的，是那些值的位置在两种语言里
+  // 不同、片段无法重排的句子。
+  // ─────────────────────────────────────────────────────────────────────────
+  'post to the configured webhook': '向已配置的 webhook 发送请求',
+  'This rule will not run:': '此规则不会运行：',
+  'Last time it fired it was refused:': '上次触发时它被拒绝了：',
+  'When an alert fires, run a job or post to the webhook. A rule runs the job it was confirmed with, on the servers it was confirmed for, and refuses if either has changed.':
+    '警报触发时运行作业，或向 webhook 发送请求。规则只会运行它在确认时指定的作业、在确认时指定的服务器上运行，两者任一发生变动它都会拒绝执行。',
+  'Rules is switched off in Settings, but the rules below are still armed and still run. Switching the module off hides this panel; it does not disarm anything. Disarm each rule here, or leave them running deliberately.':
+    '「规则」在设置中已关闭，但下面的规则仍处于武装状态、仍会运行。关闭模块只是隐藏这个面板，并不会解除任何东西。请在此逐条解除，或有意让它们继续运行。',
+  'Vacuum the journal': '收缩 journal',
+  'Clear the journal': '清空 journal',
+  'any server': '任意服务器',
+  'at or above': '达到或超过',
+  'any reading': '任意读数',
+  'Firings allowed in the window': '窗口内允许的触发次数',
+  'time(s) in': '次，时间窗口为',
+  'A rule with no ceiling turns a flapping condition into an outage.':
+    '没有上限的规则会把反复波动的状况变成一次故障。',
+  'Post to the webhook': '向 webhook 发送请求',
+  'Commands, one per line': '命令，每行一条',
+  'This runs on': '它会在',
+  'and reads as': '其判定结果为',
+  'server(s) at once': '台服务器上同时运行',
+  ', every time it fires.': '，每次触发都是如此。',
+  'Run as a one-off, this job would need confirming by typing':
+    '若作为一次性任务运行，此作业需要输入以下内容来确认：',
+  '. It needs that here too.': '。这里同样需要。',
+  'This rule runs commands on those servers unattended, whenever it fires. Type':
+    '此规则会在每次触发时，在那些服务器上无人值守地运行命令。请输入',
+  'Type UNATTENDED to confirm': '输入 UNATTENDED 以确认',
+  'Create rule': '创建规则',
+  'This build’s preload does not expose the rule engine yet. Restart the app to rebuild it.':
+    '此构建的 preload 尚未暴露规则引擎。重启应用以重建。',
+  'Reading the rules…': '正在读取规则…',
+  'No rules. Nothing runs on its own.': '没有规则。不会自动运行任何东西。',
+  'to connect an alert to a job or to the webhook. Every rule is confirmed once, against a specific job and specific servers, and refuses to run if either of those changes afterwards.':
+    '，把某个警报连接到作业或 webhook。每条规则只确认一次，且针对特定的作业与特定的服务器；之后两者任一发生变动，它都会拒绝运行。',
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Addy 配对向导（components/addy/AddySetup.tsx）。
+  // ─────────────────────────────────────────────────────────────────────────
+  'A second machine joins by': '第二台机器通过',
+  'with this one. It needs no invite, and nothing from whoever runs the relay. Both machines have to be open at the same time: this one shows a code, the other types it, and you check that the same seven emoji appear on both.':
+    '与本机建立关联。它不需要邀请，也不需要中继运营者的任何东西。两台机器必须同时打开：这台显示一个配对码，另一台输入它，然后你核对两边是否出现相同的七个表情符号。',
+  ', and give it this relay address:': '，并把下面这个中继地址填给它：',
+  'On the other machine, pick': '在另一台机器上，选择',
+  'Copy the relay address': '复制中继地址',
+  'This machine is the one with the account, so it is the one that':
+    '这台机器是持有该账户的那一台，所以由它来',
+  'a code.': '一个配对码。',
+  'This device is on an account but has no relay address recorded, so it cannot start a pairing. Open':
+    '此设备属于某个账户，但没有记录中继地址，因此无法发起配对。请打开上方的',
+  'above, or set the address in Settings.': '，或在设置中填写该地址。',
+  'You are back in': '你已回到',
+  'Your data is being brought back onto this machine now. It is on the account as':
+    '你的数据正在被导回这台机器。它在账户中的名称是',
+  'Check the device list:': '检查设备列表：',
+  'on this account.': '台设备在此账户上。',
+  'Anyone who has read your recovery phrase could have added one the same way you just did. Remove anything you do not recognise — and if the phrase has been seen by somebody else, treat every device on the list as theirs too.':
+    '任何看过你恢复短语的人，都能用你刚才同样的方式加进来。把你不认识的设备全部移除 —— 如果这个短语被别人看到过，就把列表上的每台设备都当成他们的。',
+  'Write this down before you go on': '继续之前请先抄下来',
+  'These twelve words are the only way back into this account if you lose every device on it. OpsMaxx cannot show them to you again — not because it will not, but because nothing on this machine keeps a copy.':
+    '如果你失去了此账户上的所有设备，这十二个词是唯一能回到该账户的途径。OpsMaxx 无法再次显示它们 —— 不是不愿意，而是这台机器上没有任何地方留有副本。',
+  'I have written these down somewhere that is not this computer':
+    '我已把它们抄写在不是这台电脑的地方',
+  'Done — I have them': '已完成 —— 我已经拿到了',
+  'Relay address': '中继地址',
+  'The same address the other machine uses. It is shown there, under':
+    '另一台机器使用的同一个地址。它显示在那边「',
+  ', with a button to copy it.': '」下面，并有一个复制按钮。',
+  'Account → Add another device': '账户 → 添加另一台设备',
+  'Start on the machine you already use.': '从你已经在用的那台机器开始。',
+  'in OpsMaxx there and find': '，在那边打开 OpsMaxx，然后找到',
+  '. It shows a code and a pairing id and keeps them on screen while it waits.':
+    '。它会显示一个配对码和一个配对 id，并在等待期间一直留在屏幕上。',
+  'Show a code on this device': '在此设备上显示配对码',
+  'Type both of them in below, then compare the seven emoji. Leave both machines open — the code only works while that window is.':
+    '把两者都输入到下方，然后核对那七个表情符号。两台机器都要保持打开 —— 配对码只在那个窗口开着时才有效。',
+  'Fill in the relay address above to go on.': '填写上方中继地址后继续。',
+  'Recovery phrase': '恢复短语',
+  'The twelve words, in order, separated by spaces': '那十二个词，按顺序，以空格分隔',
+  'Case and extra spaces do not matter. This is the only way back into an account whose devices are all gone — it does not create a new one, and it does not need an invite.':
+    '大小写与多余空格都无妨。这是设备全部丢失后回到账户的唯一途径 —— 它不会创建新账户，也不需要邀请。',
+  "One invite creates one account, and only the first device needs one — every machine after that is added by pairing, which needs nothing from the relay's operator.":
+    '一个邀请创建一个账户，且只有第一台设备需要它 —— 之后的每台机器都通过配对加入，无需中继运营者提供任何东西。',
+  'If this relay is yours, open': '如果这个中继是你自己的，请打开',
+  'and sign in to create one. Otherwise ask whoever runs it.':
+    '并登录以创建一个。否则请向运营它的人索取。',
+  'Ask whoever runs the relay for one, or open its address and sign in if it is yours.':
+    '向运营该中继的人索取一个；如果它是你自己的，打开它的地址并登录即可。',
+  'What to call this device': '给这台设备取什么名字',
+  'Shown in the device list on every device of this account.':
+    '会显示在此账户下每台设备的设备列表中。',
+
+  // ─────────────────────────────────────────────────────────────────────────
   // 界面部件：按钮、表头、状态名、字段标签
   //
   // 这一批由 scripts/i18n/codemod.mjs 自动包上 t() 之后，从工作单里按长度升序
