@@ -609,6 +609,32 @@ export const zhCN: Record<string, string> = {
   'Follow system language': '跟随系统语言',
 
   // ─────────────────────────────────────────────────────────────────────────
+  // 资产清单（monitor/InventoryPanel.tsx + lib/inventory.ts）
+  //
+  // `lib/inventory.ts` 的列定义是数据，渲染点 `{column.label}` 与表头 title
+  // 原先都是裸渲染 —— 所以「同类标签已有译文、界面却是英文」不是词表缺条，
+  // 而是渲染点没接线。接线与词条在这一批一起补。
+  // ─────────────────────────────────────────────────────────────────────────
+
+  'Distribution': '发行版',
+  'Collected': '采集时间',
+  'Metadata': '元数据',
+  'Arch': '架构',
+  'RAM': '内存',
+  'Virtualisation': '虚拟化',
+  'The package manager this server uses.': '这台服务器使用的包管理器。',
+  'Security updates specifically, where the distribution publishes them. Arch and Alpine have no security channel at all, and dnf cannot answer where the repositories omit updateinfo — those servers say so rather than reporting zero.':
+    '仅统计安全更新，前提是该发行版发布这类信息。Arch 与 Alpine 完全没有安全更新通道；仓库未提供 updateinfo 时 dnf 也无法回答 —— 这些服务器会如实说明，而不是报 0。',
+  'How long ago these facts were collected. Facts are collected about once an hour, not on the two-minute metrics cadence.':
+    '这些信息是多久之前采集的。信息大约每小时采集一次，而不是跟随两分钟的指标采集节奏。',
+  'How old the package cache behind the update counts is. This is a SECOND age and not the one above it: freshly collected counts read out of a forty-day-old cache are forty days out of date.':
+    '更新计数所依据的软件包缓存有多旧。这是另一个时间，与上面那个不同：刚从四十天前的缓存读出来的计数，本身就已经落后四十天。',
+  '{help} Click to sort; servers with no value for this column always sort last.':
+    '{help} 点击可排序；此列没有值的服务器始终排在最后。',
+  'Click to sort. Servers with no value for this column always sort last.':
+    '点击可排序。此列没有值的服务器始终排在最后。',
+
+  // ─────────────────────────────────────────────────────────────────────────
   // 界面部件：按钮、表头、状态名、字段标签
   //
   // 这一批由 scripts/i18n/codemod.mjs 自动包上 t() 之后，从工作单里按长度升序

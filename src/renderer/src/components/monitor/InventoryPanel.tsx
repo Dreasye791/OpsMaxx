@@ -44,6 +44,7 @@ function SortHeader({
   sort: { column: InventoryColumnId; direction: SortDirection }
   onSort: (id: InventoryColumnId) => void
 }): React.JSX.Element {
+  const t = useT()
   const active = sort.column === column.id
   return (
     <th
@@ -55,11 +56,13 @@ function SortHeader({
         onClick={() => onSort(column.id)}
         title={
           column.help
-            ? `${column.help} Click to sort; servers with no value for this column always sort last.`
-            : 'Click to sort. Servers with no value for this column always sort last.'
+            ? t('{help} Click to sort; servers with no value for this column always sort last.', {
+                help: t(column.help)
+              })
+            : t('Click to sort. Servers with no value for this column always sort last.')
         }
       >
-        {column.label}
+        {t(column.label)}
         {active &&
           (sort.direction === 'asc' ? <ArrowUp size={11} /> : <ArrowDown size={11} />)}
       </button>

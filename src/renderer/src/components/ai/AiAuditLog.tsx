@@ -267,8 +267,10 @@ export function AiAuditLog(): React.JSX.Element {
                             anything. */}
                         {e.error && <div className="s-desc danger">{e.error}</div>}
                       </td>
-                      <td title={outcome.detail}>
-                        <span className={clsx('chip', TONE_CHIP[outcome.tone])}>{outcome.label}</span>
+                      <td title={t(outcome.detail)}>
+                        <span className={clsx('chip', TONE_CHIP[outcome.tone])}>
+                          {t(outcome.label)}
+                        </span>
                       </td>
                     </tr>
                   )
