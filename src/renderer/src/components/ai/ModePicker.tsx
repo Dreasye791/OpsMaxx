@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { ChevronDown } from 'lucide-react'
 import { PICKERLESS_MODE, SESSION_MODES, resolveDefaultSessionGroup, sessionModeLabel } from '../../../../shared/mcp'
+import { Trans } from '../../i18n/Trans'
 import type { AccessGroup, SessionMode } from '../../../../shared/mcp'
 import { ContextMenu } from '../connections/ContextMenu'
 import type { MenuEntry } from '../connections/ContextMenu'
@@ -142,7 +143,9 @@ export function ModePicker({
         className={clsx('btn', size === 'sm' && 'sm', 'hc-mode-picker', value === 'bypass' && 'is-bypass')}
         disabled={disabled}
         title={title}
-        aria-label={`Profile: ${sessionModeLabel(value, groupName)}${title ? `. ${title}` : ''}`}
+        aria-label={`${t('Profile: {mode}', { mode: t(sessionModeLabel(value, groupName)) })}${
+          title ? `. ${title}` : ''
+        }`}
         aria-haspopup="menu"
         aria-expanded={menu !== null}
         onPointerDown={() => (wasOpen.current = menu !== null)}
@@ -154,7 +157,7 @@ export function ModePicker({
           setMenu(reopen ? e.currentTarget.getBoundingClientRect() : null)
         }}
       >
-        {value === 'custom' && groups ? 'Custom' : sessionModeLabel(value, groupName)}
+        {value === 'custom' && groups ? t('Custom') : t(sessionModeLabel(value, groupName))}
         <ChevronDown size={13} aria-hidden="true" />
       </button>
       {value === 'custom' && groups && (
@@ -238,14 +241,24 @@ export function StartsInMode(): React.JSX.Element {
   if (label === null) {
     return (
       <div className="s-desc warn">
-        Starts in your default profile, which could not be read — check it under AI &amp; MCP → Security.
+        {t(
+          'Starts in your default profile, which could not be read — check it under AI & MCP → Security.'
+        )}
       </div>
     )
   }
   return (
     <div className="s-desc" data-testid="starts-in-mode">
-      {t('Starts in:')}{' '}<span className={clsx('chip', label.mode === 'bypass' && 'danger')}>{label.text}</span> (your
-      default — change under AI &amp; MCP → Security)
+      <Trans
+        source="Starts in: {mode} (your default — change under AI & MCP → Security)"
+        components={{
+          mode: (
+            <span className={clsx('chip', label.mode === 'bypass' && 'danger')}>
+              {t(label.text)}
+            </span>
+          )
+        }}
+      />
     </div>
   )
 }

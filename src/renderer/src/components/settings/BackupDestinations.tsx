@@ -267,7 +267,7 @@ export function BackupDestinations(): React.JSX.Element {
             )}
             <div style={{ flex: 1, minWidth: 0 }}>
               <div className="s-title">
-                {dest.name || '(unnamed)'} · {BACKUP_DESTINATION_LABEL[dest.kind]}
+                {dest.name || t('(unnamed)')} · {t(BACKUP_DESTINATION_LABEL[dest.kind])}
               </div>
               <div className="s-desc">
                 {dest.kind === 'local' && dest.directory}
@@ -437,7 +437,7 @@ export function BackupDestinations(): React.JSX.Element {
         <div className="row" style={{ gap: 8 }}>
           {BACKUP_DESTINATION_KINDS.map((kind) => (
             <button key={kind} className="btn secondary size-28" onClick={() => setEditing(blank(kind))}>
-              <Plus size={13} /> {BACKUP_DESTINATION_LABEL[kind]}
+              <Plus size={13} /> {t(BACKUP_DESTINATION_LABEL[kind])}
             </button>
           ))}
         </div>
@@ -499,7 +499,7 @@ function DestinationEditor(props: EditorProps): React.JSX.Element {
     <div className="backup-banner warn" style={{ alignItems: 'flex-start', marginTop: 10 }}>
       <ShieldAlert size={16} />
       <div style={{ flex: 1 }}>
-        <div className="s-title">{BACKUP_DESTINATION_LABEL[dest.kind]}</div>
+        <div className="s-title">{t(BACKUP_DESTINATION_LABEL[dest.kind])}</div>
 
         {/* The security statement sits here, above the fields, because this is
             the moment the decision is made. A footnote further down the page

@@ -1322,7 +1322,7 @@ export function Settings(): React.JSX.Element {
                       disabled={!settings.fleetSamplingEnabled}
                       onClick={() => setSettings({ fleetSamplingIntervalMs: o.ms })}
                     >
-                      {o.label}
+                      {t(o.label)}
                     </button>
                   ))}
                 </div>

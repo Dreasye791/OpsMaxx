@@ -372,6 +372,21 @@ export const zhCN: Record<string, string> = {
   'Off. No AI agent can reach OpsMaxx while disabled.': '已关闭。关闭期间任何 AI 代理都无法访问 OpsMaxx。',
   'The last workspace cannot be deleted': '最后一个工作区不能删除',
 
+  // 共享菜单（components/connections/ContextMenu.tsx）现在在渲染处翻译 label /
+  // section / detail / footer，所以**任何**菜单项的 label 只要有词条就会显示中文。
+  // 下面这条是「审计从不打开菜单」因而从未进过工单的一例。
+  'Add one': '添加一个',
+
+  // 会话配置标签：'Profile: Auto' 曾是一条整句词条，而值是可变的，改回占位符。
+  'Profile: {mode}': '配置：{mode}',
+  'Custom · no access group — nothing is allowed until you pick one':
+    '自定义 · 未选择访问组 —— 在选择之前不允许任何操作',
+  'Starts in: {mode} (your default — change under AI & MCP → Security)':
+    '启动配置：{mode}（你的默认配置 —— 可在「AI 与 MCP → 安全」下修改）',
+  'Starts in your default profile, which could not be read — check it under AI & MCP → Security.':
+    '会话以你的默认配置启动，但该配置未能读取 —— 请在「AI 与 MCP → 安全」下检查。',
+  '(unnamed)': '（未命名）',
+
   // ─────────────────────────────────────────────────────────────────────────
   // 界面部件：按钮、表头、状态名、字段标签
   //
@@ -1684,7 +1699,7 @@ export const zhCN: Record<string, string> = {
   'Connect Claude Code': '连接 Claude Code',
   'Connect Claude Desktop': '连接 Claude Desktop',
   'Connect an agent': '连接一个代理',
-  'Profile: Auto': '配置：自动',
+
   'Command Prompt': '命令提示符',
   'Windows PowerShell (default)': 'Windows PowerShell（默认）',
   'New local shell': '新建本地 shell',
