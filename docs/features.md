@@ -65,6 +65,7 @@ on**, and an upgrade never switches a module on for an install that did not alre
 | **Change log** | Who approved what, when, and what it did |
 | **Access & keys** | Which key opens which server, and whose it is |
 | **Supervised processes** | Keep local processes running, with nothing auto-starting: what survives a restart is the list, not a running command |
+| **Interface languages** | English, and Simplified Chinese (简体中文) — switched in **Settings › Language**, or left to follow the operating system. This is the application: the documentation stays English. The layer behind it, and what is still untranslated, is in [i18n.md](i18n.md) |
 
 ## Real-world use cases
 
