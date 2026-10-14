@@ -1,6 +1,6 @@
 # Databases
 
-**English** · [简体中文](databases.zh-CN.md)
+**English** · [简体中文](zh-CN/databases.md)
 
 PostgreSQL, MySQL, SQL Server, MongoDB and Redis, reached directly or through a bastion.
 

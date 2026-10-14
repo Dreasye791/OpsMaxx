@@ -1,6 +1,6 @@
 # Cloud servers
 
-**English** · [简体中文](cloud.zh-CN.md)
+**English** · [简体中文](zh-CN/cloud.md)
 
 Google Cloud, AWS and Azure machines as ordinary OpsMaxx servers — reached through the
 provider tooling you already have, signed in as you already are.

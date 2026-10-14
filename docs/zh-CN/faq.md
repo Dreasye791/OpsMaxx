@@ -2,9 +2,9 @@
 
 关于安装、信任与日常使用的常见疑问。
 
-[English](faq.md) · **简体中文**
+[English](../faq.md) · **简体中文**
 
-[← 返回 README](../README.zh-CN.md)
+[← 返回 README](../../README.zh-CN.md)
 
 ---
 
@@ -93,7 +93,7 @@ PostgreSQL、MySQL、SQL Server、MongoDB 与 Redis —— 每种都有表/集�
 
 ### 为什么 Windows SmartScreen 会警告它？
 
-因为 Windows 构建没有代码签名证书。一张证书每年大约 200–400 美元，而这个免费、MIT 许可、没有收入的项目没有这笔钱。该警告意味着 Windows 无法确认**是谁**发布了这个应用，而不是说文件不安全 —— 如何绕过它以及扫描结果见[安装](install.md)。
+因为 Windows 构建没有代码签名证书。一张证书每年大约 200–400 美元，而这个免费、MIT 许可、没有收入的项目没有这笔钱。该警告意味着 Windows 无法确认**是谁**发布了这个应用，而不是说文件不安全 —— 如何绕过它以及扫描结果见[安装](../install.md)。
 
 **macOS 已经不再警告。** 自 0.30.1 起，macOS 构建已用 Apple Developer ID 签名并通过 Apple 公证，票据被装订进应用内，因此即使离线也能正常打开。`spctl -a -vvv /Applications/OpsMaxx.app` 会报告 `source=Notarized Developer ID`。
 
@@ -103,11 +103,11 @@ Windows 10 或更新；macOS 11 或更新（Apple Silicon 与 Intel）；或现�
 
 ### 我能把 Claude Code、Claude Desktop 或其他 AI 代理接到 OpsMaxx 上吗？
 
-能 —— 见 [AI 代理接入](ai-agents.md)。OpsMaxx 运行一个本地 [MCP](https://modelcontextprotocol.io) 服务器，Claude Code、Claude Desktop、Codex、Gemini CLI 等兼容 MCP 的客户端都能连上，每个会话被限定在为其选定的工作区与权限配置之内。代理永远看不到密码、私钥、数据库凭据或保险库机密 —— 它只会拿到一个友好的服务器名，以及该会话配置所允许的范围。
+能 —— 见 [AI 代理接入](../ai-agents.md)。OpsMaxx 运行一个本地 [MCP](https://modelcontextprotocol.io) 服务器，Claude Code、Claude Desktop、Codex、Gemini CLI 等兼容 MCP 的客户端都能连上，每个会话被限定在为其选定的工作区与权限配置之内。代理永远看不到密码、私钥、数据库凭据或保险库机密 —— 它只会拿到一个友好的服务器名，以及该会话配置所允许的范围。
 
 ### 让 AI 代理在我的服务器上跑命令安全吗？
 
-它取决于你给它的配置有多安全，而这是一个真实存在的局限，不是一句口号 —— 这套设计保护什么、不保护什么，见 [docs/AI-SECURITY.md](AI-SECURITY.md)。OpsMaxx 确实提供了这些：桥只监听 `127.0.0.1`；每一项能力（执行命令、读写文件、SFTP、隧道、数据库访问、sudo、指标）都可独立设为 ALLOW/ASK/DENY；除 Bypass 之外的任何配置都拒绝不受限的 root shell（`sudo -i`、`su` …）；任何需要询问的动作都会停下，等你在 OpsMaxx 里批准或拒绝 —— 代理永远无法批准它自己的请求。每个会话的配置只有你能设：只读、先询问、自动、Bypass permissions（不经询问执行一切，包括 root shell），或自定义（套用你挑选的某个访问组）。把某台服务器标记为**已保护**后，任何配置都不能在它上面不经询问地做出改动。每个动作都会记入[审计日志](AI-SECURITY.md)，机密已脱敏，并且会标明哪些动作只是因为 Bypass 才得以运行。
+它取决于你给它的配置有多安全，而这是一个真实存在的局限，不是一句口号 —— 这套设计保护什么、不保护什么，见 [docs/AI-SECURITY.md](../AI-SECURITY.md)。OpsMaxx 确实提供了这些：桥只监听 `127.0.0.1`；每一项能力（执行命令、读写文件、SFTP、隧道、数据库访问、sudo、指标）都可独立设为 ALLOW/ASK/DENY；除 Bypass 之外的任何配置都拒绝不受限的 root shell（`sudo -i`、`su` …）；任何需要询问的动作都会停下，等你在 OpsMaxx 里批准或拒绝 —— 代理永远无法批准它自己的请求。每个会话的配置只有你能设：只读、先询问、自动、Bypass permissions（不经询问执行一切，包括 root shell），或自定义（套用你挑选的某个访问组）。把某台服务器标记为**已保护**后，任何配置都不能在它上面不经询问地做出改动。每个动作都会记入[审计日志](../AI-SECURITY.md)，机密已脱敏，并且会标明哪些动作只是因为 Bypass 才得以运行。
 
 ### 我怎么把整套配置搬到另一台机器？
 
@@ -115,8 +115,8 @@ Windows 10 或更新；macOS 11 或更新（Apple Silicon 与 Intel）；或现�
 
 ### 我能帮上什么忙？
 
-给仓库点个 Star、报告缺陷，或提交合并请求 —— 见[参与贡献](../README.zh-CN.md#参与贡献)。
+给仓库点个 Star、报告缺陷，或提交合并请求 —— 见[参与贡献](../../README.zh-CN.md#参与贡献)。
 
 ---
 
-[← 返回 README](../README.zh-CN.md)
+[← 返回 README](../../README.zh-CN.md)

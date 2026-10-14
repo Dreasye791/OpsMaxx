@@ -14,7 +14,7 @@ docgov:
 
 在 OpsMaxx 里直接发出 REST、WebSocket 与 GraphQL 请求，走的是你终端所用的同一条路径。
 
-[English](http-client.md) · **简体中文**
+[English](../../../08-user/guides/http-client.md) · **简体中文**
 
 ## 目标
 
@@ -28,7 +28,7 @@ docgov:
 
 读完这份指南，你就能发出请求、把它保存下来、分别对着开发与生产环境运行，并导入你已有的东西。
 
-![HTTP 工作台：左侧是集合，请求与响应并排](../../images/http-workbench.png)
+![HTTP 工作台：左侧是集合，请求与响应并排](../../../images/http-workbench.png)
 
 ## 步骤
 
@@ -49,7 +49,7 @@ docgov:
 - **方法与 URL。** 查询参数与 URL 双向保持同步。被禁用的行仍留在表里，但不进 URL。`:id` 与 `{id}` 这类路径段会列在 **Path parameters**（路径参数；这一处目前仍显示英文）下。
 - **变量。** 在任何地方写 `{{name}}`。悬停某个记号，或把光标放进去按 **⌘I**（Ctrl+I），就能看到它的值以及它来自哪里。若某个记号无法解析，OpsMaxx 会在发送前停下并指名它。补上它，或选择 **Send anyway**（仍然发送；当该记号位于 URL 的主机部分时不会提供这个选项）。
 - **认证。** 类型有：继承自集合、无认证、Bearer 令牌、Basic，以及 API key（头或查询参数）。
-  - 以明文输入的机密会被发送，但**不会被保存**。该字段会显示「Not saved — kept for this session only」（未保存 —— 仅保留于本次会话），并提供 **Move to vault…**，它会在需要时创建或解锁[保险库](../../vault.zh-CN.md)，并用 `vault:` 引用替换掉那段文本。
+  - 以明文输入的机密会被发送，但**不会被保存**。该字段会显示「Not saved — kept for this session only」（未保存 —— 仅保留于本次会话），并提供 **Move to vault…**，它会在需要时创建或解锁[保险库](../../vault.md)，并用 `vault:` 引用替换掉那段文本。
   - 引用在发送时解析：在头、URL、认证字段与表单行里都有效。它们**绝不**在 JSON、XML 或纯文本请求体内解析，因为服务器可以把请求体回显出来。
 - **头。** 有些头是 OpsMaxx 自己设置的。在「布局」菜单里打开 **Auto-generated headers**（自动生成的头；这一处目前仍显示英文）即可看到它们，以及每一条存在的原因。
   - `User-Agent`、`Content-Type`、`Authorization` 与 `Cookie`：你自己写的一行会替换掉对应的那一条。
@@ -230,7 +230,7 @@ docgov:
 
 ## 相关
 
-- [保险库](../../vault.zh-CN.md)：`vault:` 引用的机密存放在那里。
-- [隧道](../../tunnels.zh-CN.md) 与 [VPN](../../VPN.md)：流量到达私有网络的其他途径。
-- [安全](../../security.zh-CN.md)
-- [功能](../../features.zh-CN.md)
+- [保险库](../../vault.md)：`vault:` 引用的机密存放在那里。
+- [隧道](../../tunnels.md) 与 [VPN](../../../VPN.md)：流量到达私有网络的其他途径。
+- [安全](../../security.md)
+- [功能](../../features.md)

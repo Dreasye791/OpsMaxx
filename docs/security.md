@@ -1,6 +1,6 @@
 # Security
 
-**English** · [简体中文](security.zh-CN.md)
+**English** · [简体中文](zh-CN/security.md)
 
 How credentials are stored, how they are kept out of plaintext on disk, and how to report a vulnerability.
 

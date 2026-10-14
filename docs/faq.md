@@ -1,6 +1,6 @@
 # FAQ
 
-**English** · [简体中文](faq.zh-CN.md)
+**English** · [简体中文](zh-CN/faq.md)
 
 Common questions about installing, trusting, and using OpsMaxx.
 

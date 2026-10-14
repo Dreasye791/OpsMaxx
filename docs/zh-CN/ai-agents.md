@@ -2,9 +2,9 @@
 
 Claude Code、Claude Desktop、Codex 等 MCP 客户端如何经由 OpsMaxx 触达你的基础设施，而始终看不到任何凭据。
 
-[English](ai-agents.md) · **简体中文**
+[English](../ai-agents.md) · **简体中文**
 
-[← 返回 README](../README.zh-CN.md)
+[← 返回 README](../../README.zh-CN.md)
 
 ---
 
@@ -12,9 +12,9 @@ Claude Code、Claude Desktop、Codex 等 MCP 客户端如何经由 OpsMaxx 触�
 
 Claude Code、Claude Desktop、Codex、Gemini CLI，以及任何会说 [MCP](https://modelcontextprotocol.io) 的东西，都可以经由 OpsMaxx 列出你的服务器、执行命令、浏览/编辑文件、查看指标。代理用友好的名字索取一台服务器；OpsMaxx 负责解析出真正的连接、执行逐能力策略，并能在任何敏感操作运行之前停下来询问你。
 
-云服务器 —— Google Cloud、AWS 与 Azure —— 可以按同样的方式寻址，受同样的权限约束。它们是唯一一类「服务一个代理意味着在**你的**电脑上运行程序、而不只是在远端主机上」的服务器，因为触达它们本来就需要如此。这一点由什么约束、以及如何选择不接受它，见 [AI-SECURITY.md](AI-SECURITY.md#cloud-servers-where-an-agents-input-does-reach-an-argv)。
+云服务器 —— Google Cloud、AWS 与 Azure —— 可以按同样的方式寻址，受同样的权限约束。它们是唯一一类「服务一个代理意味着在**你的**电脑上运行程序、而不只是在远端主机上」的服务器，因为触达它们本来就需要如此。这一点由什么约束、以及如何选择不接受它，见 [AI-SECURITY.md](../AI-SECURITY.md#cloud-servers-where-an-agents-input-does-reach-an-argv)。
 
-![AI 代理 → MCP → OpsMaxx 策略 → 审批 → SSH/SFTP/数据库 → 服务器](images/ai-mcp-architecture.svg)
+![AI 代理 → MCP → OpsMaxx 策略 → 审批 → SSH/SFTP/数据库 → 服务器](../images/ai-mcp-architecture.svg)
 
 **经由 OpsMaxx 接入的 AI 代理永远拿不到：**
 
@@ -22,11 +22,11 @@ Claude Code、Claude Desktop、Codex、Gemini CLI，以及任何会说 [MCP](htt
 - SSH 私钥或口令
 - 数据库密码或连接串中的凭据
 - 保险库机密 —— 根本不存在能读取保险库的 MCP 工具
-- sudo 或 root 权限 —— 不受限的 shell（`sudo -i`、`su` …）在除一个之外的所有配置下都被拒绝：你亲自设为 Bypass 的会话（见[权限配置](AI-MCP.md#permission-profiles)）
+- sudo 或 root 权限 —— 不受限的 shell（`sudo -i`、`su` …）在除一个之外的所有配置下都被拒绝：你亲自设为 Bypass 的会话（见[权限配置](../AI-MCP.md#permission-profiles)）
 
-它只会拿到一个友好的服务器名、某项能力的 ALLOW/ASK/DENY 设置所允许的范围，以及脱敏后的文本输出。完整威胁模型见 [AI-SECURITY.md](AI-SECURITY.md) —— 包括这套设计**不**声称能挡住什么。
+它只会拿到一个友好的服务器名、某项能力的 ALLOW/ASK/DENY 设置所允许的范围，以及脱敏后的文本输出。完整威胁模型见 [AI-SECURITY.md](../AI-SECURITY.md) —— 包括这套设计**不**声称能挡住什么。
 
-![OpsMaxx 的「AI 与 MCP」总览界面](images/ai-mcp-overview.png)
+![OpsMaxx 的「AI 与 MCP」总览界面](../images/ai-mcp-overview.png)
 
 ### 一个选择：配置
 
@@ -54,7 +54,7 @@ Claude Code、Claude Desktop、Codex、Gemini CLI，以及任何会说 [MCP](htt
 - **已保护。** 把某个工作区或服务器标为已保护，那里的每一次改动都会被询问 —— 包括「自动」、「自定义」与「放行」。
 - **Restrictions**（限制；这一处目前仍显示英文）。给某个工作区或服务器指派一个访问组，把它压制在任何会话本可获得的权限之下；或指派 **No AI Access**（禁止 AI 访问）使它完全不可触达。限制会收窄除「放行」之外的每一种配置；而「禁止 AI 访问」连放行也挡得住。会话里的 **Effective access**（实际生效的权限；这一处目前仍显示英文）面板会列出其触达范围内的各项限制，每项都带一个移除按钮。
 
-因此，要在一场「放行」会话面前保住一台生产机器，就把它标为已保护，或设为「禁止 AI 访问」。[权限配置](AI-MCP.md#permission-profiles)有全部细节，包括「放行」究竟不会解除什么。
+因此，要在一场「放行」会话面前保住一台生产机器，就把它标为已保护，或设为「禁止 AI 访问」。[权限配置](../AI-MCP.md#permission-profiles)有全部细节，包括「放行」究竟不会解除什么。
 
 ### 一个完整例子
 
@@ -65,7 +65,7 @@ Claude Code、Claude Desktop、Codex、Gemini CLI，以及任何会说 [MCP](htt
 3. 命令经一条正常的 SSH 连接执行，和交互式终端会话用的是同一条。输出在被返回之前会扫描已知机密与形似机密的模式并脱敏。
 4. Claude Code 看到结果 —— CPU、内存、`systemctl` 输出，无论问的是什么 —— 并回报给你。它从未见过这台服务器的 IP、用户名，或那条用于认证连接的密钥。整个往返都在**审计日志**里，与 OpsMaxx 允许过、询问过、拒绝过或失败过的其他一切并列：
 
-![审计日志：显示代理、会话、工作区/服务器、动作与结果](images/ai-audit-log.png)
+![审计日志：显示代理、会话、工作区/服务器、动作与结果](../images/ai-audit-log.png)
 
 ### 接入一个代理
 
@@ -91,7 +91,7 @@ Claude Code、Claude Desktop、Codex、Gemini CLI，以及任何会说 [MCP](htt
 
 其他所有客户端都通过 **Streamable HTTP** 连接，使用一条 URL 与一个由 OpsMaxx 自己的 **Security** 标签页为你生成的 bearer 令牌：
 
-![Security 标签页：启用开关、端口、审批超时，以及连接代码片段](images/ai-security.png)
+![Security 标签页：启用开关、端口、审批超时，以及连接代码片段](../images/ai-security.png)
 
 **Claude Desktop 是例外** —— 它用不了那条 URL。见下文[接入 Claude Desktop](#接入-claude-desktop)。
 
@@ -99,7 +99,7 @@ Claude Code、Claude Desktop、Codex、Gemini CLI，以及任何会说 [MCP](htt
 
 并不是每个客户端都已经有「一条命令搞定」的启动器：
 
-![在 AI 与 MCP → AI 代理 下创建一个 AI 代理会话](images/ai-agents.png)
+![在 AI 与 MCP → AI 代理 下创建一个 AI 代理会话](../images/ai-agents.png)
 
 1. **AI 与 MCP → AI 代理 → 新建 AI 代理会话** —— 选一个工作区与一个配置（若选「自定义」，再选一个访问组），然后点**创建会话**。
 2. 令牌只会**显示一次**，旁边就是一段现成的 JSON —— 点 **Copy JSON config**（复制 JSON 配置；这一处目前仍显示英文），或者直接复制原始令牌自己写条目。
@@ -173,10 +173,10 @@ OpsMaxx 正是为这种情况附带了一个 stdio 桥 —— 一个纯协议中
 
 令牌只显示一次，且只以哈希形式保存 —— 如果弄丢了，在**活动会话**下吊销那个会话并新建一个，而不是去把它找回来：
 
-![活动会话：所有存在的会话，带「吊销」与「停止所有 AI 访问」](images/ai-active-sessions.png)
+![活动会话：所有存在的会话，带「吊销」与「停止所有 AI 访问」](../images/ai-active-sessions.png)
 
-**完整技术指南（架构、会话、访问组、配对、排查）：** [docs/AI-MCP.md](AI-MCP.md)。**威胁模型：** [docs/AI-SECURITY.md](AI-SECURITY.md)。
+**完整技术指南（架构、会话、访问组、配对、排查）：** [docs/AI-MCP.md](../AI-MCP.md)。**威胁模型：** [docs/AI-SECURITY.md](../AI-SECURITY.md)。
 
 ---
 
-[← 返回 README](../README.zh-CN.md)
+[← 返回 README](../../README.zh-CN.md)

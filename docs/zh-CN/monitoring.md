@@ -2,9 +2,9 @@
 
 观察整个资产，并把同一项变更安全地跑到所有机器上。
 
-[English](monitoring.md) · **简体中文**
+[English](../monitoring.md) · **简体中文**
 
-[← 返回 README](../README.zh-CN.md)
+[← 返回 README](../../README.zh-CN.md)
 
 ---
 
@@ -13,7 +13,7 @@
 
 按 <kbd>Ctrl</kbd>+<kbd>M</kbd> 打开一面实时墙面，工作区里每台服务器一张卡片 —— 各自的 CPU、内存、磁盘与网络，顶部汇总整个资产的合计。
 
-![OpsMaxx 资产监控墙，服务器被分组为 Databases、Application 与 Edge & bastions，每张卡片显示实时 CPU、内存与网络](images/fleet-monitor.png)
+![OpsMaxx 资产监控墙，服务器被分组为 Databases、Application 与 Edge & bastions，每张卡片显示实时 CPU、内存与网络](../images/fleet-monitor.png)
 
 卡片是**分组的**，因此数据库、应用服务器与跳板机在视觉上保持区分，而不会混成一条长列表。可以把卡片拖到别的组，或用右上角的按钮新建一个组；没有归置的会收进 **Ungrouped**（未分组；这一处目前仍显示英文），不需要时组可以折叠起来。
 
@@ -35,4 +35,4 @@
 
 ---
 
-[← 返回 README](../README.zh-CN.md)
+[← 返回 README](../../README.zh-CN.md)

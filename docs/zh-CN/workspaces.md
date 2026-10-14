@@ -2,9 +2,9 @@
 
 把客户、环境与项目彼此隔开 —— 以及那把让「隔开」成为边界、而不只是过滤器的锁。
 
-[English](workspaces.md) · **简体中文**
+[English](../workspaces.md) · **简体中文**
 
-[← 返回 README](../README.zh-CN.md)
+[← 返回 README](../../README.zh-CN.md)
 
 ---
 
@@ -15,7 +15,7 @@
 
 用标题栏里的切换器，或 **管理工作区**（<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>N</kbd>）。
 
-![管理的工作区](images/manage-workspaces.png)
+![管理的工作区](../images/manage-workspaces.png)
 
 **工作区给你什么**
 
@@ -30,18 +30,18 @@
 
 创建时打开 **Password protect**（密码保护；这个开关目前仍显示英文），或在已有工作区上用那把挂锁。任何试图打开它的操作 —— 切换器、快捷键、管理器 —— 都会先索要密码。解锁只在本次运行内有效；应用重启后一切重新加锁。密码以 scrypt 校验值保存，绝不保存为可还原的文本。
 
-> **这个能力的范围：** 工作区密码把守的是**应用内部**的访问。它不会加密该工作区在磁盘上的服务器。对于必须静态保护的数据，请使用 [保险库](vault.md) 或[加密备份](vault.md)。
+> **这个能力的范围：** 工作区密码把守的是**应用内部**的访问。它不会加密该工作区在磁盘上的服务器。对于必须静态保护的数据，请使用 [保险库](../vault.md) 或[加密备份](../vault.md)。
 
 ## 用文件夹组织服务器
 
 
 文件夹让长长的服务器列表保持可导航，且可以任意层级地嵌套。
 
-![文件夹右键菜单](images/folders-context-menu.png)
+![文件夹右键菜单](../images/folders-context-menu.png)
 
 ### 新建文件夹
 
-![连接工具栏](images/connections-toolbar.png)
+![连接工具栏](../images/connections-toolbar.png)
 
 「连接」工具栏有三个动作 —— 从左到右：
 
@@ -71,4 +71,4 @@
 
 ---
 
-[← 返回 README](../README.zh-CN.md)
+[← 返回 README](../../README.zh-CN.md)

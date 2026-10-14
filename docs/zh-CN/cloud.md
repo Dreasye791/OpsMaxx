@@ -2,9 +2,9 @@
 
 把 Google Cloud、AWS 与 Azure 机器当作普通的 OpsMaxx 服务器 —— 通过你已有的云厂商工具链访问，用的是你已有的登录态。
 
-[English](cloud.md) · **简体中文**
+[English](../cloud.md) · **简体中文**
 
-[← 返回 README](../README.zh-CN.md)
+[← 返回 README](../../README.zh-CN.md)
 
 ---
 
@@ -117,4 +117,4 @@ Azure 的 Entra ID 登录需要 OpenSSH 证书认证，而 OpsMaxx 使用的 SSH
 
 ---
 
-[← 返回 README](../README.zh-CN.md)
+[← 返回 README](../../README.zh-CN.md)

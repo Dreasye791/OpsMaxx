@@ -1,6 +1,6 @@
 # Workspaces
 
-**English** · [简体中文](workspaces.zh-CN.md)
+**English** · [简体中文](zh-CN/workspaces.md)
 
 Keeping clients, environments and projects apart — and the lock that makes that a boundary rather than a filter.
 

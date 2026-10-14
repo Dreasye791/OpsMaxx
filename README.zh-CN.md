@@ -25,7 +25,7 @@
 [![Stars](https://img.shields.io/github/stars/OpsMaxx/OpsMaxx?style=flat-square&label=stars&color=22c7d6&labelColor=30363d)](https://github.com/OpsMaxx/OpsMaxx/stargazers)
 [![License](https://img.shields.io/badge/license-MIT-22c7d6?style=flat-square&labelColor=30363d)](LICENSE)
 
-[官网](https://opsmaxx.dev) · [安装](docs/install.md) · [功能](docs/features.md) · [AI 代理](docs/ai-agents.md) · [工作区](docs/workspaces.md) · [终端](docs/terminal.md) · [数据库](docs/databases.md) · [隧道](docs/tunnels.md) · [保险库](docs/vault.md) · [安全](docs/security.md) · [常见问题](docs/faq.md)
+[官网](https://opsmaxx.dev) · [安装](docs/zh-CN/install.md) · [功能](docs/zh-CN/features.md) · [AI 代理](docs/zh-CN/ai-agents.md) · [工作区](docs/zh-CN/workspaces.md) · [终端](docs/terminal.md) · [数据库](docs/zh-CN/databases.md) · [隧道](docs/zh-CN/tunnels.md) · [保险库](docs/zh-CN/vault.md) · [安全](docs/zh-CN/security.md) · [常见问题](docs/zh-CN/faq.md)
 
 > 链接到的这些文档目前**只有英文版**；界面本身已支持简体中文。
 
@@ -39,7 +39,7 @@
 > 每个发布版本在上传前都会扫描，并为每个文件附带 **SHA-256**。
 > → [如何绕过该警告](docs/install.md#first-run-why-windows-shows-a-warning) · [杀毒扫描结果](docs/install.md#antivirus-scan)
 
-OpsMaxx 是 **MobaXterm、PuTTY、Termius、SecureCRT 与 MobaXterm Personal Edition 的免费开源替代品**，为那些整天在跳板机、生产机器和数据库之间来回切换的工程师而做 —— 如今也为协助他们的 AI 编程代理而做。它把 **SSH 终端**、**SFTP 文件浏览器**、**服务器监控**、**SSH 隧道**、**支持多种引擎的数据库客户端**、**加密的密码保险库**，以及一个**供 Claude Code、Claude Desktop、Codex 等 AI 代理安全接入的 [MCP](docs/ai-agents.md) 桥**放进同一个窗口 —— 无需账号、无遥测、无订阅。
+OpsMaxx 是 **MobaXterm、PuTTY、Termius、SecureCRT 与 MobaXterm Personal Edition 的免费开源替代品**，为那些整天在跳板机、生产机器和数据库之间来回切换的工程师而做 —— 如今也为协助他们的 AI 编程代理而做。它把 **SSH 终端**、**SFTP 文件浏览器**、**服务器监控**、**SSH 隧道**、**支持多种引擎的数据库客户端**、**加密的密码保险库**，以及一个**供 Claude Code、Claude Desktop、Codex 等 AI 代理安全接入的 [MCP](docs/zh-CN/ai-agents.md) 桥**放进同一个窗口 —— 无需账号、无遥测、无订阅。
 
 **让它与别家不同的**不是其中任何一项单独的能力 —— MobaXterm、Termius 等各自都做到了其中一部分。不同之处在于它们**处在同一个地方、共用同一份凭据存储**，而这份凭据存储如今还成了 AI 代理与你基础设施**之间**的一道屏障，而不是代理可以随意拿到手的东西。
 
@@ -52,7 +52,7 @@ OpsMaxx 是 **MobaXterm、PuTTY、Termius、SecureCRT 与 MobaXterm Personal Edi
 - **不锁定** —— 可直接从你现有的 `~/.ssh/config` 导入连接
 - **不需要账号** —— 不会上传你或你的资产信息；OpsMaxx 唯一自行发起的连接是更新检查，默认开启且可关闭
 - **不要钱** —— MIT 许可，永久免费，欢迎贡献
-- **凭据不外泄，对 AI 也是** —— Claude Code、Claude Desktop 和 Codex 可以通过它执行命令、读取文件，却永远看不到密码、私钥、IP 或用户名 —— 见 [AI 代理接入](docs/ai-agents.md)
+- **凭据不外泄，对 AI 也是** —— Claude Code、Claude Desktop 和 Codex 可以通过它执行命令、读取文件，却永远看不到密码、私钥、IP 或用户名 —— 见 [AI 代理接入](docs/zh-CN/ai-agents.md)
 
 ## 功能一览
 
@@ -74,7 +74,7 @@ OpsMaxx 是 **MobaXterm、PuTTY、Termius、SecureCRT 与 MobaXterm Personal Edi
 | **AI 代理网关** | Claude Code、Claude Desktop 与 Codex 可以经由它工作，却始终看不到密码、密钥、IP 或用户名 |
 | **界面语言** | 英文与 **简体中文**，在 **设置 › 语言** 中切换，或设为跟随操作系统。这只覆盖应用界面，文档仍为英文。翻译层的机制、它看不到什么，以及尚未翻完的部分见 [docs/i18n.md](docs/i18n.md) |
 
-→ **[完整功能列表、它替代了什么、以及它是为哪种工作而生](docs/features.md)**
+→ **[完整功能列表、它替代了什么、以及它是为哪种工作而生](docs/zh-CN/features.md)**
 
 ## 安装
 
@@ -88,7 +88,7 @@ brew install --cask opsmaxx/tap/opsmaxx     # macOS
 
 从 **[最新发布](https://github.com/OpsMaxx/OpsMaxx/releases/latest)** 下载安装包 —— Windows 用 `.exe`，macOS 用 `.dmg`，Linux 用 `.AppImage` 或 `.deb`。
 
-→ **[所有安装方式、校验和，以及首次运行的安全警告](docs/install.md)**
+→ **[所有安装方式、校验和，以及首次运行的安全警告](docs/zh-CN/install.md)**
 
 ## 快速开始
 
@@ -98,25 +98,25 @@ brew install --cask opsmaxx/tap/opsmaxx     # macOS
 
 已经在 `~/.ssh/config` 里维护主机？直接导入即可，不必重打 —— `ProxyJump` 也会一并带过来。
 
-→ **[带截图的长版操作指引](docs/install.md)**
+→ **[带截图的长版操作指引](docs/zh-CN/install.md)**
 
 ## 文档
 
 | | |
 |---|---|
-| **[功能](docs/features.md)** | 完整列表，与 MobaXterm、PuTTY、Termius、SecureCRT 的对比，以及真实使用场景 |
-| **[安装](docs/install.md)** | Windows、macOS、Linux 的各种安装方式，以及首次运行的安全警告 |
-| **[AI 代理接入](docs/ai-agents.md)** | MCP 客户端如何在不接触凭据的前提下访问你的基础设施 |
-| **[工作区](docs/workspaces.md)** | 把客户、环境与项目彼此隔开，以及如何锁定它们 |
+| **[功能](docs/zh-CN/features.md)** | 完整列表，与 MobaXterm、PuTTY、Termius、SecureCRT 的对比，以及真实使用场景 |
+| **[安装](docs/zh-CN/install.md)** | Windows、macOS、Linux 的各种安装方式，以及首次运行的安全警告 |
+| **[AI 代理接入](docs/zh-CN/ai-agents.md)** | MCP 客户端如何在不接触凭据的前提下访问你的基础设施 |
+| **[工作区](docs/zh-CN/workspaces.md)** | 把客户、环境与项目彼此隔开，以及如何锁定它们 |
 | **[终端](docs/terminal.md)** | 终端、本地 shell、命令面板与全部快捷键 |
-| **[云服务器](docs/cloud.md)** | 通过你已有的 CLI 使用 Google Cloud、AWS 与 Azure —— 以及为什么它做的是代理而非包装 |
-| **[监控](docs/monitoring.md)** | 观察整个资产，并把一项变更跑到所有机器上 |
-| **[数据库](docs/databases.md)** | 五种引擎，直连或经跳板机 |
-| **[隧道与 VPN](docs/tunnels.md)** | 转发、SOCKS5、WireGuard、OpenVPN 与 frp |
-| **[保险库与设置](docs/vault.md)** | 密钥存储、备份，以及值得了解的设置项 |
-| **[安全](docs/security.md)** | 凭据如何存放，以及如何避免明文落盘 |
+| **[云服务器](docs/zh-CN/cloud.md)** | 通过你已有的 CLI 使用 Google Cloud、AWS 与 Azure —— 以及为什么它做的是代理而非包装 |
+| **[监控](docs/zh-CN/monitoring.md)** | 观察整个资产，并把一项变更跑到所有机器上 |
+| **[数据库](docs/zh-CN/databases.md)** | 五种引擎，直连或经跳板机 |
+| **[隧道与 VPN](docs/zh-CN/tunnels.md)** | 转发、SOCKS5、WireGuard、OpenVPN 与 frp |
+| **[保险库与设置](docs/zh-CN/vault.md)** | 密钥存储、备份，以及值得了解的设置项 |
+| **[安全](docs/zh-CN/security.md)** | 凭据如何存放，以及如何避免明文落盘 |
 | **[界面语言](docs/i18n.md)** | 翻译层：以英文原文为键、两个测量工具各自能看见与看不见什么、还剩哪些待译 |
-| **[常见问题](docs/faq.md)** | 最常被问到的问题 |
+| **[常见问题](docs/zh-CN/faq.md)** | 最常被问到的问题 |
 
 ## 安全
 

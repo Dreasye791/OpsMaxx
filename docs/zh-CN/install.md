@@ -2,9 +2,9 @@
 
 Windows、macOS 与 Linux 的全部安装方式 —— 以及首次运行时的安全警告该怎么办。
 
-[English](install.md) · **简体中文**
+[English](../install.md) · **简体中文**
 
-[← 返回 README](../README.zh-CN.md)
+[← 返回 README](../../README.zh-CN.md)
 
 ---
 
@@ -87,7 +87,7 @@ spctl -a -vvv /Applications/OpsMaxx.app
 <details>
 <summary><b>macOS —— 「OpsMaxx 已损坏，无法打开」（0.2.2 及更早的发布）</b></summary>
 
-![macOS Gatekeeper 对话框：「OpsMaxx 已损坏，无法打开。你应该将它移到废纸篓。」](images/macos-damaged-dialog.png)
+![macOS Gatekeeper 对话框：「OpsMaxx 已损坏，无法打开。你应该将它移到废纸篓。」](../images/macos-damaged-dialog.png)
 
 **下载并没有损坏，而且这个问题在 0.2.2 之后的发布中已修复。** 直到 0.2.2（含）的构建都让 macOS 应用保持未签名，这意味着 bundle 仍带着 Electron 自带的那个签名 —— 一个不覆盖 OpsMaxx 任何自有文件的签名。Gatekeeper 把这种不匹配读成「下载损坏」，于是用了这种措辞，而不是上面那条普通的「无法验证」。很恼人的是，这个对话框不提供**仍要打开**按钮，所以没有任何东西可以点过去。
 
@@ -178,7 +178,7 @@ npm run dist:mac     # dmg (must be run on macOS)
 
 点「连接」侧边栏里的 **+**，或按 <kbd>Ctrl</kbd>+<kbd>N</kbd>。
 
-![添加服务器对话框](images/add-server.png)
+![添加服务器对话框](../images/add-server.png)
 
 填上服务器、端口与用户名，然后选择认证方式：
 
@@ -195,7 +195,7 @@ npm run dist:mac     # dmg (must be run on macOS)
 
 内网里的服务器要经堡垒机访问。点 **Add jump host**（添加跳板机；这一处目前仍显示英文），跳转就会出现在那里 —— 没有第二个对话框，也没有额外的步骤。
 
-![带跳板机的添加服务器对话框](images/add-server-jump-hosts.png)
+![带跳板机的添加服务器对话框](../images/add-server-jump-hosts.png)
 
 每一跳都可以：
 
@@ -224,4 +224,4 @@ npm run dist:mac     # dmg (must be run on macOS)
 
 ---
 
-[← 返回 README](../README.zh-CN.md)
+[← 返回 README](../../README.zh-CN.md)

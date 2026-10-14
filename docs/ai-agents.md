@@ -1,6 +1,6 @@
 # AI agent access
 
-**English** · [简体中文](ai-agents.zh-CN.md)
+**English** · [简体中文](zh-CN/ai-agents.md)
 
 How Claude Code, Claude Desktop, Codex and other MCP clients reach your infrastructure through OpsMaxx without ever seeing a credential.
 

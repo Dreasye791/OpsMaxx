@@ -2,9 +2,9 @@
 
 PostgreSQL、MySQL、SQL Server、MongoDB 与 Redis，可直连，也可经跳板机。
 
-[English](databases.md) · **简体中文**
+[English](../databases.md) · **简体中文**
 
-[← 返回 README](../README.zh-CN.md)
+[← 返回 README](../../README.zh-CN.md)
 
 ---
 
@@ -28,4 +28,4 @@ OpsMaxx 支持 **PostgreSQL、MySQL、SQL Server、MongoDB 与 Redis**。可以�
 
 ---
 
-[← 返回 README](../README.zh-CN.md)
+[← 返回 README](../../README.zh-CN.md)

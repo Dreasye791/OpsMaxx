@@ -1,6 +1,6 @@
 # Monitoring and fleet operations
 
-**English** · [简体中文](monitoring.zh-CN.md)
+**English** · [简体中文](zh-CN/monitoring.md)
 
 Watching a fleet, and running the same change across it safely.
 
