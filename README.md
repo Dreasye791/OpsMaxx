@@ -4,6 +4,8 @@
 
 # OpsMaxx
 
+**English** · [简体中文](README.zh-CN.md)
+
 **A free, open-source SSH client, SFTP browser, database manager, secrets vault and secure AI-agent gateway — in one desktop app.**
 
 Your DevOps workstation, everywhere. Windows · macOS · Linux.
