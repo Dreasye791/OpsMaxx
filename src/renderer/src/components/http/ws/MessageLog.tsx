@@ -17,6 +17,7 @@ import {
   stamp,
   type LogFilter
 } from './frames'
+import { useT } from '../../../i18n'
 
 export const ROW_H = 28
 
@@ -60,6 +61,7 @@ export function MessageLog({
   onView: (patch: Partial<LogView>) => void
   onLoadIntoComposer: (text: string) => void
 }): React.JSX.Element {
+  const t = useT()
   const version = useWsSessions((s) => s.sessions[tabId]?.version ?? 0)
   const dropped = useWsSessions((s) => s.sessions[tabId]?.stats.dropped ?? 0)
   const state = useWsSessions((s) => s.sessions[tabId]?.state ?? 'idle')
@@ -157,14 +159,13 @@ export function MessageLog({
       <div className="hc-ws-logpane">
         {dropped > 0 && (
           <div className="hc-ws-row is-system hc-ws-dropped" role="note">
-            <Info size={13} aria-hidden /> {dropped.toLocaleString()} older frame{dropped === 1 ? '' : 's'} dropped
-          </div>
+            <Info size={13} aria-hidden /> {dropped.toLocaleString()} {t('older frame')}{dropped === 1 ? '' : 's'} {t('dropped')}</div>
         )}
         <div
           ref={listRef}
           className="hc-ws-list"
           role="listbox"
-          aria-label="Messages"
+          aria-label={t('Messages')}
           tabIndex={0}
           aria-activedescendant={frame ? `hc-ws-${tabId}-${frame.id}` : undefined}
           onScroll={onScroll}
@@ -218,8 +219,7 @@ export function MessageLog({
         </div>
         {unseen > 0 && (
           <button type="button" className="btn sm hc-ws-pill" onClick={follow}>
-            <ArrowDown size={13} aria-hidden /> {unseen} new
-          </button>
+            <ArrowDown size={13} aria-hidden /> {unseen} {t('new')}</button>
         )}
       </div>
       {frame && <MessageDetail frame={frame} placement={placement} onClose={() => setSelected(null)} />}
@@ -238,6 +238,7 @@ export function MessageToolbar({
   view: LogView
   onView: (patch: Partial<LogView>) => void
 }): React.JSX.Element {
+  const t = useT()
   const following = view.pausedAt === null
   return (
     <div className="hc-ws-tools">
@@ -246,22 +247,22 @@ export function MessageToolbar({
         <input
           className="input mono"
           type="search"
-          placeholder="Search"
-          aria-label="Search messages"
+          placeholder={t('Search')}
+          aria-label={t('Search messages')}
           value={view.query}
           onChange={(e) => onView({ query: e.target.value })}
         />
       </label>
       <select
         className="input"
-        aria-label="Filter messages"
+        aria-label={t('Filter messages')}
         value={view.filter}
         onChange={(e) => onView({ filter: e.target.value as LogFilter })}
       >
-        <option value="all">All</option>
-        <option value="out">Sent</option>
-        <option value="in">Received</option>
-        <option value="system">System</option>
+        <option value="all">{t('All')}</option>
+        <option value="out">{t('Sent')}</option>
+        <option value="in">{t('Received')}</option>
+        <option value="system">{t('System')}</option>
       </select>
       <button
         type="button"
@@ -276,8 +277,8 @@ export function MessageToolbar({
       <button
         type="button"
         className="btn ghost sm"
-        aria-label="Clear log"
-        title="Clear log"
+        aria-label={t('Clear log')}
+        title={t('Clear log')}
         onClick={() => useWsSessions.getState().clear(tabId)}
       >
         <Trash2 size={13} />

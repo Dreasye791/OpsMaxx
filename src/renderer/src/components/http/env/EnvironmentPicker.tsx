@@ -9,6 +9,7 @@ import { ContextMenu, type MenuEntry } from '../../connections/ContextMenu'
 import { VariablesPopover } from './VariablesPopover'
 import { openEnvironmentsTab } from './EnvironmentsTab'
 import '../nav.css'
+import { useT } from '../../../i18n'
 
 /**
  * The environment picker at the right of the tab strip: swatch, name and a
@@ -17,6 +18,7 @@ import '../nav.css'
  * request…" is about `tabId`, or else the active tab (or the ghost).
  */
 export function EnvironmentPicker({ tabId: forTab, compact }: { tabId?: Id; compact?: boolean } = {}): React.JSX.Element {
+  const t = useT()
   const ws = useApp((s) => s.activeWorkspaceId)
   const current = useHttp((s) => s.activeTab[ws] ?? s.ghost[ws]?.id ?? undefined)
   const tabId = forTab ?? current
@@ -67,11 +69,10 @@ export function EnvironmentPicker({ tabId: forTab, compact }: { tabId?: Id; comp
       >
         <span className={`hc-swatch${active ? ` hc-swatch--${active.color}` : ''}`} aria-hidden="true" />
         {!compact && <span className="hc-env-name">{label}</span>}
-        {active?.production && <span className="hc-prod">PROD</span>}
+        {active?.production && <span className="hc-prod">{t('PROD')}</span>}
         {active && pending.includes(active.id) && (
-          <span className="hc-review" title="Changed on another device; held until reviewed">
-            review
-          </span>
+          <span className="hc-review" title={t('Changed on another device; held until reviewed')}>
+            {t('review')}</span>
         )}
         <ChevronDown size={12} aria-hidden="true" />
       </button>

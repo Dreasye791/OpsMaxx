@@ -21,6 +21,7 @@ import { suggestedFileName, headerValue } from '../response/bodyWindow'
 import { METHODS, METHOD_ABBR, methodToken, syncFromUrl, withResolvedScheme } from './requestModel'
 import { urlRowLayout, useWidth } from '../ProtocolLayout'
 import './request.css'
+import { useT } from '../../../i18n'
 
 export interface UrlBarProps {
   tabId: Id
@@ -78,6 +79,7 @@ export function useScopeChain(tab: HttpTabState | undefined): VariableScopeChain
 }
 
 export function UrlBar({ tabId, ghost }: UrlBarProps): React.JSX.Element | null {
+  const t = useT()
   const req = useHttpRequest(tabId)
   const tab = useHttp((s) => tabById(s, tabId))
   const sending = useHttp((s) => s.responses[tabId]?.status === 'sending')
@@ -230,7 +232,7 @@ export function UrlBar({ tabId, ghost }: UrlBarProps): React.JSX.Element | null 
     >
       <select
         className="hc-method"
-        aria-label="Method"
+        aria-label={t('Method')}
         value={req.method}
         style={{ color: `var(${methodToken(req.method)})` }}
         onChange={(e) => update({ ...req, method: e.target.value })}
@@ -247,7 +249,7 @@ export function UrlBar({ tabId, ghost }: UrlBarProps): React.JSX.Element | null 
           onChange={(url) => update(syncFromUrl(req, url))}
           chain={chain}
           ariaLabel="URL"
-          placeholder={isGhost ? 'Paste a URL or a curl command' : 'https://api.example.com/path'}
+          placeholder={isGhost ? t('Paste a URL or a curl command') : 'https://api.example.com/path'}
           onSubmit={() => void doSend()}
           onPaste={onPaste}
         />
@@ -256,7 +258,7 @@ export function UrlBar({ tabId, ghost }: UrlBarProps): React.JSX.Element | null 
       <TlsChip tabId={tabId} compact={layout.tlsIcon} />
       <div className="hc-send">
         <SplitButton
-          label={sending ? 'Cancel' : 'Send'}
+          label={t(sending ? 'Cancel' : 'Send')}
           icon={sending ? undefined : <Play size={14} />}
           variant={sending ? 'danger' : 'primary'}
           busy={sending}

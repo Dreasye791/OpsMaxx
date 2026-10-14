@@ -6,6 +6,7 @@ import type { ComposeEnvWriteResult } from '../../../../shared/compose'
 import type { VaultEntryDescriptor, VaultIndexResult } from '../../../../shared/vaultIndex'
 import { bridgeHas } from '../../lib/bridge'
 import { UnlockVaultButton } from '../common/UnlockVaultButton'
+import { useT } from '../../i18n'
 
 // Setting one `.env` variable from the vault.
 //
@@ -56,6 +57,7 @@ export function EnvValueWrite({
   sudo,
   onWritten
 }: EnvValueWriteProps): React.JSX.Element | null {
+  const t = useT()
   const [entries, setEntries] = useState<VaultEntryDescriptor[] | null>(null)
   const [locked, setLocked] = useState(false)
   const [open, setOpen] = useState(false)
@@ -94,8 +96,7 @@ export function EnvValueWrite({
         onClick={() => void openForm()}
         aria-label={`Set ${name} from the vault`}
       >
-        <KeyRound size={11} /> Set from vault
-      </button>
+        <KeyRound size={11} /> {t('Set from vault')}</button>
     )
   }
 
@@ -105,8 +106,7 @@ export function EnvValueWrite({
     return (
       <div className="faint" style={{ fontSize: 11, display: 'flex', alignItems: 'center', gap: 6 }}>
         <span>
-          Set <span className="mono">{name}</span> from the vault.
-        </span>
+          {t('Set')}{' '}<span className="mono">{name}</span> {t('from the vault.')}</span>
         <UnlockVaultButton
           className="btn sm"
           reason={`Unlocking lets you set ${name} from a vault entry.`}
@@ -155,12 +155,12 @@ export function EnvValueWrite({
         <select
           className="input"
           style={{ fontSize: 11 }}
-          aria-label="Vault entry"
+          aria-label={t('Vault entry')}
           value={entryId}
           onChange={(e) => setEntryId(e.target.value)}
           disabled={busy}
         >
-          <option value="">Choose a vault entry…</option>
+          <option value="">{t('Choose a vault entry…')}</option>
           {entries.map((e) => (
             <option key={e.id} value={e.id}>
               {e.name}
@@ -170,7 +170,7 @@ export function EnvValueWrite({
         <select
           className="input"
           style={{ fontSize: 11 }}
-          aria-label="Which field"
+          aria-label={t('Which field')}
           value={slot}
           onChange={(e) => setSlot(e.target.value as typeof slot)}
           disabled={busy}
@@ -185,12 +185,12 @@ export function EnvValueWrite({
           <select
             className="input"
             style={{ fontSize: 11 }}
-            aria-label="Field name"
+            aria-label={t('Field name')}
             value={fieldKey}
             onChange={(e) => setFieldKey(e.target.value)}
             disabled={busy}
           >
-            <option value="">Choose a field…</option>
+            <option value="">{t('Choose a field…')}</option>
             {/* The KEYS of the entry's custom fields. A key is a label the
                 operator typed; the value beside it never reaches here. */}
             {(chosen?.fieldKeys ?? []).map((k) => (
@@ -205,8 +205,7 @@ export function EnvValueWrite({
           {busy ? 'Writing' : 'Write'}
         </button>
         <button className="btn quiet" style={{ fontSize: 11 }} onClick={() => setOpen(false)} disabled={busy}>
-          Cancel
-        </button>
+          {t('Cancel')}</button>
       </div>
 
       <span className="faint" style={{ fontSize: 11 }}>
@@ -221,9 +220,7 @@ export function EnvValueWrite({
             {result.action === 'append'
               ? `${result.name} was added to ${path}.`
               : `${result.name} was replaced on line ${result.line} of ${path}.`}{' '}
-            The previous file is at <span className="mono">{result.backup}</span>. Nothing is
-            running the new value yet — the stack has to be brought up again.
-          </span>
+            {t('The previous file is at')}{' '}<span className="mono">{result.backup}</span>{t('. Nothing is running the new value yet — the stack has to be brought up again.')}</span>
         </div>
       )}
       {result !== null && !result.ok && (

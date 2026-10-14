@@ -9,6 +9,7 @@ import { CollectionTree } from './sidebar/CollectionTree'
 import { HistoryList } from './sidebar/HistoryList'
 import { recoverOldData } from './paletteCommands'
 import './nav.css'
+import { useT } from '../../i18n'
 
 /**
  * Opens the import dialog, which the workbench hosts. With a collection id it
@@ -23,6 +24,7 @@ export function requestImport(collectionId?: Id): void {
  * Collections / History switch, a filter, and the list below it.
  */
 export function HttpSidebar(): React.JSX.Element {
+  const t = useT()
   const sidebarTab = useHttp((s) => s.sidebarTab)
   const [query, setQuery] = useState('')
   const [renaming, setRenaming] = useState<Id | null>(null)
@@ -48,7 +50,7 @@ export function HttpSidebar(): React.JSX.Element {
   return (
     <div className="hc-sidebar">
       <div className="hc-sidebar-head">
-        <h2 className="hc-sidebar-title">Collections (formerly APIs)</h2>
+        <h2 className="hc-sidebar-title">{t('Collections (formerly APIs)')}</h2>
         <div className="hc-sidebar-actions">
           <button
             type="button"
@@ -57,18 +59,18 @@ export function HttpSidebar(): React.JSX.Element {
             aria-expanded={menu !== null}
             onClick={(e) => setMenu(e.currentTarget.getBoundingClientRect())}
           >
-            <Plus size={13} aria-hidden="true" /> New <ChevronDown size={12} aria-hidden="true" />
+            <Plus size={13} aria-hidden="true" /> {t('New')}{' '}<ChevronDown size={12} aria-hidden="true" />
           </button>
-          <button type="button" className="btn sm" aria-label="Import" title="Import (cURL, OpenAPI)" onClick={() => requestImport()}>
+          <button type="button" className="btn sm" aria-label={t('Import')} title={t('Import (cURL, OpenAPI)')} onClick={() => requestImport()}>
             <Import size={13} aria-hidden="true" />
-            <span className="hc-import-text">Import</span>
+            <span className="hc-import-text">{t('Import')}</span>
           </button>
           {hasLegacy && (
             <button
               type="button"
               className="hc-icon-btn"
-              aria-label="More"
-              title="More"
+              aria-label={t('More')}
+              title={t('More')}
               aria-haspopup="menu"
               onClick={(e) => setMore(e.currentTarget.getBoundingClientRect())}
             >
@@ -91,7 +93,7 @@ export function HttpSidebar(): React.JSX.Element {
         className="hc-input hc-sidebar-filter"
         type="search"
         aria-label={sidebarTab === 'history' ? 'Filter history' : 'Filter collections'}
-        placeholder="Filter"
+        placeholder={t('Filter')}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />

@@ -16,6 +16,7 @@ import type {
   CicdRun,
   CicdStep
 } from '../../../../shared/cicd'
+import { useT } from '../../i18n'
 
 /**
  * One run, as a workbench rather than a form.
@@ -53,6 +54,7 @@ export function CicdRunWorkbench({
   bridge?: CicdBridge
   onClose: () => void
 }): React.JSX.Element {
+  const t = useT()
   const [fetched, setFetched] = useState<CicdStep[] | null>(null)
   // Given steps win; otherwise ask. `null` is "not asked yet or failed", which
   // the pane below renders as "no job list was read" rather than "no jobs".
@@ -115,21 +117,20 @@ export function CicdRunWorkbench({
           onClick={onClose}
         >
           <ChevronLeft size={14} />
-          Back to runs
-        </button>
+          {t('Back to runs')}</button>
         <StatusWord outcome={run.outcome} />
         <b className="grow ellipsis">
           {pipeline.name} · {run.label}
-          {run.attempt > 1 && <span className="faint"> attempt {run.attempt}</span>}
+          {run.attempt > 1 && <span className="faint"> {t('attempt')}{' '}{run.attempt}</span>}
         </b>
-        <button className="icon-btn close" aria-label="Close the run" onClick={onClose}>
+        <button className="icon-btn close" aria-label={t('Close the run')} onClick={onClose}>
           <X size={16} />
         </button>
       </div>
 
       <div className="cicd-workbench-body">
         <div className="cicd-steps" style={{ width: stepPane.size }}>
-          <div className="ui-label cicd-pane-label">Jobs</div>
+          <div className="ui-label cicd-pane-label">{t('Jobs')}</div>
           {shown.length === 0 ? (
             /* Not "no jobs". A run whose YAML failed to parse has zero jobs and
                a run whose steps we could not read has none either, and calling
@@ -144,7 +145,7 @@ export function CicdRunWorkbench({
                 className={clsx('cicd-step', stepName === undefined && 'active')}
                 onClick={() => setStepName(undefined)}
               >
-                <span className="grow ellipsis">Whole run</span>
+                <span className="grow ellipsis">{t('Whole run')}</span>
               </button>
               {shown.map((s) => (
                 <button
@@ -169,7 +170,7 @@ export function CicdRunWorkbench({
           className={clsx('resizer static', stepPane.dragging && 'dragging')}
           onMouseDown={stepPane.onMouseDown}
           role="separator"
-          aria-label="Resize the job list"
+          aria-label={t('Resize the job list')}
         />
 
         <div className="cicd-log-column">
@@ -186,29 +187,29 @@ export function CicdRunWorkbench({
             className={clsx('resizer-h', detailPane.dragging && 'dragging')}
             onMouseDown={detailPane.onMouseDown}
             role="separator"
-            aria-label="Resize the run detail"
+            aria-label={t('Resize the run detail')}
           />
 
           <div className="cicd-detail" style={{ height: detailPane.size }}>
-            <div className="ui-label cicd-pane-label">This run</div>
+            <div className="ui-label cicd-pane-label">{t('This run')}</div>
             <dl className="cicd-detail-grid">
-              <dt>Pipeline</dt>
+              <dt>{t('Pipeline')}</dt>
               <dd className="ellipsis">
                 {pathLabel(pipeline)}
                 {pathLabel(pipeline) && ' / '}
                 {pipeline.name}
               </dd>
-              <dt>Connection</dt>
+              <dt>{t('Connection')}</dt>
               <dd className="ellipsis">{connection.name}</dd>
               {run.branch !== undefined && (
                 <>
-                  <dt>Branch</dt>
+                  <dt>{t('Branch')}</dt>
                   <dd className="mono ellipsis">{remoteText(run.branch)}</dd>
                 </>
               )}
               {run.actor !== undefined && (
                 <>
-                  <dt>Started by</dt>
+                  <dt>{t('Started by')}</dt>
                   {/* remoteText, always. Anyone who can open a pull request
                       writes this field. */}
                   <dd className="ellipsis">{remoteText(run.actor)}</dd>
@@ -216,21 +217,21 @@ export function CicdRunWorkbench({
               )}
               {run.title !== undefined && (
                 <>
-                  <dt>Title</dt>
+                  <dt>{t('Title')}</dt>
                   <dd className="ellipsis">{remoteText(run.title)}</dd>
                 </>
               )}
-              <dt>Started</dt>
+              <dt>{t('Started')}</dt>
               <dd>{run.startedAt === undefined ? 'not reported' : `${duration(run.startedAt)} ago`}</dd>
               {run.durationMs !== undefined && (
                 <>
-                  <dt>Took</dt>
+                  <dt>{t('Took')}</dt>
                   <dd>{Math.round(run.durationMs / 1000)}s</dd>
                 </>
               )}
               {!running && (
                 <>
-                  <dt>Finished</dt>
+                  <dt>{t('Finished')}</dt>
                   <dd>
                     {/* Disabled with the reason on the control, never hidden —
                         an option that vanishes teaches the user the product
@@ -265,7 +266,7 @@ export function CicdRunWorkbench({
               )}
               {running && (
                 <>
-                  <dt>Running</dt>
+                  <dt>{t('Running')}</dt>
                   <dd>
                     {/* The operator's stop button.
                         `cancel_run` existed as an MCP tool and as a bridge
@@ -301,7 +302,7 @@ export function CicdRunWorkbench({
               )}
               {stopNote !== null && (
                 <>
-                  <dt>Last action</dt>
+                  <dt>{t('Last action')}</dt>
                   <dd>
                     {/* Verbatim from the adapter, because the three providers
                         genuinely differ about what a stop means: Jenkins will
@@ -317,7 +318,7 @@ export function CicdRunWorkbench({
               )}
               {run.webUrl !== undefined && (
                 <>
-                  <dt>In the provider</dt>
+                  <dt>{t('In the provider')}</dt>
                   <dd className="ellipsis">
                     <a href={run.webUrl} target="_blank" rel="noreferrer">
                       {run.webUrl}
@@ -375,6 +376,7 @@ export function LogPane({
   stepName?: string
   steps: CicdStep[]
 }): React.JSX.Element {
+  const t = useT()
   const [chunk, setChunk] = useState<CicdLogChunk | null>(null)
   const [text, setText] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -444,8 +446,7 @@ export function LogPane({
           {following ? 'Stop following' : 'Follow'}
         </button>
         <button className="btn secondary size-24" onClick={() => void read(false)}>
-          Refresh
-        </button>
+          {t('Refresh')}</button>
       </div>
 
       {cannotFollow !== undefined && <div className="ui-note cicd-pane-note">{cannotFollow}</div>}
@@ -459,7 +460,7 @@ export function LogPane({
               saying why reads as a failure. */}
           <EmptyState
             compact
-            title="No logs yet"
+            title={t('No logs yet')}
             message="GitHub publishes a run’s logs when the run ends, so there is nothing to fetch while it is in progress. The job statuses below are live."
           />
           {steps.length > 0 && (
@@ -475,7 +476,7 @@ export function LogPane({
         </div>
       ) : text === '' ? (
         <div className="cicd-log-body">
-          <EmptyState compact title="Nothing in this log" message="The provider returned an empty log for this run." />
+          <EmptyState compact title={t('Nothing in this log')} message="The provider returned an empty log for this run." />
         </div>
       ) : (
         <pre className="cicd-log-body mono">{text}</pre>
@@ -483,9 +484,7 @@ export function LogPane({
 
       {chunk?.withheldBytes !== undefined && chunk.withheldBytes > 0 && (
         <div className="panel-note is-watch">
-          {chunk.withheldBytes.toLocaleString()} bytes were left out of this log by the size cap.
-          Open the run in the provider to read all of it.
-        </div>
+          {chunk.withheldBytes.toLocaleString()} {t('bytes were left out of this log by the size cap. Open the run in the provider to read all of it.')}</div>
       )}
     </div>
   )

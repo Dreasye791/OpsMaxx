@@ -35,6 +35,7 @@ import {
 import type { Server } from '../../types'
 import { NoteWhy, PanelShell } from './PanelShell'
 import { SweepEmpty } from './SweepEmpty'
+import { useT } from '../../i18n'
 
 // Fleet keys and access — roadmap item 23, renderer half.
 //
@@ -117,7 +118,8 @@ function statusChip(status: AccessStatus): React.JSX.Element | null {
  *  account whose file was not read — that substitution is the whole failure
  *  this feature exists to avoid. */
 function KeyCount({ account }: { account: AccessAccount }): React.JSX.Element {
-  if (account.keys === null) return statusChip(account.keysStatus) ?? <span>unknown</span>
+  const t = useT()
+  if (account.keys === null) return statusChip(account.keysStatus) ?? <span>{t('unknown')}</span>
   const usable = account.keys.filter((k) => k.problem === null).length
   const unreadable = account.keys.length - usable
   return (
@@ -131,21 +133,18 @@ function KeyCount({ account }: { account: AccessAccount }): React.JSX.Element {
           file somebody has been editing. */}
       {account.keysStatus === 'absent' && (
         <span className="chip" title={ACCESS_STATUS_HELP.absent}>
-          no key file
-        </span>
+          {t('no key file')}</span>
       )}
       {unreadable > 0 && (
         <span
           className="chip warn"
           title={`${unreadable} line${unreadable === 1 ? '' : 's'} in this file could not be fingerprinted, so ${unreadable === 1 ? 'it is' : 'they are'} not in the count beside it and cannot be matched against other servers.`}
         >
-          +{unreadable} unreadable
-        </span>
+          +{unreadable} {t('unreadable')}</span>
       )}
       {account.keysUsedSudo && (
-        <span className="chip" title="Read as root after the unprivileged attempt was refused.">
-          root
-        </span>
+        <span className="chip" title={t('Read as root after the unprivileged attempt was refused.')}>
+          {t('root')}</span>
       )}
     </span>
   )
@@ -158,6 +157,7 @@ export function AccessPanel({
   servers: Server[]
   onOpen?: (serverId: string) => void
 }): React.JSX.Element {
+  const t = useT()
   const [entries, setEntries] = useState<Record<string, Entry>>({})
   const [busy, setBusy] = useState(false)
   const [view, setView] = useState<'keys' | 'hosts'>('keys')
@@ -361,12 +361,10 @@ export function AccessPanel({
   return (
     <PanelShell
       icon={<KeyRound size={14} />}
-      title="Keys and access"
+      title={t('Keys and access')}
       about={
         <p>
-          Which SSH keys can reach which servers, and which accounts they land on. Files are read,
-          never edited, and no private key is touched.
-        </p>
+          {t('Which SSH keys can reach which servers, and which accounts they land on. Files are read, never edited, and no private key is touched.')}</p>
       }
       actions={
         <>
@@ -381,19 +379,17 @@ export function AccessPanel({
           <button
             className="btn ghost sm"
             disabled={servers.length === 0}
-            title="Every account and key across this estate as a CSV, with a coverage section naming every host that could not be read and every sshd that reads keys from somewhere this did not look."
+            title={t('Every account and key across this estate as a CSV, with a coverage section naming every host that could not be read and every sshd that reads keys from somewhere this did not look.')}
             onClick={() => exportReview('csv')}
           >
-            Export CSV
-          </button>
+            {t('Export CSV')}</button>
           <button
             className="btn ghost sm"
             disabled={servers.length === 0}
-            title="The same review as JSON, coverage first."
+            title={t('The same review as JSON, coverage first.')}
             onClick={() => exportReview('json')}
           >
-            Export JSON
-          </button>
+            {t('Export JSON')}</button>
           {/* Ghost while there are keys on screen, solid while there are not —
               the same rule Inventory and Security posture follow. At most one
               accent control per view, and only where pressing it is the task.
@@ -415,20 +411,20 @@ export function AccessPanel({
       {collected.length > 0 && (
         <div className="list-row" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 4 }}>
           <div className="cron-row">
-            <span className="r-title">Keys nobody is using</span>
+            <span className="r-title">{t('Keys nobody is using')}</span>
             <span className="grow" />
             <label className="r-sub faint">
-              idle for{' '}
+              {t('idle for')}{' '}
               <select
                 className="input sm"
-                aria-label="Idle threshold in days"
+                aria-label={t('Idle threshold in days')}
                 value={idleDays}
                 onChange={(e) => setIdleDays(Number(e.target.value))}
               >
-                <option value={30}>30 days</option>
-                <option value={90}>90 days</option>
-                <option value={180}>180 days</option>
-                <option value={365}>a year</option>
+                <option value={30}>{t('30 days')}</option>
+                <option value={90}>{t('90 days')}</option>
+                <option value={180}>{t('180 days')}</option>
+                <option value={365}>{t('a year')}</option>
               </select>
             </label>
           </div>
@@ -461,9 +457,7 @@ export function AccessPanel({
           {/* Revoking is item 36's, behind its own gate and its own rollback.
               A button here would act through a path that has neither. */}
           <div className="r-sub faint">
-            Read-only. Removing a key is done from the key rows above, where the change is staged
-            with a rollback.
-          </div>
+            {t('Read-only. Removing a key is done from the key rows above, where the change is staged with a rollback.')}</div>
         </div>
       )}
 
@@ -473,12 +467,10 @@ export function AccessPanel({
           point of the feature lost. */}
       {collected.some((h) => h.entry!.access!.sudoers !== undefined) && (
         <div className="list-row" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 4 }}>
-          <div className="r-title">What sudo actually grants</div>
+          <div className="r-title">{t('What sudo actually grants')}</div>
           <div className="r-sub faint">
-            Read from <code>/etc/sudoers</code> and <code>/etc/sudoers.d</code>, which replaces
-            the guess this app makes otherwise — that anyone in <code>wheel</code> or{' '}
-            <code>sudo</code> has root. That guess is wrong in both directions.
-          </div>
+            {t('Read from')}{' '}<code>/etc/sudoers</code> {t('and')}{' '}<code>/etc/sudoers.d</code>{t(', which replaces the guess this app makes otherwise — that anyone in')}{' '}<code>{t('wheel')}</code> {t('or')}{' '}
+            <code>{t('sudo')}</code> {t('has root. That guess is wrong in both directions.')}</div>
           <table className="mini-table">
             <tbody>
               {collected
@@ -489,11 +481,9 @@ export function AccessPanel({
                     return [
                       <tr key={`${h.server.id}:failed`}>
                         <td className="mono">{h.server.name}</td>
-                        <td className="state-unknown">could not be read</td>
+                        <td className="state-unknown">{t('could not be read')}</td>
                         <td className="faint">
-                          The read was asked for and did not answer. This is not a server with no
-                          sudo rules.
-                        </td>
+                          {t('The read was asked for and did not answer. This is not a server with no sudo rules.')}</td>
                       </tr>
                     ]
                   }
@@ -518,7 +508,7 @@ export function AccessPanel({
 
       {serviceKeys.length > 0 && (
         <div className="list-row" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 4 }}>
-          <div className="r-title">Service accounts with keys</div>
+          <div className="r-title">{t('Service accounts with keys')}</div>
           <div className="r-sub faint">
             Accounts below uid 1000 — software, not people — that hold a key. Ordered by whether
             the account&rsquo;s own shell would let somebody in. root is not listed: a key there is
@@ -558,7 +548,7 @@ export function AccessPanel({
               that the write half is off and that nothing here writes
               anywhere, so a reader who never expands it is not misled. */}
           <ShieldAlert size={12} /> <b>{ACCESS_WRITE_DISABLED_SUMMARY}</b>
-          <NoteWhy summary="Why it is off, and what it will be able to do">
+          <NoteWhy summary={t('Why it is off, and what it will be able to do')}>
             <p>{ACCESS_WRITE_DISABLED_REASON}</p>
             <p>{ACCESS_WRITE_SCOPE}</p>
           </NoteWhy>
@@ -577,13 +567,10 @@ export function AccessPanel({
                   standing promise about what the probe does to a host is not a
                   description you read once. Shortened from three sentences to
                   one — the wall of text was the complaint, not this clause. */}
-              The files are read, never edited, and no private key is touched.
-              {failed.length > 0 && (
+              {t('The files are read, never edited, and no private key is touched.')}{failed.length > 0 && (
                 <>
                   {' '}
-                  <b>{failed.length}</b> server{failed.length === 1 ? '' : 's'} refused the probe —
-                  see below.
-                </>
+                  <b>{failed.length}</b> {t('server')}{failed.length === 1 ? '' : 's'} {t('refused the probe — see below.')}</>
               )}
             </>
           }
@@ -596,19 +583,17 @@ export function AccessPanel({
               of a count over 12. */}
           <div className="panel-stats">
             <span>
-              {keyRows.length} distinct key{keyRows.length === 1 ? '' : 's'} across{' '}
-              {collected.length} server{collected.length === 1 ? '' : 's'}
+              {keyRows.length} {t('distinct key')}{keyRows.length === 1 ? '' : 's'} {t('across')}{' '}
+              {collected.length} {t('server')}{collected.length === 1 ? '' : 's'}
             </span>
             {unchecked > 0 && (
               <span className="state-unknown" data-testid="unchecked-hosts">
-                {unchecked} server{unchecked === 1 ? '' : 's'} could not be checked and{' '}
-                {unchecked === 1 ? 'is' : 'are'} not in that count
-              </span>
+                {unchecked} {t('server')}{unchecked === 1 ? '' : 's'} {t('could not be checked and')}{' '}
+                {unchecked === 1 ? 'is' : 'are'} {t('not in that count')}</span>
             )}
             {incomplete.length > 0 && (
               <span className="state-unknown" data-testid="incomplete-hosts">
-                {incomplete.length} server{incomplete.length === 1 ? '' : 's'} answered only partly
-              </span>
+                {incomplete.length} {t('server')}{incomplete.length === 1 ? '' : 's'} {t('answered only partly')}</span>
             )}
           </div>
 
@@ -618,29 +603,23 @@ export function AccessPanel({
               is missing. */}
           {(unchecked > 0 || incomplete.length > 0) && (
             <div className="panel-note is-unknown" data-testid="not-an-answer">
-              <ShieldAlert size={12} /> This is not a complete picture of the estate, so “this key
-              is not on my fleet” cannot be concluded from it.{' '}
+              <ShieldAlert size={12} /> {t('This is not a complete picture of the estate, so “this key is not on my fleet” cannot be concluded from it.')}{' '}
               {unchecked > 0 && (
                 <>
-                  {unchecked} server{unchecked === 1 ? '' : 's'} could not be read this time
-                  {stale.length > 0 && (
+                  {unchecked} {t('server')}{unchecked === 1 ? '' : 's'} {t('could not be read this time')}{stale.length > 0 && (
                     <>
                       {' '}
-                      ({stale.length} of {unchecked === 1 ? 'them is' : 'them'} showing an older
-                      reading below)
-                    </>
+                      ({stale.length} {t('of')}{' '}{unchecked === 1 ? 'them is' : 'them'} {t('showing an older reading below)')}</>
                   )}
                   {incomplete.length > 0 ? ', and ' : '. '}
                 </>
               )}
               {incomplete.length > 0 && (
                 <>
-                  {incomplete.length} server{incomplete.length === 1 ? '' : 's'} answered for some
-                  accounts and not others.{' '}
+                  {incomplete.length} {t('server')}{incomplete.length === 1 ? '' : 's'} {t('answered for some accounts and not others.')}{' '}
                 </>
               )}
-              Every count above is a lower bound.
-            </div>
+              {t('Every count above is a lower bound.')}</div>
           )}
 
           {view === 'keys' ? (
@@ -648,11 +627,11 @@ export function AccessPanel({
               <table className="table inv-table">
                 <thead>
                   <tr>
-                    <th>Fingerprint</th>
-                    <th>Labelled</th>
-                    <th>Type</th>
-                    <th className="num">Hosts</th>
-                    <th>Where</th>
+                    <th>{t('Fingerprint')}</th>
+                    <th>{t('Labelled')}</th>
+                    <th>{t('Type')}</th>
+                    <th className="num">{t('Hosts')}</th>
+                    <th>{t('Where')}</th>
                     {canWrite && <th />}
                   </tr>
                 </thead>
@@ -666,10 +645,9 @@ export function AccessPanel({
                         {k.labels.length === 0 ? (
                           <span
                             className="inv-na"
-                            title="No comment on any line carrying this key. A key with no label is not an unused key — it is a key nobody wrote down the owner of."
+                            title={t('No comment on any line carrying this key. A key with no label is not an unused key — it is a key nobody wrote down the owner of.')}
                           >
-                            no label
-                          </span>
+                            {t('no label')}</span>
                         ) : (
                           // The most attacker-controlled string in this whole
                           // feature: it is free text in a file on a host that
@@ -688,16 +666,14 @@ export function AccessPanel({
                             className="chip"
                             title="Every line carrying this key restricts it — a command=, from= or restrict option. It is not a general-purpose login on any server where it was found."
                           >
-                            restricted
-                          </span>
+                            {t('restricted')}</span>
                         )}
                         {k.viaCertificate && (
                           <span
                             className="chip"
-                            title="At least one server trusts this key through a certificate rather than as a bare key. The fingerprint is the key inside the certificate, which is what ssh-keygen -l prints — so it is the same key either way."
+                            title={t('At least one server trusts this key through a certificate rather than as a bare key. The fingerprint is the key inside the certificate, which is what ssh-keygen -l prints — so it is the same key either way.')}
                           >
-                            certificate
-                          </span>
+                            {t('certificate')}</span>
                         )}
                         {/* The loudest thing on this table, and it is not a
                             restriction. A cert-authority line means the host
@@ -707,10 +683,9 @@ export function AccessPanel({
                           <span
                             className="chip warn"
                             data-testid={`ca-${k.fingerprint}`}
-                            title="This is a cert-authority line: the server trusts this key as a signer, so it also accepts every key this authority signs — including keys that do not exist yet and are in no file anywhere. Revoking one signed key does not change that."
+                            title={t('This is a cert-authority line: the server trusts this key as a signer, so it also accepts every key this authority signs — including keys that do not exist yet and are in no file anywhere. Revoking one signed key does not change that.')}
                           >
-                            certificate authority
-                          </span>
+                            {t('certificate authority')}</span>
                         )}
                       </td>
                       <td className="num mono">{k.on.length}</td>
@@ -749,10 +724,9 @@ export function AccessPanel({
                             className="btn ghost sm"
                             data-testid={`revoke-${k.fingerprint}`}
                             onClick={() => openKeyRevoke(k.fingerprint)}
-                            title="Opens Operations › Revoke a key, with this key chosen. Nothing is written until you confirm it there, and nothing becomes permanent until a second, independent session has proved the server still lets OpsMaxx in."
+                            title={t('Opens Operations › Revoke a key, with this key chosen. Nothing is written until you confirm it there, and nothing becomes permanent until a second, independent session has proved the server still lets OpsMaxx in.')}
                           >
-                            Revoke…
-                          </button>
+                            {t('Revoke…')}</button>
                         </td>
                       )}
                     </tr>
@@ -765,12 +739,12 @@ export function AccessPanel({
               <table className="table inv-table">
                 <thead>
                   <tr>
-                    <th>Host</th>
-                    <th>Account</th>
-                    <th className="num">Keys</th>
-                    <th>Password</th>
-                    <th>Admin groups</th>
-                    <th>Last login</th>
+                    <th>{t('Host')}</th>
+                    <th>{t('Account')}</th>
+                    <th className="num">{t('Keys')}</th>
+                    <th>{t('Password')}</th>
+                    <th>{t('Admin groups')}</th>
+                    <th>{t('Last login')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -783,7 +757,7 @@ export function AccessPanel({
                           {a.hasLegacyKeyFile === true && (
                             <span
                               className="chip warn"
-                              title="This account has a .ssh/authorized_keys2 file. sshd still reads it and OpsMaxx does not, so this account may trust keys that are not listed here."
+                              title={t('This account has a .ssh/authorized_keys2 file. sshd still reads it and OpsMaxx does not, so this account may trust keys that are not listed here.')}
                             >
                               authorized_keys2
                             </span>
@@ -795,10 +769,9 @@ export function AccessPanel({
                             <span
                               className="inv-na loud"
                               data-testid={`keys2-unknown-${a.user}`}
-                              title="OpsMaxx could not tell whether this account has a .ssh/authorized_keys2 file — the path to it could not be traversed, and root could not settle it either. sshd still reads that file, so this account may trust keys that are not listed here."
+                              title={t('OpsMaxx could not tell whether this account has a .ssh/authorized_keys2 file — the path to it could not be traversed, and root could not settle it either. sshd still reads that file, so this account may trust keys that are not listed here.')}
                             >
-                              authorized_keys2 unchecked
-                            </span>
+                              {t('authorized_keys2 unchecked')}</span>
                           )}
                         </td>
                         <td className="num">
@@ -821,26 +794,24 @@ export function AccessPanel({
                                   : 'The password is locked. This does not by itself prevent key authentication.'
                               }
                             >
-                              locked
-                            </span>
+                              {t('locked')}</span>
                           ) : (
-                            <span className="faint">usable</span>
+                            <span className="faint">{t('usable')}</span>
                           )}
                           {a.expired === true && (
                             <span className="chip warn" title={a.expiresText ?? undefined}>
-                              expired
-                            </span>
+                              {t('expired')}</span>
                           )}
                         </td>
                         <td>
                           {a.adminGroups === null ? (
                             statusChip('unknown')
                           ) : a.adminGroups.length === 0 ? (
-                            <span className="faint">none</span>
+                            <span className="faint">{t('none')}</span>
                           ) : (
                             <span
                               className="mono"
-                              title="Membership of an administrative group, which is a proxy for sudo rights rather than a reading of sudoers."
+                              title={t('Membership of an administrative group, which is a proxy for sudo rights rather than a reading of sudoers.')}
                             >
                               {a.adminGroups.join(', ')}
                             </span>
@@ -857,7 +828,7 @@ export function AccessPanel({
                             // of this" is not "we do not know when they logged
                             // in", and showing the phrase is the better of the
                             // two answers.
-                            <span title="The server reported this and OpsMaxx could not read a date out of it.">
+                            <span title={t('The server reported this and OpsMaxx could not read a date out of it.')}>
                               {a.lastLoginText}
                             </span>
                           ) : (
@@ -889,25 +860,19 @@ export function AccessPanel({
           whether to act on what is on the screen. */}
       {stale.map((h) => (
         <div key={h.server.id} className="panel-note is-unknown" data-testid={`stale-${h.server.name}`}>
-          <ShieldAlert size={12} /> <b>{h.server.name}</b>: the keys shown above were read{' '}
-          <b>{duration(h.entry!.at ?? null)} ago</b> and the probe has been failing since —{' '}
-          {h.entry!.error}. They are what OpsMaxx last saw, not what the server trusts now, and
-          this server is counted as unchecked.
-        </div>
+          <ShieldAlert size={12} /> <b>{h.server.name}</b>{t(': the keys shown above were read')}{' '}
+          <b>{duration(h.entry!.at ?? null)} {t('ago')}</b> {t('and the probe has been failing since —')}{' '}
+          {h.entry!.error}{t('. They are what OpsMaxx last saw, not what the server trusts now, and this server is counted as unchecked.')}</div>
       ))}
 
       {failed.map((h) => (
         <div key={h.server.id} className="panel-note is-alarm" data-testid={`failed-${h.server.name}`}>
-          {h.server.name}: the access probe failed — {h.entry!.error}. This server is excluded from
-          every count above; it is not a server with no keys.
-        </div>
+          {h.server.name}{t(': the access probe failed —')}{' '}{h.entry!.error}{t('. This server is excluded from every count above; it is not a server with no keys.')}</div>
       ))}
       {collected.length > 0 && never.length > 0 && (
         <div className="panel-note is-unknown" data-testid="never-collected">
-          {never.length} server{never.length === 1 ? '' : 's'} ({never.map((h) => h.server.name).join(', ')}
-          ) {never.length === 1 ? 'has' : 'have'} not been read yet. They are excluded from every
-          count above.
-        </div>
+          {never.length} {t('server')}{never.length === 1 ? '' : 's'} ({never.map((h) => h.server.name).join(', ')}
+          ) {never.length === 1 ? 'has' : 'have'} {t('not been read yet. They are excluded from every count above.')}</div>
       )}
 
       {/* The vocabulary, stated once. Every problem word above links back to
@@ -916,7 +881,7 @@ export function AccessPanel({
         h.entry!.access!.accounts.some((a) => a.keys?.some((k) => k.problem !== null))
       ) && (
         <div className="panel-note" data-testid="problem-help">
-          Some lines in files that WERE read could not be fingerprinted.{' '}
+          {t('Some lines in files that WERE read could not be fingerprinted.')}{' '}
           {KEY_PROBLEM_HELP['unknown-type']}
         </div>
       )}

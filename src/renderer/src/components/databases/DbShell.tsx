@@ -5,6 +5,7 @@ import { ContextMenu, type MenuEntry } from '../connections/ContextMenu'
 import { shellPrompt } from '../../../../shared/dbshell'
 import type { DbShellResult } from '../../../../shared/dbshell'
 import type { DbConnectConfig, DbKind } from '../../../../shared/db'
+import { useT } from '../../i18n'
 
 interface Entry {
   id: number
@@ -33,6 +34,7 @@ const BANNER: Record<DbKind, string> = {
 }
 
 export function DbShell({ cfg, kind, dbName, onUseDatabase, onSchemaChanged }: Props): React.JSX.Element {
+  const t = useT()
   const [entries, setEntries] = useState<Entry[]>([])
   const [input, setInput] = useState('')
   const [busy, setBusy] = useState(false)
@@ -217,9 +219,8 @@ export function DbShell({ cfg, kind, dbName, onUseDatabase, onSchemaChanged }: P
       </div>
       <div className="dbshell-hint">
         <span>
-          <b>Enter</b> run · <b>Shift+Enter</b> newline · <b>↑</b> history · <b>Ctrl+C/V</b> copy &amp; paste ·{' '}
-          <b>Ctrl+L</b> clear · <b>help</b> for commands
-        </span>
+          <b>{t('Enter')}</b> {t('run ·')}{' '}<b>{t('Shift+Enter')}</b> {t('newline ·')}{' '}<b>↑</b> {t('history ·')}{' '}<b>Ctrl+C/V</b> copy &amp; paste ·{' '}
+          <b>{t('Ctrl+L')}</b> {t('clear ·')}{' '}<b>{t('help')}</b> {t('for commands')}</span>
       </div>
       {menu && <ContextMenu x={menu.x} y={menu.y} entries={menuEntries()} onClose={() => setMenu(null)} />}
     </div>
@@ -227,6 +228,7 @@ export function DbShell({ cfg, kind, dbName, onUseDatabase, onSchemaChanged }: P
 }
 
 function Output({ result }: { result: DbShellResult }): React.JSX.Element | null {
+  const t = useT()
   if (!result.ok) {
     return <div className="dbshell-error">{result.error}</div>
   }
@@ -255,7 +257,7 @@ function Output({ result }: { result: DbShellResult }): React.JSX.Element | null
       </div>
     )
   }
-  if (!parts.length) return <div className="dbshell-note">ok</div>
+  if (!parts.length) return <div className="dbshell-note">{t('ok')}</div>
   return <>{parts}</>
 }
 

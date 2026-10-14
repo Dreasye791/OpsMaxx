@@ -3,10 +3,12 @@ import { Eye, EyeOff, Lock, Unlock } from 'lucide-react'
 import { Modal } from '../common/Modal'
 import { useApp } from '../../store/app'
 import { toast } from '../../store/toast'
+import { useT } from '../../i18n'
 
 // Shown whenever something tries to activate a password-protected workspace
 // that has not been unlocked yet this session.
 export function WorkspaceUnlock(): React.JSX.Element | null {
+  const t = useT()
   const pendingId = useApp((s) => s.pendingWorkspaceId)
   const workspaces = useApp((s) => s.workspaces)
   const unlockWorkspace = useApp((s) => s.unlockWorkspace)
@@ -65,9 +67,7 @@ export function WorkspaceUnlock(): React.JSX.Element | null {
         <div className="row" style={{ gap: 8, alignItems: 'flex-start' }}>
           <Lock size={18} className="faint" style={{ marginTop: 2, flexShrink: 0 }} />
           <span className="muted" style={{ fontSize: 12 }}>
-            Someone set a password on this workspace, so its servers, databases and tunnels stay out
-            of sight until it is entered. Your other workspaces are unaffected.
-          </span>
+            {t('Someone set a password on this workspace, so its servers, databases and tunnels stay out of sight until it is entered. Your other workspaces are unaffected.')}</span>
         </div>
         <div className="row" style={{ gap: 6 }}>
           <input
@@ -75,7 +75,7 @@ export function WorkspaceUnlock(): React.JSX.Element | null {
             ref={passwordRef}
             type={show ? 'text' : 'password'}
             autoFocus
-            placeholder="Workspace password"
+            placeholder={t('Workspace password')}
             value={password}
             onChange={(e) => {
               setFailed(false)
@@ -89,29 +89,23 @@ export function WorkspaceUnlock(): React.JSX.Element | null {
         </div>
         {failed && (
           <>
-            <div className="vault-error">That is not the password for {ws.name}.</div>
+            <div className="vault-error">{t('That is not the password for')}{' '}{ws.name}.</div>
             {/* No reset exists, so say so rather than let someone hunt for one —
                 and name the confusion this trips over most often. */}
             <span className="muted" style={{ fontSize: 12 }}>
-              Workspace passwords are case sensitive, and this is not your vault master password.
-              Nothing here can reset one: to change or remove it, or to delete the workspace
-              entirely, open Manage Workspaces.
-            </span>
+              {t('Workspace passwords are case sensitive, and this is not your vault master password. Nothing here can reset one: to change or remove it, or to delete the workspace entirely, open Manage Workspaces.')}</span>
           </>
         )}
         <div className="row" style={{ gap: 8 }}>
           {failed && (
             <button className="btn sm" onClick={manage}>
-              Manage workspaces
-            </button>
+              {t('Manage workspaces')}</button>
           )}
           <span className="spacer" />
           <button className="btn sm" onClick={close}>
-            Cancel
-          </button>
+            {t('Cancel')}</button>
           <button className="btn primary sm" disabled={!password || busy} onClick={() => void submit()}>
-            <Unlock size={14} /> Unlock
-          </button>
+            <Unlock size={14} /> {t('Unlock')}</button>
         </div>
       </div>
     </Modal>

@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { useShallow } from 'zustand/react/shallow'
+import type { LanguagePreference } from '../i18n'
 import { FLEET_INTERVAL_DEFAULT_MS } from '../../../shared/fleet'
 import { defaultModuleState, type ModuleState } from '../../../shared/modules'
 import type { DriftWatchProposal } from '../../../shared/driftWatch'
@@ -302,6 +303,20 @@ export interface AppSettings {
   closeTabOnShellExit: boolean
   // Tightens row heights and paddings across the app.
   compactDensity: boolean
+  /**
+   * The interface language, as the user chose it — a preference, not a locale.
+   *
+   * `'system'` is the default and stays a distinct value from `'en'`, even on a
+   * machine whose system language IS English. Holding the resolved code here
+   * instead would freeze whatever the system happened to be on the day the app
+   * first ran: someone who later switches their desktop to Chinese would keep an
+   * English OpsMaxx with no way to ask for the system's answer back.
+   *
+   * Optional so the field can be absent in saves written before it existed;
+   * `{ ...DEFAULT_SETTINGS, ...data.settings }` in persist.ts fills it in, and
+   * absent means 'system', which is what every existing install was doing.
+   */
+  language?: LanguagePreference
   /** Width of the database view's schema column. */
   dbSchemaWidth: number
   /** Height of the database view's query editor. */
@@ -419,6 +434,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   vaultAutoBiometricPrompt: true,
   closeTabOnShellExit: true,
   compactDensity: false,
+  language: 'system',
   // The database workbench's two dividers. In settings rather than in the
   // component so a layout somebody arranged survives a restart -- the sidebar's
   // own width does not, and having to redo it every launch is exactly the

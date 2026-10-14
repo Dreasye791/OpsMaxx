@@ -6,6 +6,7 @@ import { clsx } from '../../../lib/format'
 import { KeyValueTable } from '../../common/KeyValueTable'
 import { VarField, isLiteralSecret } from './AuthEditor'
 import './request.css'
+import { useT } from '../../../i18n'
 
 export interface HeadersEditorProps {
   rows: Row[]
@@ -45,6 +46,7 @@ export function HeadersEditor({
   stripped = [],
   onMoveToVault
 }: HeadersEditorProps): React.JSX.Element {
+  const t = useT()
   const showAuto = useHttp((s) => s.prefs.showAutoHeaders)
   const showDescription = useHttp((s) => s.prefs.kvDescriptions)
   const setPrefs = useHttp((s) => s.setPrefs)
@@ -61,7 +63,7 @@ export function HeadersEditor({
             {showAuto ? 'Hide auto-generated headers' : `${auto.length} hidden`}
           </button>
           {showAuto && (
-            <table className="hc-auto-table" aria-label="Headers OpsMaxx adds">
+            <table className="hc-auto-table" aria-label={t('Headers OpsMaxx adds')}>
               <tbody>
                 {auto.map((h) => {
                   const replaced = isOverridden(h, rows)
@@ -86,7 +88,7 @@ export function HeadersEditor({
         onShowDescription={(kvDescriptions) => setPrefs({ kvDescriptions })}
         readOnly={readOnly}
         valueCell={(row, onValue) => (
-          <VarField readOnly={readOnly} value={row.value} onChange={onValue} chain={chain} ariaLabel={`Value of ${row.key || 'header'}`} placeholder="Value" />
+          <VarField readOnly={readOnly} value={row.value} onChange={onValue} chain={chain} ariaLabel={`Value of ${row.key || 'header'}`} placeholder={t('Value')} />
         )}
         warnFor={(row) => rowWarning(row, 'headers', rows.indexOf(row), stripped)}
         extraRowMenu={(row) =>

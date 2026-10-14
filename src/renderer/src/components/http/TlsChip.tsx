@@ -4,6 +4,7 @@ import { useHttp } from '../../store/http'
 import { useApi } from '../../store/api'
 import { clsx } from '../../lib/format'
 import { useTabOrGhost } from './RouteChip'
+import { useT } from '../../i18n'
 
 export interface TlsChipProps {
   tabId: Id
@@ -18,6 +19,7 @@ export interface TlsChipProps {
  * always verifies, so it has no chip.
  */
 export function TlsChip({ tabId, compact }: TlsChipProps): React.JSX.Element | null {
+  const t = useT()
   const tab = useTabOrGhost(tabId)
   const collection = useApi((s) => (tab?.ref ? s.collections.find((c) => c.id === tab.ref!.collectionId) : undefined))
   if (!collection) return null
@@ -38,7 +40,7 @@ export function TlsChip({ tabId, compact }: TlsChipProps): React.JSX.Element | n
         onClick={open}
       >
         <ShieldAlert size={14} aria-hidden />
-        {!compact && <span className="hc-chip-text">Review TLS change</span>}
+        {!compact && <span className="hc-chip-text">{t('Review TLS change')}</span>}
       </button>
     )
   }

@@ -9,6 +9,7 @@ import { VarField } from './AuthEditor'
 import { prettyText } from '../response/bodyWindow'
 import { rowWarning } from './HeadersEditor'
 import { bodyTooLargeToSave, invalidJson, vaultRefInFreeText } from './requestModel'
+import { useT } from '../../../i18n'
 
 export const BODY_MODES: { mode: Body['mode']; label: string }[] = [
   { mode: 'none', label: 'None' },
@@ -68,6 +69,7 @@ export function BodyEditor({
   stripped = [],
   readOnly
 }: BodyEditorProps): React.JSX.Element {
+  const t = useT()
   const showDescription = useHttp((s) => s.prefs.kvDescriptions)
   const setPrefs = useHttp((s) => s.setPrefs)
   const body = req.body
@@ -75,17 +77,16 @@ export function BodyEditor({
     if (!readOnly) onChange({ ...req, body: next })
   }
   const valueCell = (row: Row, onValue: (v: string) => void): React.JSX.Element => (
-    <VarField readOnly={readOnly} value={row.value} onChange={onValue} chain={chain} ariaLabel={`Value of ${row.key || 'field'}`} placeholder="Value" />
+    <VarField readOnly={readOnly} value={row.value} onChange={onValue} chain={chain} ariaLabel={`Value of ${row.key || 'field'}`} placeholder={t('Value')} />
   )
 
   return (
     <div className="hc-bodyed">
       {!methodAllowsBody(req.method) && body.mode !== 'none' && (
         <p className="hc-note hc-warn" role="note">
-          {req.method} requests are sent without a body.
-        </p>
+          {req.method} {t('requests are sent without a body.')}</p>
       )}
-      {body.mode === 'none' && <p className="hc-note hc-pad">This request has no body.</p>}
+      {body.mode === 'none' && <p className="hc-note hc-pad">{t('This request has no body.')}</p>}
 
       {(body.mode === 'json' || body.mode === 'text' || body.mode === 'xml') && (
         <>
@@ -103,19 +104,15 @@ export function BodyEditor({
           </div>
           {invalidJson(req) && (
             <p className="hc-note hc-danger" role="note">
-              Not valid JSON. It will be sent exactly as written.
-            </p>
+              {t('Not valid JSON. It will be sent exactly as written.')}</p>
           )}
           {vaultRefInFreeText(req) && (
             <p className="hc-note hc-warn" role="note">
-              A vault: reference in a JSON, XML or text body is sent as written, not resolved, because a server can echo
-              a body back. Put the secret in a header, the auth, or a form field instead.
-            </p>
+              {t('A vault: reference in a JSON, XML or text body is sent as written, not resolved, because a server can echo a body back. Put the secret in a header, the auth, or a form field instead.')}</p>
           )}
           {bodyTooLargeToSave(req) && (
             <p className="hc-note" role="note">
-              Over 256 KiB: this body is sent, but not saved with the request.
-            </p>
+              {t('Over 256 KiB: this body is sent, but not saved with the request.')}</p>
           )}
         </>
       )}
@@ -161,8 +158,8 @@ export function BodyEditor({
                   disabled={readOnly}
                   onChange={(e) => setRow({ kind: e.target.value as 'text' | 'file', value: '', fileName: undefined })}
                 >
-                  <option value="text">Text</option>
-                  <option value="file">File</option>
+                  <option value="text">{t('Text')}</option>
+                  <option value="file">{t('File')}</option>
                 </select>
                 {mrow.kind === 'text' ? (
                   valueCell(row, onValue)

@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { Modal } from '../common/Modal'
 import { ClipboardPaste, AlertTriangle } from 'lucide-react'
 import { useApp } from '../../store/app'
+import { useT } from '../../i18n'
 
 /**
  * Make this pane a paste target while its session is live, and hand it any
@@ -92,6 +93,7 @@ export function PasteConfirm({
   onConfirm: () => void
   onCancel: () => void
 }): React.JSX.Element {
+  const t = useT()
   // Split on every break xterm will send as Enter, a lone \r included, so the
   // preview shows one row per command that will run.
   const rows = text.split(/\r\n|\r|\n/)
@@ -108,9 +110,7 @@ export function PasteConfirm({
         <div className="row" style={{ gap: 8, color: 'var(--warn)' }}>
           <AlertTriangle size={16} />
           <span style={{ fontSize: 12 }}>
-            {local ? 'This is a shell on this computer.' : 'This is a remote shell.'} Check the
-            commands before continuing.
-          </span>
+            {local ? 'This is a shell on this computer.' : 'This is a remote shell.'} {t('Check the commands before continuing.')}</span>
         </div>
         <pre className="paste-preview selectable">
           {preview.join('\n')}
@@ -123,8 +123,7 @@ export function PasteConfirm({
               the next Enter -- a key repeat or a second tap -- as consent to a
               text nobody has read yet. So there, Cancel holds the focus. */}
           <button className="btn sm" onClick={onCancel} autoFocus={full}>
-            Cancel
-          </button>
+            {t('Cancel')}</button>
           <button className="btn primary sm" onClick={onConfirm} autoFocus={!full}>
             <ClipboardPaste size={14} /> {full || bracketed ? 'Paste' : 'Paste and run'}
           </button>

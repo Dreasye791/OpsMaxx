@@ -24,6 +24,7 @@ import {
   respondToApproval,
   useApprovalFuse
 } from '../../store/approvalQueue'
+import { useT } from '../../i18n'
 
 // The approval modal.
 //
@@ -219,12 +220,11 @@ export function WritePreview({
   agentName: string
   preview: ContentPreview
 }): React.JSX.Element {
+  const t = useT()
   return (
     <div>
       <div style={{ color: 'var(--text-faint)', fontSize: 'var(--fs-caption)', marginBottom: 4 }}>
-        What {agentName} wants written — the agent’s content, not OpsMaxx’s. Secrets are shown redacted, and
-        invisible characters as ⟨U+…⟩.
-      </div>
+        {t('What')}{' '}{agentName} {t('wants written — the agent’s content, not OpsMaxx’s. Secrets are shown redacted, and invisible characters as ⟨U+…⟩.')}</div>
       <pre
         className="mono"
         aria-label={`File content written by ${agentName}`}
@@ -246,10 +246,7 @@ export function WritePreview({
       </pre>
       {preview.omittedChars > 0 && (
         <div style={{ color: 'var(--warn)', fontSize: 'var(--fs-caption)', marginTop: 4 }}>
-          Only the start is shown: {preview.omittedChars.toLocaleString()} more characters
-          {preview.omittedLines > 0 ? ` (${preview.omittedLines.toLocaleString()} more lines)` : ''} are not.
-          Approving writes all of it.
-        </div>
+          {t('Only the start is shown:')}{' '}{preview.omittedChars.toLocaleString()} {t('more characters')}{preview.omittedLines > 0 ? ` (${preview.omittedLines.toLocaleString()} more lines)` : ''} {t('are not. Approving writes all of it.')}</div>
       )}
     </div>
   )
@@ -262,6 +259,7 @@ export function ApprovalDialog({
   request: ApprovalRequest
   waiting: number
 }): React.JSX.Element {
+  const t = useT()
   const subject = {
     capability: request.capability,
     action: request.action,
@@ -350,15 +348,15 @@ export function ApprovalDialog({
     // burning fuse and nothing on screen to say so.
     <div className="scrim approval-scrim">
       <ToastSlot />
-      <div className="modal" role="dialog" aria-modal aria-label="AI action requires approval">
+      <div className="modal" role="dialog" aria-modal aria-label={t('AI action requires approval')}>
         <div className="modal-header">
           <div>
             <h2>
               <ShieldAlert size={15} style={{ verticalAlign: -2, marginRight: 6, color: toneText }} />
-              {request.agentName} is asking to act on {approvalTarget(request)}
+              {request.agentName} {t('is asking to act on')}{' '}{approvalTarget(request)}
             </h2>
             <div className="sub">
-              It is blocked until you answer. {waiting > 1 ? `${waiting - 1} more request(s) behind this one.` : ''}
+              {t('It is blocked until you answer.')}{' '}{waiting > 1 ? `${waiting - 1} more request(s) behind this one.` : ''}
             </div>
             {(request.sessionMode || request.protectedTarget) && (
               <div className="row" style={{ gap: 6, marginTop: 6 }}>
@@ -366,19 +364,18 @@ export function ApprovalDialog({
                   <span
                     className={clsx('chip', request.sessionMode === 'bypass' && 'danger')}
                     data-testid="approval-mode"
-                    title="The session’s mode when it asked"
+                    title={t('The session’s mode when it asked')}
                   >
-                    Asked under: {sessionModeLabel(sessionModeOf({ mode: request.sessionMode }), request.sessionGroupName)}
+                    {t('Asked under:')}{' '}{t(sessionModeLabel(sessionModeOf({ mode: request.sessionMode }), request.sessionGroupName))}
                   </span>
                 )}
                 {request.protectedTarget && (
                   <span
                     className="chip warn"
                     data-testid="approval-protected"
-                    title="This target is Protected: every change is approved first, whatever the session’s mode."
+                    title={t('This target is Protected: every change is approved first, whatever the session’s mode.')}
                   >
-                    Protected
-                  </span>
+                    {t('Protected')}</span>
                 )}
               </div>
             )}
@@ -386,9 +383,7 @@ export function ApprovalDialog({
                 that approving it alone returns nothing. */}
             {request.workspaceOf && (
               <div className="sub">
-                Workspace {request.workspaceOf.index} of {request.workspaceOf.total} this call asks about. It returns
-                nothing unless you approve every one of them.
-              </div>
+                {t('Workspace')}{' '}{request.workspaceOf.index} {t('of')}{' '}{request.workspaceOf.total} {t('this call asks about. It returns nothing unless you approve every one of them.')}</div>
             )}
           </div>
           <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
@@ -421,16 +416,13 @@ export function ApprovalDialog({
                   style={{ marginTop: 6 }}
                   onClick={() => void extendApprovalFuse(request.id, 300)}
                 >
-                  Give me more time
-                </button>
+                  {t('Give me more time')}</button>
               ) : (
                 // The honest absence. The timer lives in main's approvals.ts
                 // and no IPC reaches it, so a "Give me more time" button here
                 // would be a control that looked like it worked and did not.
                 <div style={{ marginTop: 4, fontSize: 'var(--fs-caption)', color: 'var(--text-faint)', maxWidth: 210 }}>
-                  This build cannot extend the fuse. Decide later keeps it in the status bar — the clock keeps
-                  running either way.
-                </div>
+                  {t('This build cannot extend the fuse. Decide later keeps it in the status bar — the clock keeps running either way.')}</div>
               ))}
           </div>
         </div>
@@ -468,13 +460,12 @@ export function ApprovalDialog({
                 Rule: {request.policyReason}
                 <div className="row" style={{ gap: 12, marginTop: 4 }}>
                   <button className="linklike" title={LEAVES} onClick={openSession}>
-                    Change this agent’s profile
-                  </button>
+                    {t('Change this agent’s profile')}</button>
                   {/* Only a Custom group's switch can be changed; a predefined
                       profile's is part of what the profile means. */}
                   {askedCustom && /confirm risky actions/i.test(request.policyReason) && (
                     <button className="linklike" title={LEAVES} onClick={() => void openGroup()}>
-                      Change Confirm risky actions{prov.groupName ? ` on ${prov.groupName}` : ''}
+                      {t('Change Confirm risky actions')}{prov.groupName ? ` on ${prov.groupName}` : ''}
                     </button>
                   )}
                 </div>
@@ -492,16 +483,14 @@ export function ApprovalDialog({
             <div style={{ fontSize: 14, lineHeight: 1.55, color: 'var(--text)' }}>{consequence.text}</div>
             {!consequence.known && (
               <div style={{ fontSize: 'var(--fs-caption)', color: 'var(--warn)', marginTop: 6 }}>
-                Not being able to describe an action is itself a reason to look harder at it.
-              </div>
+                {t('Not being able to describe an action is itself a reason to look harder at it.')}</div>
             )}
           </div>
 
           {/* 3. The command, as evidence — secondary to the sentence above it. */}
           <div>
             <div style={{ color: 'var(--text-faint)', fontSize: 'var(--fs-caption)', marginBottom: 4 }}>
-              What {request.agentName} asked OpsMaxx to run
-            </div>
+              {t('What')}{' '}{request.agentName} {t('asked OpsMaxx to run')}</div>
             <pre
               className="mono"
               style={{
@@ -524,7 +513,7 @@ export function ApprovalDialog({
 
           {/* 4. Provenance. */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-            <Row label="Agent">
+            <Row label={t('Agent')}>
               {request.agentName}
               {askedCustom
                 ? prov.groupName
@@ -541,43 +530,38 @@ export function ApprovalDialog({
                 </button>
               )}
               {request.toolName ? (
-                <span className="mono" style={{ color: 'var(--text-faint)' }}> · called {request.toolName}</span>
+                <span className="mono" style={{ color: 'var(--text-faint)' }}> {t('· called')}{' '}{request.toolName}</span>
               ) : (
                 ''
               )}
             </Row>
-            <Row label="Where">{approvalWhere(request)}</Row>
+            <Row label={t('Where')}>{approvalWhere(request)}</Row>
             {/* Which permission a yes is spent on. The capability was the one
                 fact on the request the dialog only used internally, and it is
                 the unit a session grant is measured in. */}
-            <Row label="Permission">
+            <Row label={t('Permission')}>
               {capabilityLabel(request.capability)}
               <span className="mono" style={{ color: 'var(--text-faint)' }}> · {request.capability}</span>
             </Row>
-            <Row label="Session">
+            <Row label={t('Session')}>
               {!prov.sessionRead ? (
                 'reading…'
               ) : prov.startedAt ? (
                 <>
-                  connected {duration(Date.parse(prov.startedAt))} ago
-                  <span className="mono" style={{ color: 'var(--text-faint)' }}>
+                  {t('connected')}{' '}{duration(Date.parse(prov.startedAt))} {t('ago')}<span className="mono" style={{ color: 'var(--text-faint)' }}>
                     {' '}
                     ({request.sessionId})
                   </span>
                 </>
               ) : (
                 <span style={{ color: 'var(--warn)' }}>
-                  OpsMaxx has no session record for {request.sessionId} — it cannot say who this is or when they
-                  connected.
-                </span>
+                  {t('OpsMaxx has no session record for')}{' '}{request.sessionId} {t('— it cannot say who this is or when they connected.')}</span>
               )}
             </Row>
-            <Row label="Actions so far">
+            <Row label={t('Actions so far')}>
               {prov.actions === null ? (
                 <span style={{ color: 'var(--warn)' }}>
-                  OpsMaxx could not read the audit log, so it cannot say whether this is this session’s first
-                  action or its fortieth.
-                </span>
+                  {t('OpsMaxx could not read the audit log, so it cannot say whether this is this session’s first action or its fortieth.')}</span>
               ) : (
                 // "at least" only for the renderer's own tail read. Main counts
                 // the whole log or sends nothing, so a number that came from the
@@ -586,7 +570,7 @@ export function ApprovalDialog({
                 `${prov.capped ? 'at least ' : ''}${prov.actions} recorded before this one`
               )}
             </Row>
-            <Row label="What led to this">
+            <Row label={t('What led to this')}>
               {/* THE ONE FIELD ON THIS SCREEN THE AGENT WROTE.
                   Rendered as an attributed quotation, in the agent's name, and
                   never as OpsMaxx's own voice — the party asking for
@@ -603,17 +587,14 @@ export function ApprovalDialog({
                 <>
                   <span style={{ color: 'var(--text)' }}>“{request.intent}”</span>
                   <div style={{ color: 'var(--text-faint)', fontSize: 'var(--fs-caption)', marginTop: 3 }}>
-                    {request.agentName}’s own words, not OpsMaxx’s. Nothing checked whether they are true.
-                  </div>
+                    {request.agentName}{t('’s own words, not OpsMaxx’s. Nothing checked whether they are true.')}</div>
                 </>
               ) : (
                 <span style={{ color: 'var(--warn)' }}>
-                  {request.agentName} sent no reason. OpsMaxx asks for one on every gated call and does not
-                  require it, so nothing here knows what task this action belongs to.
-                </span>
+                  {request.agentName} {t('sent no reason. OpsMaxx asks for one on every gated call and does not require it, so nothing here knows what task this action belongs to.')}</span>
               )}
             </Row>
-            <Row label="If you deny">{describeDenial(subject)}</Row>
+            <Row label={t('If you deny')}>{describeDenial(subject)}</Row>
           </div>
         </div>
 
@@ -630,21 +611,20 @@ export function ApprovalDialog({
         )}
         {/* Future calls only, and said so: a mode change here is not an answer. */}
         <div className="approval-note approval-mode">
-          <span>Change this agent’s profile</span>
+          <span>{t('Change this agent’s profile')}</span>
           <ModePicker
             value={mode}
             onChange={changeMode}
             protectedCount={request.protectedTarget ? 1 : 0}
             onOpen={readMode}
             size="sm"
-            title="Applies to this agent’s later calls; this request still needs an answer. Read only is the exception: it also denies this request and any other this agent has waiting."
+            title={t('Applies to this agent’s later calls; this request still needs an answer. Read only is the exception: it also denies this request and any other this agent has waiting.')}
           />
         </div>
         {stopFailed && (
           <div className="approval-note approval-stop-failed state-alarm" role="alert">
             <span className="state-dot is-alarm" aria-hidden="true" />
-            {KILL_SWITCH_FAILED}. This request is still waiting on you.
-          </div>
+            {KILL_SWITCH_FAILED}{t('. This request is still waiting on you.')}</div>
         )}
         {/* Two groups that wrap rather than one row that overflows. At 1440
             wide, with a session grant label, the single row was wider than the
@@ -658,8 +638,7 @@ export function ApprovalDialog({
             style={{ color: 'var(--danger)', borderColor: 'transparent', background: 'transparent' }}
             onClick={() => void denyAndStopAllAi().then((ok) => setStopFailed(!ok))}
           >
-            <Octagon size={13} /> Deny and stop all AI access
-          </button>
+            <Octagon size={13} /> {t('Deny and stop all AI access')}</button>
           <div className="approval-answers">
             {/* Labelled, not a bare ✕.
                 The choice was between removing the dismiss control entirely and
@@ -673,8 +652,7 @@ export function ApprovalDialog({
                 clickable the whole time. A bare ✕ could not have been used for
                 this, because a ✕ does not say whether it denies or defers. */}
             <button className="btn ghost" onClick={() => deferApproval(request.id)}>
-              <X size={13} /> Decide later
-            </button>
+              <X size={13} /> {t('Decide later')}</button>
             {/* Two yeses, and they say different things. "Approve once" is this
                 call; the second button remembers the answer for the rest of the
                 session, and its name is the grant's full extent. Absent for a
@@ -706,8 +684,7 @@ export function ApprovalDialog({
                 if (allow(e)) void respondToApproval(request.id, 'approved', 'once')
               }}
             >
-              Approve once
-            </button>
+              {t('Approve once')}</button>
             <button
               className="btn"
               autoFocus
@@ -719,8 +696,7 @@ export function ApprovalDialog({
               }}
               onClick={() => void respondToApproval(request.id, 'denied')}
             >
-              Deny
-            </button>
+              {t('Deny')}</button>
           </div>
         </div>
       </div>

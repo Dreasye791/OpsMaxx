@@ -1,6 +1,7 @@
 import type { ApiCollectionV2, HttpRequest, Id } from '../../../../../shared/apiModel'
 import { DEFAULT_TIMEOUT_MS, MAX_REDIRECT_HOPS, MAX_TIMEOUT_MS } from '../../../../../shared/httpClient'
 import { HTTP_FIX_EVENT, type HttpFixDetail } from '../response/ResponsePane'
+import { useT } from '../../../i18n'
 
 export interface RequestSettingsProps {
   tabId: Id
@@ -11,6 +12,7 @@ export interface RequestSettingsProps {
 }
 
 export function RequestSettings({ tabId, req, onChange, collection, readOnly }: RequestSettingsProps): React.JSX.Element {
+  const t = useT()
   const fallback = collection?.timeoutMs ?? DEFAULT_TIMEOUT_MS
   const settings = (patch: Partial<HttpRequest['settings']>): void => {
     if (!readOnly) onChange({ ...req, settings: { ...req.settings, ...patch } })
@@ -27,8 +29,7 @@ export function RequestSettings({ tabId, req, onChange, collection, readOnly }: 
     <div className="hc-settings">
       <div className="hc-field">
         <label className="ui-label" htmlFor={`${tabId}-timeout`}>
-          Timeout (seconds)
-        </label>
+          {t('Timeout (seconds)')}</label>
         <input
           id={`${tabId}-timeout`}
           className="hc-input hc-num"
@@ -45,8 +46,7 @@ export function RequestSettings({ tabId, req, onChange, collection, readOnly }: 
           }}
         />
         <span className="hc-note">
-          Empty uses {collection?.timeoutMs ? 'the collection’s' : 'the default'} {fallback / 1000} s. At most 10 minutes.
-        </span>
+          {t('Empty uses')}{' '}{collection?.timeoutMs ? 'the collection’s' : 'the default'} {fallback / 1000} {t('s. At most 10 minutes.')}</span>
       </div>
       <label className="hc-check">
         <input
@@ -55,10 +55,9 @@ export function RequestSettings({ tabId, req, onChange, collection, readOnly }: 
           disabled={readOnly}
           onChange={(e) => settings({ followRedirects: e.target.checked })}
         />
-        Follow redirects
-      </label>
+        {t('Follow redirects')}</label>
       <label className="hc-field">
-        <span className="ui-label">Max redirects</span>
+        <span className="ui-label">{t('Max redirects')}</span>
         <input
           className="hc-input hc-num"
           type="number"
@@ -84,8 +83,7 @@ export function RequestSettings({ tabId, req, onChange, collection, readOnly }: 
                 )
               }
             >
-              Change
-            </button>
+              {t('Change')}</button>
           </>
         )}
       </p>

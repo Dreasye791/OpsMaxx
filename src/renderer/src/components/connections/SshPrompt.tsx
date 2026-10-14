@@ -4,11 +4,13 @@ import { Modal } from '../common/Modal'
 import type { SshPromptRequest } from '../../../../preload/index'
 import { bridgeOn } from '../../lib/bridge'
 import { Switch } from '../common/Switch'
+import { useT } from '../../i18n'
 
 // Answers keyboard-interactive challenges: the second factor on servers with
 // AuthenticationMethods publickey,keyboard-interactive, or the password on
 // servers that only offer keyboard-interactive.
 export function SshPrompt(): React.JSX.Element | null {
+  const t = useT()
   /**
    * A QUEUE, not a slot.
    *
@@ -134,14 +136,12 @@ export function SshPrompt(): React.JSX.Element | null {
           <label className="row" style={{ gap: 8 }}>
             <Switch checked={remember} onChange={setRemember} />
             <span className="muted" style={{ fontSize: 12 }}>
-              Remember this answer for {request.host} (stored in OS secure storage)
-            </span>
+              {t('Remember this answer for')}{' '}{request.host} {t('(stored in OS secure storage)')}</span>
           </label>
         )}
         {looksOneTime && (
           <span className="faint" style={{ fontSize: 11 }}>
-            One-time codes change each login and are never stored.
-          </span>
+            {t('One-time codes change each login and are never stored.')}</span>
         )}
         {waiting > 0 && (
           <span className="field-hint">
@@ -154,11 +154,9 @@ export function SshPrompt(): React.JSX.Element | null {
         <div className="row" style={{ gap: 8 }}>
           <span className="spacer" />
           <button className="btn sm" onClick={cancel}>
-            Cancel
-          </button>
+            {t('Cancel')}</button>
           <button className="btn primary sm" onClick={submit}>
-            Continue
-          </button>
+            {t('Continue')}</button>
         </div>
       </div>
     </Modal>

@@ -588,6 +588,29 @@ const api = {
   theme: {
     set: (mode: ThemeMode): Promise<boolean> => ipcRenderer.invoke('theme:set', mode)
   },
+  /**
+   * The interface language, for everything the renderer does NOT own.
+   *
+   * The renderer translates itself — it holds the catalogue and does not need
+   * main for that. What it cannot do is the two things that belong to the shell:
+   *
+   *   1. The application menu. `installMenu` builds real labels ("Edit", "View"),
+   *      and those are native menu items, not DOM.
+   *   2. Chromium's own strings — the context menu on a terminal's right-click,
+   *      the find bar, the spell-check menu. Those come out of
+   *      `locales/*.pak`, which is chosen at STARTUP from the `--lang` switch,
+   *      so main has to remember the choice across restarts; see the
+   *      `OPSMAXX_LANG` handling in main.
+   *
+   * Both arguments, because they answer different questions: `locale` is what to
+   * render now, `preference` is what to remember. Sending only the resolved
+   * locale would turn "follow the system" into a hard `'en'` on the first
+   * English machine the app ever ran on.
+   */
+  i18n: {
+    set: (locale: string, preference: string): Promise<void> =>
+      ipcRenderer.invoke('i18n:set', locale, preference)
+  },
   dialog: {
     /** `title` lets the same ~/.ssh picker ask for a certificate as well as a key. */
     openKey: (title?: string): Promise<string | null> => ipcRenderer.invoke('dialog:openKey', title),

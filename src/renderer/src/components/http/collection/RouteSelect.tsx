@@ -1,5 +1,6 @@
 import type { ApiCollectionV2, Id, Route } from '../../../../../shared/apiModel'
 import { useApp } from '../../../store/app'
+import { useT } from '../../../i18n'
 
 /** A collection's route, from the fields it is stored in. */
 export function collectionRoute(c: Pick<ApiCollectionV2, 'viaServerId' | 'vpnProfileId'>): Route {
@@ -43,6 +44,7 @@ export function RouteSelect({
   onChange: (route: Route) => void
   ariaLabel?: string
 }): React.JSX.Element {
+  const t = useT()
   const ws = useApp((s) => s.activeWorkspaceId)
   const servers = useApp((s) => s.servers).filter((s) => s.workspaceId === ws)
   const vpns = useApp((s) => s.vpns).filter((v) => v.workspaceId === ws)
@@ -50,9 +52,9 @@ export function RouteSelect({
   const known = current === 'direct' || [...servers.map((s) => `server:${s.id}`), ...vpns.map((v) => `vpn:${v.id}`)].includes(current)
   return (
     <select className="hc-input" aria-label={ariaLabel} value={current} onChange={(e) => onChange(decode(e.target.value))}>
-      <option value="direct">This machine</option>
+      <option value="direct">{t('This machine')}</option>
       {servers.length > 0 && (
-        <optgroup label="Servers">
+        <optgroup label={t('Servers')}>
           {servers.map((s) => (
             <option key={s.id} value={`server:${s.id}`}>
               {s.name}
@@ -61,7 +63,7 @@ export function RouteSelect({
         </optgroup>
       )}
       {vpns.length > 0 && (
-        <optgroup label="VPN profiles">
+        <optgroup label={t('VPN profiles')}>
           {vpns.map((v) => (
             <option key={v.id} value={`vpn:${v.id}`}>
               {v.name}

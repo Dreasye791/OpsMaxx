@@ -2,6 +2,7 @@ import { Trash2 } from 'lucide-react'
 import { Modal } from '../common/Modal'
 import { useHttpCookies, type JarKey, type StoredCookie } from '../../store/httpCookies'
 import { useApp } from '../../store/app'
+import { useT } from '../../i18n'
 
 /** A jar's route, as the route chip names it. */
 function routeLabel(routeKey: string): string {
@@ -27,6 +28,7 @@ const expiry = (c: StoredCookie): string =>
  * credential, and deleting one does not need it.
  */
 export function CookiesPopover({ onClose }: { onClose: () => void }): React.JSX.Element {
+  const t = useT()
   const ws = useApp((s) => s.activeWorkspaceId)
   const jars = useHttpCookies((s) => s.jars)
   const mine = (Object.entries(jars) as [JarKey, StoredCookie[]][]).filter(
@@ -36,20 +38,19 @@ export function CookiesPopover({ onClose }: { onClose: () => void }): React.JSX.
 
   return (
     <Modal
-      title="Cookies"
+      title={t('Cookies')}
       subtitle="Cookies are kept until OpsMaxx quits."
       onClose={onClose}
-      cancelLabel="Close"
+      cancelLabel={t('Close')}
       footer={
         mine.length > 0 ? (
           <button className="btn danger" onClick={() => clearAll()}>
-            Clear all
-          </button>
+            {t('Clear all')}</button>
         ) : undefined
       }
     >
       <div className="hc-cookies">
-        {mine.length === 0 && <div className="faint">No cookies yet. Responses that set one add it here.</div>}
+        {mine.length === 0 && <div className="faint">{t('No cookies yet. Responses that set one add it here.')}</div>}
         {mine.map(([key, cookies]) => (
           <section className="hc-cookie-group" key={key} aria-label={routeLabel(key.slice(ws.length + 1))}>
             <div className="ui-label">{routeLabel(key.slice(ws.length + 1))}</div>
@@ -58,8 +59,7 @@ export function CookiesPopover({ onClose }: { onClose: () => void }): React.JSX.
                 <div className="hc-cookie-row">
                   <span className="hc-cookie-name">{domain}</span>
                   <button className="btn sm" onClick={() => clearDomain(key, domain)}>
-                    Clear domain
-                  </button>
+                    {t('Clear domain')}</button>
                 </div>
                 {list.map((c) => (
                   <div className="hc-cookie-row" key={`${c.name}|${c.path}`}>
@@ -74,7 +74,7 @@ export function CookiesPopover({ onClose }: { onClose: () => void }): React.JSX.
                     <button
                       className="icon-btn xs"
                       aria-label={`Delete cookie ${c.name} for ${domain}`}
-                      title="Delete"
+                      title={t('Delete')}
                       onClick={() => remove(key, c.name, c.domain, c.path)}
                     >
                       <Trash2 size={12} />

@@ -13,6 +13,7 @@ import {
   resolveBindings
 } from '../../lib/shortcuts'
 import { approvalShowing } from '../../hooks/useClickOutside'
+import { useT } from '../../i18n'
 
 const SCOPE_LABEL: Record<string, string> = {
   app: 'Outside terminals',
@@ -22,6 +23,7 @@ const SCOPE_LABEL: Record<string, string> = {
 }
 
 export function ShortcutManager(): React.JSX.Element {
+  const t = useT()
   const overrides = useApp((s) => s.settings.shortcuts)
   const setShortcut = useApp((s) => s.setShortcut)
   const resetShortcuts = useApp((s) => s.resetShortcuts)
@@ -116,29 +118,25 @@ export function ShortcutManager(): React.JSX.Element {
     <div>
       <div className="row" style={{ marginBottom: 16 }}>
         <span className="faint" style={{ fontSize: 12 }}>
-          Click a shortcut and press the keys you want. Backspace clears it, Esc cancels.
-        </span>
+          {t('Click a shortcut and press the keys you want. Backspace clears it, Esc cancels.')}</span>
         <span className="spacer" />
         <button
           className="btn sm"
           onClick={() => {
             resetShortcuts()
-            toast('Every shortcut is back to its default.', 'ok')
+            toast(t('Every shortcut is back to its default.'), 'ok')
           }}
         >
-          <RotateCcw size={13} /> Reset
-        </button>
+          <RotateCcw size={13} /> {t('Reset')}</button>
         <button className="btn sm" onClick={() => void exportJson()}>
-          <Download size={13} /> Export
-        </button>
+          <Download size={13} /> {t('Export')}</button>
         <button className="btn sm" onClick={() => void importJson()}>
-          <Upload size={13} /> Import
-        </button>
+          <Upload size={13} /> {t('Import')}</button>
       </div>
 
       {groups.map(({ group, ids }) => (
         <div key={group}>
-          <div className="palette-group">{group}</div>
+          <div className="palette-group">{t(group)}</div>
           {ids.map((id) => {
             const cmd = COMMANDS_BY_ID.get(id)
             if (!cmd) return null
@@ -150,9 +148,11 @@ export function ShortcutManager(): React.JSX.Element {
             const shadows = shadowed.get(id)?.map((x) => COMMANDS_BY_ID.get(x)?.name).filter(Boolean)
             const shadowedBy = [...shadowed].find(([, apps]) => apps.includes(id))?.[0]
             const shadowNote = shadows?.length
-              ? `In the HTTP client this replaces ${shadows.join(', ')}`
+              ? t('In the HTTP client this replaces {names}', { names: shadows.join(', ') })
               : shadowedBy
-                ? `Shadowed in the HTTP client by ${COMMANDS_BY_ID.get(shadowedBy)?.name}`
+                ? t('Shadowed in the HTTP client by {name}', {
+                    name: COMMANDS_BY_ID.get(shadowedBy)?.name ?? ''
+                  })
                 : null
             return (
               <div
@@ -162,10 +162,10 @@ export function ShortcutManager(): React.JSX.Element {
                 style={jumpedTo === id ? { background: 'var(--accent-soft)' } : undefined}
               >
                 <span className="sc-name">
-                  {cmd.name}
+                  {t(cmd.name)}
                   <span className="faint" style={{ marginLeft: 8, fontSize: 11 }}>
-                    {SCOPE_LABEL[cmd.scope]}
-                    {cmd.hint ? ` · ${cmd.hint}` : ''}
+                    {t(SCOPE_LABEL[cmd.scope])}
+                    {cmd.hint ? ` · ${t(cmd.hint)}` : ''}
                     {shadowNote ? ` · ${shadowNote}` : ''}
                   </span>
                 </span>
@@ -177,17 +177,18 @@ export function ShortcutManager(): React.JSX.Element {
                       title={`${otherName} uses the same keys — go to it`}
                       onClick={() => jumpTo(other)}
                     >
-                      <AlertTriangle size={12} /> same keys as {otherName}
+                      <AlertTriangle size={12} /> {t('same keys as')}{' '}{otherName}
                     </button>
                   ) : (
                     <span className="sc-conflict">
-                      <AlertTriangle size={12} /> conflict
-                    </span>
+                      <AlertTriangle size={12} /> {t('conflict')}</span>
                   ))}
                 {overridden && (
                   <button
                     className="icon-btn"
-                    title={`Restore default (${displayCombo(defaultKeys(cmd)).join(' ')})`}
+                    title={t('Restore default ({keys})', {
+                      keys: displayCombo(defaultKeys(cmd)).join(' ')
+                    })}
                     onClick={() => setShortcut(id, null)}
                   >
                     <RotateCcw size={12} />
@@ -196,12 +197,14 @@ export function ShortcutManager(): React.JSX.Element {
                 <button
                   className={`sc-record${recording === id ? ' recording' : ''}`}
                   disabled={cmd.fixed}
-                  title={cmd.fixed ? 'This shortcut cannot be changed' : 'Click, then press keys'}
+                  title={
+                    cmd.fixed ? t('This shortcut cannot be changed') : t('Click, then press keys')
+                  }
                   onClick={() => !cmd.fixed && setRecording(id)}
                   style={clash ? { borderColor: 'var(--danger)', color: 'var(--danger)' } : undefined}
                 >
                   {recording === id ? (
-                    'Press keys…'
+                    t('Press keys…')
                   ) : keys ? (
                     displayCombo(keys).map((k, i) => (
                       <span className="kbd" key={i}>
@@ -210,8 +213,7 @@ export function ShortcutManager(): React.JSX.Element {
                     ))
                   ) : (
                     <span className="faint">
-                      <X size={12} /> unbound
-                    </span>
+                      <X size={12} /> {t('unbound')}</span>
                   )}
                 </button>
               </div>

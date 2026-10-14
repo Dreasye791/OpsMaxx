@@ -7,6 +7,7 @@ import { TerminalView } from '../terminal/TerminalView'
 import { localTransport, sshTransport, containerTransport} from '../../lib/transport'
 import type { TerminalTransport } from '../../lib/transport'
 import type { Server } from '../../types'
+import { useT } from '../../i18n'
 
 // The N panes of one tab, laid out along a single axis.
 //
@@ -26,6 +27,7 @@ import type { Server } from '../../types'
 //    session survives. Rendering the terminal bare when unsplit and wrapped when
 //    split would remount it on every toggle.
 export function PaneGrid({ tabId, tp }: { tabId: string; tp: TabPanes }): React.JSX.Element {
+  const t = useT()
   const servers = useApp((s) => s.servers)
   const localShells = useApp((s) => s.localShells)
   const setServerStatus = useApp((s) => s.setServerStatus)
@@ -117,8 +119,8 @@ export function PaneGrid({ tabId, tp }: { tabId: string; tp: TabPanes }): React.
           {!single && (
             <button
               className="icon-btn"
-              title="Close pane"
-              aria-label="Close pane"
+              title={t('Close pane')}
+              aria-label={t('Close pane')}
               // Sits over the terminal, so it carries its own background rather
               // than relying on whatever character happens to be underneath it.
               style={{
@@ -162,12 +164,13 @@ function PaneBody({
   onClose: () => void
   closeLabel: string
 }): React.JSX.Element {
+  const t = useT()
   const { transport, server } = resolve(pane.target)
   if (!transport && !server) {
     return (
       <EmptyState
         icon={<TerminalIcon size={26} />}
-        title="Session unavailable"
+        title={t('Session unavailable')}
         message={
           pane.target.kind === 'local'
             ? 'This shell is no longer available on this machine.'

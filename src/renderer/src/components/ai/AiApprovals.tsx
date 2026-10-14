@@ -5,8 +5,10 @@ import { approvalWhere, describeConsequence, formatRiskLabel, riskTone } from '.
 import { bridgeOn } from '../../lib/bridge'
 import { LATER_WRITES_UNSEEN, WritePreview, capabilityLabel, sessionGrantLabel } from './ApprovalDialog'
 import { useArming } from '../../hooks/useArming'
+import { useT } from '../../i18n'
 
 export function AiApprovals(): React.JSX.Element {
+  const t = useT()
   // `null` until the first read comes back, NOT `[]`.
   //
   // This panel says "Nothing waiting on you right now", and that sentence is
@@ -56,21 +58,17 @@ export function AiApprovals(): React.JSX.Element {
 
   return (
     <div className="settings-section">
-      <h2>Approvals</h2>
+      <h2>{t('Approvals')}</h2>
       <div className="sub">
-        Actions an access group marked ASK wait here for your decision. An AI agent can never approve
-        its own request — only this UI can.
-      </div>
+        {t('Actions an access group marked ASK wait here for your decision. An AI agent can never approve its own request — only this UI can.')}</div>
 
       {unreadable ? (
         <div className="s-desc state-unknown">
-          The list of pending approvals could not be read, so this is not a statement that none are
-          waiting.
-        </div>
+          {t('The list of pending approvals could not be read, so this is not a statement that none are waiting.')}</div>
       ) : approvals === null ? (
-        <div className="s-desc state-unknown">Checking for anything waiting…</div>
+        <div className="s-desc state-unknown">{t('Checking for anything waiting…')}</div>
       ) : approvals.length === 0 ? (
-        <div className="s-desc">Nothing waiting on you right now.</div>
+        <div className="s-desc">{t('Nothing waiting on you right now.')}</div>
       ) : null}
 
       {/* Same vocabulary as the modal, from the same module. This list used to
@@ -122,8 +120,7 @@ export function AiApprovals(): React.JSX.Element {
           </div>
           <div className="spacer" />
           <button className="btn sm danger" onClick={() => respond(a.id, 'denied')}>
-            <X size={13} /> Deny
-          </button>
+            <X size={13} /> {t('Deny')}</button>
           {grantLabel && (
             <button
               className="btn sm"
@@ -144,8 +141,7 @@ export function AiApprovals(): React.JSX.Element {
               if (allow(e)) void respond(a.id, 'approved', 'once')
             }}
           >
-            <Check size={13} /> Approve once
-          </button>
+            <Check size={13} /> {t('Approve once')}</button>
         </div>
         )
       })}
@@ -157,10 +153,9 @@ export function AiApprovals(): React.JSX.Element {
           resolved and the agent has long since been answered. */}
       {recent.length > 0 && (
         <>
-          <h3 style={{ marginTop: 20 }}>Recently resolved</h3>
+          <h3 style={{ marginTop: 20 }}>{t('Recently resolved')}</h3>
           <div className="sub">
-            Kept until OpsMaxx restarts. The audit log is the permanent record.
-          </div>
+            {t('Kept until OpsMaxx restarts. The audit log is the permanent record.')}</div>
           {recent.map((a) => (
             <div className="list-row" key={a.id} style={{ opacity: 0.75 }}>
               <div>

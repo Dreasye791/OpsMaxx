@@ -3,6 +3,7 @@ import { KeyRound } from 'lucide-react'
 import { Modal } from '../common/Modal'
 import type { VpnPrompt } from '../../types'
 import { bridgeOn } from '../../lib/bridge'
+import { useT } from '../../i18n'
 
 const FIELD_LABEL: Record<VpnPrompt['kind'], string> = {
   otp: 'Code',
@@ -19,6 +20,7 @@ const FIELD_LABEL: Record<VpnPrompt['kind'], string> = {
 // for an OTP long after the user has switched to a terminal, and a prompt
 // nobody can see is a connection that hangs for no visible reason.
 export function VpnPromptModal(): React.JSX.Element | null {
+  const t = useT()
   // A queue, not a single slot. Engines do not take turns: two profiles can be
   // starting at once, and `autoStart` makes that the ordinary case rather than
   // the odd one. Holding one request meant the second overwrote the first, the
@@ -86,11 +88,9 @@ export function VpnPromptModal(): React.JSX.Element | null {
         <>
           <span className="spacer" />
           <button className="btn" onClick={cancel}>
-            Cancel
-          </button>
+            {t('Cancel')}</button>
           <button className="btn primary" disabled={!value} onClick={submit}>
-            Continue
-          </button>
+            {t('Continue')}</button>
         </>
       }
     >
@@ -123,8 +123,7 @@ export function VpnPromptModal(): React.JSX.Element | null {
 
         {request.kind === 'otp' && (
           <span className="faint" style={{ fontSize: 11 }}>
-            One-time codes change every login and are never stored.
-          </span>
+            {t('One-time codes change every login and are never stored.')}</span>
         )}
 
         {waiting > 0 && (

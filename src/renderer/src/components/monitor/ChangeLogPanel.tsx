@@ -29,6 +29,7 @@ import {
 } from '../../../../shared/changelog'
 import type { Server } from '../../types'
 import { NoteWhy, PanelShell } from './PanelShell'
+import { useT } from '../../i18n'
 
 // "What did I change on Tuesday." — roadmap item 14, the view.
 //
@@ -344,6 +345,7 @@ function coverageHeadline(coverage: ChangeLogCoverage[]): { text: string; incomp
 // ---------------------------------------------------------------------------
 
 export function ChangeLogPanel({ servers }: { servers: Server[] }): React.JSX.Element {
+  const t = useT()
   // main does not hold the workspace's server list — the renderer does — so the
   // name is resolved here.
   const nameOf = useCallback(
@@ -409,13 +411,11 @@ export function ChangeLogPanel({ servers }: { servers: Server[] }): React.JSX.El
   return (
     <PanelShell
       icon={<History size={14} />}
-      title="Change log"
+      title={t('Change log')}
       about={
         <>
           <p>
-            What OpsMaxx itself changed on the estate, and when — with the coverage of each
-            source stated, so a quiet window is not read as a quiet week.
-          </p>
+            {t('What OpsMaxx itself changed on the estate, and when — with the coverage of each source stated, so a quiet window is not read as a quiet week.')}</p>
           <p data-testid="changelog-on">{CHANGELOG_SWITCH_ON}</p>
         </>
       }
@@ -427,23 +427,19 @@ export function ChangeLogPanel({ servers }: { servers: Server[] }): React.JSX.El
           onClick={() => void read()}
           disabled={reading}
         >
-          <RefreshCw size={13} className={clsx(reading && 'spin')} /> Refresh
-        </button>
+          <RefreshCw size={13} className={clsx(reading && 'spin')} /> {t('Refresh')}</button>
       }
     >
       {unavailable && (
         <div className="panel-note is-alarm" data-testid="changelog-unavailable">
-          The change log could not be read: this window is newer than the preload script it booted
-          with. Restart the app to rebuild it. Nothing below is a statement about what happened.
-        </div>
+          {t('The change log could not be read: this window is newer than the preload script it booted with. Restart the app to rebuild it. Nothing below is a statement about what happened.')}</div>
       )}
 
       {page !== null && !page.enabled && (
         <div className="panel-note is-unknown" data-testid="changelog-off">
           {CHANGELOG_SWITCH_OFF}{' '}
           <button className="btn ghost sm" onClick={() => openSettings('modules')}>
-            Modules
-          </button>
+            {t('Modules')}</button>
         </div>
       )}
 
@@ -452,7 +448,7 @@ export function ChangeLogPanel({ servers }: { servers: Server[] }): React.JSX.El
           <div className="cl-toolbar">
             <select
               className="input sm"
-              aria-label="Time range"
+              aria-label={t('Time range')}
               value={windowId}
               onChange={(e) => setWindowId(e.target.value)}
             >
@@ -464,11 +460,11 @@ export function ChangeLogPanel({ servers }: { servers: Server[] }): React.JSX.El
             </select>
             <select
               className="input sm"
-              aria-label="Who"
+              aria-label={t('Who')}
               value={actor}
               onChange={(e) => setActor(e.target.value as ChangeLogActor | 'any')}
             >
-              <option value="any">Anyone</option>
+              <option value="any">{t('Anyone')}</option>
               {(Object.keys(ACTOR_LABEL) as ChangeLogActor[]).map((a) => (
                 <option key={a} value={a}>
                   {ACTOR_LABEL[a]}
@@ -477,24 +473,24 @@ export function ChangeLogPanel({ servers }: { servers: Server[] }): React.JSX.El
             </select>
             <select
               className="input sm"
-              aria-label="What"
+              aria-label={t('What')}
               value={kind}
               onChange={(e) => setKind(e.target.value as ChangeLogKind | 'any')}
             >
-              <option value="any">Everything</option>
+              <option value="any">{t('Everything')}</option>
               {CHANGELOG_KINDS.map((k) => (
                 <option key={k} value={k}>
-                  {KIND_LABEL[k]}
+                  {t(KIND_LABEL[k])}
                 </option>
               ))}
             </select>
             <select
               className="input sm"
-              aria-label="Host"
+              aria-label={t('Host')}
               value={host}
               onChange={(e) => setHost(e.target.value)}
             >
-              <option value="">Every server</option>
+              <option value="">{t('Every server')}</option>
               {servers.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.name}
@@ -511,13 +507,13 @@ export function ChangeLogPanel({ servers }: { servers: Server[] }): React.JSX.El
               an unknown number" would be the same lie the coverage rows exist
               to prevent, told by the summary instead of by the timeline. */}
           {page.entries.length > 0 && (
-            <section className="kpi-band" aria-label="What changed" data-testid="changelog-summary">
+            <section className="kpi-band" aria-label={t('What changed')} data-testid="changelog-summary">
               <div className="kpi">
                 <div className="kpi-top">
                   <span className="kpi-icon">
                     <History size={13} />
                   </span>
-                  <span className="kpi-label">Changes</span>
+                  <span className="kpi-label">{t('Changes')}</span>
                 </div>
                 <div className="kpi-value">
                   {stats.total}
@@ -533,7 +529,7 @@ export function ChangeLogPanel({ servers }: { servers: Server[] }): React.JSX.El
                   <span className="kpi-icon">
                     <ServerIcon size={13} />
                   </span>
-                  <span className="kpi-label">Servers</span>
+                  <span className="kpi-label">{t('Servers')}</span>
                 </div>
                 <div className="kpi-value">{stats.hosts}</div>
                 <div className="kpi-sub">
@@ -568,7 +564,7 @@ export function ChangeLogPanel({ servers }: { servers: Server[] }): React.JSX.El
                     <span className="kpi-icon">
                       <AlertTriangle size={13} />
                     </span>
-                    <span className="kpi-label">Repeated most</span>
+                    <span className="kpi-label">{t('Repeated most')}</span>
                   </div>
                   <div className="kpi-value">
                     <span className="kpi-unit">×</span>
@@ -612,18 +608,13 @@ export function ChangeLogPanel({ servers }: { servers: Server[] }): React.JSX.El
 
           {page.hostFilterHidUnattributed !== undefined && (
             <div className="panel-note is-unknown" data-testid="changelog-host-filter-note">
-              {page.hostFilterHidUnattributed} entries in this window name no server at all — a local
-              shell, or a job that had not reached one — so filtering by server hides them. They are
-              not absent; they are unattributed.
-            </div>
+              {page.hostFilterHidUnattributed} {t('entries in this window name no server at all — a local shell, or a job that had not reached one — so filtering by server hides them. They are not absent; they are unattributed.')}</div>
           )}
 
           {page.more && (
             <div className="panel-note" data-testid="changelog-more">
-              More entries matched than fit on one page. The oldest shown is{' '}
-              {page.oldest === null ? 'unknown' : absolute(page.oldest)}; narrow the window to see
-              further back.
-            </div>
+              {t('More entries matched than fit on one page. The oldest shown is')}{' '}
+              {page.oldest === null ? 'unknown' : absolute(page.oldest)}{t('; narrow the window to see further back.')}</div>
           )}
 
           {page.entries.length === 0 ? (
@@ -631,12 +622,9 @@ export function ChangeLogPanel({ servers }: { servers: Server[] }): React.JSX.El
             // the one claim this panel exists to make.
             <div className="panel-empty" data-testid="changelog-empty">
               <p className="panel-empty-title">
-                Nothing matched this window — read the coverage above before reading that as a
-                quiet period.
-              </p>
+                {t('Nothing matched this window — read the coverage above before reading that as a quiet period.')}</p>
               <p className="panel-empty-body">
-                Widening the time range, or clearing the server filter, is the next thing to try.
-              </p>
+                {t('Widening the time range, or clearing the server filter, is the next thing to try.')}</p>
             </div>
           ) : (
             <div className="cl-timeline" data-testid="changelog-entries">

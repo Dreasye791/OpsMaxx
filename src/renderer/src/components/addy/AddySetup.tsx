@@ -5,6 +5,7 @@ import { clsx } from '../../lib/format'
 import { toast } from '../../store/toast'
 import { PairingPanel } from './PairingPanel'
 import { useAddyStatus } from './addyStatus'
+import { useT } from '../../i18n'
 
 /**
  * Getting onto a relay for the first time.
@@ -35,6 +36,7 @@ import { useAddyStatus } from './addyStatus'
  * is in progress.
  */
 export function AddySetup(): React.JSX.Element | null {
+  const t = useT()
   // Read here rather than taken as a prop, so BOTH call sites — the panel and
   // the Security page in Settings — get the same guard without either having
   // to remember to pass it. The Settings one had no guard at all, which made
@@ -148,13 +150,9 @@ export function AddySetup(): React.JSX.Element | null {
     const attached = status.relayURL ?? relayURL
     return (
       <div className="addy-setup">
-        <h3>Add another device</h3>
+        <h3>{t('Add another device')}</h3>
         <div className="setting-desc">
-          A second machine joins by <strong>pairing</strong> with this one. It needs no invite, and
-          nothing from whoever runs the relay. Both machines have to be open at the same time:
-          this one shows a code, the other types it, and you check that the same seven emoji
-          appear on both.
-        </div>
+          {t('A second machine joins by')}{' '}<strong>{t('pairing')}</strong> {t('with this one. It needs no invite, and nothing from whoever runs the relay. Both machines have to be open at the same time: this one shows a code, the other types it, and you check that the same seven emoji appear on both.')}</div>
         {/* THE OTHER MACHINE CANNOT GUESS THE RELAY ADDRESS, and nothing else
             in the product tells it. Pairing frames go through the relay, so
             the joining device needs this before it needs anything else —
@@ -162,15 +160,13 @@ export function AddySetup(): React.JSX.Element | null {
             second machine hit, before it even got to the code. */}
         <div className="addy-handoff">
           <span>
-            On the other machine, pick <strong>I already use OpsMaxx on another machine</strong>,
-            and give it this relay address:
-          </span>
+            {t('On the other machine, pick')}{' '}<strong>{t('I already use OpsMaxx on another machine')}</strong>{t(', and give it this relay address:')}</span>
           <div className="addy-handoff-row">
             <code>{attached || 'not recorded on this device'}</code>
             {attached && (
               <button
                 className="btn"
-                aria-label="Copy the relay address"
+                aria-label={t('Copy the relay address')}
                 onClick={() => {
                   void navigator.clipboard.writeText(attached)
                   toast('Relay address copied')
@@ -191,9 +187,8 @@ export function AddySetup(): React.JSX.Element | null {
                 is the one that hands the key over, so it is always the one
                 that shows. */}
             <div className="setting-desc">
-              This machine is the one with the account, so it is the one that{' '}
-              <strong>shows</strong> a code.
-            </div>
+              {t('This machine is the one with the account, so it is the one that')}{' '}
+              <strong>{t('shows')}</strong> {t('a code.')}</div>
             <PairingPanel baseURL={attached} />
           </>
         ) : (
@@ -202,9 +197,7 @@ export function AddySetup(): React.JSX.Element | null {
           // against an empty URL and fail on a screen that had promised it
           // would work.
           <div className="setting-desc">
-            This device is on an account but has no relay address recorded, so it cannot start a
-            pairing. Open <strong>Sync now</strong> above, or set the address in Settings.
-          </div>
+            {t('This device is on an account but has no relay address recorded, so it cannot start a pairing. Open')}{' '}<strong>{t('Sync now')}</strong> {t('above, or set the address in Settings.')}</div>
         )}
       </div>
     )
@@ -252,9 +245,9 @@ export function AddySetup(): React.JSX.Element | null {
   if (recovered) {
     return (
       <div className="addy-setup">
-        <h3>You are back in</h3>
+        <h3>{t('You are back in')}</h3>
         <div className="setting-desc">
-          Your data is being brought back onto this machine now. It is on the account as{' '}
+          {t('Your data is being brought back onto this machine now. It is on the account as')}{' '}
           <strong>{label.trim()}</strong>.
         </div>
         {/* THE REVIEW, and it is not a formality. Anyone who read the card can
@@ -265,14 +258,10 @@ export function AddySetup(): React.JSX.Element | null {
           <AlertTriangle size={15} aria-hidden />
           <div>
             <strong>
-              Check the device list: {recovered.devices}{' '}
-              {recovered.devices === 1 ? 'device is' : 'devices are'} on this account.
-            </strong>
+              {t('Check the device list:')}{' '}{recovered.devices}{' '}
+              {recovered.devices === 1 ? 'device is' : 'devices are'} {t('on this account.')}</strong>
             <div className="setting-desc">
-              Anyone who has read your recovery phrase could have added one the same way you just
-              did. Remove anything you do not recognise — and if the phrase has been seen by
-              somebody else, treat every device on the list as theirs too.
-            </div>
+              {t('Anyone who has read your recovery phrase could have added one the same way you just did. Remove anything you do not recognise — and if the phrase has been seen by somebody else, treat every device on the list as theirs too.')}</div>
           </div>
         </div>
       </div>
@@ -284,12 +273,9 @@ export function AddySetup(): React.JSX.Element | null {
   if (phrase && !done) {
     return (
       <div className="addy-setup">
-        <h3>Write this down before you go on</h3>
+        <h3>{t('Write this down before you go on')}</h3>
         <div className="setting-desc">
-          These twelve words are the only way back into this account if you lose every device on
-          it. OpsMaxx cannot show them to you again — not because it will not, but because nothing
-          on this machine keeps a copy.
-        </div>
+          {t('These twelve words are the only way back into this account if you lose every device on it. OpsMaxx cannot show them to you again — not because it will not, but because nothing on this machine keeps a copy.')}</div>
         <ol className="addy-phrase">
           {phrase.split(/\s+/).map((word, i) => (
             <li key={i}>
@@ -305,22 +291,20 @@ export function AddySetup(): React.JSX.Element | null {
             toast('Copied — paste it somewhere safe, then clear your clipboard')
           }}
         >
-          <Copy size={14} /> Copy
-        </button>
+          <Copy size={14} /> {t('Copy')}</button>
         <label className="addy-confirm">
           <input
             type="checkbox"
             checked={wroteItDown}
             onChange={(e) => setWroteItDown(e.target.checked)}
           />
-          <span>I have written these down somewhere that is not this computer</span>
+          <span>{t('I have written these down somewhere that is not this computer')}</span>
         </label>
         {/* Disabled until they say so. Not a nag: this is the one screen in the
             product where clicking past it loses something that cannot be
             recovered. */}
         <button className="btn" disabled={!wroteItDown} onClick={() => setDone(true)}>
-          <Check size={14} /> Done — I have them
-        </button>
+          <Check size={14} /> {t('Done — I have them')}</button>
       </div>
     )
   }
@@ -328,7 +312,7 @@ export function AddySetup(): React.JSX.Element | null {
   if (done) {
     return (
       <div className="addy-setup">
-        <h3>Add another device</h3>
+        <h3>{t('Add another device')}</h3>
         {/* PairingPanel says the "both machines open" part itself, beside the
             two buttons it belongs to. What it cannot say is the relay
             address, which the other machine needs before it can be reached at
@@ -336,14 +320,12 @@ export function AddySetup(): React.JSX.Element | null {
             screen. */}
         <div className="addy-handoff">
           <span>
-            On the other machine, pick <strong>I already use OpsMaxx on another machine</strong>,
-            and give it this relay address:
-          </span>
+            {t('On the other machine, pick')}{' '}<strong>{t('I already use OpsMaxx on another machine')}</strong>{t(', and give it this relay address:')}</span>
           <div className="addy-handoff-row">
             <code>{url.trim()}</code>
             <button
               className="btn"
-              aria-label="Copy the relay address"
+              aria-label={t('Copy the relay address')}
               onClick={() => {
                 void navigator.clipboard.writeText(url.trim())
                 toast('Relay address copied')
@@ -361,9 +343,7 @@ export function AddySetup(): React.JSX.Element | null {
   return (
     <div className="addy-setup">
       <div className="setting-desc">
-        addy is a relay you run yourself. It carries your data between your devices and cannot read
-        any of it — every object is sealed before it leaves, and the server holds no key.
-      </div>
+        {t('addy is a relay you run yourself. It carries your data between your devices and cannot read any of it — every object is sealed before it leaves, and the server holds no key.')}</div>
 
       {/* THE FORK, FIRST AND BEFORE ANY FIELD.
           The question a person arrives with is "how do I get my stuff onto
@@ -375,8 +355,7 @@ export function AddySetup(): React.JSX.Element | null {
           creating one rather than behind it. */}
       <div className="addy-fork" role="group" aria-labelledby="addy-fork-q">
         <div className="addy-fork-q" id="addy-fork-q">
-          Which of these is this machine?
-        </div>
+          {t('Which of these is this machine?')}</div>
         <button
           type="button"
           className={clsx('addy-choice', mode === 'create' && 'on')}
@@ -386,11 +365,9 @@ export function AddySetup(): React.JSX.Element | null {
             setError(null)
           }}
         >
-          <strong>This is my first device</strong>
+          <strong>{t('This is my first device')}</strong>
           <small>
-            Nothing of mine is on this relay yet. Creates the account — the only step in the whole
-            product that needs an invite.
-          </small>
+            {t('Nothing of mine is on this relay yet. Creates the account — the only step in the whole product that needs an invite.')}</small>
         </button>
         <button
           type="button"
@@ -401,11 +378,9 @@ export function AddySetup(): React.JSX.Element | null {
             setError(null)
           }}
         >
-          <strong>I already use OpsMaxx on another machine</strong>
+          <strong>{t('I already use OpsMaxx on another machine')}</strong>
           <small>
-            Joins the account that machine already has, by pairing with it. No invite, and nothing
-            to ask anybody for.
-          </small>
+            {t('Joins the account that machine already has, by pairing with it. No invite, and nothing to ask anybody for.')}</small>
         </button>
         <button
           type="button"
@@ -416,17 +391,15 @@ export function AddySetup(): React.JSX.Element | null {
             setError(null)
           }}
         >
-          <strong>My other devices are gone</strong>
+          <strong>{t('My other devices are gone')}</strong>
           <small>
-            Back in with the twelve words you wrote down. This is the only way in when there is no
-            other machine left to pair with.
-          </small>
+            {t('Back in with the twelve words you wrote down. This is the only way in when there is no other machine left to pair with.')}</small>
         </button>
       </div>
 
       {mode !== null && (
         <label className="addy-field">
-          <span>Relay address</span>
+          <span>{t('Relay address')}</span>
           <input
             value={url}
             onChange={(e) => setUrl(e.target.value)}
@@ -438,9 +411,8 @@ export function AddySetup(): React.JSX.Element | null {
               the first wall it hit. */}
           {mode === 'join' && (
             <small>
-              The same address the other machine uses. It is shown there, under{' '}
-              <strong>Account → Add another device</strong>, with a button to copy it.
-            </small>
+              {t('The same address the other machine uses. It is shown there, under')}{' '}
+              <strong>{t('Account → Add another device')}</strong>{t(', with a button to copy it.')}</small>
           )}
         </label>
       )}
@@ -451,20 +423,15 @@ export function AddySetup(): React.JSX.Element | null {
               fix. Nothing this machine can press begins a pairing: the
               device holding the account is the one that hands the key over,
               so it is the one that shows a code, always. */}
-          <strong>Start on the machine you already use.</strong>
+          <strong>{t('Start on the machine you already use.')}</strong>
           <ol>
             <li>
-              Open <strong>Account</strong> in OpsMaxx there and find <strong>Add another
-              device</strong>.
+              {t('Open')}{' '}<strong>{t('Account')}</strong> {t('in OpsMaxx there and find')}{' '}<strong>{t('Add another device')}</strong>.
             </li>
             <li>
-              Choose <strong>Show a code on this device</strong>. It shows a code and a pairing id
-              and keeps them on screen while it waits.
-            </li>
+              {t('Choose')}{' '}<strong>{t('Show a code on this device')}</strong>{t('. It shows a code and a pairing id and keeps them on screen while it waits.')}</li>
             <li>
-              Type both of them in below, then compare the seven emoji. Leave both machines open —
-              the code only works while that window is.
-            </li>
+              {t('Type both of them in below, then compare the seven emoji. Leave both machines open — the code only works while that window is.')}</li>
           </ol>
           {url.trim() ? (
             // THIS MACHINE HAS NO ACCOUNT, so it cannot be the one that shows
@@ -473,39 +440,35 @@ export function AddySetup(): React.JSX.Element | null {
             // button was offered on the one screen where it could only fail.
             <PairingPanel baseURL={url.trim()} canShow={false} />
           ) : (
-            <div className="setting-desc">Fill in the relay address above to go on.</div>
+            <div className="setting-desc">{t('Fill in the relay address above to go on.')}</div>
           )}
         </div>
       )}
 
       {mode === 'recover' && (
         <label className="addy-field">
-          <span>Recovery phrase</span>
+          <span>{t('Recovery phrase')}</span>
           <textarea
             className="addy-phrase-input"
             value={mnemonic}
             onChange={(e) => setMnemonic(e.target.value)}
             spellCheck={false}
             rows={3}
-            placeholder="The twelve words, in order, separated by spaces"
+            placeholder={t('The twelve words, in order, separated by spaces')}
           />
           <small>
-            Case and extra spaces do not matter. This is the only way back into an account whose
-            devices are all gone — it does not create a new one, and it does not need an invite.
-          </small>
+            {t('Case and extra spaces do not matter. This is the only way back into an account whose devices are all gone — it does not create a new one, and it does not need an invite.')}</small>
         </label>
       )}
 
       {mode === 'create' && (
       <label className="addy-field">
-        <span>Invite</span>
+        <span>{t('Invite')}</span>
         <input value={invite} onChange={(e) => setInvite(e.target.value)} spellCheck={false} />
         {/* Said plainly, because somebody reading this has no reason to know
             where an invite comes from. */}
         <small>
-          One invite creates one account, and only the first device needs one — every machine
-          after that is added by pairing, which needs nothing from the relay's operator.
-        </small>
+          {t('One invite creates one account, and only the first device needs one — every machine after that is added by pairing, which needs nothing from the relay\'s operator.')}</small>
         {/* THE ANSWER TO "where do I get one", which this said nothing about.
             It named a command without saying where to run it, so somebody who
             runs their own relay — which is everybody, that is the product —
@@ -513,7 +476,7 @@ export function AddySetup(): React.JSX.Element | null {
         <small>
           {consoleURL ? (
             <>
-              If this relay is yours, open{' '}
+              {t('If this relay is yours, open')}{' '}
               <a
                 href={consoleURL}
                 onClick={(e) => {
@@ -526,10 +489,9 @@ export function AddySetup(): React.JSX.Element | null {
               >
                 {consoleURL.replace(/^https:\/\//, '')}
               </a>{' '}
-              and sign in to create one. Otherwise ask whoever runs it.
-            </>
+              {t('and sign in to create one. Otherwise ask whoever runs it.')}</>
           ) : (
-            <>Ask whoever runs the relay for one, or open its address and sign in if it is yours.</>
+            <>{t('Ask whoever runs the relay for one, or open its address and sign in if it is yours.')}</>
           )}
         </small>
       </label>
@@ -542,9 +504,9 @@ export function AddySetup(): React.JSX.Element | null {
           is thrown away. */}
       {(mode === 'create' || mode === 'recover') && (
         <label className="addy-field">
-          <span>What to call this device</span>
+          <span>{t('What to call this device')}</span>
           <input value={label} onChange={(e) => setLabel(e.target.value)} spellCheck={false} />
-          <small>Shown in the device list on every device of this account.</small>
+          <small>{t('Shown in the device list on every device of this account.')}</small>
         </label>
       )}
 

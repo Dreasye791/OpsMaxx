@@ -1,6 +1,7 @@
 import { useCallback, useRef } from 'react'
 import { Plus, FolderPlus, Network, Download } from 'lucide-react'
 import { useApp } from '../../store/app'
+import { useT } from '../../i18n'
 import { clsx } from '../../lib/format'
 import { ConnectionTree } from '../connections/ConnectionTree'
 import { TunnelSidebar } from '../tunnels/TunnelSidebar'
@@ -27,6 +28,7 @@ const titles: Record<string, string> = {
 }
 
 export function Sidebar(): React.JSX.Element | null {
+  const t = useT()
   const activity = useApp((s) => s.activity)
   const fleetRail = useNav((s) => s.fleetRail)
   const monitorTab = useNav((s) => s.monitorTab)
@@ -70,10 +72,13 @@ export function Sidebar(): React.JSX.Element | null {
     activity === 'monitor' && fleetRail === 'monitor' && isPromotedModule(monitorTab as ModuleId)
       ? (MODULES.find((m) => m.id === monitorTab)?.label ?? null)
       : null
+  // Translated here rather than in `titles` above, which is module scope and
+  // evaluated at import — long before `settings.language` has been read back
+  // off disk. See the note on SETTINGS_SECTION_LABELS in store/nav.ts.
   const title =
     activity === 'monitor' && fleetRail === 'operations'
-      ? 'Operations'
-      : (promotedTitle ?? titles[activity] ?? '')
+      ? t('Operations')
+      : t(promotedTitle ?? titles[activity] ?? '')
 
   return (
     <aside className="sidebar" style={{ width }}>
@@ -84,30 +89,42 @@ export function Sidebar(): React.JSX.Element | null {
         <div className="sidebar-actions">
           {activity === 'connections' && (
             <>
-              <button className="icon-btn" title="New folder" onClick={() => addFolder('New folder')}>
+              <button
+                className="icon-btn"
+                title={t('New folder')}
+                onClick={() => addFolder(t('New folder'))}
+              >
                 <FolderPlus size={15} />
               </button>
               <button
                 className="icon-btn"
-                title="Import from ~/.ssh/config"
+                title={t('Import from ~/.ssh/config')}
                 onClick={() => setModal('import-ssh')}
               >
                 <Download size={15} />
               </button>
-              <button className="icon-btn" title="Add server" onClick={() => setModal('add-server')}>
+              <button
+                className="icon-btn"
+                title={t('Add server')}
+                onClick={() => setModal('add-server')}
+              >
                 <Plus size={16} />
               </button>
             </>
           )}
           {activity === 'databases' && (
-            <button className="icon-btn" title="Add database" onClick={() => setModal('add-database')}>
+            <button
+              className="icon-btn"
+              title={t('Add database')}
+              onClick={() => setModal('add-database')}
+            >
               <Plus size={16} />
             </button>
           )}
           {activity === 'tunnels' && (
             <button
               className="icon-btn"
-              title="New tunnel"
+              title={t('New tunnel')}
               onClick={() => openTunnels({ kind: 'create' })}
             >
               <Network size={15} />
@@ -120,14 +137,18 @@ export function Sidebar(): React.JSX.Element | null {
           {activity === 'monitor' && fleetRail === 'monitor' && (
             <button
               className="icon-btn"
-              title="New monitor group"
-              onClick={() => addMonitorGroup('New group')}
+              title={t('New monitor group')}
+              onClick={() => addMonitorGroup(t('New group'))}
             >
               <FolderPlus size={15} />
             </button>
           )}
           {activity === 'vault' && vaultUnlocked && (
-            <button className="icon-btn" title="New entry" onClick={() => void addVaultEntry()}>
+            <button
+              className="icon-btn"
+              title={t('New entry')}
+              onClick={() => void addVaultEntry()}
+            >
               <Plus size={16} />
             </button>
           )}

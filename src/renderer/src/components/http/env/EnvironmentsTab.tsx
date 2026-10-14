@@ -7,6 +7,7 @@ import { useHttp } from '../../../store/http'
 import { Modal } from '../../common/Modal'
 import { VariablesTable } from './VariablesTable'
 import '../nav.css'
+import { useT } from '../../../i18n'
 
 export const HOST_COLORS: HostColor[] = ['blue', 'violet', 'pink', 'jade', 'rust', 'olive']
 export const PROD_NAME = /\bprod(uction)?\b/i
@@ -37,6 +38,7 @@ export interface EnvironmentsTabProps {
 // The tab id is part of the workbench contract; the tab edits the workspace's
 // environments, whichever tab shows them.
 export function EnvironmentsTab({ tabId }: EnvironmentsTabProps): React.JSX.Element {
+  const t = useT()
   const ws = useApp((s) => s.activeWorkspaceId)
   const all = useApi((s) => s.workspace.environments)
   const envs = useMemo(() => all.filter((e) => e.workspaceId === ws), [all, ws])
@@ -82,13 +84,12 @@ export function EnvironmentsTab({ tabId }: EnvironmentsTabProps): React.JSX.Elem
       <div className="hc-envs-list">
         <div className="hc-envs-tools">
           <button type="button" className="btn sm" onClick={create}>
-            <Plus size={13} aria-hidden="true" /> New
-          </button>
+            <Plus size={13} aria-hidden="true" /> {t('New')}</button>
           <button
             type="button"
             className="hc-icon-btn"
-            aria-label="Duplicate environment"
-            title="Duplicate environment"
+            aria-label={t('Duplicate environment')}
+            title={t('Duplicate environment')}
             disabled={!env}
             onClick={() => {
               const id = env && api().duplicateEnvironment(env.id)
@@ -100,8 +101,8 @@ export function EnvironmentsTab({ tabId }: EnvironmentsTabProps): React.JSX.Elem
           <button
             type="button"
             className="hc-icon-btn"
-            aria-label="Rename environment"
-            title="Rename environment (F2)"
+            aria-label={t('Rename environment')}
+            title={t('Rename environment (F2)')}
             disabled={!env}
             onClick={() => nameInput.current?.select()}
           >
@@ -110,15 +111,15 @@ export function EnvironmentsTab({ tabId }: EnvironmentsTabProps): React.JSX.Elem
           <button
             type="button"
             className="hc-icon-btn"
-            aria-label="Delete environment"
-            title="Delete environment"
+            aria-label={t('Delete environment')}
+            title={t('Delete environment')}
             disabled={!env}
             onClick={() => env && setDeleting(env)}
           >
             <Trash2 size={13} aria-hidden="true" />
           </button>
         </div>
-        <div role="listbox" aria-label="Environments" className="hc-envs-options">
+        <div role="listbox" aria-label={t('Environments')} className="hc-envs-options">
           <button
             type="button"
             role="option"
@@ -126,8 +127,7 @@ export function EnvironmentsTab({ tabId }: EnvironmentsTabProps): React.JSX.Elem
             className="hc-envs-option"
             onClick={() => setSelected(GLOBALS)}
           >
-            <Globe size={13} aria-hidden="true" /> Globals
-            {pending.includes(globalsKey) && <span className="hc-review">review</span>}
+            <Globe size={13} aria-hidden="true" /> {t('Globals')}{pending.includes(globalsKey) && <span className="hc-review">{t('review')}</span>}
           </button>
           {envs.map((e) => (
             <button
@@ -143,9 +143,9 @@ export function EnvironmentsTab({ tabId }: EnvironmentsTabProps): React.JSX.Elem
             >
               <span className={`hc-swatch hc-swatch--${e.color}`} aria-hidden="true" />
               {e.name}
-              {e.production && <span className="hc-prod">PROD</span>}
-              {pending.includes(e.id) && <span className="hc-review">review</span>}
-              {e.id === activeId && <span className="hc-envs-active">active</span>}
+              {e.production && <span className="hc-prod">{t('PROD')}</span>}
+              {pending.includes(e.id) && <span className="hc-review">{t('review')}</span>}
+              {e.id === activeId && <span className="hc-envs-active">{t('active')}</span>}
             </button>
           ))}
         </div>
@@ -159,11 +159,11 @@ export function EnvironmentsTab({ tabId }: EnvironmentsTabProps): React.JSX.Elem
         {env ? (
           <>
             <label className="hc-form-row">
-              <span className="ui-label">Name</span>
+              <span className="ui-label">{t('Name')}</span>
               <input ref={nameInput} className="hc-input" value={env.name} onChange={(e) => rename(env, e.target.value)} />
             </label>
-            <div className="hc-form-row" role="radiogroup" aria-label="Colour">
-              <span className="ui-label">Colour</span>
+            <div className="hc-form-row" role="radiogroup" aria-label={t('Colour')}>
+              <span className="ui-label">{t('Colour')}</span>
               {HOST_COLORS.map((c) => (
                 <label key={c} className="hc-swatch-pick" title={c}>
                   <input
@@ -183,16 +183,14 @@ export function EnvironmentsTab({ tabId }: EnvironmentsTabProps): React.JSX.Elem
                 checked={env.production}
                 onChange={(e) => api().setEnvironment({ ...env, production: e.target.checked })}
               />
-              Production — sending a change here asks first
-            </label>
+              {t('Production — sending a change here asks first')}</label>
             <label className="hc-form-row">
               <input
                 type="checkbox"
                 checked={env.id === activeId}
                 onChange={(e) => api().setActiveEnvironment(ws, e.target.checked ? env.id : null)}
               />
-              Active in this workspace
-            </label>
+              {t('Active in this workspace')}</label>
             <VariablesTable
               variables={env.variables}
               onChange={(variables) => api().setEnvironment({ ...env, variables })}
@@ -202,7 +200,7 @@ export function EnvironmentsTab({ tabId }: EnvironmentsTabProps): React.JSX.Elem
           </>
         ) : (
           <>
-            <p className="hc-note-line">Globals apply to every request in this workspace. A collection or environment variable of the same name wins.</p>
+            <p className="hc-note-line">{t('Globals apply to every request in this workspace. A collection or environment variable of the same name wins.')}</p>
             <VariablesTable
               variables={globals ?? []}
               onChange={(vars) => api().setGlobals(ws, vars)}
@@ -228,9 +226,7 @@ export function EnvironmentsTab({ tabId }: EnvironmentsTabProps): React.JSX.Elem
           }}
         >
           <p>
-            Its {deleting.variables.length} {deleting.variables.length === 1 ? 'variable is' : 'variables are'} deleted with it.
-            Requests that use them will stop resolving.
-          </p>
+            {t('Its')}{' '}{deleting.variables.length} {deleting.variables.length === 1 ? 'variable is' : 'variables are'} {t('deleted with it. Requests that use them will stop resolving.')}</p>
         </Modal>
       )}
     </div>
@@ -243,14 +239,14 @@ export function EnvironmentsTab({ tabId }: EnvironmentsTabProps): React.JSX.Elem
  * values; the values are in the table below.
  */
 function ReviewBanner({ reviewKey, pending, keys }: { reviewKey: string; pending: boolean; keys: string[] }): React.JSX.Element | null {
+  const t = useT()
   if (!pending) return null
   const shown = keys.slice(0, 8)
   return (
     <div className="hc-banner" role="note">
       <TriangleAlert size={13} aria-hidden="true" />
       <span>
-        These variables changed on another device. Requests using them are held until you accept.
-        {keys.length > 0 && (
+        {t('These variables changed on another device. Requests using them are held until you accept.')}{keys.length > 0 && (
           <span className="hc-review-keys">
             {' '}
             {keys.length} {keys.length === 1 ? 'variable' : 'variables'}: {shown.join(', ')}
@@ -259,8 +255,7 @@ function ReviewBanner({ reviewKey, pending, keys }: { reviewKey: string; pending
         )}
       </span>
       <button type="button" className="btn primary sm" onClick={() => useApi.getState().acceptEnvReview(reviewKey)}>
-        Accept these variables
-      </button>
+        {t('Accept these variables')}</button>
     </div>
   )
 }

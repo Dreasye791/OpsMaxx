@@ -73,6 +73,7 @@ import { approvalFor, type CommandApproval } from '../../../../shared/broadcast'
 import type { Server } from '../../types'
 import { withVaultUnlock } from '../../lib/withVaultUnlock'
 import { EmptyState } from '../common/EmptyState'
+import { useT } from '../../i18n'
 
 // Pods on a cluster reachable from a server, and what you do about them.
 //
@@ -236,31 +237,29 @@ function LogPane({
   onDock?: () => void
   onClose: () => void
 }): React.JSX.Element {
+  const t = useT()
   return (
     <div style={inline ? { paddingBottom: 6 } : undefined}>
       <div className="row muted" style={{ fontSize: 11, marginTop: inline ? 4 : 10 }}>
-        <span className="grow">Logs · {entry.pod}</span>
+        <span className="grow">{t('Logs ·')}{' '}{entry.pod}</span>
         {inline && onPopOut && (
           <button
             className="btn ghost sm"
-            title="Read this in the larger panel at the bottom"
+            title={t('Read this in the larger panel at the bottom')}
             onClick={onPopOut}
           >
-            Pop out
-          </button>
+            {t('Pop out')}</button>
         )}
         {!inline && onDock && (
           <button
             className="btn ghost sm"
-            title="Put this back under its pod’s row"
+            title={t('Put this back under its pod’s row')}
             onClick={onDock}
           >
-            Dock
-          </button>
+            {t('Dock')}</button>
         )}
         <button className="btn ghost sm" onClick={onClose}>
-          Close
-        </button>
+          {t('Close')}</button>
       </div>
       {/* Inline keeps .bc-out's own 26px indent, which reads as "this belongs
           to the row above"; the bottom panel owns its width and cancels it. */}
@@ -301,44 +300,39 @@ function DiagPane({
   entry: { pod: string; result: K8sDiagnosis | null; error?: string }
   onClose: () => void
 }): React.JSX.Element {
+  const t = useT()
   return (
     <div style={{ paddingBottom: 6 }}>
       <div className="row muted" style={{ fontSize: 11, marginTop: 4 }}>
-        <span className="grow">Diagnosis · {entry.pod}</span>
+        <span className="grow">{t('Diagnosis ·')}{' '}{entry.pod}</span>
         <button className="btn ghost sm" onClick={onClose}>
-          Close
-        </button>
+          {t('Close')}</button>
       </div>
           {entry.error && <div className="s-desc danger">{entry.error}</div>}
           {!entry.result && !entry.error && (
-            <div className="faint" style={{ fontSize: 12 }}>Reading…</div>
+            <div className="faint" style={{ fontSize: 12 }}>{t('Reading…')}</div>
           )}
           {entry.result && (
             <>
               {/* Events first. They are the answer far more often than the
                   logs are, and a Pending pod has nothing else at all. */}
               <div className="s-title" style={{ marginTop: 6 }}>
-                <Activity size={12} /> Events
-              </div>
+                <Activity size={12} /> {t('Events')}</div>
               {!entry.result.events.ok ? (
                 <Denied read={entry.result.events} what="Events" />
               ) : entry.result.events.items.length === 0 ? (
                 <div className="faint" style={{ fontSize: 12 }}>
-                  No events for this pod. They expire after about an hour, so this is not proof
-                  nothing happened.
-                </div>
+                  {t('No events for this pod. They expire after about an hour, so this is not proof nothing happened.')}</div>
               ) : (
                 <EventRows events={entry.result.events.items} />
               )}
 
               <div className="s-title" style={{ marginTop: 10 }}>
-                <ScrollText size={12} /> Previous container
-              </div>
+                <ScrollText size={12} /> {t('Previous container')}</div>
               {textBlock(entry.result.previousLogs, 'Previous container logs')}
 
               <div className="s-title" style={{ marginTop: 10 }}>
-                <Boxes size={12} /> describe
-              </div>
+                <Boxes size={12} /> {t('describe')}</div>
               {textBlock(entry.result.describe, 'Describe')}
             </>
           )}
@@ -354,6 +348,7 @@ function readEmpty<T>(r: K8sRead<T>): boolean {
 const LOCAL_ID = 'local'
 
 export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.Element {
+  const t = useT()
   const [serverId, setServerId] = useState('')
   const [context, setContext] = useState('')
   const [namespace, setNamespace] = useState('')
@@ -1054,11 +1049,11 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
     <div className="bc-panel">
       <div className="row" style={{ gap: 8, alignItems: 'center' }}>
         <Boxes size={14} className="faint" />
-        <b className="grow">Kubernetes</b>
+        <b className="grow">{t('Kubernetes')}</b>
         <select
           className="input"
           style={{ maxWidth: 170 }}
-          aria-label="Kubernetes host"
+          aria-label={t('Kubernetes host')}
           value={selectedId}
           onChange={(e) => {
             setServerId(e.target.value)
@@ -1089,7 +1084,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
         >
           {/* First, and present even with no servers: a local kubeconfig is
               what most developers have in front of them. */}
-          <option value={LOCAL_ID}>This machine</option>
+          <option value={LOCAL_ID}>{t('This machine')}</option>
           {eligible.map((s) => (
             <option key={s.id} value={s.id}>
               {s.name}
@@ -1109,7 +1104,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
           <select
             className="input"
             style={{ maxWidth: 200 }}
-            aria-label="Kubernetes context"
+            aria-label={t('Kubernetes context')}
             value={effectiveContext}
             onChange={(e) => {
               setContext(e.target.value)
@@ -1160,9 +1155,9 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
               if (again.usage) void loadUsage(ns)
               if (again.resources) void loadResources(ns)
             }}
-            title="Scopes the cluster and usage reads. Nodes are cluster-scoped and are never namespace-filtered."
+            title={t('Scopes the cluster and usage reads. Nodes are cluster-scoped and are never namespace-filtered.')}
           >
-            <option value="">all namespaces</option>
+            <option value="">{t('all namespaces')}</option>
             {probe.namespaces.map((n) => (
               <option key={n} value={n}>
                 {n}
@@ -1188,18 +1183,13 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
           dropdown either way, and reading one dials it. */}
       {!anyConnected(servers) && (
         <div className="s-desc">
-          No server in this workspace is connected — reading the kubeconfig on this machine. Any
-          saved server can still be picked above.
-        </div>
+          {t('No server in this workspace is connected — reading the kubeconfig on this machine. Any saved server can still be picked above.')}</div>
       )}
 
       {!probe && !loading && hasTarget && (
         <div className="s-desc">
-          Runs <span className="mono">kubectl</span> on the selected server, using whatever
-          kubeconfig that server already has. Reading only, with one exception:{' '}
-          <span className="mono">rollout restart</span>, which asks first. It never switches your
-          context, never execs into a pod, and never deletes anything.
-        </div>
+          {t('Runs')}{' '}<span className="mono">{t('kubectl')}</span> {t('on the selected server, using whatever kubeconfig that server already has. Reading only, with one exception:')}{' '}
+          <span className="mono">{t('rollout restart')}</span>{t(', which asks first. It never switches your context, never execs into a pod, and never deletes anything.')}</div>
       )}
 
       {/* Failure classes with different fixes. "No pods" for a permissions
@@ -1213,8 +1203,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
               className={clsx('chip', view === 'pods' && 'on')}
               onClick={() => setView('pods')}
             >
-              <Boxes size={12} /> Pods
-            </button>
+              <Boxes size={12} /> {t('Pods')}</button>
             <button
               className={clsx('chip', view === 'cluster' && 'on')}
               onClick={() => {
@@ -1231,8 +1220,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                 if (!usage) void loadUsage()
               }}
             >
-              <Gauge size={12} /> Usage
-            </button>
+              <Gauge size={12} /> {t('Usage')}</button>
             <button
               className={clsx('chip', view === 'resources' && 'on')}
               onClick={() => {
@@ -1253,15 +1241,14 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
             <>
               <div className="row muted wrap" style={{ fontSize: 11, marginTop: 8, gap: 12 }}>
                 <span>
-                  {pods.length} pod{pods.length === 1 ? '' : 's'}
+                  {pods.length} {t('pod')}{pods.length === 1 ? '' : 's'}
                   {q !== '' && ` of ${allPods.length}`}
                 </span>
                 {/* An empty list means something different depending on this, so
                     it is never left for the reader to assume. */}
                 {!probe.allNamespaces && (
                   <span className="warn">
-                    one namespace only — this account cannot list across the cluster
-                  </span>
+                    {t('one namespace only — this account cannot list across the cluster')}</span>
                 )}
                 {/* A list narrowed by choice is not the same as a list narrowed
                     by RBAC, and saying so is the difference between "you picked
@@ -1271,14 +1258,14 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                     suppressing the chip there left the user's own choice
                     unnamed in exactly the case where both explanations apply. */}
                 {probe.scopedTo && (
-                  <span className="faint">in {probe.scopedTo}</span>
+                  <span className="faint">{t('in')}{' '}{probe.scopedTo}</span>
                 )}
                 <span className="spacer" />
                 {allPods.length > 0 && (
                   <input
                     className="input"
                     style={{ maxWidth: 180 }}
-                    placeholder="Filter pods…"
+                    placeholder={t('Filter pods…')}
                     value={filter}
                     onChange={(e) => setFilter(e.target.value)}
                   />
@@ -1312,7 +1299,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                       </span>
                       {p.restarts > 0 && (
                         <span className={clsx('chip', p.restarts > 5 ? 'danger' : 'warn')}>
-                          {p.restarts} restart{p.restarts === 1 ? '' : 's'}
+                          {p.restarts} {t('restart')}{p.restarts === 1 ? '' : 's'}
                         </span>
                       )}
                       {/* First, and to the left of the log button, because it is
@@ -1362,7 +1349,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                           // a server is its own decision, not a side effect of a
                           // dropdown option.
                           disabled={localSelected}
-                          aria-label="Run a command in this pod"
+                          aria-label={t('Run a command in this pod')}
                           onClick={() => {
                             setExecResult(null)
                             setExecCommand('')
@@ -1387,12 +1374,12 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                       <>
         <div className="s-card" style={{ marginTop: 8 }}>
           <div className="s-title">
-            <SquareTerminal size={12} /> Run a command in {execFor.namespace}/{execFor.name}
+            <SquareTerminal size={12} /> {t('Run a command in')}{' '}{execFor.namespace}/{execFor.name}
           </div>
           <div className="input-group" style={{ marginTop: 6 }}>
             <input
               className="input mono"
-              placeholder="e.g. cat /etc/nginx/nginx.conf"
+              placeholder={t('e.g. cat /etc/nginx/nginx.conf')}
               value={execCommand}
               onChange={(e) => setExecCommand(e.target.value)}
               autoFocus
@@ -1405,7 +1392,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
           <div className="input-group" style={{ marginTop: 6 }}>
             <input
               className="input mono"
-              placeholder="container (optional — kubectl picks the default and says which)"
+              placeholder={t('container (optional — kubectl picks the default and says which)')}
               value={execContainer}
               onChange={(e) => setExecContainer(e.target.value)}
             />
@@ -1418,13 +1405,11 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                 is its own RBAC subresource and this app cannot read what it grants.
               </div>
               <div className="s-desc faint">
-                One command, no TTY and no stdin: a program that waits for input will hang until the
-                timeout rather than prompt. This is not a shell session.
-              </div>
+                {t('One command, no TTY and no stdin: a program that waits for input will hang until the timeout rather than prompt. This is not a shell session.')}</div>
               <div className="input-group" style={{ marginTop: 6 }}>
                 <input
                   className="input"
-                  placeholder="Type EXEC to run it"
+                  placeholder={t('Type EXEC to run it')}
                   value={execPhrase}
                   onChange={(e) => setExecPhrase(e.target.value)}
                 />
@@ -1437,8 +1422,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
               disabled={execBusy || execCommand.trim() === '' || execPhrase.trim() !== 'EXEC'}
               onClick={() => void runExec()}
             >
-              Run
-            </button>
+              {t('Run')}</button>
             <button
               className="btn ghost"
               onClick={() => {
@@ -1448,8 +1432,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                 setExecPhrase('')
               }}
             >
-              Cancel
-            </button>
+              {t('Cancel')}</button>
           </div>
         </div></>
                     )}
@@ -1475,8 +1458,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                             : execResult.r.detail}
                         </pre>
                         <button className="btn ghost sm" onClick={() => setExecResult(null)}>
-                          Close
-                        </button>
+                          {t('Close')}</button>
                       </div>
                     )}
                     {entry && poppedOut !== key && (
@@ -1500,17 +1482,15 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                   {namespace ? `namespace ${namespace}` : 'all namespaces'}
                 </span>
                 <button className="btn ghost sm" disabled={overviewLoading} onClick={() => void loadOverview()}>
-                  <RefreshCw size={12} className={clsx(overviewLoading && 'spin')} /> Refresh
-                </button>
+                  <RefreshCw size={12} className={clsx(overviewLoading && 'spin')} /> {t('Refresh')}</button>
               </div>
 
-              {!overview && overviewLoading && <div className="faint" style={{ fontSize: 12 }}>Reading…</div>}
+              {!overview && overviewLoading && <div className="faint" style={{ fontSize: 12 }}>{t('Reading…')}</div>}
 
               {overview && (
                 <>
                   <div className="s-title" style={{ marginTop: 8 }}>
-                    <Layers size={12} /> Deployments
-                  </div>
+                    <Layers size={12} /> {t('Deployments')}</div>
                   {workloadRows(overview.deployments, 'Deployments')}
 
                   {/* StatefulSets and DaemonSets are only drawn when there are
@@ -1519,16 +1499,14 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                   {(!overview.statefulSets.ok || !readEmpty(overview.statefulSets)) && (
                     <>
                       <div className="s-title" style={{ marginTop: 8 }}>
-                        <Layers size={12} /> StatefulSets
-                      </div>
+                        <Layers size={12} /> {t('StatefulSets')}</div>
                       {workloadRows(overview.statefulSets, 'StatefulSets')}
                     </>
                   )}
                   {(!overview.daemonSets.ok || !readEmpty(overview.daemonSets)) && (
                     <>
                       <div className="s-title" style={{ marginTop: 8 }}>
-                        <Layers size={12} /> DaemonSets
-                      </div>
+                        <Layers size={12} /> {t('DaemonSets')}</div>
                       {workloadRows(overview.daemonSets, 'DaemonSets')}
                     </>
                   )}
@@ -1541,22 +1519,17 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                     <div className="s-note" style={{ marginTop: 10 }}>
                       {watched ? (
                         <>
-                          <b>Watching this cluster for restarting pods.</b> Checked every two
-                          minutes from {servers.find((x) => x.id === serverId)?.name}. An alert is
+                          <b>{t('Watching this cluster for restarting pods.')}</b> {t('Checked every two minutes from')}{' '}{servers.find((x) => x.id === serverId)?.name}. An alert is
                           raised when a pod&rsquo;s restart count goes up between checks — a count
                           on its own cannot tell a pod that is restarting now from one that
                           restarted last week.
                           <button className="btn ghost sm" onClick={() => setWatch(false)}>
-                            Stop watching
-                          </button>
+                            {t('Stop watching')}</button>
                         </>
                       ) : (
                         <>
-                          Not watching this cluster. Nothing is polled until you say which server
-                          to ask, because nothing else can know which of them holds a kubeconfig.
-                          <button className="btn ghost sm" onClick={() => setWatch(true)}>
-                            Watch for restarting pods
-                          </button>
+                          {t('Not watching this cluster. Nothing is polled until you say which server to ask, because nothing else can know which of them holds a kubeconfig.')}<button className="btn ghost sm" onClick={() => setWatch(true)}>
+                            {t('Watch for restarting pods')}</button>
                         </>
                       )}
                     </div>
@@ -1598,14 +1571,13 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                   )}
 
                   <div className="s-title" style={{ marginTop: 10 }}>
-                    <ServerIcon size={12} /> Nodes
-                  </div>
+                    <ServerIcon size={12} /> {t('Nodes')}</div>
                   {!overview.nodes.ok ? (
                     <Denied read={overview.nodes} what="Nodes" />
                   ) : overview.nodes.items.length === 0 ? (
                     <EmptyState
                       compact
-                      title="No nodes"
+                      title={t('No nodes')}
                       message="The cluster reported no nodes. Check the selected context."
                     />
                   ) : (
@@ -1625,16 +1597,14 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                             disabled={nodeBusy === n.name}
                             onClick={() => askToCordon(n, 'uncordon')}
                           >
-                            Uncordon
-                          </button>
+                            {t('Uncordon')}</button>
                         ) : (
                           <button
                             className="btn ghost sm"
                             disabled={nodeBusy === n.name}
                             onClick={() => askToCordon(n, 'cordon')}
                           >
-                            Cordon
-                          </button>
+                            {t('Cordon')}</button>
                         )}
                         <Explain why="Read whether this node can be drained safely. This is a read; nothing moves.">
                           <button
@@ -1642,23 +1612,19 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                             disabled={nodeBusy === n.name || drainCheck?.loading === true}
                             onClick={() => void checkDrain(n.name)}
                           >
-                            Check drain
-                          </button>
+                            {t('Check drain')}</button>
                         </Explain>
                       </div>
                     ))
                   )}
 
                   <div className="s-title" style={{ marginTop: 10 }}>
-                    <Activity size={12} /> Events, newest first
-                  </div>
+                    <Activity size={12} /> {t('Events, newest first')}</div>
                   {!overview.events.ok ? (
                     <Denied read={overview.events} what="Events" />
                   ) : overview.events.items.length === 0 ? (
                     <div className="faint" style={{ fontSize: 12 }}>
-                      No events. The API server keeps them for about an hour, so a quiet list can
-                      also mean nothing has happened recently.
-                    </div>
+                      {t('No events. The API server keeps them for about an hour, so a quiet list can also mean nothing has happened recently.')}</div>
                   ) : (
                     <EventRows events={overview.events.items} />
                   )}
@@ -1671,13 +1637,11 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
             <>
               <div className="row muted" style={{ fontSize: 11, marginTop: 8 }}>
                 <span className="grow">
-                  <span className="mono">kubectl top</span> — needs a Metrics API in the cluster
-                </span>
+                  <span className="mono">{t('kubectl top')}</span> {t('— needs a Metrics API in the cluster')}</span>
                 <button className="btn ghost sm" disabled={usageLoading} onClick={() => void loadUsage()}>
-                  <RefreshCw size={12} className={clsx(usageLoading && 'spin')} /> Refresh
-                </button>
+                  <RefreshCw size={12} className={clsx(usageLoading && 'spin')} /> {t('Refresh')}</button>
               </div>
-              {!usage && usageLoading && <div className="faint" style={{ fontSize: 12 }}>Reading…</div>}
+              {!usage && usageLoading && <div className="faint" style={{ fontSize: 12 }}>{t('Reading…')}</div>}
 
               {/* USAGE AND BOOKED CAPACITY ARE DIFFERENT QUESTIONS, and putting
                   them under one heading is how they get confused. `kubectl top`
@@ -1687,23 +1651,20 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                   explains why. */}
               <div className="row muted" style={{ fontSize: 11, marginTop: 12 }}>
                 <span className="grow">
-                  Requested against allocatable — what the scheduler has promised, not what is
-                  being used. Every namespace, whichever one is selected above.
-                </span>
+                  {t('Requested against allocatable — what the scheduler has promised, not what is being used. Every namespace, whichever one is selected above.')}</span>
                 <button
                   className="btn ghost sm"
                   disabled={allocLoading}
                   onClick={() => void loadAllocatable()}
                 >
-                  <RefreshCw size={12} className={clsx(allocLoading && 'spin')} /> Read
-                </button>
+                  <RefreshCw size={12} className={clsx(allocLoading && 'spin')} /> {t('Read')}</button>
               </div>
               {!alloc && allocLoading && (
-                <div className="faint" style={{ fontSize: 12 }}>Reading…</div>
+                <div className="faint" style={{ fontSize: 12 }}>{t('Reading…')}</div>
               )}
               {alloc && !alloc.ok && (
                 <div className="faint" style={{ fontSize: 12 }}>
-                  Requested-against-allocatable could not be read: {alloc.detail}
+                  {t('Requested-against-allocatable could not be read:')}{' '}{alloc.detail}
                 </div>
               )}
               {alloc?.ok && alloc.report && (
@@ -1735,7 +1696,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                   ))}
                   {alloc.report.unplaced.length > 0 && (
                     <div className="faint" style={{ fontSize: 11, marginTop: 4 }}>
-                      Not scheduled anywhere:{' '}
+                      {t('Not scheduled anywhere:')}{' '}
                       {alloc.report.unplaced
                         .map((u) => `${u.namespace}/${u.name} (${u.phase})`)
                         .join(', ')}
@@ -1750,8 +1711,8 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                   ) : (
                     usage.nodes.items.map((n) => (
                       <div key={n.name} className="cron-row">
-                        <span className="chip">{n.cpuPercent} cpu</span>
-                        <span className="chip">{n.memoryPercent} mem</span>
+                        <span className="chip">{n.cpuPercent} {t('cpu')}</span>
+                        <span className="chip">{n.memoryPercent} {t('mem')}</span>
                         <span className="mono grow cron-cmd">{n.name}</span>
                         <span className="faint mono">
                           {n.cpu} · {n.memory}
@@ -1780,32 +1741,28 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
             <>
               <div className="row muted" style={{ fontSize: 11, marginTop: 8 }}>
                 <span className="grow">
-                  {namespace ? `namespace ${namespace}` : 'all namespaces'} — ClusterRoleBindings
-                  and the API scan are cluster-wide either way
-                </span>
+                  {namespace ? `namespace ${namespace}` : 'all namespaces'} {t('— ClusterRoleBindings and the API scan are cluster-wide either way')}</span>
                 <button
                   className="btn ghost sm"
                   disabled={resourcesLoading}
                   onClick={() => void loadResources()}
                 >
-                  <RefreshCw size={12} className={clsx(resourcesLoading && 'spin')} /> Refresh
-                </button>
+                  <RefreshCw size={12} className={clsx(resourcesLoading && 'spin')} /> {t('Refresh')}</button>
               </div>
               {!resources && resourcesLoading && (
-                <div className="faint" style={{ fontSize: 12 }}>Reading…</div>
+                <div className="faint" style={{ fontSize: 12 }}>{t('Reading…')}</div>
               )}
 
               {resources && (
                 <>
                   <div className="s-title" style={{ marginTop: 8 }}>
-                    <HardDrive size={12} /> PersistentVolumeClaims
-                  </div>
+                    <HardDrive size={12} /> {t('PersistentVolumeClaims')}</div>
                   {!resources.pvcs.ok ? (
                     <Denied read={resources.pvcs} what="PersistentVolumeClaims" />
                   ) : resources.pvcs.items.length === 0 ? (
                     <EmptyState
                       compact
-                      title="No claims"
+                      title={t('No claims')}
                       message="No persistent volume claims in this namespace."
                     />
                   ) : (
@@ -1827,14 +1784,13 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                   )}
 
                   <div className="s-title" style={{ marginTop: 10 }}>
-                    <Activity size={12} /> Ingresses
-                  </div>
+                    <Activity size={12} /> {t('Ingresses')}</div>
                   {!resources.ingresses.ok ? (
                     <Denied read={resources.ingresses} what="Ingresses" />
                   ) : resources.ingresses.items.length === 0 ? (
                     <EmptyState
                       compact
-                      title="No ingresses"
+                      title={t('No ingresses')}
                       message="Nothing in this namespace is exposed through an ingress."
                     />
                   ) : (
@@ -1859,8 +1815,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                   )}
 
                   <div className="s-title" style={{ marginTop: 10 }}>
-                    <ShieldQuestion size={12} /> Role bindings
-                  </div>
+                    <ShieldQuestion size={12} /> {t('Role bindings')}</div>
                   {!resources.roleBindings.ok ? (
                     <Denied read={resources.roleBindings} what="Role bindings" />
                   ) : (
@@ -1881,11 +1836,9 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                   )}
 
                   <div className="s-title" style={{ marginTop: 10 }}>
-                    <ShieldQuestion size={12} /> Secrets — names and key names only
-                  </div>
+                    <ShieldQuestion size={12} /> {t('Secrets — names and key names only')}</div>
                   <div className="faint" style={{ fontSize: 11 }}>
-                    No value is read. The query lists key names and cannot reach what is behind them.
-                  </div>
+                    {t('No value is read. The query lists key names and cannot reach what is behind them.')}</div>
                   {!resources.secrets.ok ? (
                     <Denied read={resources.secrets} what="Secrets" />
                   ) : (
@@ -1900,8 +1853,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                   )}
 
                   <div className="s-title" style={{ marginTop: 10 }}>
-                    <TriangleAlert size={12} /> Cluster review
-                  </div>
+                    <TriangleAlert size={12} /> {t('Cluster review')}</div>
                   {/* Its own button. Thirteen kubectl calls, and the answer only
                       matters when somebody is asking the question it answers —
                       folding it into the refresh would make every refresh wait
@@ -1914,11 +1866,11 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                     >
                       {review === null ? 'Review this cluster' : 'Review again'}
                     </button>
-                    {reviewLoading && <span className="faint" style={{ fontSize: 11 }}>reading…</span>}
+                    {reviewLoading && <span className="faint" style={{ fontSize: 11 }}>{t('reading…')}</span>}
                   </div>
                   {review !== null && !review.ok && (
                     <div className="s-note is-alarm">
-                      Nothing was read: {review.detail}
+                      {t('Nothing was read:')}{' '}{review.detail}
                     </div>
                   )}
                   {review?.ok === true &&
@@ -1933,7 +1885,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                               denied read is the difference. */}
                           {r.blind.map((b2) => (
                             <div key={`${b2.section} ${b2.detail}`} className="s-note is-alarm">
-                              <b>{b2.section}</b> was not read, so nothing here says anything about it:{' '}
+                              <b>{b2.section}</b> {t('was not read, so nothing here says anything about it:')}{' '}
                               <span className="mono">{b2.detail}</span>
                             </div>
                           ))}
@@ -1955,17 +1907,15 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                     })()}
 
                   <div className="s-title" style={{ marginTop: 10 }}>
-                    <TriangleAlert size={12} /> Deprecated APIs
-                  </div>
+                    <TriangleAlert size={12} /> {t('Deprecated APIs')}</div>
                   {apiScan && (
                     <>
                       <div className="faint" style={{ fontSize: 11 }}>
-                        Server {apiScan.serverVersion ?? 'version unknown'}
+                        {t('Server')}{' '}{apiScan.serverVersion ?? 'version unknown'}
                       </div>
                       {apiScan.findings.length === 0 ? (
                         <div className="faint" style={{ fontSize: 12 }}>
-                          Nothing in the table is still being served.
-                        </div>
+                          {t('Nothing in the table is still being served.')}</div>
                       ) : (
                         apiScan.findings.map((f) => (
                           <div key={f.groupVersion} className="cron-row">
@@ -1973,7 +1923,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                               {f.pastRemoval ? `past ${f.removedIn}` : `goes in ${f.removedIn}`}
                             </span>
                             <span className="mono grow cron-cmd">{f.groupVersion}</span>
-                            <span className="faint">use {f.replacement}</span>
+                            <span className="faint">{t('use')}{' '}{f.replacement}</span>
                           </div>
                         ))
                       )}
@@ -1981,8 +1931,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                           "Nothing found" is the sentence people act on, and it
                           is only honest next to what was not looked at. */}
                       <div className="s-desc faint" style={{ marginTop: 4 }}>
-                        What this did not check:
-                        <ul style={{ margin: '4px 0 0 16px' }}>
+                        {t('What this did not check:')}<ul style={{ margin: '4px 0 0 16px' }}>
                           {apiScan.notChecked.map((n) => (
                             <li key={n}>{n}</li>
                           ))}
@@ -1992,8 +1941,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                   )}
 
                   <div className="s-title" style={{ marginTop: 10 }}>
-                    <Layers size={12} /> Helm releases
-                  </div>
+                    <Layers size={12} /> {t('Helm releases')}</div>
                   {helm && !helm.ok && (
                     <div className="faint" style={{ fontSize: 12 }}>
                       {helm.detail}
@@ -2002,15 +1950,14 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                   {helm?.ok &&
                     (helm.releases.length === 0 ? (
                       <div className="faint" style={{ fontSize: 12 }}>
-                        helm answered and has no releases.
-                      </div>
+                        {t('helm answered and has no releases.')}</div>
                     ) : (
                       helm.releases.map((r) => (
                         <div key={`${r.namespace}/${r.name}`} className="cron-row">
                           <span className={clsx('chip', r.status !== 'deployed' && 'warn')}>
                             {r.status}
                           </span>
-                          <span className="mono cron-when">rev {r.revision}</span>
+                          <span className="mono cron-when">{t('rev')}{' '}{r.revision}</span>
                           <span className="faint cron-desc">{r.namespace}</span>
                           <span className="mono grow cron-cmd">{r.name}</span>
                           <span className="faint">{r.chart}</span>
@@ -2028,15 +1975,15 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
       {pending && (
         <div className="bc-confirm">
           <div className="s-title">
-            Restart {pending.plan.target.kind} {pending.plan.target.name}?
+            {t('Restart')}{' '}{pending.plan.target.kind} {pending.plan.target.name}?
           </div>
           <div className="s-desc mono">
-            kubectl rollout restart {pending.plan.target.kind}/{pending.plan.target.name} --namespace=
+            {t('kubectl rollout restart')}{' '}{pending.plan.target.kind}/{pending.plan.target.name} --namespace=
             {pending.plan.target.namespace}
             {pending.plan.target.context ? ` --context=${pending.plan.target.context}` : ''}
           </div>
           <div className={clsx('s-desc', pending.plan.risk === 'destructive' ? 'danger' : 'warn')}>
-            <TriangleAlert size={12} /> This changes the cluster — {pending.plan.reasons.join('; ')}.
+            <TriangleAlert size={12} /> {t('This changes the cluster —')}{' '}{pending.plan.reasons.join('; ')}.
           </div>
           {/* Kept apart from the reasons: these are not arguments for pressing
               harder, they are things that would otherwise be discovered from a
@@ -2063,8 +2010,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
               disabled={!canConfirm || restarting}
               onClick={() => void runRestart()}
             >
-              Restart
-            </button>
+              {t('Restart')}</button>
             <button
               className="btn ghost"
               onClick={() => {
@@ -2072,8 +2018,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                 setPhrase('')
               }}
             >
-              Cancel
-            </button>
+              {t('Cancel')}</button>
           </div>
         </div>
       )}
@@ -2087,7 +2032,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
             {nodePending.plan.target.node}
           </div>
           <div className="s-desc mono">
-            kubectl {nodePending.plan.target.action} {nodePending.plan.target.node}
+            {t('kubectl')}{' '}{nodePending.plan.target.action} {nodePending.plan.target.node}
             {nodePending.plan.target.context ? ` --context=${nodePending.plan.target.context}` : ''}
           </div>
           <div className="s-desc warn">
@@ -2122,8 +2067,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
               {nodePending.plan.target.action === 'cordon' ? 'Cordon' : 'Uncordon'}
             </button>
             <button className="btn ghost" onClick={() => setNodePending(null)}>
-              Cancel
-            </button>
+              {t('Cancel')}</button>
           </div>
         </div>
       )}
@@ -2141,16 +2085,13 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
               else's maintenance window is already open on this node. */}
           {nodeResult.alreadyInState && (
             <div className="warn" style={{ marginTop: 4 }}>
-              Nothing changed — the node was already in that state before this click. Somebody else
-              may be working on it.
-            </div>
+              {t('Nothing changed — the node was already in that state before this click. Somebody else may be working on it.')}</div>
           )}
           <div className="mono" style={{ marginTop: 4, opacity: 0.8, whiteSpace: 'pre-wrap' }}>
             {nodeResult.ok ? nodeResult.node_status : nodeResult.detail}
           </div>
           <button className="btn ghost sm" onClick={() => setNodeResult(null)}>
-            Close
-          </button>
+            {t('Close')}</button>
         </div>
       )}
 
@@ -2158,26 +2099,27 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
       {drainCheck && (
         <div className="s-card" style={{ marginTop: 8 }}>
           <div className="s-title">
-            <ShieldQuestion size={12} /> Can {drainCheck.node} be drained?
-          </div>
-          {drainCheck.loading && <div className="s-desc faint">Reading pods, budgets and endpoints…</div>}
+            <ShieldQuestion size={12} /> {t('Can {node} be drained?', { node: drainCheck.node })}</div>
+          {drainCheck.loading && <div className="s-desc faint">{t('Reading pods, budgets and endpoints…')}</div>}
           {!drainCheck.loading && !drainCheck.assessment && (
             <div className="s-desc danger">{NOT_WIRED}</div>
           )}
           {drainCheck.assessment && drainCheck.plan && (
             <>
               <div className="s-desc">
-                {drainCheck.assessment.evictable.length} pod(s) would move;{' '}
-                {drainCheck.assessment.daemonSetPods.length} DaemonSet pod(s) stay where they are.
-              </div>
+                {drainCheck.assessment.evictable.length} {t('pod(s) would move;')}{' '}
+                {drainCheck.assessment.daemonSetPods.length} {t('DaemonSet pod(s) stay where they are.')}</div>
 
               {/* Reads that did not answer come FIRST and are styled as hard as
                   a blocker, because they are one. An empty budget list from a
                   denied read looks exactly like a cluster with no budgets. */}
               {drainCheck.assessment.unchecked.map((u) => (
                 <div key={u.read} className="s-desc danger">
-                  <TriangleAlert size={12} /> The {u.read} read did not answer, so nobody can say{' '}
-                  {u.meaning}
+                  <TriangleAlert size={12} />{' '}
+                  {t('The {read} read did not answer, so nobody can say {meaning}', {
+                    read: u.read,
+                    meaning: t(u.meaning)
+                  })}
                   <div className="mono faint" style={{ marginTop: 2 }}>
                     {u.detail}
                   </div>
@@ -2197,8 +2139,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
               {drainCheck.assessment.safe ? (
                 <>
                   <div className="s-desc mono">
-                    kubectl drain {drainCheck.node} --ignore-daemonsets
-                    {context ? ` --context=${context}` : ''}
+                    {t('kubectl drain')}{' '}{drainCheck.node} {t('--ignore-daemonsets')}{context ? ` --context=${context}` : ''}
                   </div>
                   {drainCheck.plan.caveats.map((c) => (
                     <div key={c} className="s-desc faint">
@@ -2208,7 +2149,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                   <div className="input-group" style={{ marginTop: 6 }}>
                     <input
                       className="input"
-                      placeholder="Type DRAIN to drain this node"
+                      placeholder={t('Type DRAIN to drain this node')}
                       value={phrase}
                       onChange={(e) => setPhrase(e.target.value)}
                     />
@@ -2219,8 +2160,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                       disabled={phrase.trim() !== 'DRAIN' || nodeBusy !== ''}
                       onClick={() => void runDrain()}
                     >
-                      Drain
-                    </button>
+                      {t('Drain')}</button>
                     <button
                       className="btn ghost"
                       onClick={() => {
@@ -2228,8 +2168,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                         setPhrase('')
                       }}
                     >
-                      Cancel
-                    </button>
+                      {t('Cancel')}</button>
                   </div>
                 </>
               ) : (
@@ -2239,12 +2178,9 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
                       on its own reading of this same preflight, so offering the
                       control would be offering a button that cannot work. */}
                   <div className="s-desc">
-                    This drain will not be offered while any of the above is true. Fix the cause, or
-                    read the budget yourself — nothing here overrides it.
-                  </div>
+                    {t('This drain will not be offered while any of the above is true. Fix the cause, or read the budget yourself — nothing here overrides it.')}</div>
                   <button className="btn ghost sm" onClick={() => setDrainCheck(null)}>
-                    Close
-                  </button>
+                    {t('Close')}</button>
                 </>
               )}
             </>
@@ -2264,13 +2200,11 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
               node is untouched is how somebody reboots it. */}
           {drainResult.partial && (
             <div className="warn" style={{ marginTop: 4 }}>
-              This drain is PARTIAL: {drainResult.evicted.length} pod(s) were already evicted before
-              it stopped, and the node has been cordoned. It is not untouched.
-            </div>
+              {t('This drain is PARTIAL:')}{' '}{drainResult.evicted.length} {t('pod(s) were already evicted before it stopped, and the node has been cordoned. It is not untouched.')}</div>
           )}
           {drainResult.pdbRejected.length > 0 && (
             <div style={{ marginTop: 4 }}>
-              Still held by a PodDisruptionBudget: {drainResult.pdbRejected.join(', ')}. That is a
+              {t('Still held by a PodDisruptionBudget:')}{' '}{drainResult.pdbRejected.join(', ')}. That is a
               &ldquo;try again later&rdquo;, not a broken cluster.
             </div>
           )}
@@ -2278,8 +2212,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
             {drainResult.detail ?? drainResult.output}
           </div>
           <button className="btn ghost sm" onClick={() => setDrainResult(null)}>
-            Close
-          </button>
+            {t('Close')}</button>
         </div>
       )}
 
@@ -2303,8 +2236,7 @@ export function KubernetesPanel({ servers }: { servers: Server[] }): React.JSX.E
             {restartResult.r.ok ? restartResult.r.status : restartResult.r.detail}
           </div>
           <button className="btn ghost sm" onClick={() => setRestartResult(null)}>
-            Close
-          </button>
+            {t('Close')}</button>
         </div>
       )}
 

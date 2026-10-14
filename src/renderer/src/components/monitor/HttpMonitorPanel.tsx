@@ -15,6 +15,7 @@ import {
   type CheckState,
   type HttpCheck
 } from '../../../../shared/httpMonitor'
+import { useT } from '../../i18n'
 
 /**
  * External service checks: is this URL up, how fast, and how often lately.
@@ -59,6 +60,7 @@ const STATE_DOT: Record<CheckState, string> = {
 }
 
 export function HttpMonitorPanel(): React.JSX.Element {
+  const t = useT()
   const checks = useApp((s) => s.httpChecks)
   const activeId = useApp((s) => s.activeId)
   const setChecks = useApp((s) => s.setHttpChecks)
@@ -157,24 +159,23 @@ export function HttpMonitorPanel(): React.JSX.Element {
     <div className="content">
       <div className="content-header">
         <div>
-          <h1>Service checks</h1>
-          <div className="sub">Watch any URL from the outside</div>
+          <h1>{t('Service checks')}</h1>
+          <div className="sub">{t('Watch any URL from the outside')}</div>
         </div>
         <div className="spacer" />
         <button className="btn secondary size-28" onClick={() => setAdding((v) => !v)}>
-          <Plus size={14} /> Add a check
-        </button>
+          <Plus size={14} /> {t('Add a check')}</button>
       </div>
 
       {adding && (
         <div className="card" style={{ marginBottom: 16 }}>
           <div className="row" style={{ gap: 8, alignItems: 'flex-end', flexWrap: 'wrap' }}>
             <label className="field" style={{ minWidth: 160 }}>
-              <span className="field-label">Name (optional)</span>
+              <span className="field-label">{t('Name (optional)')}</span>
               <input className="input" value={name} onChange={(e) => setName(e.target.value)} />
             </label>
             <label className="field" style={{ flex: 1, minWidth: 240 }}>
-              <span className="field-label">URL</span>
+              <span className="field-label">{t('URL')}</span>
               <input
                 className="input"
                 placeholder="https://example.com/health"
@@ -186,11 +187,10 @@ export function HttpMonitorPanel(): React.JSX.Element {
               />
             </label>
             <button className="btn primary" disabled={!isCheckableUrl(url)} onClick={add}>
-              Add
-            </button>
+              {t('Add')}</button>
           </div>
           {url.trim() !== '' && !isCheckableUrl(url) && (
-            <span className="field-hint">Enter a full http:// or https:// URL.</span>
+            <span className="field-hint">{t('Enter a full http:// or https:// URL.')}</span>
           )}
         </div>
       )}
@@ -198,12 +198,11 @@ export function HttpMonitorPanel(): React.JSX.Element {
       {mine.length === 0 ? (
         <EmptyState
           icon={<Globe size={26} />}
-          title="No service checks"
+          title={t('No service checks')}
           message="Watch a URL to see whether it answers, how fast, and how often it has been up while this view is open."
           action={
             <button className="btn primary" onClick={() => setAdding(true)}>
-              <Plus size={15} /> Add a check
-            </button>
+              <Plus size={15} /> {t('Add a check')}</button>
           }
         />
       ) : (
@@ -234,7 +233,7 @@ export function HttpMonitorPanel(): React.JSX.Element {
                         greyed-out button. */}
                     <RefreshCw size={12} className={running.has(check.id) ? 'spin' : undefined} />
                   </button>
-                  <button className="btn sm" title="Stop watching" onClick={() => remove(check.id)}>
+                  <button className="btn sm" title={t('Stop watching')} onClick={() => remove(check.id)}>
                     <Trash2 size={12} />
                   </button>
                 </div>
@@ -247,12 +246,11 @@ export function HttpMonitorPanel(): React.JSX.Element {
                     // Median, not mean: one timeout in a hundred fast responses
                     // drags a mean somewhere no request ever was.
                     <span className="faint" style={{ fontSize: 11 }}>
-                      median {s.medianMs} ms
-                    </span>
+                      {t('median')}{' '}{s.medianMs} {t('ms')}</span>
                   )}
                   {s.uptimePct !== null && (
                     <span className="faint" style={{ fontSize: 11 }}>
-                      {s.uptimePct}% of {s.runs} {s.runs === 1 ? 'check' : 'checks'}
+                      {s.uptimePct}{t('% of')}{' '}{s.runs} {s.runs === 1 ? 'check' : 'checks'}
                     </span>
                   )}
                 </div>
@@ -292,9 +290,7 @@ export function HttpMonitorPanel(): React.JSX.Element {
               closes, without saying so, teaches people to trust a number that
               is not being maintained. */}
           <span className="faint" style={{ fontSize: 11, marginTop: 4 }}>
-            Checks run while this view is open and their history is kept for this session.
-            They do not run in the background and do not raise alerts yet.
-          </span>
+            {t('Checks run while this view is open and their history is kept for this session. They do not run in the background and do not raise alerts yet.')}</span>
         </div>
       )}
     </div>

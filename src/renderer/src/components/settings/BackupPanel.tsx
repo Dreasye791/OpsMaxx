@@ -5,6 +5,7 @@ import { BackupDestinations } from './BackupDestinations'
 import { toast } from '../../store/toast'
 import { MIN_PASSPHRASE } from '../../../../shared/backup'
 import type { BackupResult, BackupSummary } from '../../../../shared/backup'
+import { useT } from '../../i18n'
 
 function when(iso: string | null): string {
   if (!iso) return 'never'
@@ -29,6 +30,7 @@ interface PanelError {
 }
 
 export function BackupPanel(): React.JSX.Element {
+  const t = useT()
   const settings = useApp((s) => s.settings)
   const setSettings = useApp((s) => s.setSettings)
 
@@ -178,12 +180,9 @@ export function BackupPanel(): React.JSX.Element {
         </div>
       </div>
 
-      <h3 className="backup-h">Download backup</h3>
+      <h3 className="backup-h">{t('Download backup')}</h3>
       <p className="s-desc" style={{ marginBottom: 10 }}>
-        Writes a single encrypted file containing your workspaces, servers, databases, tunnels,
-        stored credentials, vault and trusted host keys. Credentials are re-encrypted under this
-        passphrase, so the file restores on any machine — and is unreadable without it.
-      </p>
+        {t('Writes a single encrypted file containing your workspaces, servers, databases, tunnels, stored credentials, vault and trusted host keys. Credentials are re-encrypted under this passphrase, so the file restores on any machine — and is unreadable without it.')}</p>
       <div className="row" style={{ gap: 8 }}>
         <input
           className="input grow"
@@ -196,7 +195,7 @@ export function BackupPanel(): React.JSX.Element {
         <input
           className="input grow"
           type="password"
-          placeholder="Confirm passphrase"
+          placeholder={t('Confirm passphrase')}
           value={exportPw2}
           onChange={(e) => setExportPw2(e.target.value)}
         />
@@ -213,19 +212,16 @@ export function BackupPanel(): React.JSX.Element {
           onClick={() => void runExport()}
         >
           {busy === 'export' ? <Loader2 size={14} className="spin" /> : <Download size={14} />}
-          Download
-        </button>
+          {t('Download')}</button>
       </div>
       {exportPw2.length > 0 && exportPw !== exportPw2 && (
-        <div className="s-desc" style={{ color: 'var(--danger)' }}>Passphrases do not match.</div>
+        <div className="s-desc" style={{ color: 'var(--danger)' }}>{t('Passphrases do not match.')}</div>
       )}
       <div className="s-desc" style={{ marginTop: 6 }}>
-        <ShieldCheck size={12} /> Choose a passphrase you can find again — there is no way to open
-        the file without it, and nothing here can reset it.
-      </div>
+        <ShieldCheck size={12} /> {t('Choose a passphrase you can find again — there is no way to open the file without it, and nothing here can reset it.')}</div>
       {errorFor('export')}
 
-      <h3 className="backup-h">Restore from backup</h3>
+      <h3 className="backup-h">{t('Restore from backup')}</h3>
       <p className="s-desc" style={{ marginBottom: 10 }}>
         Replaces everything currently in this app with the contents of the backup file. Type the
         passphrase for that backup first, then choose the file — you get to see what is inside it
@@ -238,7 +234,7 @@ export function BackupPanel(): React.JSX.Element {
         <input
           className="input grow"
           type="password"
-          placeholder="Passphrase used for that backup"
+          placeholder={t('Passphrase used for that backup')}
           value={importPw}
           onChange={(e) => {
             setImportPw(e.target.value)
@@ -250,12 +246,11 @@ export function BackupPanel(): React.JSX.Element {
         <button
           className="btn"
           disabled={!importPw || busy !== null}
-          title={importPw ? 'Pick the backup file to read' : 'Type the backup passphrase first'}
+          title={importPw ? t('Pick the backup file to read') : t('Type the backup passphrase first')}
           onClick={() => void runInspect()}
         >
           {busy === 'inspect' ? <Loader2 size={14} className="spin" /> : <Upload size={14} />}
-          Choose file…
-        </button>
+          {t('Choose file…')}</button>
       </div>
       {errorFor('import')}
 
@@ -263,31 +258,27 @@ export function BackupPanel(): React.JSX.Element {
         <div className="backup-banner warn" style={{ marginTop: 12 }}>
           <AlertTriangle size={16} />
           <div style={{ flex: 1 }}>
-            <div className="s-title">Replace current data?</div>
+            <div className="s-title">{t('Replace current data?')}</div>
             <div className="s-desc">
               {staged.path}
               <br />
-              Created {when(staged.summary.createdAt)} · {staged.summary.workspaces} workspaces ·{' '}
-              {staged.summary.servers} servers · {staged.summary.databases} databases ·{' '}
-              {staged.summary.secrets} credentials
-              {staged.summary.hasVault ? ' · vault included' : ''}
+              {t('Created')}{' '}{when(staged.summary.createdAt)} · {staged.summary.workspaces} {t('workspaces ·')}{' '}
+              {staged.summary.servers} {t('servers ·')}{' '}{staged.summary.databases} {t('databases ·')}{' '}
+              {staged.summary.secrets} {t('credentials')}{staged.summary.hasVault ? ' · vault included' : ''}
             </div>
           </div>
           <button className="btn sm" onClick={() => setStaged(null)}>
-            Cancel
-          </button>
+            {t('Cancel')}</button>
           <button className="btn sm danger fill" disabled={busy !== null} onClick={() => void runImport()}>
             {busy === 'import' ? <Loader2 size={13} className="spin" /> : null}
-            Restore and restart
-          </button>
+            {t('Restore and restart')}</button>
         </div>
       )}
 
       <BackupDestinations />
 
       <h3 className="backup-h" style={{ color: 'var(--danger)' }}>
-        Danger zone
-      </h3>
+        {t('Danger zone')}</h3>
       <p className="s-desc" style={{ marginBottom: 10 }}>
         Permanently deletes every workspace, server, database, tunnel, stored credential, the
         vault, trusted host keys and AI/MCP configuration — everything a backup covers, gone from
@@ -300,11 +291,9 @@ export function BackupPanel(): React.JSX.Element {
         <div className="backup-banner warn">
           <AlertTriangle size={16} />
           <div style={{ flex: 1 }}>
-            <div className="s-title">Back up first</div>
+            <div className="s-title">{t('Back up first')}</div>
             <div className="s-desc">
-              Your data has changed since the last backup — download one before deleting anything,
-              or whatever changed since then is gone for good.
-            </div>
+              {t('Your data has changed since the last backup — download one before deleting anything, or whatever changed since then is gone for good.')}</div>
           </div>
           {/* "Above" is a direction, not a next step. This puts the cursor in
               the field that does it. */}
@@ -315,21 +304,18 @@ export function BackupPanel(): React.JSX.Element {
               exportPwRef.current?.focus()
             }}
           >
-            Back up now
-          </button>
+            {t('Back up now')}</button>
         </div>
       ) : !confirmDelete ? (
         <button className="btn danger outline" onClick={() => setConfirmDelete(true)}>
-          <Trash2 size={14} /> Delete all data
-        </button>
+          <Trash2 size={14} /> {t('Delete all data')}</button>
       ) : (
         <div className="backup-banner warn">
           <AlertTriangle size={16} />
           <div style={{ flex: 1 }}>
-            <div className="s-title">This deletes everything on this machine</div>
+            <div className="s-title">{t('This deletes everything on this machine')}</div>
             <div className="s-desc" style={{ marginBottom: 8 }}>
-              Type <strong>DELETE</strong> to confirm. The app restarts once it's done.
-            </div>
+              {t('Type')}{' '}<strong>DELETE</strong> {t('to confirm. The app restarts once it\'s done.')}</div>
             <input
               className="input"
               style={{ maxWidth: 200 }}
@@ -346,16 +332,14 @@ export function BackupPanel(): React.JSX.Element {
               setDeleteTyped('')
             }}
           >
-            Cancel
-          </button>
+            {t('Cancel')}</button>
           <button
             className="btn sm danger fill"
             disabled={deleteTyped !== 'DELETE' || busy !== null}
             onClick={() => void runDeleteAll()}
           >
             {busy === 'delete' ? <Loader2 size={13} className="spin" /> : <Trash2 size={13} />}
-            Delete everything
-          </button>
+            {t('Delete everything')}</button>
         </div>
       )}
       {errorFor('delete')}

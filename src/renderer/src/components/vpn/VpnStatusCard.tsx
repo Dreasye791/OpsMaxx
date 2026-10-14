@@ -13,6 +13,7 @@ import type {
 } from '../../types'
 import { bytes, clsx } from '../../lib/format'
 import { VpnDiagnose } from './VpnDiagnose'
+import { useT } from '../../i18n'
 
 // How healthy a profile is, as the UI cares about it. Deliberately coarser than
 // VpnState in one place and finer in another: `reconnecting` and `degraded`
@@ -134,14 +135,13 @@ export function isLoopbackBind(host: string): boolean {
 }
 
 export function BindWarning({ host, what }: { host: string; what: string }): React.JSX.Element | null {
+  const t = useT()
   if (isLoopbackBind(host)) return null
   return (
     <div className="row" style={{ gap: 6, color: 'var(--warn)', fontSize: 11 }}>
       <AlertTriangle size={12} />
       <span>
-        Bound to {host} — {what} is reachable from every machine on your network, not just this
-        one. Use 127.0.0.1 unless you meant to share it.
-      </span>
+        {t('Bound to')}{' '}{host} — {what} {t('is reachable from every machine on your network, not just this one. Use 127.0.0.1 unless you meant to share it.')}</span>
     </div>
   )
 }
@@ -168,6 +168,7 @@ interface VpnStatusCardProps {
 }
 
 export function VpnStatusCard({ profile, status }: VpnStatusCardProps): React.JSX.Element {
+  const t = useT()
   const health = vpnHealth(status)
   const stats = status?.stats
   const listeners = status?.listeners ?? []
@@ -296,14 +297,14 @@ export function VpnStatusCard({ profile, status }: VpnStatusCardProps): React.JS
           say this tunnel has no peers. */}
       {profile.spec.kind === 'wireguard' && (stats?.peers?.length ?? 0) > 0 && (
         <div className="col" style={{ gap: 6 }}>
-          <span className="field-label">Peers</span>
+          <span className="field-label">{t('Peers')}</span>
           <table className="mini-table">
             <thead>
               <tr>
-                <th>Peer</th>
-                <th>Handshake</th>
-                <th>Received</th>
-                <th>Sent</th>
+                <th>{t('Peer')}</th>
+                <th>{t('Handshake')}</th>
+                <th>{t('Received')}</th>
+                <th>{t('Sent')}</th>
               </tr>
             </thead>
             <tbody>
@@ -345,7 +346,7 @@ export function VpnStatusCard({ profile, status }: VpnStatusCardProps): React.JS
 
       {listeners.length > 0 && (
         <div className="col" style={{ gap: 6 }}>
-          <span className="field-label">Local listeners</span>
+          <span className="field-label">{t('Local listeners')}</span>
           {listeners.map((l, i) => (
             <div key={`${l.bindHost}:${l.bindPort}-${i}`} className="col" style={{ gap: 4 }}>
               <div className="row" style={{ gap: 8 }}>
@@ -362,22 +363,21 @@ export function VpnStatusCard({ profile, status }: VpnStatusCardProps): React.JS
 
       {profile.spec.kind === 'frp' && (
         <div className="col" style={{ gap: 6 }}>
-          <span className="field-label">Proxies</span>
+          <span className="field-label">{t('Proxies')}</span>
           {proxies.length === 0 ? (
             // frp publishes no client-side byte counters, so this table is the
             // telemetry. Saying so beats showing invented rx/tx numbers.
             <span className="faint" style={{ fontSize: 11 }}>
-              No proxy status yet. frp reports per-proxy state rather than traffic counters.
-            </span>
+              {t('No proxy status yet. frp reports per-proxy state rather than traffic counters.')}</span>
           ) : (
             <table className="mini-table">
               <thead>
                 <tr>
-                  <th>Proxy</th>
-                  <th>Type</th>
-                  <th>Status</th>
-                  <th>Local</th>
-                  <th>Remote</th>
+                  <th>{t('Proxy')}</th>
+                  <th>{t('Type')}</th>
+                  <th>{t('Status')}</th>
+                  <th>{t('Local')}</th>
+                  <th>{t('Remote')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -411,6 +411,7 @@ export function VpnStatusCard({ profile, status }: VpnStatusCardProps): React.JS
  * to be movable. It was previously neither clickable nor selectable.
  */
 function AuthoriseNode({ url }: { url: string }): React.JSX.Element {
+  const t = useT()
   const [copied, setCopied] = useState(false)
 
   const copy = (): void => {
@@ -426,9 +427,7 @@ function AuthoriseNode({ url }: { url: string }): React.JSX.Element {
       <div className="vpn-authorise-say">
         <AlertTriangle size={13} />
         <span>
-          This node has not been authorised yet. It is a device of its own on your tailnet — separate
-          from any Tailscale client already running on this machine — so it needs approving once.
-        </span>
+          {t('This node has not been authorised yet. It is a device of its own on your tailnet — separate from any Tailscale client already running on this machine — so it needs approving once.')}</span>
       </div>
       {/* Selectable, and on one line that scrolls rather than wrapping: a URL
           broken across two lines is one nobody can copy by hand either. */}
@@ -438,8 +437,7 @@ function AuthoriseNode({ url }: { url: string }): React.JSX.Element {
           className="btn primary sm"
           onClick={() => window.open(url, '_blank', 'noopener,noreferrer')}
         >
-          <ExternalLink size={13} /> Authorise this node
-        </button>
+          <ExternalLink size={13} /> {t('Authorise this node')}</button>
         <button className="btn ghost sm" onClick={copy}>
           {copied ? <Check size={13} /> : <Copy size={13} />}
           {copied ? 'Copied' : 'Copy link'}

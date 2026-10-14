@@ -8,6 +8,7 @@ import { Field, Modal } from '../../common/Modal'
 import { destinationsIn } from './MoveToDialog'
 import { collectionRoute, routeLabel } from '../collection/RouteSelect'
 import '../nav.css'
+import { useT } from '../../../i18n'
 
 const NEW = '__new'
 
@@ -48,6 +49,7 @@ function SaveForm({
   onSaved: (ref: { collectionId: Id; requestId: Id }) => void
   onClose: () => void
 }): React.JSX.Element {
+  const t = useT()
   const ws = useApp((s) => s.activeWorkspaceId)
   const options = useMemo(() => destinationsIn(ws), [ws])
   const [name, setName] = useState(request.name)
@@ -72,51 +74,48 @@ function SaveForm({
 
   return (
     <Modal
-      title="Save request"
+      title={t('Save request')}
       onClose={onClose}
       confirm={{ label: 'Save', onClick: save, disabled: !!nameError || !!newError }}
     >
-      <Field label="Name" error={nameError}>
+      <Field label={t('Name')} error={nameError}>
         <input className="input" value={name} autoFocus onChange={(e) => setName(e.target.value)} />
       </Field>
-      <Field label="Save to">
+      <Field label={t('Save to')}>
         <select className="input" value={dest} onChange={(e) => setDest(e.target.value)}>
           {options.map((d, i) => (
             <option key={`${d.collectionId}/${d.parentId}`} value={String(i)}>
               {d.label}
             </option>
           ))}
-          <option value={NEW}>New collection…</option>
+          <option value={NEW}>{t('New collection…')}</option>
         </select>
       </Field>
       {dest === NEW && (
-        <Field label="New collection name" error={newError}>
+        <Field label={t('New collection name')} error={newError}>
           <input className="input" value={newName} onChange={(e) => setNewName(e.target.value)} />
         </Field>
       )}
       <p className="hc-effective" aria-live="polite">
         {target ? (
           <>
-            Sends from <strong>{routeLabel(collectionRoute(target))}</strong> (collection setting)
-            {routeLabel(collectionRoute(target)) !== used && (
+            {t('Sends from')}{' '}<strong>{routeLabel(collectionRoute(target))}</strong> {t('(collection setting)')}{routeLabel(collectionRoute(target)) !== used && (
               <>
                 {' '}
-                — this request used <strong>{used}</strong>
+                {t('— this request used')}{' '}<strong>{used}</strong>
               </>
             )}
           </>
         ) : (
           <>
-            Sends from <strong>{used}</strong>, which the new collection keeps
-          </>
+            {t('Sends from')}{' '}<strong>{used}</strong>{t(', which the new collection keeps')}</>
         )}
       </p>
       {target?.insecureTls && (
         <p className="hc-warn-line">
-          <TriangleAlert size={13} aria-hidden="true" /> This collection does not verify certificates
-        </p>
+          <TriangleAlert size={13} aria-hidden="true" /> {t('This collection does not verify certificates')}</p>
       )}
-      {target?.caPem && <p className="hc-note-line">Uses a custom CA</p>}
+      {target?.caPem && <p className="hc-note-line">{t('Uses a custom CA')}</p>}
     </Modal>
   )
 }

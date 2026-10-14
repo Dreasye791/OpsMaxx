@@ -2,6 +2,7 @@ import { Trash2 } from 'lucide-react'
 import type { FrpProxy, FrpProxyType } from '../../types'
 import { BindWarning } from './VpnStatusCard'
 import { Switch } from '../common/Switch'
+import { useT } from '../../i18n'
 
 const TYPES: FrpProxyType[] = ['tcp', 'udp', 'http', 'https', 'stcp', 'sudp', 'xtcp', 'tcpmux']
 
@@ -27,6 +28,7 @@ export function FrpProxyEditor({
   onChange,
   onRemove
 }: FrpProxyEditorProps): React.JSX.Element {
+  const t = useT()
   const set = (patch: Partial<FrpProxy>): void => onChange({ ...proxy, ...patch })
 
   const byDomain = BY_DOMAIN.includes(proxy.type)
@@ -56,7 +58,7 @@ export function FrpProxyEditor({
         <input
           className="input"
           style={{ flex: 1, minWidth: 110 }}
-          placeholder="Proxy name"
+          placeholder={t('Proxy name')}
           value={proxy.name}
           onChange={(e) => set({ name: e.target.value })}
         />
@@ -72,7 +74,7 @@ export function FrpProxyEditor({
             </option>
           ))}
         </select>
-        <button className="icon-btn sm" title="Remove proxy" onClick={onRemove}>
+        <button className="icon-btn sm" title={t('Remove proxy')} onClick={onRemove}>
           <Trash2 size={14} />
         </button>
       </div>
@@ -88,7 +90,7 @@ export function FrpProxyEditor({
         <input
           className="input"
           type="number"
-          placeholder="Local port"
+          placeholder={t('Local port')}
           value={proxy.localPort || ''}
           onChange={(e) => set({ localPort: Number(e.target.value) })}
         />
@@ -96,7 +98,7 @@ export function FrpProxyEditor({
           <input
             className="input"
             type="number"
-            placeholder="Remote port"
+            placeholder={t('Remote port')}
             value={proxy.remotePort ?? ''}
             onChange={(e) => set({ remotePort: e.target.value ? Number(e.target.value) : undefined })}
           />
@@ -111,7 +113,7 @@ export function FrpProxyEditor({
         <div className="input-group">
           <input
             className="input"
-            placeholder="Custom domain (app.example.com)"
+            placeholder={t('Custom domain (app.example.com)')}
             value={proxy.customDomains?.join(', ') ?? ''}
             onChange={(e) =>
               set({
@@ -124,7 +126,7 @@ export function FrpProxyEditor({
           />
           <input
             className="input"
-            placeholder="Subdomain"
+            placeholder={t('Subdomain')}
             value={proxy.subdomain ?? ''}
             onChange={(e) => set({ subdomain: e.target.value || undefined })}
           />
@@ -133,8 +135,7 @@ export function FrpProxyEditor({
 
       {secret && (
         <span className="field-hint">
-          Visitors need the shared secret for this proxy. It lives in the vault, not here.
-        </span>
+          {t('Visitors need the shared secret for this proxy. It lives in the vault, not here.')}</span>
       )}
 
       {/* The gate. Written out in full, with the real host and the real port,

@@ -5,6 +5,7 @@ import { useApp } from '../../store/app'
 import { clsx } from '../../lib/format'
 import { TOUR_STEPS, walkthroughFor } from './tourSteps'
 import { approvalShowing } from '../../hooks/useClickOutside'
+import { useT } from '../../i18n'
 
 // A first-run walkthrough, mounted once at the app root.
 //
@@ -13,6 +14,7 @@ import { approvalShowing } from '../../hooks/useClickOutside'
 // while it is explained. A tour that hides the app while describing it teaches
 // nothing you can act on.
 export function OnboardingTour(): React.JSX.Element | null {
+  const t = useT()
   const open = useOnboarding((s) => s.open)
   const step = useOnboarding((s) => s.step)
   const next = useOnboarding((s) => s.next)
@@ -73,7 +75,7 @@ export function OnboardingTour(): React.JSX.Element | null {
   const last = step === steps.length - 1
 
   return (
-    <div className="tour-card" role="dialog" aria-label="OpsMaxx walkthrough">
+    <div className="tour-card" role="dialog" aria-label={t('OpsMaxx walkthrough')}>
       <div className="row" style={{ gap: 8, alignItems: 'center' }}>
         <Compass size={16} style={{ color: 'var(--accent-ink)' }} />
         <b>{current.title}</b>
@@ -106,24 +108,21 @@ export function OnboardingTour(): React.JSX.Element | null {
 
       <div className="row" style={{ gap: 8, marginTop: 10 }}>
         <button className="btn sm" disabled={step === 0} onClick={back}>
-          <ArrowLeft size={13} /> Back
-        </button>
+          <ArrowLeft size={13} /> {t('Back')}</button>
         <button className="btn sm primary" onClick={() => (last ? finish() : next())}>
           {last ? (
             <>
-              <Check size={13} /> Done
-            </>
+              <Check size={13} /> {t('Done')}</>
           ) : (
             <>
-              Next <ArrowRight size={13} />
+              {t('Next')}{' '}<ArrowRight size={13} />
             </>
           )}
         </button>
         <span className="spacer" />
         {!last && (
           <button className="btn sm ghost" onClick={finish}>
-            Skip
-          </button>
+            {t('Skip')}</button>
         )}
       </div>
     </div>

@@ -19,6 +19,7 @@ import { clsx } from '../../lib/format'
 import type { TerminalTransport } from '../../lib/transport'
 import type { Server } from '../../types'
 import { resolveScheme } from '../../../../shared/terminalTheme'
+import { useT } from '../../i18n'
 
 // ---- Simulated demo shell --------------------------------------------------
 const MOCK: Record<string, string> = {
@@ -157,9 +158,10 @@ function Recovering({
   recovery: RecoveryState
   onCancel: () => void
 }): React.JSX.Element {
+  const t = useT()
   return (
     <>
-      <div className="td-title">Reconnecting to {transport.title}</div>
+      <div className="td-title">{t('Reconnecting to')}{' '}{transport.title}</div>
       <div className="td-hint">
         {recovery.nextInSec > 0
           ? `Attempt ${recovery.attempt} in ${recovery.nextInSec}s`
@@ -167,8 +169,7 @@ function Recovering({
       </div>
       <div className="td-actions">
         <button className="btn" onClick={onCancel}>
-          <X size={14} /> Stop trying
-        </button>
+          <X size={14} /> {t('Stop trying')}</button>
       </div>
     </>
   )
@@ -210,6 +211,7 @@ function DeadSession({
   onClose?: () => void
   closeLabel?: string
 }): React.JSX.Element {
+  const t = useT()
   const openServerEditor = useApp((s) => s.openServerEditor)
   const advice = adviseOnError(dead)
   const fault = classifyConnectionError(dead)
@@ -277,8 +279,7 @@ function DeadSession({
         {recovery.exhausted && (
           <div className="td-hint">
             {`Tried to reconnect for ${Math.round(RECOVERY_BUDGET_MS / 60_000)} minutes and stopped. `}
-            Reconnect is still here whenever you want it.
-          </div>
+            {t('Reconnect is still here whenever you want it.')}</div>
         )}
         {advice.hint && <div className="td-hint">{advice.hint}</div>}
         {/* What we offered, which the server's own message cannot tell them. */}
@@ -294,7 +295,7 @@ function DeadSession({
               className="btn primary"
               reason={`${transport.subtitle} signs in with a credential from your vault.`}
               onUnlocked={onReconnect}
-              label="Unlock and reconnect"
+              label={t('Unlock and reconnect')}
             />
           </div>
         )}
@@ -304,8 +305,7 @@ function DeadSession({
               credential re-runs the same rejected credential, forever. */}
           {advice.retry && (
             <button className="btn primary" autoFocus onClick={onReconnect}>
-              <RotateCw size={14} /> Reconnect
-            </button>
+              <RotateCw size={14} /> {t('Reconnect')}</button>
           )}
           {advice.edit && serverId && (
             <button
@@ -313,15 +313,13 @@ function DeadSession({
               autoFocus={!advice.retry}
               onClick={() => openServerEditor(serverId)}
             >
-              <Pencil size={14} /> Edit connection
-            </button>
+              <Pencil size={14} /> {t('Edit connection')}</button>
           )}
           {/* Neither applies — a changed host key, or an OS refusal. Retrying
               is still allowed, it is just not the thing being recommended. */}
           {!advice.retry && !(advice.edit && serverId) && (
             <button className="btn" onClick={onReconnect}>
-              <RotateCw size={14} /> Try again
-            </button>
+              <RotateCw size={14} /> {t('Try again')}</button>
           )}
           {/* Giving up is an outcome too, and until now the only way to act on
               it was the tab strip — the `×` PaneGrid draws over a pane appears
@@ -347,9 +345,7 @@ function DeadSession({
             Reconnect now drops it first, on every path. */}
         {advice.retry && (
           <div className="td-hint">
-            The scrollback above is kept. Reconnecting drops the shared connection first, so it
-            never dials on a socket the server may have taken with it.
-          </div>
+            {t('The scrollback above is kept. Reconnecting drops the shared connection first, so it never dials on a socket the server may have taken with it.')}</div>
         )}
       </div>
     </div>
@@ -661,6 +657,7 @@ export function TerminalView({
   onClose?: () => void
   closeLabel?: string
 }): React.JSX.Element {
+  const t = useT()
   if (transport)
     return (
       <RealTerminal
@@ -674,7 +671,7 @@ export function TerminalView({
   return (
     <EmptyState
       icon={<TerminalIcon size={26} />}
-      title="Session unavailable"
+      title={t('Session unavailable')}
       message="This session has no transport."
     />
   )

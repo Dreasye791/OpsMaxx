@@ -14,6 +14,7 @@ import { useApi } from '../../../store/api'
 import { KeyValueTable } from '../../common/KeyValueTable'
 import { VaultValueField } from '../fields/VaultValueField'
 import { MoveToVaultDialog } from '../dialogs/MoveToVaultDialog'
+import { useT } from '../../../i18n'
 
 export const CREDENTIAL_WARNING = 'Sent as a credential; saved and synced as plain text. Move it to the vault from the row menu.'
 
@@ -79,6 +80,7 @@ export function VariablesTable({
   /** Keys a narrower scope also defines, and that scope's name: shown struck through. */
   overriddenBy?: { keys: ReadonlySet<string>; by: string }
 }): React.JSX.Element {
+  const t = useT()
   const collections = useApi((s) => s.collections)
   const credentials = useMemo(
     () => credentialVariables(collections.filter((c) => c.workspaceId === workspaceId)),
@@ -101,7 +103,7 @@ export function VariablesTable({
           return overriddenBy?.keys.has(row.key) ? (
             <span className="hc-overridden" title={`Overridden by ${overriddenBy.by}`}>
               {field}
-              <span className="hc-sr-only">, overridden by {overriddenBy.by}</span>
+              <span className="hc-sr-only">{t(', overridden by')}{' '}{overriddenBy.by}</span>
             </span>
           ) : (
             field

@@ -7,6 +7,7 @@ import { clsx } from '../../lib/format'
 import type { SshConfigHost } from '../../../../shared/sshconfig'
 import type { Hop } from '../../types'
 import { Switch } from '../common/Switch'
+import { useT } from '../../i18n'
 
 let hopSeq = 0
 
@@ -45,6 +46,7 @@ function hopsFor(entry: SshConfigHost, all: SshConfigHost[]): Hop[] {
 }
 
 export function SshConfigImport(): React.JSX.Element {
+  const t = useT()
   const setModal = useApp((s) => s.setModal)
   const addServer = useApp((s) => s.addServer)
   const addFolder = useApp((s) => s.addFolder)
@@ -134,7 +136,7 @@ export function SshConfigImport(): React.JSX.Element {
 
   return (
     <Modal
-      title="Import from SSH config"
+      title={t('Import from SSH config')}
       subtitle={path || '~/.ssh/config'}
       size="lg"
       onClose={() => setModal(null)}
@@ -142,17 +144,16 @@ export function SshConfigImport(): React.JSX.Element {
         <>
           <span className="spacer" />
           <button className="btn" onClick={() => setModal(null)}>
-            Cancel
-          </button>
+            {t('Cancel')}</button>
           <button className="btn primary" disabled={chosen.length === 0} onClick={() => void runImport()}>
-            <Download size={14} /> Import {chosen.length || ''}
+            <Download size={14} /> {t('Import')}{' '}{chosen.length || ''}
           </button>
         </>
       }
     >
       {loading && (
         <div className="row" style={{ gap: 8, padding: 12 }}>
-          <Loader2 size={15} className="spin" /> Reading {path || 'SSH config'}…
+          <Loader2 size={15} className="spin" /> {t('Reading')}{' '}{path || 'SSH config'}…
         </div>
       )}
 
@@ -161,17 +162,14 @@ export function SshConfigImport(): React.JSX.Element {
           <div className="vault-error">{error}</div>
           <div className="row" style={{ gap: 8, marginTop: 10 }}>
             <button className="btn primary" onClick={() => setModal('add-server')}>
-              Add a server manually
-            </button>
+              {t('Add a server manually')}</button>
           </div>
         </>
       )}
 
       {!loading && !error && hosts.length === 0 && (
         <div className="faint" style={{ padding: 12 }}>
-          No concrete servers found. Entries using only wildcards (<span className="mono">Host *</span>) are
-          treated as defaults and are not imported on their own.
-        </div>
+          {t('No concrete servers found. Entries using only wildcards (')}<span className="mono">{t('Host *')}</span>{t(') are treated as defaults and are not imported on their own.')}</div>
       )}
 
       {hosts.length > 0 && (
@@ -181,17 +179,14 @@ export function SshConfigImport(): React.JSX.Element {
               className="btn sm"
               onClick={() => setPicked(Object.fromEntries(hosts.map((h) => [h.alias, true])))}
             >
-              Select all
-            </button>
+              {t('Select all')}</button>
             <button className="btn sm" onClick={() => setPicked({})}>
-              Select none
-            </button>
+              {t('Select none')}</button>
             <span className="spacer" />
             <label className="row" style={{ gap: 8 }}>
               <Switch checked={intoFolder} onChange={setIntoFolder} />
               <span className="muted">
-                <FolderPlus size={13} /> Group into a folder
-              </span>
+                <FolderPlus size={13} /> {t('Group into a folder')}</span>
             </label>
           </div>
 
@@ -215,7 +210,7 @@ export function SshConfigImport(): React.JSX.Element {
                   <div>
                     <div className="r-title">
                       {h.alias}
-                      {existing && <span className="chip" style={{ marginLeft: 8 }}>already added</span>}
+                      {existing && <span className="chip" style={{ marginLeft: 8 }}>{t('already added')}</span>}
                     </div>
                     <div className="r-sub mono">
                       {h.user ? `${h.user}@` : ''}

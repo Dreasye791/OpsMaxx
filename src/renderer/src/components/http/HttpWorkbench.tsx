@@ -33,6 +33,7 @@ import {
 } from './response/ResponsePane'
 import { HTTP_COMMAND_EVENT, type HttpCommandDetail } from './request/UrlBar'
 import './http.css'
+import { useT } from '../../i18n'
 
 /**
  * The HTTP client (§3.7): the request-tab strip over the active tab's surface.
@@ -40,6 +41,7 @@ import './http.css'
  * row with focus in it (§2.10), which the first edit promotes in place.
  */
 export function HttpWorkbench(): React.JSX.Element {
+  const t = useT()
   const ws = useApp((s) => s.activeWorkspaceId)
   const activeId = useHttp((s) => {
     const id = s.activeTab[ws]
@@ -163,7 +165,7 @@ export function HttpWorkbench(): React.JSX.Element {
       <ProductionPrompt />
       {curlSecrets && (
         <Modal
-          title="Copy as cURL with secrets?"
+          title={t('Copy as cURL with secrets?')}
           subtitle="Vault values and credentials go onto the clipboard as plain text, where any app can read them."
           onClose={() => setCurlSecrets(null)}
           confirm={{
@@ -208,6 +210,7 @@ const isCollectionGone = (route: Route): boolean =>
 
 /** The production confirm (§2.18). A's send layer raises it; this answers it. */
 function ProductionPrompt(): React.JSX.Element | null {
+  const t = useT()
   const prompt = useHttpRuntime((s) => s.prompt)
   const [skip, setSkip] = useState(false)
   if (!prompt) return null
@@ -219,7 +222,7 @@ function ProductionPrompt(): React.JSX.Element | null {
     <Modal
       title={`Send ${prompt.action} to production (${prompt.target}${prompt.via ? `, via ${prompt.via}` : ''})?`}
       onClose={() => answer(false)}
-      confirm={{ label: 'Send', onClick: () => answer(true), destructive: true }}
+      confirm={{ label: t('Send'), onClick: () => answer(true), destructive: true }}
     >
       <label className="row">
         <input type="checkbox" checked={skip} onChange={(e) => setSkip(e.target.checked)} /> {prompt.skipLabel}
@@ -230,6 +233,7 @@ function ProductionPrompt(): React.JSX.Element | null {
 
 /** One tab's content, chosen by what the tab holds. Keyed by tab id, so a promoted ghost keeps its tree. */
 function Surface({ tabId }: { tabId: Id }): React.JSX.Element | null {
+  const t = useT()
   const tab = useTabOrGhost(tabId)
   const kind = useHttp((s) => s.requestFor(tabId)?.kind ?? null)
   if (!tab) return null
@@ -240,12 +244,11 @@ function Surface({ tabId }: { tabId: Id }): React.JSX.Element | null {
   if (kind === 'http') return <HttpRequestPane tabId={tabId} />
   return (
     <div className="hc-empty-body">
-      <div className="hc-empty-title">This request no longer exists</div>
-      <div>It was deleted from its collection, here or on another device.</div>
+      <div className="hc-empty-title">{t('This request no longer exists')}</div>
+      <div>{t('It was deleted from its collection, here or on another device.')}</div>
       <div className="hc-empty-actions">
         <button className="btn" onClick={() => closeNow([tabId])}>
-          Close tab
-        </button>
+          {t('Close tab')}</button>
       </div>
     </div>
   )

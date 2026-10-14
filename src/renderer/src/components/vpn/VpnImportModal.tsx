@@ -13,6 +13,7 @@ import type {
 import { bridgeHas } from '../../lib/bridge'
 import type { DiscoveredVpnProfile } from '../../../../shared/vpn'
 import { isVaultLocked, withVaultUnlock } from '../../lib/withVaultUnlock'
+import { useT } from '../../i18n'
 
 const ACCEPT: Record<ImportableVpnKind, string> = {
   wireguard: '.conf',
@@ -42,6 +43,7 @@ interface VpnImportModalProps {
 // report is shown before anything is written: a profile that silently dropped
 // the half of the config that made it work is worse than a failed import.
 export function VpnImportModal({ kind, onClose }: VpnImportModalProps): React.JSX.Element {
+  const t = useT()
   const workspaceId = useApp((s) => s.activeId())
   const upsertVpnProfile = useApp((s) => s.upsertVpnProfile)
 
@@ -430,8 +432,7 @@ export function VpnImportModal({ kind, onClose }: VpnImportModalProps): React.JS
             </span>
             <span className="grow" />
             <button className="btn secondary size-28" onClick={() => fileInput.current?.click()}>
-              <Upload size={13} /> Choose file
-            </button>
+              <Upload size={13} /> {t('Choose file')}</button>
             <input
               ref={fileInput}
               type="file"
@@ -476,7 +477,7 @@ export function VpnImportModal({ kind, onClose }: VpnImportModalProps): React.JS
           >
             <div className="row" style={{ gap: 8, fontWeight: 600, fontSize: 12 }}>
               <ShieldAlert size={14} />
-              <span>This config cannot be imported</span>
+              <span>{t('This config cannot be imported')}</span>
             </div>
             {/* Quoting the line matters. "Rejected for security reasons" sends
                 the user to a forum; the directive itself sends them to the one
@@ -490,10 +491,7 @@ export function VpnImportModal({ kind, onClose }: VpnImportModalProps): React.JS
               </div>
             ))}
             <span style={{ fontSize: 11, opacity: 0.9 }}>
-              These directives run commands on your machine. OpsMaxx re-emits a config it
-              generated itself, so it cannot honour them — and importing while pretending it had
-              would be a lie about what this profile does.
-            </span>
+              {t('These directives run commands on your machine. OpsMaxx re-emits a config it generated itself, so it cannot honour them — and importing while pretending it had would be a lie about what this profile does.')}</span>
           </div>
         )}
 
@@ -507,8 +505,7 @@ export function VpnImportModal({ kind, onClose }: VpnImportModalProps): React.JS
                 style={{ flexShrink: 0 }}
                 onClick={() => void save()}
               >
-                Unlock vault and import
-              </button>
+                {t('Unlock vault and import')}</button>
             )}
           </div>
         )}
@@ -523,8 +520,7 @@ export function VpnImportModal({ kind, onClose }: VpnImportModalProps): React.JS
         {removed.length > 0 && (
           <div className="col" style={{ gap: 6 }}>
             <span className="field-label" style={{ color: 'var(--warn)' }}>
-              {removed.length} {removed.length === 1 ? 'directive was' : 'directives were'} removed
-            </span>
+              {removed.length} {removed.length === 1 ? 'directive was' : 'directives were'} {t('removed')}</span>
             <div
               className="paste-preview"
               style={{ maxHeight: 150 }}
@@ -547,8 +543,7 @@ export function VpnImportModal({ kind, onClose }: VpnImportModalProps): React.JS
             </div>
             {needsAck && (
               <span className="faint" style={{ fontSize: 11 }}>
-                Scroll to the end of the list to continue.
-              </span>
+                {t('Scroll to the end of the list to continue.')}</span>
             )}
           </div>
         )}
@@ -565,14 +560,14 @@ export function VpnImportModal({ kind, onClose }: VpnImportModalProps): React.JS
         )}
 
         <Field
-          label="Profile name"
+          label={t('Profile name')}
           required
           error={nameTouched && name.trim() === '' ? 'Give the profile a name.' : null}
         >
           <input
             className="input"
             value={name}
-            placeholder="Office VPN"
+            placeholder={t('Office VPN')}
             onChange={(e) => {
               setNameTouched(true)
               setName(e.target.value)

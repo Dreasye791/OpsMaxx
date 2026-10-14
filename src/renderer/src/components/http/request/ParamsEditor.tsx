@@ -5,6 +5,7 @@ import { KeyValueTable } from '../../common/KeyValueTable'
 import { VarField } from './AuthEditor'
 import { rowWarning } from './HeadersEditor'
 import { syncFromParams } from './requestModel'
+import { useT } from '../../../i18n'
 
 export interface ParamsEditorProps {
   req: HttpRequest
@@ -16,6 +17,7 @@ export interface ParamsEditorProps {
 
 /** Query parameters, kept in step with the URL both ways, and the URL's `:id` / `{id}` segments. */
 export function ParamsEditor({ req, onChange, chain, stripped = [], readOnly }: ParamsEditorProps): React.JSX.Element {
+  const t = useT()
   const showDescription = useHttp((s) => s.prefs.kvDescriptions)
   const setPrefs = useHttp((s) => s.setPrefs)
   return (
@@ -28,14 +30,14 @@ export function ParamsEditor({ req, onChange, chain, stripped = [], readOnly }: 
         onShowDescription={(kvDescriptions) => setPrefs({ kvDescriptions })}
         readOnly={readOnly}
         valueCell={(row, onValue) => (
-          <VarField readOnly={readOnly} value={row.value} onChange={onValue} chain={chain} ariaLabel={`Value of ${row.key || 'parameter'}`} placeholder="Value" />
+          <VarField readOnly={readOnly} value={row.value} onChange={onValue} chain={chain} ariaLabel={`Value of ${row.key || 'parameter'}`} placeholder={t('Value')} />
         )}
         warnFor={(row) => rowWarning(row, 'params', req.params.indexOf(row), stripped)}
       />
       {req.pathParams.length > 0 && (
         <>
-          <h4 className="hc-section ui-label">Path parameters</h4>
-          <table className="hc-path-table" aria-label="Path parameters">
+          <h4 className="hc-section ui-label">{t('Path parameters')}</h4>
+          <table className="hc-path-table" aria-label={t('Path parameters')}>
             <tbody>
               {req.pathParams.map((p) => (
                 <tr key={p.id}>

@@ -46,6 +46,7 @@ import { sshTargetFor } from '../../lib/ssh'
 import type { Server } from '../../types'
 import { PanelShell } from './PanelShell'
 import type { OnDemandTarget } from '../../../../shared/ssh'
+import { useT } from '../../i18n'
 
 // "This disk fills in eleven days." — roadmap item 26.
 //
@@ -347,6 +348,7 @@ function latestRun(trend: Trend): number[] {
  * came for is now the first thing in the card rather than the last.
  */
 function CapacityCard({ row, report }: { row: CapacityRow; report: CapacityReport }): React.JSX.Element {
+  const t = useT()
   const { trend, threshold } = row
   const latest = trend.latest
   const label = METRIC_LABEL[trend.metric]
@@ -380,7 +382,7 @@ function CapacityCard({ row, report }: { row: CapacityRow; report: CapacityRepor
 
         <div className="cap-now">
           {latest === null ? (
-            <span className="faint">no samples</span>
+            <span className="faint">{t('no samples')}</span>
           ) : (
             <span className={clsx('mono', 'cap-value', tone(latest.v))}>
               {latest.v.toFixed(1)}%
@@ -394,18 +396,17 @@ function CapacityCard({ row, report }: { row: CapacityRow; report: CapacityRepor
           that was on screen before. */}
       <div className="cap-basis">
         {METRIC_BASIS[trend.metric]}
-        {latest !== null && <> · last read {span(report.now - latest.ts)} ago</>}
+        {latest !== null && <> {t('· last read')}{' '}{span(report.now - latest.ts)} {t('ago')}</>}
         {trend.read > 0 && (
           <>
             {' '}
-            · {trend.read} reading{trend.read === 1 ? '' : 's'} over {span(report.to - report.from)}
+            · {trend.read} {t('reading')}{trend.read === 1 ? '' : 's'} {t('over')}{' '}{span(report.to - report.from)}
           </>
         )}
         {trend.high !== null && trend.low !== null && (
           <>
             {' '}
-            · {trend.low.toFixed(0)}–{trend.high.toFixed(0)}% across the window
-          </>
+            · {trend.low.toFixed(0)}–{trend.high.toFixed(0)}{t('% across the window')}</>
         )}
       </div>
 
@@ -420,8 +421,7 @@ function CapacityCard({ row, report }: { row: CapacityRow; report: CapacityRepor
               {' '}
               <span className="cap-rate">{rateText(f)}</span>{' '}
               <span className="chip" title={CONFIDENCE_HELP[f.confidence]}>
-                {f.confidence} confidence
-              </span>
+                {f.confidence} {t('confidence')}</span>
             </>
           )}
         </div>
@@ -433,15 +433,12 @@ function CapacityCard({ row, report }: { row: CapacityRow; report: CapacityRepor
           flat as a percentage" is the reason the byte series exists. */}
       {f !== null && threshold !== null && row.basis === 'bytes' && trend.bytes !== null && (
         <div className="cap-why" data-testid={`cap-basis-bytes-${trend.metric}`}>
-          Measured in bytes, not in percent: df reports capacity as a rounded whole number, so a
-          large filesystem sits still for weeks and then moves a whole point at once. As a
-          percentage the same disk reads: {forecastText(f, trend.metric, threshold)}
+          {t('Measured in bytes, not in percent: df reports capacity as a rounded whole number, so a large filesystem sits still for weeks and then moves a whole point at once. As a percentage the same disk reads:')}{' '}{forecastText(f, trend.metric, threshold)}
           {trend.bytes.confidence !== null && (
             <>
               {' '}
               <span className="chip" title={CONFIDENCE_HELP[trend.bytes.confidence]}>
-                {trend.bytes.confidence} confidence
-              </span>
+                {trend.bytes.confidence} {t('confidence')}</span>
             </>
           )}
         </div>
@@ -454,10 +451,9 @@ function CapacityCard({ row, report }: { row: CapacityRow; report: CapacityRepor
           could never answer, so it is on the card rather than inside the fold. */}
       {trend.bytes !== null && trend.bytes.latest !== null && (
         <div className="cap-basis" data-testid={`cap-bytes-${trend.metric}`}>
-          {bytes(trend.bytes.latest)} used
-          {trend.bytes.perDay !== null && <> · growing {bytes(trend.bytes.perDay)} a day</>}
+          {bytes(trend.bytes.latest)} {t('used')}{trend.bytes.perDay !== null && <> {t('· growing')}{' '}{bytes(trend.bytes.perDay)} {t('a day')}</>}
           {trend.bytes.crossesAt !== null && trend.bytes.days !== null && (
-            <> · {threshold ?? 90}% in {dayCount(trend.bytes.days)} day(s)</>
+            <> · {threshold ?? 90}{t('% in')}{' '}{dayCount(trend.bytes.days)} day(s)</>
           )}
         </div>
       )}
@@ -466,8 +462,7 @@ function CapacityCard({ row, report }: { row: CapacityRow; report: CapacityRepor
         <details className="disclosure cap-fold">
           <summary className="disclosure-head">
             <ChevronRight size={14} className="chev" />
-            Show the measured line
-          </summary>
+            {t('Show the measured line')}</summary>
           <div className="disclosure-body">
             <TrendChart trend={trend} report={report} />
           </div>
@@ -490,6 +485,7 @@ function CapacityCard({ row, report }: { row: CapacityRow; report: CapacityRepor
  * measurement that was not taken.
  */
 function TrendChart({ trend, report }: { trend: Trend; report: CapacityReport }): React.JSX.Element {
+  const t = useT()
   const threshold = CAPACITY_THRESHOLDS[trend.metric] ?? null
   const drawing = draw(trend, report.from, report.to, CHART, threshold)
   const label = METRIC_LABEL[trend.metric]
@@ -556,7 +552,7 @@ function TrendChart({ trend, report }: { trend: Trend; report: CapacityReport })
       <div className="row faint" style={{ gap: 10, flexWrap: 'wrap' }}>
         {drawing.boundaryX !== null && (
           <span>
-            Before {shortDate(trend.resolutionBoundary ?? report.from)}: {RES_LABEL.hourly}. After:{' '}
+            {t('Before')}{' '}{shortDate(trend.resolutionBoundary ?? report.from)}: {RES_LABEL.hourly}{t('. After:')}{' '}
             {RES_LABEL.full}.
           </span>
         )}
@@ -573,14 +569,10 @@ function TrendChart({ trend, report }: { trend: Trend; report: CapacityReport })
               host, so it does not get the warning colour or the triangle. */}
           {s.gapKnown === 'not-running' ? (
             <>
-              OpsMaxx was not running for {span(s.gapBefore)} — nothing was measured across it, so
-              the line is broken there rather than joined.
-            </>
+              {t('OpsMaxx was not running for')}{' '}{span(s.gapBefore)} {t('— nothing was measured across it, so the line is broken there rather than joined.')}</>
           ) : (
             <>
-              <AlertTriangle size={11} /> No samples for {span(s.gapBefore)}. The line is broken
-              there rather than joined — nothing was measured across it.
-            </>
+              <AlertTriangle size={11} /> {t('No samples for')}{' '}{span(s.gapBefore)}{t('. The line is broken there rather than joined — nothing was measured across it.')}</>
           )}
         </div>
       ))}
@@ -597,32 +589,21 @@ function TrendChart({ trend, report }: { trend: Trend; report: CapacityReport })
  * than implying a precision the sampler does not have.
  */
 function MethodNote(): React.JSX.Element {
+  const t = useT()
   return (
     <details className="disclosure cap-fold" data-testid="capacity-method">
       <summary className="disclosure-head">
         <ChevronRight size={14} className="chev" />
-        How a date is worked out, and when one is refused
-      </summary>
+        {t('How a date is worked out, and when one is refused')}</summary>
       <div className="disclosure-body">
         <div className="cap-note">
-          Every projection is <b>a straight line</b> — an ordinary least-squares fit through the
-          samples in the window, extended until it meets the threshold. It assumes the current rate
-          holds, and that assumption is doing most of the work: treat a date as a description of
-          today’s rate, not as a schedule.
-        </div>
+          {t('Every projection is')}{' '}<b>{t('a straight line')}</b> {t('— an ordinary least-squares fit through the samples in the window, extended until it meets the threshold. It assumes the current rate holds, and that assumption is doing most of the work: treat a date as a description of today’s rate, not as a schedule.')}</div>
         <div className="cap-note">
-          Nothing is projected from fewer than {FORECAST_MIN_POINTS} samples, from a run shorter
-          than {span(FORECAST_MIN_WINDOW_MS)}, or from points that sit further from the line than
-          an r² of {FORECAST_MIN_R2} allows. If one jump accounts for{' '}
-          {Math.round(FORECAST_STEP_SHARE * 100)}% or more of the whole rise, that is something
-          written once and not a trend, and no date is given. Crossings further out than{' '}
-          {FORECAST_HORIZON_DAYS} days are not stated at all.
-        </div>
+          {t('Nothing is projected from fewer than')}{' '}{FORECAST_MIN_POINTS} {t('samples, from a run shorter than')}{' '}{span(FORECAST_MIN_WINDOW_MS)}{t(', or from points that sit further from the line than an r² of')}{' '}{FORECAST_MIN_R2} {t('allows. If one jump accounts for')}{' '}
+          {Math.round(FORECAST_STEP_SHARE * 100)}{t('% or more of the whole rise, that is something written once and not a trend, and no date is given. Crossings further out than')}{' '}
+          {FORECAST_HORIZON_DAYS} {t('days are not stated at all.')}</div>
         <div className="cap-note">
-          Nothing is measured for this screen. Every number is derived on demand from samples the
-          fleet sampler already wrote, which is also why a host that has just been added has no
-          history to draw on.
-        </div>
+          {t('Nothing is measured for this screen. Every number is derived on demand from samples the fleet sampler already wrote, which is also why a host that has just been added has no history to draw on.')}</div>
       </div>
     </details>
   )
@@ -706,6 +687,7 @@ function withoutHostPrefix(sentence: string, hostName: string): string {
 }
 
 export function CapacityPanel({ servers }: { servers: Server[] }): React.JSX.Element {
+  const t = useT()
   const [serverId, setServerId] = useState<string>(servers[0]?.id ?? '')
   const [days, setDays] = useState<number>(7)
   const [report, setReport] = useState<CapacityReport | null>(null)
@@ -849,19 +831,17 @@ export function CapacityPanel({ servers }: { servers: Server[] }): React.JSX.Ele
   return (
     <PanelShell
       icon={<TrendingUp size={14} />}
-      title="Capacity trends"
+      title={t('Capacity trends')}
       about={
         <p>
-          What is going to run out on this server, and when — projected from samples the fleet
-          sampler already writes. Nothing extra is measured for this panel.
-        </p>
+          {t('What is going to run out on this server, and when — projected from samples the fleet sampler already writes. Nothing extra is measured for this panel.')}</p>
       }
       actions={
         <>
         <select
           className="input"
           style={{ maxWidth: 200 }}
-          aria-label="Server"
+          aria-label={t('Server')}
           value={serverId}
           onChange={(e) => {
               setServerId(e.target.value)
@@ -880,7 +860,7 @@ export function CapacityPanel({ servers }: { servers: Server[] }): React.JSX.Ele
         <select
           className="input"
           style={{ maxWidth: 130 }}
-          aria-label="Window"
+          aria-label={t('Window')}
           value={days}
           onChange={(e) => setDays(Number(e.target.value))}
         >
@@ -907,7 +887,7 @@ export function CapacityPanel({ servers }: { servers: Server[] }): React.JSX.Ele
             onClick={() => {
               void Promise.resolve(refresh()).then(() => setRefreshedAt(Date.now()))
             }}
-            title="Re-reads the samples already collected for this window. New samples arrive with the hourly sweep."
+            title={t('Re-reads the samples already collected for this window. New samples arrive with the hourly sweep.')}
           >
             <RefreshCw size={13} className={clsx(loading && 'spin')} />
             {loading ? 'Reading…' : 'Refresh'}
@@ -915,7 +895,7 @@ export function CapacityPanel({ servers }: { servers: Server[] }): React.JSX.Ele
           {refreshedAt !== null && !loading && (
             <span className="check-now-said" aria-live="polite">
               <Check size={12} />
-              Re-read at{' '}
+              {t('Re-read at')}{' '}
               {new Date(refreshedAt).toLocaleTimeString([], {
                 hour: '2-digit',
                 minute: '2-digit'
@@ -938,7 +918,7 @@ export function CapacityPanel({ servers }: { servers: Server[] }): React.JSX.Ele
             onClick={() => void loadFleet()}
           >
             {fleet === null ? 'Forecast the whole estate' : 'Forecast again'}
-            {fleetLoading && <span className="faint"> reading…</span>}
+            {fleetLoading && <span className="faint"> {t('reading…')}</span>}
           </button>
           {fleet !== null && (
             <>
@@ -956,8 +936,7 @@ export function CapacityPanel({ servers }: { servers: Server[] }): React.JSX.Ele
 
       {typeof trends !== 'function' ? (
         <div className="panel-note is-alarm">
-          This build’s preload does not expose capacity trends yet. Restart the app to rebuild it.
-        </div>
+          {t('This build’s preload does not expose capacity trends yet. Restart the app to rebuild it.')}</div>
       ) : servers.length === 0 && !hydrated ? (
         // Saved servers arrive from an await, so the list is empty for the
         // first moments of every launch -- and this panel used that emptiness
@@ -969,26 +948,25 @@ export function CapacityPanel({ servers }: { servers: Server[] }): React.JSX.Ele
         // back for a signal that would only confirm what is already on screen
         // would be a spinner in front of an answer.
         <div className="panel-empty">
-          <p className="panel-empty-title">Reading your servers…</p>
+          <p className="panel-empty-title">{t('Reading your servers…')}</p>
         </div>
       ) : servers.length === 0 ? (
         <div className="panel-empty">
-          <p className="panel-empty-title">No servers to chart.</p>
+          <p className="panel-empty-title">{t('No servers to chart.')}</p>
           <p className="panel-empty-body">
-            Add a server to this workspace and its samples start accumulating here.
-          </p>
+            {t('Add a server to this workspace and its samples start accumulating here.')}</p>
         </div>
       ) : failed ? (
-        <div className="panel-note is-alarm">Could not read the history store.</div>
+        <div className="panel-note is-alarm">{t('Could not read the history store.')}</div>
       ) : report === null ? (
         loading ? (
-          <div className="panel-note">Reading…</div>
+          <div className="panel-note">{t('Reading…')}</div>
         ) : (
           <SweepEmpty
             subject="No stored history."
             busy={loading}
             onCheckNow={refresh}
-            note="Trends are drawn from the sampler’s own samples. Nothing is measured for this panel, so it fills only while background checking is running."
+            note={t('Trends are drawn from the sampler’s own samples. Nothing is measured for this panel, so it fills only while background checking is running.')}
           />
         )
       ) : report.trends.every((t) => t.read === 0) ? (
@@ -996,13 +974,13 @@ export function CapacityPanel({ servers }: { servers: Server[] }): React.JSX.Ele
           subject={`Nothing has been sampled for ${selected?.name ?? serverId} in this window.`}
           busy={loading}
           onCheckNow={refresh}
-          note="A longer window will not help until sampling resumes — the store has no readings for this host at any resolution."
+          note={t('A longer window will not help until sampling resumes — the store has no readings for this host at any resolution.')}
         />
       ) : (
         <>
           <div className="cap-lede">
             <b>{selected?.name ?? serverId}</b>
-            <span className="faint"> · last {span(report.to - report.from)}</span>
+            <span className="faint"> {t('· last')}{' '}{span(report.to - report.from)}</span>
           </div>
 
           {/* The answer, ranked. What is going to run out, soonest first. */}
@@ -1011,9 +989,8 @@ export function CapacityPanel({ servers }: { servers: Server[] }): React.JSX.Ele
             // real host, and saying nothing about that is how a screen comes to
             // read as an all-clear for an estate nobody has measured.
             <div className="panel-note" data-testid="capacity-none-urgent">
-              Nothing here is heading for a limit within {FORECAST_HORIZON_DAYS} days. None of the{' '}
-              {ranked.length} metrics produced a date — the reason for each is below.
-            </div>
+              {t('Nothing here is heading for a limit within')}{' '}{FORECAST_HORIZON_DAYS} {t('days. None of the')}{' '}
+              {ranked.length} {t('metrics produced a date — the reason for each is below.')}</div>
           ) : (
             <ol className="cap-cards" data-testid="capacity-ranked">
               {loud.map((row) => (
@@ -1029,8 +1006,7 @@ export function CapacityPanel({ servers }: { servers: Server[] }): React.JSX.Ele
             <details className="disclosure cap-fold" data-testid="capacity-quiet">
               <summary className="disclosure-head">
                 <ChevronRight size={14} className="chev" />
-                No date for {quiet.length} of {ranked.length} — open for the reason each was refused
-              </summary>
+                {t('No date for')}{' '}{quiet.length} {t('of')}{' '}{ranked.length} {t('— open for the reason each was refused')}</summary>
               <div className="disclosure-body">
                 <ol className="cap-cards">
                   {quiet.map((row) => (
@@ -1044,10 +1020,8 @@ export function CapacityPanel({ servers }: { servers: Server[] }): React.JSX.Ele
           <MethodNote />
 
           <div className="cap-note faint">
-            The store keeps {report.fullResolutionDays} days of {RES_LABEL.full} and{' '}
-            {report.retainedDays} days of {RES_LABEL.hourly}. Older than that is gone, which is why
-            a longer window is not always more line.
-          </div>
+            {t('The store keeps')}{' '}{report.fullResolutionDays} {t('days of')}{' '}{RES_LABEL.full} {t('and')}{' '}
+            {report.retainedDays} {t('days of')}{' '}{RES_LABEL.hourly}{t('. Older than that is gone, which is why a longer window is not always more line.')}</div>
 
           {/* THE TREND ABOVE IS `/` ONLY. This says which other filesystems
               exist, because a full /var or /data is invisible to a single disk
@@ -1055,8 +1029,7 @@ export function CapacityPanel({ servers }: { servers: Server[] }): React.JSX.Ele
               lists is not a filesystem at all. */}
           <div className="row" style={{ gap: 8, marginTop: 14, alignItems: 'center' }}>
             <span className="grow faint">
-              The disk row above is the root filesystem. This host may have others.
-            </span>
+              {t('The disk row above is the root filesystem. This host may have others.')}</span>
             <button
               className="btn ghost sm"
               disabled={storageLoading}
@@ -1082,11 +1055,11 @@ export function CapacityPanel({ servers }: { servers: Server[] }): React.JSX.Ele
               <table className="mini-table">
                 <thead>
                   <tr>
-                    <th>Mounted on</th>
-                    <th>Type</th>
-                    <th className="num">Size</th>
-                    <th className="num">Used</th>
-                    <th className="num">Inodes</th>
+                    <th>{t('Mounted on')}</th>
+                    <th>{t('Type')}</th>
+                    <th className="num">{t('Size')}</th>
+                    <th className="num">{t('Used')}</th>
+                    <th className="num">{t('Inodes')}</th>
                   </tr>
                 </thead>
                 <tbody>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { GitMerge, AlertTriangle } from 'lucide-react'
 import type { AddyStatusDevice, ConflictCopy } from '../../../../shared/addy'
 import { approvalShowing } from '../../hooks/useClickOutside'
+import { useT } from '../../i18n'
 
 /**
  * Two versions of the same thing, and a person deciding.
@@ -82,6 +83,7 @@ function madeBy(hex: string, devices: AddyStatusDevice[] | undefined): string | 
 }
 
 export function ConflictChooser(): React.JSX.Element | null {
+  const t = useT()
   const [conflicts, setConflicts] = useState<ConflictCopy[]>([])
   const [busy, setBusy] = useState(false)
   /**
@@ -166,24 +168,17 @@ export function ConflictChooser(): React.JSX.Element | null {
     >
       <div className="conflict">
         <GitMerge size={26} aria-hidden className="conflict-icon" />
-        <h2 id="conflict-title">Two versions of {nameOf(current.collection)}</h2>
+        <h2 id="conflict-title">{t('Two versions of')}{' '}{nameOf(current.collection)}</h2>
         {/* WHAT HAPPENED, FOR SOMEBODY WHO HAS NEVER HEARD THE WORD CONFLICT.
             The old opening sentence was "Both copies are here now", which
             assumes the reader already knows there are two and why. */}
         <p className="fine">
-          Two of your machines changed this before they had synced with each other, so OpsMaxx
-          kept both rather than picking one and telling nobody. It is already using the version
-          marked <strong>In use now</strong>; the other has been set aside, waiting for this.
-        </p>
+          {t('Two of your machines changed this before they had synced with each other, so OpsMaxx kept both rather than picking one and telling nobody. It is already using the version marked')}{' '}<strong>{t('In use now')}</strong>{t('; the other has been set aside, waiting for this.')}</p>
         <p className="fine">
-          Nothing is lost yet and nothing is written until you press one of the buttons below.{' '}
+          {t('Nothing is lost yet and nothing is written until you press one of the buttons below.')}{' '}
           <strong>
-            Whichever version you keep, the other is deleted from the relay and cannot be brought
-            back.
-          </strong>{' '}
-          If you are not sure, <strong>Decide later</strong> leaves both exactly where they are and
-          brings this back next time.
-        </p>
+            {t('Whichever version you keep, the other is deleted from the relay and cannot be brought back.')}</strong>{' '}
+          {t('If you are not sure,')}{' '}<strong>{t('Decide later')}</strong> {t('leaves both exactly where they are and brings this back next time.')}</p>
 
         {current.problem && (
           <div className="conflict-problem" role="alert">
@@ -194,31 +189,27 @@ export function ConflictChooser(): React.JSX.Element | null {
                 It also says what the greyed-out button means. A disabled
                 control with no reason beside it reads as a broken dialog. */}
             <span>
-              The copy that was set aside cannot be opened on this device: {current.problem}. That
-              is why it cannot be chosen here — it is sealed under a key this machine does not
-              hold, and another of your devices may still be able to read it. Keeping the version
-              in use deletes it.
-            </span>
+              {t('The copy that was set aside cannot be opened on this device:')}{' '}{current.problem}{t('. That is why it cannot be chosen here — it is sealed under a key this machine does not hold, and another of your devices may still be able to read it. Keeping the version in use deletes it.')}</span>
           </div>
         )}
 
         <div className="conflict-pair">
           <section>
             <h3>
-              <span>In use now</span>
+              <span>{t('In use now')}</span>
               {/* Not "what is on the relay": a person is being asked about
                   their own data, and the relay is an implementation detail
                   they have no way to check. This copy is the one already
                   written to disk here -- `sync.ts` writes the winner before it
                   publishes the loser -- and the one every other device
                   converges on, so keeping it changes nothing anywhere. */}
-              <span className="conflict-when">on every device</span>
+              <span className="conflict-when">{t('on every device')}</span>
             </h3>
             <pre>{preview(current.winning, current.collection)}</pre>
           </section>
           <section>
             <h3>
-              <span>Set aside{from !== null ? `, ${from}` : ''}</span>
+              <span>{t('Set aside')}{from !== null ? `, ${from}` : ''}</span>
               <span className="conflict-when">{when(current.createdAt)}</span>
             </h3>
             <pre>{preview(current.losing, current.collection)}</pre>
@@ -231,8 +222,7 @@ export function ConflictChooser(): React.JSX.Element | null {
             disabled={busy}
             onClick={() => act(() => window.opsmaxx!.addy.discardConflict(current.id))}
           >
-            Keep the version in use (delete the other copy)
-          </button>
+            {t('Keep the version in use (delete the other copy)')}</button>
           <button
             className="btn"
             disabled={busy || current.losing === undefined}
@@ -242,8 +232,7 @@ export function ConflictChooser(): React.JSX.Element | null {
               )
             }
           >
-            Replace it with the other copy
-          </button>
+            {t('Replace it with the other copy')}</button>
           {/* Only where both sides are lists. Offering "keep both" for two
               objects would mean inventing a merge, and a merge invented in a
               dialog is one nobody can predict. */}
@@ -264,20 +253,18 @@ export function ConflictChooser(): React.JSX.Element | null {
                   produces duplicates, and a person who expected a merge should
                   see the size of what they are about to get before they press
                   it rather than after. */}
-              Keep both ({combined} entries, duplicates and all)
-            </button>
+              {t('Keep both (')}{combined} {t('entries, duplicates and all)')}</button>
           )}
           {/* The way out. Nothing is written and nothing is lost: the copy
               stays on the relay and this comes back. */}
           <button className="btn ghost" disabled={busy} onClick={() => setDeferred((d) => [...d, current.id])}>
-            Decide later
-          </button>
+            {t('Decide later')}</button>
         </div>
 
         {/* What is still waiting, not how many there ever were. Counting the
             ones already deferred told somebody who had put two off that there
             were still two to come after this. */}
-        {left > 0 && <p className="fine">{left} more to decide after this one.</p>}
+        {left > 0 && <p className="fine">{left} {t('more to decide after this one.')}</p>}
       </div>
     </div>
   )

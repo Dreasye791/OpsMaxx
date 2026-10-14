@@ -5,6 +5,7 @@ import { bridgeHas } from '../../lib/bridge'
 import { withVaultUnlock } from '../../lib/withVaultUnlock'
 import { toast } from '../../store/toast'
 import type { DiscoveredVpnProfile } from '../../../../shared/vpn'
+import { useT } from '../../i18n'
 
 /**
  * OpenVPN profiles this machine already has, offered on the VPN screen.
@@ -80,6 +81,7 @@ export function FoundProfilesBanner({
    *  find at all. */
   onReview: (kind: DiscoveredVpnProfile['kind']) => void
 }): React.JSX.Element | null {
+  const t = useT()
   const workspaceId = useApp((s) => s.activeId())
   const profiles = useApp((s) => s.vpns)
   const upsertVpnProfile = useApp((s) => s.upsertVpnProfile)
@@ -216,9 +218,7 @@ export function FoundProfilesBanner({
             : `${offer.length} VPN profiles are already on this machine`}
         </div>
         <div className="s-desc">
-          {summary(offer)} Importing copies the keys into the vault; the files on disk are not
-          moved or changed.
-        </div>
+          {summary(offer)} {t('Importing copies the keys into the vault; the files on disk are not moved or changed.')}</div>
       </div>
       {kinds.map((kind) => (
         <button
@@ -233,7 +233,7 @@ export function FoundProfilesBanner({
       <button className="btn primary size-28" onClick={() => void importAll()} disabled={busy}>
         {busy ? 'Importing…' : 'Import all'}
       </button>
-      <button className="btn ghost size-28" onClick={decline} title="Not now" disabled={busy}>
+      <button className="btn ghost size-28" onClick={decline} title={t('Not now')} disabled={busy}>
         <X size={14} />
       </button>
     </div>

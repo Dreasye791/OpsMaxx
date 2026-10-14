@@ -13,6 +13,7 @@ import { stableId, type Id, type Item, type Route } from '../../../../../shared/
 // `importedFrom.url` syncs: no userinfo and no credential-named query parameter in it.
 import { withoutCredentials } from '../../../../../shared/apiUrl'
 import type { HttpVia } from '../../../../../shared/httpClient'
+import { useT } from '../../../i18n'
 
 /**
  * Import: a cURL command, or an OpenAPI description from a URL or a file.
@@ -43,11 +44,12 @@ function routeFrom(key: string): Route {
 }
 
 export function ImportDialog({ onClose, initialTab = 'curl', reimportInto }: ImportDialogProps): React.JSX.Element {
+  const t = useT()
   const [tab, setTab] = useState<'curl' | 'openapi'>(reimportInto ? 'openapi' : initialTab)
   return (
-    <Modal title="Import" onClose={onClose} size="lg" cancelLabel="Close">
+    <Modal title={t('Import')} onClose={onClose} size="lg" cancelLabel={t('Close')}>
       {!reimportInto && (
-        <div className="segment" role="tablist" aria-label="Import from">
+        <div className="segment" role="tablist" aria-label={t('Import from')}>
           {(['curl', 'openapi'] as const).map((t) => (
             <button
               key={t}
@@ -67,6 +69,7 @@ export function ImportDialog({ onClose, initialTab = 'curl', reimportInto }: Imp
 }
 
 function CurlTab({ onDone }: { onDone: () => void }): React.JSX.Element {
+  const t = useT()
   const [text, setText] = useState('')
   const [target, setTarget] = useState('')
   const workspaceId = useApp((s) => s.activeWorkspaceId)
@@ -76,29 +79,29 @@ function CurlTab({ onDone }: { onDone: () => void }): React.JSX.Element {
 
   return (
     <>
-      <Field label="cURL command" error={parsed && !parsed.ok ? parsed.error : undefined} hint="Paste a command. Nothing in it is run.">
+      <Field label={t('cURL command')} error={parsed && !parsed.ok ? parsed.error : undefined} hint={t('Paste a command. Nothing in it is run.')}>
         <textarea
           className="input mono"
           rows={8}
           value={text}
           autoFocus
           spellCheck={false}
-          aria-label="cURL command"
-          placeholder="curl https://api.example.com/items -H 'Accept: application/json'"
+          aria-label={t('cURL command')}
+          placeholder={t('curl https://api.example.com/items -H \'Accept: application/json\'')}
           onChange={(e) => setText(e.target.value)}
         />
       </Field>
       {request && (
-        <div aria-label="Preview">
+        <div aria-label={t('Preview')}>
           <div className="mono">
             {request.method} {request.url}
           </div>
           <div className="field-hint">
-            {request.headers.length} headers · body: {request.body.mode}
+            {request.headers.length} {t('headers · body:')}{' '}{request.body.mode}
             {request.auth.type !== 'none' ? ` · auth: ${request.auth.type}` : ''}
           </div>
           {parsed?.ok && parsed.notes.length > 0 && (
-            <ul aria-label="Notes">
+            <ul aria-label={t('Notes')}>
               {parsed.notes.map((n) => (
                 <li key={n} className="field-hint">
                   {n}
@@ -114,10 +117,9 @@ function CurlTab({ onDone }: { onDone: () => void }): React.JSX.Element {
                 onDone()
               }}
             >
-              Open in new tab
-            </button>
-            <select className="input" aria-label="Save to collection" value={target} onChange={(e) => setTarget(e.target.value)}>
-              <option value="">Save to…</option>
+              {t('Open in new tab')}</button>
+            <select className="input" aria-label={t('Save to collection')} value={target} onChange={(e) => setTarget(e.target.value)}>
+              <option value="">{t('Save to…')}</option>
               {collections.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -133,8 +135,7 @@ function CurlTab({ onDone }: { onDone: () => void }): React.JSX.Element {
                 onDone()
               }}
             >
-              Save
-            </button>
+              {t('Save')}</button>
           </div>
         </div>
       )}
@@ -143,6 +144,7 @@ function CurlTab({ onDone }: { onDone: () => void }): React.JSX.Element {
 }
 
 function OpenApiTab({ onDone, reimportInto }: { onDone: () => void; reimportInto?: Id }): React.JSX.Element {
+  const t = useT()
   const workspaceId = useApp((s) => s.activeWorkspaceId)
   const servers = useWorkspaceServers()
   const vpns = useApp(useShallow((s) => s.workspaceVpns()))
@@ -248,12 +250,11 @@ function OpenApiTab({ onDone, reimportInto }: { onDone: () => void; reimportInto
     <>
       {fileName && (
         // Not a <Field>: that is a <label>, which would rename the button after itself.
-        <div className="field" role="group" aria-label="From a file">
-          <span className="field-label">From a file</span>
+        <div className="field" role="group" aria-label={t('From a file')}>
+          <span className="field-label">{t('From a file')}</span>
           <span className="field-control">
             <button className="btn primary size-28" autoFocus onClick={() => void chooseFile()}>
-              Choose {fileName} again…
-            </button>
+              {t('Choose')}{' '}{fileName} {t('again…')}</button>
           </span>
           {error ? (
             <span className="field-error" role="alert">
@@ -261,7 +262,7 @@ function OpenApiTab({ onDone, reimportInto }: { onDone: () => void; reimportInto
             </span>
           ) : (
             <span className="field-hint">
-              {into?.name} was imported from {fileName}. OpsMaxx keeps only the file&rsquo;s name, so choose it again.
+              {into?.name} {t('was imported from')}{' '}{fileName}. OpsMaxx keeps only the file&rsquo;s name, so choose it again.
             </span>
           )}
         </div>
@@ -269,13 +270,13 @@ function OpenApiTab({ onDone, reimportInto }: { onDone: () => void; reimportInto
       <Field
         label={fileName ? 'Or from a URL' : 'From a URL'}
         error={fileName ? undefined : (error ?? undefined)}
-        hint="Fetched the way a request is sent, over the route below."
+        hint={t('Fetched the way a request is sent, over the route below.')}
       >
         <div className="row" style={{ gap: 'var(--sp-2)' }}>
           <input
             className="input"
             value={url}
-            aria-label="OpenAPI URL"
+            aria-label={t('OpenAPI URL')}
             placeholder="https://api.example.com/openapi.json"
             onChange={(e) => setUrl(e.target.value)}
           />
@@ -284,14 +285,13 @@ function OpenApiTab({ onDone, reimportInto }: { onDone: () => void; reimportInto
           </button>
           {!fileName && (
             <button className="btn secondary size-28" onClick={() => void chooseFile()}>
-              Choose a file…
-            </button>
+              {t('Choose a file…')}</button>
           )}
         </div>
       </Field>
-      <Field label="Send from" hint="Also the route the new collection sends through.">
+      <Field label={t('Send from')} hint={t('Also the route the new collection sends through.')}>
         <select className="input" value={routeKey(route)} onChange={(e) => setRoute(routeFrom(e.target.value))}>
-          <option value="direct">This machine</option>
+          <option value="direct">{t('This machine')}</option>
           {servers.map((s) => (
             <option key={s.id} value={`server:${s.id}`}>
               {s.name}
@@ -306,18 +306,18 @@ function OpenApiTab({ onDone, reimportInto }: { onDone: () => void; reimportInto
       </Field>
 
       {parsed && preview && (
-        <div aria-label="Import report">
+        <div aria-label={t('Import report')}>
           <div>
-            {count} requests in {preview.items.filter((i) => i.kind === 'folder').length} folders.
+            {count} {t('requests in')}{' '}{preview.items.filter((i) => i.kind === 'folder').length} folders.
           </div>
           <div className="field-hint">
             {preview.baseUrl ? `Base URL ${preview.baseUrl}` : 'No absolute server: set baseUrl in the collection’s variables.'}
           </div>
           {parsed.externalRefs > 0 && (
-            <div className="field-hint">{parsed.externalRefs} external references not followed.</div>
+            <div className="field-hint">{parsed.externalRefs} {t('external references not followed.')}</div>
           )}
           {preview.skipped.length > 0 && (
-            <ul aria-label="Skipped operations">
+            <ul aria-label={t('Skipped operations')}>
               {preview.skipped.map((s) => (
                 <li key={`${s.method} ${s.path}`} className="field-hint">
                   {s.method} {s.path}: {s.reason}
@@ -326,7 +326,7 @@ function OpenApiTab({ onDone, reimportInto }: { onDone: () => void; reimportInto
             </ul>
           )}
           {!into && (
-            <Field label="Collection name">
+            <Field label={t('Collection name')}>
               <input className="input" value={name} onChange={(e) => setName(e.target.value)} />
             </Field>
           )}
@@ -334,14 +334,12 @@ function OpenApiTab({ onDone, reimportInto }: { onDone: () => void; reimportInto
             {into && confirming ? (
               <>
                 <span className="field-error" role="alert">
-                  Replace every request in {into.name} with these {count}?
+                  {t('Replace every request in')}{' '}{into.name} {t('with these')}{' '}{count}?
                 </span>
                 <button className="btn danger size-28" onClick={commit}>
-                  Replace
-                </button>
+                  {t('Replace')}</button>
                 <button className="btn secondary size-28" onClick={() => setConfirming(false)}>
-                  Keep them
-                </button>
+                  {t('Keep them')}</button>
               </>
             ) : (
               <button

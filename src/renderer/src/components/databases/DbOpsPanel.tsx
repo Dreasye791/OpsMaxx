@@ -39,6 +39,7 @@ import {
   type RedisSlowlogValue
 } from '../../../../shared/dbOps'
 import type { DbConnectConfig, DbKind } from '../../../../shared/db'
+import { useT } from '../../i18n'
 
 /**
  * The operations panel.
@@ -546,6 +547,7 @@ interface Props {
 }
 
 export function DbOpsPanel({ cfg, kind, onVerdict }: Props): React.JSX.Element {
+  const t = useT()
   const [report, setReport] = useState<DbOpsReport | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -629,21 +631,16 @@ export function DbOpsPanel({ cfg, kind, onVerdict }: Props): React.JSX.Element {
       )}
       <div className="row" style={{ marginBottom: 10 }}>
         <button className="btn primary sm" disabled={loading} onClick={() => void read()}>
-          {loading ? <Loader2 size={13} className="spin" /> : <RefreshCw size={13} />} Read server state
-        </button>
+          {loading ? <Loader2 size={13} className="spin" /> : <RefreshCw size={13} />} {t('Read server state')}</button>
         <span className="spacer" />
         {report && (
           <span className="faint" style={{ fontSize: 11 }}>
-            {report.answers.length} questions in {report.elapsedMs} ms
-          </span>
+            {report.answers.length} {t('questions in')}{' '}{report.elapsedMs} {t('ms')}</span>
         )}
       </div>
 
       <div className="faint" style={{ fontSize: 11, marginBottom: 10 }}>
-        Read-only. Every statement here is a SELECT, a SHOW, a MongoDB read command or a Redis
-        INFO — nothing on this page changes the server, and there is no control that kills a
-        session or an operation, vacuums a table, purges a log, drops an index or sets a config.
-      </div>
+        {t('Read-only. Every statement here is a SELECT, a SHOW, a MongoDB read command or a Redis INFO — nothing on this page changes the server, and there is no control that kills a session or an operation, vacuums a table, purges a log, drops an index or sets a config.')}</div>
 
       {error && (
         <div className="chip danger" style={{ marginBottom: 10 }}>
@@ -653,7 +650,7 @@ export function DbOpsPanel({ cfg, kind, onVerdict }: Props): React.JSX.Element {
 
       {!report && !loading && !error && (
         <div className="faint" style={{ fontSize: 12 }}>
-          Nothing has been read yet.{' '}
+          {t('Nothing has been read yet.')}{' '}
           {supportsDbOps(kind) &&
             `${DB_QUESTIONS_BY_ENGINE[kind].length} questions will be asked: ${DB_QUESTIONS_BY_ENGINE[kind]
               .map((id) => DB_QUESTION_LABEL[id].toLowerCase())

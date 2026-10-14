@@ -9,6 +9,7 @@ import { useHttp } from '../../../store/http'
 import { Popover } from '../../common/Popover'
 import { setVariable } from '../dialogs/SetVariableDialog'
 import { vaultLabel } from '../fields/VaultValueField'
+import { useT } from '../../../i18n'
 
 /** Every `{{name}}` a request refers to, in order of first use. */
 export function referencedVariables(value: unknown): string[] {
@@ -33,6 +34,7 @@ export function VariablesPopover({
   anchor: DOMRect | null
   onClose: () => void
 }): React.JSX.Element | null {
+  const t = useT()
   const tab = useHttp((s) => s.tabs.find((t) => t.id === tabId) ?? Object.values(s.ghost).find((g) => g.id === tabId))
   const collections = useApi((s) => s.collections)
   const workspace = useApi((s) => s.workspace)
@@ -50,8 +52,8 @@ export function VariablesPopover({
   return (
     <Popover anchor={anchor} open={anchor !== null} onClose={onClose} ariaLabel="Variables in this request">
       <div className="hc-vars-pop">
-        <h3 className="ui-label">Variables in this request</h3>
-        {names.length === 0 && <p className="hc-note-line">This request uses no variables.</p>}
+        <h3 className="ui-label">{t('Variables in this request')}</h3>
+        {names.length === 0 && <p className="hc-note-line">{t('This request uses no variables.')}</p>}
         <ul>
           {names.map((name) => {
             const hit = lookupVariable(chain, name)
@@ -60,20 +62,17 @@ export function VariablesPopover({
                 <span className="hc-mono hc-vars-name">{`{{${name}}}`}</span>
                 {!hit ? (
                   <span className="hc-vars-add">
-                    <span className="hc-vars-missing">Not defined. Add to:</span>
+                    <span className="hc-vars-missing">{t('Not defined. Add to:')}</span>
                     {hasEnv && (
                       <button type="button" className="btn ghost sm" onClick={() => setVariable('environment', name, '', where)}>
-                        environment
-                      </button>
+                        {t('environment')}</button>
                     )}
                     {tab.ref && (
                       <button type="button" className="btn ghost sm" onClick={() => setVariable('collection', name, '', where)}>
-                        collection
-                      </button>
+                        {t('collection')}</button>
                     )}
                     <button type="button" className="btn ghost sm" onClick={() => setVariable('global', name, '', where)}>
-                      global
-                    </button>
+                      {t('global')}</button>
                   </span>
                 ) : isVaultReference(hit.value) ? (
                   <span className="hc-vars-value">

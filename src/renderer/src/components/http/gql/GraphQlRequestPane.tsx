@@ -29,6 +29,7 @@ import { errorsStrip, gqlExtensions, literalSecretsIn, operationsIn, prettify } 
 import { gqlRequestOf, loadGqlSchema, prettifyGql, runGql, schemaKeyFor, updateGql } from './gqlActions'
 import { SchemaExplorer, explorerMode } from './SchemaExplorer'
 import './gql.css'
+import { useT } from '../../../i18n'
 
 type Section = 'query' | 'auth' | 'headers' | 'settings'
 
@@ -55,6 +56,7 @@ export interface GraphQlRequestPaneProps {
 }
 
 export function GraphQlRequestPane({ tabId, requestWidth }: GraphQlRequestPaneProps): React.JSX.Element | null {
+  const t = useT()
   const tab = useHttp((s) => s.tabs.find((t) => t.id === tabId))
   const res = useHttp((s) => s.responses[tabId])
   const prefs = useHttp((s) => s.prefs)
@@ -150,9 +152,8 @@ export function GraphQlRequestPane({ tabId, requestWidth }: GraphQlRequestPanePr
 
   const bar = (
     <div className="hc-gql-bar" ref={barRef} data-step={step}>
-      <span className="hc-gql-badge" aria-label="GraphQL">
-        GQL
-      </span>
+      <span className="hc-gql-badge" aria-label={t('GraphQL')}>
+        {t('GQL')}</span>
       <div className="hc-gql-url">
         <VariableInput
           value={req.url}
@@ -167,7 +168,7 @@ export function GraphQlRequestPane({ tabId, requestWidth }: GraphQlRequestPanePr
       <TlsChip tabId={tabId} compact={step >= 3} />
       <div className="hc-gql-run">
         <SplitButton
-          label="Run"
+          label={t('Run')}
           icon={<Play size={14} aria-hidden />}
           ariaLabel={`Run (${isMac() ? '⌘↵' : 'Ctrl+Enter'})`}
           variant="primary"
@@ -215,26 +216,23 @@ export function GraphQlRequestPane({ tabId, requestWidth }: GraphQlRequestPanePr
           disabled={prettify(req.query) === null}
           onClick={() => prettifyGql(tabId)}
         >
-          Prettify
-        </button>
+          {t('Prettify')}</button>
         <button
           type="button"
           className={clsx('btn ghost sm', prefs.gqlSchemaOpen && 'is-on')}
           aria-pressed={prefs.gqlSchemaOpen}
           onClick={() => setPrefs({ gqlSchemaOpen: !prefs.gqlSchemaOpen })}
         >
-          Schema <PanelRight size={13} aria-hidden />
+          {t('Schema')}{' '}<PanelRight size={13} aria-hidden />
         </button>
         {entry?.status === 'loading' ? (
-          <span className="hc-gql-meta">Loading schema…</span>
+          <span className="hc-gql-meta">{t('Loading schema…')}</span>
         ) : schema && entry?.status === 'ready' ? (
           <span className="hc-gql-meta">
-            · {types} types · {duration(entry.at)} ago
-          </span>
+            · {types} {t('types ·')}{' '}{duration(entry.at)} {t('ago')}</span>
         ) : (
           <button type="button" className="btn ghost sm" onClick={() => void loadGqlSchema(tabId)}>
-            Load schema
-          </button>
+            {t('Load schema')}</button>
         )}
       </div>
     ) : undefined
@@ -260,7 +258,7 @@ export function GraphQlRequestPane({ tabId, requestWidth }: GraphQlRequestPanePr
           onClick={() => setPrefs({ gqlVariablesOpen: !prefs.gqlVariablesOpen })}
         >
           {prefs.gqlVariablesOpen ? <ChevronDown size={13} aria-hidden /> : <ChevronRight size={13} aria-hidden />}
-          <span className="ui-label">Variables</span>
+          <span className="ui-label">{t('Variables')}</span>
         </button>
         {prefs.gqlVariablesOpen && (
           <div className="hc-gql-vars-editor">
@@ -278,8 +276,7 @@ export function GraphQlRequestPane({ tabId, requestWidth }: GraphQlRequestPanePr
         {secrets.length > 0 && (
           // Variables are saved with the request and synced (§3.5 keeps them, with this warning).
           <p className="hc-gql-warn" role="note">
-            {secrets.map((s) => s.key).join(', ')} {secrets.length === 1 ? 'looks' : 'look'} like a credential: saved and
-            synced as plain text.{' '}
+            {secrets.map((s) => s.key).join(', ')} {secrets.length === 1 ? 'looks' : 'look'} {t('like a credential: saved and synced as plain text.')}{' '}
             <button
               type="button"
               className="btn ghost sm"
@@ -292,10 +289,8 @@ export function GraphQlRequestPane({ tabId, requestWidth }: GraphQlRequestPanePr
                 )
               }
             >
-              Set as variable…
-            </button>{' '}
-            then write {`"{{${secrets[0].key}}}"`} in its place, and the vault can hold it.
-          </p>
+              {t('Set as variable…')}</button>{' '}
+            {t('then write')}{' '}{`"{{${secrets[0].key}}}"`} {t('in its place, and the vault can hold it.')}</p>
         )}
       </div>
     </div>
@@ -326,13 +321,13 @@ export function GraphQlRequestPane({ tabId, requestWidth }: GraphQlRequestPanePr
       ) : (
         <div className="hc-gql-settings">
           <label className="hc-gql-field">
-            <span className="ui-label">Timeout (ms)</span>
+            <span className="ui-label">{t('Timeout (ms)')}</span>
             <input
               className="input mono"
               type="number"
               min={0}
-              aria-label="Timeout in milliseconds"
-              placeholder="Collection default"
+              aria-label={t('Timeout in milliseconds')}
+              placeholder={t('Collection default')}
               value={req.settings.timeoutMs ?? ''}
               onChange={(e) =>
                 updateGql(tabId, {
@@ -355,15 +350,14 @@ export function GraphQlRequestPane({ tabId, requestWidth }: GraphQlRequestPanePr
 
   const requestSummary = (
     <span className="hc-gql-summary">
-      Request ·{' '}
+      {t('Request ·')}{' '}
       <button type="button" className="btn ghost sm" onClick={() => openSection('query')}>
-        Query
-      </button>
+        {t('Query')}</button>
       <button type="button" className="btn ghost sm" onClick={() => openSection('auth')}>
-        Auth{req.auth.type !== 'none' && req.auth.type !== 'inherit' ? ' •' : ''}
+        {t('Auth')}{req.auth.type !== 'none' && req.auth.type !== 'inherit' ? ' •' : ''}
       </button>
       <button type="button" className="btn ghost sm" onClick={() => openSection('headers')}>
-        Headers {enabledCount(req.headers)}
+        {t('Headers')}{' '}{enabledCount(req.headers)}
       </button>
     </span>
   )

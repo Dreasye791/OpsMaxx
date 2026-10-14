@@ -8,6 +8,7 @@ import type { AccessGroup, SessionMode } from '../../../../shared/mcp'
 import { DEFAULT_SESSION_MODE, resolveDefaultSessionGroup, sessionModeLabel } from '../../../../shared/mcp'
 import { ModePicker } from './ModePicker'
 import { containsBearerToken, maskBearerTokens } from '../../../../shared/tokenDisplay'
+import { useT } from '../../i18n'
 
 type Target = 'claude-code' | 'claude-desktop' | 'codex'
 
@@ -53,6 +54,7 @@ const TARGETS: { id: Target; label: string; agentName: string; icon: React.JSX.E
 // and a mode, mint a session, hand the token to the client — collapsed into one
 // button per client. Done by hand it spans three tabs.
 export function ConnectAgent({ onConnected }: { onConnected?: () => void }): React.JSX.Element {
+  const t = useT()
   const [groups, setGroups] = useState<AccessGroup[]>([])
   // `null` until resolved, `''` once resolved to No AI Access — see the same
   // distinction in AiAgents.tsx. Without it a resolved No AI Access is
@@ -191,17 +193,15 @@ export function ConnectAgent({ onConnected }: { onConnected?: () => void }): Rea
 
   return (
     <div style={{ marginTop: 24 }}>
-      <h3>Connect an agent</h3>
+      <h3>{t('Connect an agent')}</h3>
       <div className="s-desc" style={{ marginBottom: 12 }}>
-        Turns on the bridge, creates a session across your workspaces and hands it to the client. The session does not expire — revoke it under Active Sessions.
-      </div>
+        {t('Turns on the bridge, creates a session across your workspaces and hands it to the client. The session does not expire — revoke it under Active Sessions.')}</div>
 
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Profile</div>
+          <div className="s-title">{t('Profile')}</div>
           <div className="s-desc">
-            What the agent may do, and how much it asks first. Change it any time under Active Sessions.
-          </div>
+            {t('What the agent may do, and how much it asks first. Change it any time under Active Sessions.')}</div>
         </div>
         <ModePicker value={chosen} onChange={setMode} />
       </div>
@@ -209,8 +209,8 @@ export function ConnectAgent({ onConnected }: { onConnected?: () => void }): Rea
       {chosen === 'custom' && (
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Access group</div>
-          <div className="s-desc">The Custom profile does exactly what this group says.</div>
+          <div className="s-title">{t('Access group')}</div>
+          <div className="s-desc">{t('The Custom profile does exactly what this group says.')}</div>
         </div>
         <select
           className="input"
@@ -221,7 +221,7 @@ export function ConnectAgent({ onConnected }: { onConnected?: () => void }): Rea
           {/* A real resolved answer, so it is on the list: a <select> whose
               value matches no option renders blank, which reads as the first
               group rather than as no access. */}
-          <option value="">No AI Access</option>
+          <option value="">{t('No AI Access')}</option>
           {groups.map((g) => (
             <option key={g.id} value={g.id}>
               {g.name}
@@ -232,14 +232,14 @@ export function ConnectAgent({ onConnected }: { onConnected?: () => void }): Rea
       )}
 
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 4 }}>
-        {TARGETS.map((t) => (
+        {TARGETS.map((tg) => (
           <button
-            key={t.id}
+            key={tg.id}
             className="btn sm primary"
             disabled={busy !== null}
-            onClick={() => void connect(t.id, t.agentName)}
+            onClick={() => void connect(tg.id, tg.agentName)}
           >
-            {t.icon} {busy === t.id ? 'Connecting…' : t.label}
+            {tg.icon} {busy === tg.id ? t('Connecting…') : t(tg.label)}
           </button>
         ))}
       </div>
@@ -248,8 +248,7 @@ export function ConnectAgent({ onConnected }: { onConnected?: () => void }): Rea
         <div className="setting-row" style={{ marginTop: 12, alignItems: 'flex-start' }}>
           <div className="s-info">
             <div className="s-title">
-              <TriangleAlert size={13} /> Could not connect
-            </div>
+              <TriangleAlert size={13} /> {t('Could not connect')}</div>
             <div className="s-desc">{error.text}</div>
           </div>
           {error.action && (
@@ -262,7 +261,7 @@ export function ConnectAgent({ onConnected }: { onConnected?: () => void }): Rea
 
       {ready?.target === 'claude-code' && ready.command && (
         <div className="settings-section" style={{ marginTop: 12 }}>
-          <h3>Claude Code</h3>
+          <h3>{t('Claude Code')}</h3>
           {/* The old copy read "the token is in that command and is shown only
               once here" — beside a Copy again button, above the full 64-character
               token in plain selectable text. The claim was defensible (only the
@@ -272,11 +271,7 @@ export function ConnectAgent({ onConnected }: { onConnected?: () => void }): Rea
               that sentence to believe, so the token is now actually hidden and
               the sentence says what is true. */}
           <div className="s-desc">
-            Copied to your clipboard. Paste it into a terminal — it registers OpsMaxx with Claude
-            Code for every project. OpsMaxx keeps only a hash of the token, so this is the only
-            time it can show it to you; the copy on your clipboard is the whole command, token
-            included.
-          </div>
+            {t('Copied to your clipboard. Paste it into a terminal — it registers OpsMaxx with Claude Code for every project. OpsMaxx keeps only a hash of the token, so this is the only time it can show it to you; the copy on your clipboard is the whole command, token included.')}</div>
           <div className="setting-row">
             <div className="s-info">
               <div className="s-title mono" style={{ wordBreak: 'break-all' }}>
@@ -308,8 +303,7 @@ export function ConnectAgent({ onConnected }: { onConnected?: () => void }): Rea
                 toast('Command copied')
               }}
             >
-              <Copy size={13} /> Copy again
-            </button>
+              <Copy size={13} /> {t('Copy again')}</button>
           </div>
         </div>
       )}
@@ -318,13 +312,10 @@ export function ConnectAgent({ onConnected }: { onConnected?: () => void }): Rea
         <div className="settings-section" style={{ marginTop: 12 }}>
           <h3>{FILE_CLIENTS[ready.target]}</h3>
           <div className="s-desc">
-            Written to <code className="mono">{ready.path}</code>. That file is only read at
-            startup, so quit the app completely and reopen it — OpsMaxx then appears in its
-            tools.
-            {ready.backedUpTo ? (
+            {t('Written to')}{' '}<code className="mono">{ready.path}</code>{t('. That file is only read at startup, so quit the app completely and reopen it — OpsMaxx then appears in its tools.')}{ready.backedUpTo ? (
               <>
                 {' '}
-                The previous file was copied to <code className="mono">{ready.backedUpTo}</code>.
+                {t('The previous file was copied to')}{' '}<code className="mono">{ready.backedUpTo}</code>.
               </>
             ) : null}
           </div>

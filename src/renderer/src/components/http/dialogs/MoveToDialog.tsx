@@ -5,6 +5,7 @@ import { useHttp } from '../../../store/http'
 import { useApp } from '../../../store/app'
 import { Modal } from '../../common/Modal'
 import '../nav.css'
+import { useT } from '../../../i18n'
 
 export interface Destination {
   collectionId: Id
@@ -40,6 +41,7 @@ export function MoveToDialog({
   itemId: Id
   onClose: () => void
 }): React.JSX.Element {
+  const t = useT()
   const ws = useApp((s) => s.activeWorkspaceId)
   // A folder cannot go into itself or its own subtree, so its subtree is left out.
   const options = useMemo(() => destinationsIn(ws, itemId), [ws, itemId])
@@ -69,7 +71,7 @@ export function MoveToDialog({
   }
   return (
     <Modal title={`Move ${name} to…`} onClose={onClose} confirm={{ label: 'Move', onClick: move, disabled: !options.length }}>
-      <div role="radiogroup" aria-label="Destination" className="hc-dest-list">
+      <div role="radiogroup" aria-label={t('Destination')} className="hc-dest-list">
         {options.map((d, i) => (
           <label key={`${d.collectionId}/${d.parentId}`} className="hc-dest">
             <input type="radio" name="hc-move-dest" checked={choice === i} onChange={() => setChoice(i)} /> {d.label}

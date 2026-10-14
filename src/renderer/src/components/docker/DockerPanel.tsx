@@ -57,6 +57,7 @@ import { ImageScanPanel } from './ImageScan'
 import type { ImageScanProbe } from '../../../../shared/imageScan'
 import { ReclaimDialog, ReclaimOutcome } from './Reclaim'
 import { withVaultUnlock } from '../../lib/withVaultUnlock'
+import { useT } from '../../i18n'
 
 // Containers on a server, and what an operator does with them.
 //
@@ -198,22 +199,23 @@ function LogPane({
   onDock?: () => void
   onClose: () => void
 }): React.JSX.Element {
+  const t = useT()
   return (
     <div style={inline ? { paddingBottom: 6 } : undefined}>
       <div
         className="row muted"
         style={{ fontSize: 11, marginTop: inline ? 4 : 10, gap: 8, alignItems: 'center' }}
       >
-        <span className="grow">Logs · {pane.name}</span>
+        <span className="grow">{t('Logs ·')}{' '}{pane.name}</span>
         <select
           className="input"
           style={{ maxWidth: 110 }}
           value={pane.lines}
           onChange={(e) => onChange({ lines: Number(e.target.value) })}
         >
-          <option value={200}>200 lines</option>
-          <option value={1000}>1000 lines</option>
-          <option value={5000}>5000 lines</option>
+          <option value={200}>{t('200 lines')}</option>
+          <option value={1000}>{t('1000 lines')}</option>
+          <option value={5000}>{t('5000 lines')}</option>
         </select>
         <label className="row" style={{ gap: 4, alignItems: 'center' }}>
           <input
@@ -221,29 +223,25 @@ function LogPane({
             checked={pane.timestamps}
             onChange={(e) => onChange({ timestamps: e.target.checked })}
           />
-          Timestamps
-        </label>
+          {t('Timestamps')}</label>
         {inline && onPopOut && (
           <button
             className="btn ghost sm"
-            title="Read this in the larger panel at the bottom"
+            title={t('Read this in the larger panel at the bottom')}
             onClick={onPopOut}
           >
-            Pop out
-          </button>
+            {t('Pop out')}</button>
         )}
         {!inline && onDock && (
           <button
             className="btn ghost sm"
-            title="Put this back under its container's row"
+            title={t('Put this back under its container\'s row')}
             onClick={onDock}
           >
-            Dock
-          </button>
+            {t('Dock')}</button>
         )}
         <button className="btn ghost sm" onClick={onClose}>
-          Close
-        </button>
+          {t('Close')}</button>
       </div>
       {/* Inline keeps .bc-out's own 26px indent, which reads as "this belongs
           to the row above"; the bottom panel owns its width and cancels it. */}
@@ -258,6 +256,7 @@ function LogPane({
 }
 
 export function DockerPanel({ servers }: { servers: Server[] }): React.JSX.Element {
+  const t = useT()
   const [serverId, setServerId] = useState<string>('')
   // The package manager, from the facts the sampler already collects. Absent
   // means the facts have not been collected -- which the engine-upgrade panel
@@ -886,15 +885,14 @@ export function DockerPanel({ servers }: { servers: Server[] }): React.JSX.Eleme
         <span className="panel-head-icon">
           <Container size={14} />
         </span>
-        <h2 className="ui-section-title">Containers</h2>
+        <h2 className="ui-section-title">{t('Containers')}</h2>
         <p className="ui-note panel-head-purpose">
-          What is running under Docker on one host — state, ports, disk and live stats.
-        </p>
+          {t('What is running under Docker on one host — state, ports, disk and live stats.')}</p>
         <div className="panel-head-actions">
           <select
             className="input"
             style={{ maxWidth: 200 }}
-            aria-label="Docker host"
+            aria-label={t('Docker host')}
             value={selectedId}
             onChange={(e) => {
               setServerId(e.target.value)
@@ -904,7 +902,7 @@ export function DockerPanel({ servers }: { servers: Server[] }): React.JSX.Eleme
           >
             {/* First, and present even with no servers: the local daemon is the
                 one most developers actually have running. */}
-            <option value={LOCAL_ID}>This machine</option>
+            <option value={LOCAL_ID}>{t('This machine')}</option>
             {eligible.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.name}
@@ -935,24 +933,17 @@ export function DockerPanel({ servers }: { servers: Server[] }): React.JSX.Eleme
       {!anyConnected(servers) && (
         <div className="panel-empty">
           <p className="panel-empty-title">
-            No server in this workspace is connected — showing Docker on this machine.
-          </p>
+            {t('No server in this workspace is connected — showing Docker on this machine.')}</p>
           <p className="panel-empty-body">
-            Any saved server can still be picked above — reading one dials it. Connect a server
-            from the sidebar to work on it properly, or press <b>Read containers</b> for the daemon
-            running here.
-          </p>
+            {t('Any saved server can still be picked above — reading one dials it. Connect a server from the sidebar to work on it properly, or press')}{' '}<b>{t('Read containers')}</b> {t('for the daemon running here.')}</p>
         </div>
       )}
 
       {!probe && !loading && hasTarget && (
         <div className="panel-empty">
-          <p className="panel-empty-title">Nothing has been read yet.</p>
+          <p className="panel-empty-title">{t('Nothing has been read yet.')}</p>
           <p className="panel-empty-body">
-            Press <b>Read containers</b> to run <span className="mono">docker ps</span> on the
-            selected server, using the docker binary already installed there. Reading only —
-            nothing is started, stopped or removed until you ask for it.
-          </p>
+            {t('Press')}{' '}<b>{t('Read containers')}</b> {t('to run')}{' '}<span className="mono">{t('docker ps')}</span> {t('on the selected server, using the docker binary already installed there. Reading only — nothing is started, stopped or removed until you ask for it.')}</p>
         </div>
       )}
 
@@ -977,18 +968,14 @@ export function DockerPanel({ servers }: { servers: Server[] }): React.JSX.Eleme
                   void load(true)
                 }}
               >
-                Retry with sudo
-              </button>
+                {t('Retry with sudo')}</button>
               <span className="faint">
-                This account has passwordless sudo on that server, so containers can be read as root.
-              </span>
+                {t('This account has passwordless sudo on that server, so containers can be read as root.')}</span>
             </div>
           )}
           {probe.reason === 'permission-denied' && sudoAvailable === false && (
             <div className="faint" style={{ marginTop: 6 }}>
-              sudo would need a password here, and there is no terminal to type it into. Add this
-              user to the docker group on the server, or configure passwordless sudo for it.
-            </div>
+              {t('sudo would need a password here, and there is no terminal to type it into. Add this user to the docker group on the server, or configure passwordless sudo for it.')}</div>
           )}
         </div>
       )}
@@ -1007,8 +994,7 @@ export function DockerPanel({ servers }: { servers: Server[] }): React.JSX.Eleme
               void load(false)
             }}
           >
-            Stop using sudo
-          </button>
+            {t('Stop using sudo')}</button>
         </div>
       )}
 
@@ -1020,12 +1006,11 @@ export function DockerPanel({ servers }: { servers: Server[] }): React.JSX.Eleme
                 beats printing "docker null". */}
             <span>{probe.version ? `docker ${probe.version}` : 'docker'}</span>
             <span>
-              {probe.containers.length} container{probe.containers.length === 1 ? '' : 's'}
+              {probe.containers.length} {t('container')}{probe.containers.length === 1 ? '' : 's'}
             </span>
             <span className="grow" />
             <button className="btn ghost sm" disabled={diskLoading} onClick={() => void loadDisk()}>
-              <HardDrive size={12} className={clsx(diskLoading && 'spin')} /> Disk usage
-            </button>
+              <HardDrive size={12} className={clsx(diskLoading && 'spin')} /> {t('Disk usage')}</button>
             <button
               className="btn ghost sm"
               disabled={statsLoading || running.length === 0}
@@ -1045,8 +1030,7 @@ export function DockerPanel({ servers }: { servers: Server[] }): React.JSX.Eleme
               on screen otherwise, and only one of them is true. */}
           {probe.composeLabels === 'unavailable' && (
             <div className="faint" style={{ fontSize: 11 }}>
-              This runtime did not report compose labels, so containers are not grouped by project.
-            </div>
+              {t('This runtime did not report compose labels, so containers are not grouped by project.')}</div>
           )}
 
           {/* The file half.
@@ -1085,7 +1069,7 @@ export function DockerPanel({ servers }: { servers: Server[] }): React.JSX.Eleme
           {disk?.ok && (
             <>
               <div className="row muted" style={{ fontSize: 11, marginTop: 8 }}>
-                <span className="grow">Disk usage</span>
+                <span className="grow">{t('Disk usage')}</span>
                 <button
                   className="btn ghost sm"
                   onClick={() => {
@@ -1093,15 +1077,13 @@ export function DockerPanel({ servers }: { servers: Server[] }): React.JSX.Eleme
                     setDiskItems(null)
                   }}
                 >
-                  Close
-                </button>
+                  {t('Close')}</button>
               </div>
               {disk.rows.map((r) => (
                 <div key={r.type} className="cron-row">
                   <span className="mono cron-when">{r.type}</span>
                   <span className="faint cron-desc">
-                    {r.active ?? '?'} of {r.total ?? '?'} in use
-                  </span>
+                    {r.active ?? '?'} {t('of')}{' '}{r.total ?? '?'} {t('in use')}</span>
                   <span className="grow" />
                   <span className="mono">{r.size}</span>
                   <span className={clsx('chip', (r.reclaimablePercent ?? 0) >= 50 && 'warn')}>
@@ -1144,13 +1126,10 @@ export function DockerPanel({ servers }: { servers: Server[] }): React.JSX.Eleme
                   </button>
                   {diskItems === null ? (
                     <span className="faint" style={{ fontSize: 11 }}>
-                      Every image, container, volume and cache entry, largest first — and where something
-                      can be removed, a checkbox for it.
-                    </span>
+                      {t('Every image, container, volume and cache entry, largest first — and where something can be removed, a checkbox for it.')}</span>
                   ) : (
                     <button className="btn ghost sm" onClick={() => setDiskItems(null)}>
-                      Close
-                    </button>
+                      {t('Close')}</button>
                   )}
                 </div>
               )}
@@ -1187,13 +1166,11 @@ export function DockerPanel({ servers }: { servers: Server[] }): React.JSX.Eleme
                         setReclaimPlan(planDockerReclaim(pickedItems))
                       }}
                     >
-                      <Trash2 size={13} /> Remove{' '}
+                      <Trash2 size={13} /> {t('Remove')}{' '}
                       {pickedItems.length === 0 ? 'selected' : `${pickedItems.length} selected`}
                     </button>
                     <span className="faint" style={{ fontSize: 11 }}>
-                      By id, one docker command per kind — never a prune. No size is totalled here: image
-                      layers are shared, so adding the rows up would overstate what comes back.
-                    </span>
+                      {t('By id, one docker command per kind — never a prune. No size is totalled here: image layers are shared, so adding the rows up would overstate what comes back.')}</span>
                   </div>
                 </>
               )}
@@ -1221,8 +1198,7 @@ export function DockerPanel({ servers }: { servers: Server[] }): React.JSX.Eleme
 
           {probe.containers.length === 0 && (
             <div className="faint" style={{ fontSize: 12 }}>
-              Docker is running and has no containers.
-            </div>
+              {t('Docker is running and has no containers.')}</div>
           )}
 
           {/* Healthchecks, worst first. Asked for rather than read on every
@@ -1275,13 +1251,12 @@ export function DockerPanel({ servers }: { servers: Server[] }): React.JSX.Eleme
               style={{ fontSize: 'var(--fs-xs)', marginTop: 8, alignItems: 'center' }}
             >
               <span className="grow">
-                {shown.length} of {allContainers.length} container
-                {allContainers.length === 1 ? '' : 's'}
+                {shown.length} {t('of')}{' '}{allContainers.length} {t('container')}{allContainers.length === 1 ? '' : 's'}
               </span>
               <input
                 className="input"
                 style={{ maxWidth: 200 }}
-                placeholder="Filter containers…"
+                placeholder={t('Filter containers…')}
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
               />
@@ -1292,9 +1267,7 @@ export function DockerPanel({ servers }: { servers: Server[] }): React.JSX.Eleme
               "nothing here" is a statement about the filter, not the host. */}
           {q !== '' && shown.length === 0 && (
             <div className="faint" style={{ fontSize: 'var(--fs-sm)', marginTop: 8 }}>
-              No container matches “{filter}”. {allContainers.length} are running or stopped on this
-              host.
-            </div>
+              {t('No container matches “')}{filter}”. {allContainers.length} {t('are running or stopped on this host.')}</div>
           )}
 
           {groups.map((g) => (
@@ -1318,8 +1291,7 @@ export function DockerPanel({ servers }: { servers: Server[] }): React.JSX.Eleme
                         )
                       }
                     >
-                      <RotateCw size={12} /> Restart project
-                    </button>
+                      <RotateCw size={12} /> {t('Restart project')}</button>
                   )}
                 </div>
               )}
@@ -1339,13 +1311,12 @@ export function DockerPanel({ servers }: { servers: Server[] }): React.JSX.Eleme
                       </span>
                       {stat && (
                         <span className="faint mono" title={`${stat.memUsage} · net ${stat.netIo}`}>
-                          {stat.cpuPercent === null ? '—' : `${stat.cpuPercent.toFixed(1)}%`} cpu ·{' '}
-                          {stat.memPercent === null ? '—' : `${stat.memPercent.toFixed(1)}%`} mem
-                        </span>
+                          {stat.cpuPercent === null ? '—' : `${stat.cpuPercent.toFixed(1)}%`} {t('cpu ·')}{' '}
+                          {stat.memPercent === null ? '—' : `${stat.memPercent.toFixed(1)}%`} {t('mem')}</span>
                       )}
                       <button
                         className={clsx('icon-btn sm', open && 'on')}
-                        title="Ports, mounts, restart policy, health"
+                        title={t('Ports, mounts, restart policy, health')}
                         onClick={() => void toggleDetail(c)}
                       >
                         <Info size={13} />
@@ -1456,8 +1427,7 @@ export function DockerPanel({ servers }: { servers: Server[] }): React.JSX.Eleme
                 setPhrase('')
               }}
             >
-              Cancel
-            </button>
+              {t('Cancel')}</button>
           </div>
         </div>
       )}
@@ -1474,10 +1444,7 @@ export function DockerPanel({ servers }: { servers: Server[] }): React.JSX.Eleme
               </div>
               {actionResult.result.reason === 'permission-denied' && !useSudo && (
                 <div className="faint" style={{ marginTop: 6 }}>
-                  The socket refused this account. Nothing was retried as root on its own — an action
-                  running as root is a decision to make deliberately, not one to discover afterwards.
-                  Turn sudo on above and try again if that is what you want.
-                </div>
+                  {t('The socket refused this account. Nothing was retried as root on its own — an action running as root is a decision to make deliberately, not one to discover afterwards. Turn sudo on above and try again if that is what you want.')}</div>
               )}
             </>
           )}
@@ -1485,9 +1452,8 @@ export function DockerPanel({ servers }: { servers: Server[] }): React.JSX.Eleme
             <>
               <div>
                 {actionResult.action}:{' '}
-                {actionResult.result.outcomes.filter((o) => o.ok).length} of{' '}
-                {actionResult.result.outcomes.length} succeeded
-                {actionResult.result.usedSudo ? ', as root' : ''}.
+                {actionResult.result.outcomes.filter((o) => o.ok).length} {t('of')}{' '}
+                {actionResult.result.outcomes.length} {t('succeeded')}{actionResult.result.usedSudo ? ', as root' : ''}.
               </div>
               {actionResult.result.outcomes
                 .filter((o) => !o.ok)
@@ -1536,11 +1502,11 @@ function InspectDetail({
   probe: DockerInspectProbe | null
   scan: ((ref: string) => Promise<ImageScanProbe>) | null
 }): React.JSX.Element {
+  const t = useT()
   if (probe === null) {
     return (
       <div className="faint" style={{ fontSize: 11, padding: '4px 0 8px 12px' }}>
-        Reading…
-      </div>
+        {t('Reading…')}</div>
     )
   }
   if (!probe.ok) {
@@ -1563,14 +1529,14 @@ function InspectDetail({
             one number here that is a diagnosis rather than a fact. */}
         {(i.restartCount ?? 0) > 0 && (
           <span className={clsx('chip', (i.restartCount ?? 0) > 5 && 'warn')}>
-            restarted {i.restartCount}×
+            {t('restarted')}{' '}{i.restartCount}×
           </span>
         )}
-        {i.exitCode !== null && i.status !== 'running' && <span className="chip">exit {i.exitCode}</span>}
-        <span className="chip">{i.envCount ?? '?'} env vars</span>
+        {i.exitCode !== null && i.status !== 'running' && <span className="chip">{t('exit')}{' '}{i.exitCode}</span>}
+        <span className="chip">{i.envCount ?? '?'} {t('env vars')}</span>
         <span className="chip">logs: {i.logDriver === '' ? 'unknown' : i.logDriver}</span>
       </div>
-      <div className="mono">image {i.image}</div>
+      <div className="mono">{t('image')}{' '}{i.image}</div>
       {/* The scan lives beside the image reference because that is what it is
           about -- a container's vulnerabilities are its image's. Asked for, not
           run on open: it is a scanner invocation that may download a 111 MB
@@ -1579,11 +1545,11 @@ function InspectDetail({
       {/* The reference and the digest disagree constantly, and that
           disagreement — "latest" is not the latest here — is frequently the
           bug being hunted. */}
-      <div className="mono">digest {i.imageId.replace(/^sha256:/, '').slice(0, 19)}</div>
-      <div className="mono">started {i.startedAt}</div>
+      <div className="mono">{t('digest')}{' '}{i.imageId.replace(/^sha256:/, '').slice(0, 19)}</div>
+      <div className="mono">{t('started')}{' '}{i.startedAt}</div>
       {i.ports.length > 0 && (
         <div className="mono">
-          ports{' '}
+          {t('ports')}{' '}
           {i.ports
             .map((p) => (p.host === '' ? `${p.container} (not published)` : `${p.host} → ${p.container}`))
             .join(', ')}
@@ -1600,7 +1566,7 @@ function InspectDetail({
       )}
       {i.networks.length > 0 && (
         <div className="mono">
-          networks {i.networks.map((n) => (n.ip === '' ? n.name : `${n.name} ${n.ip}`)).join(', ')}
+          {t('networks')}{' '}{i.networks.map((n) => (n.ip === '' ? n.name : `${n.name} ${n.ip}`)).join(', ')}
         </div>
       )}
     </div>
@@ -1653,6 +1619,7 @@ function DiskItems({
   onToggle: (item: DockerReclaimItem) => void
   onClose: () => void
 }): React.JSX.Element {
+  const t = useT()
   const d = probe.disk
   const offered = new Map(preview.items.map((i) => [dockerReclaimKey(i), i]))
   const refused = new Map(preview.withheld.map((w) => [dockerReclaimKey(w), w]))
@@ -1726,7 +1693,7 @@ function DiskItems({
   return (
     <>
       <div className="row muted" style={{ fontSize: 11, marginTop: 8, alignItems: 'center' }}>
-        <span className="grow">By item</span>
+        <span className="grow">{t('By item')}</span>
         {/* Absolute, and computed on the host rather than looked up in a table
             of release dates that would need an owner and would eventually be
             wrong. Absent on a runtime that will not answer — podman's docker
@@ -1736,16 +1703,13 @@ function DiskItems({
         {/* This read has its own sudo failover, and the banner above the panel
             is about the CONTAINER LIST. Without this, a listing that had to
             escalate to root to be readable said nothing about it. */}
-        {probe.usedSudo === true && <span className="faint">read as root</span>}
+        {probe.usedSudo === true && <span className="faint">{t('read as root')}</span>}
         <button className="btn ghost sm" onClick={onClose}>
-          Close
-        </button>
+          {t('Close')}</button>
       </div>
 
       <div className="faint" style={{ fontSize: 11 }}>
-        Tick what should go. Nothing is ticked for you, there is no select-all, and a row with a dot
-        instead of a box says why on hover — that is docker refusing, not this panel being cautious.
-      </div>
+        {t('Tick what should go. Nothing is ticked for you, there is no select-all, and a row with a dot instead of a box says why on hover — that is docker refusing, not this panel being cautious.')}</div>
 
       {images.length > 0 && heading('Images', images.length)}
       {images.map((i) => (
@@ -1760,9 +1724,9 @@ function DiskItems({
           <span className="grow" />
           {/* An untagged image with nothing running off it is the classic
               leftover — a previous build's layers, orphaned by the next one. */}
-          {i.dangling && <span className="chip warn">dangling</span>}
+          {i.dangling && <span className="chip warn">{t('dangling')}</span>}
           <span className={clsx('chip', i.containers === 0 && 'warn')}>
-            {i.containers ?? '?'} container{i.containers === 1 ? '' : 's'}
+            {i.containers ?? '?'} {t('container')}{i.containers === 1 ? '' : 's'}
           </span>
           {/* UNIQUE SIZE, not SIZE. SIZE includes layers other images share, so
               it is the number that makes a 300MB image look like 900MB. */}
@@ -1795,7 +1759,7 @@ function DiskItems({
           <span className={clsx('chip', stateTone(c.state))}>{c.status}</span>
           {/* The writable layer only. The image's bytes are in the table above,
               and adding the two together would count them twice. */}
-          <span className="mono" title="Writable layer, not the image">
+          <span className="mono" title={t('Writable layer, not the image')}>
             {c.size}
           </span>
         </div>
@@ -1824,8 +1788,8 @@ function DiskItems({
           {/* No links is not the same as unwanted: an anonymous volume with no
               links is usually rubbish, a NAMED one with no links is usually the
               database of something that happens to be stopped. */}
-          {v.links === 0 && <span className={clsx('chip', v.anonymous && 'warn')}>no containers</span>}
-          {(v.links ?? 0) > 0 && <span className="chip">{v.links} linked</span>}
+          {v.links === 0 && <span className={clsx('chip', v.anonymous && 'warn')}>{t('no containers')}</span>}
+          {(v.links ?? 0) > 0 && <span className="chip">{v.links} {t('linked')}</span>}
           <span className="mono">{v.size}</span>
         </div>
       ))}
@@ -1839,7 +1803,7 @@ function DiskItems({
           {pick('cache', c.id)}
           <span className="mono cron-when">{c.id}</span>
           <span className="faint cron-desc">
-            {c.type} · last used {c.lastUsed === '' ? 'never' : c.lastUsed}
+            {c.type} {t('· last used')}{' '}{c.lastUsed === '' ? 'never' : c.lastUsed}
           </span>
           <span className="grow" />
           <span className="mono">{c.size}</span>
@@ -1872,9 +1836,7 @@ function DiskItems({
           that failed to load rather than a host holding nothing. */}
       {empty && (
         <div className="faint" style={{ fontSize: 11 }}>
-          Docker answered, and every table it printed was empty: there is nothing stored on this
-          server. That is the reading, not a read that failed.
-        </div>
+          {t('Docker answered, and every table it printed was empty: there is nothing stored on this server. That is the reading, not a read that failed.')}</div>
       )}
 
       {/* Absent and empty are different sentences, and only one of them is
@@ -1882,14 +1844,11 @@ function DiskItems({
           table at all. */}
       {!d.sections.buildCache && (
         <div className="faint" style={{ fontSize: 11 }}>
-          This runtime did not report a build cache.
-        </div>
+          {t('This runtime did not report a build cache.')}</div>
       )}
       {d.unreadable > 0 && (
         <div className="faint" style={{ fontSize: 11 }}>
-          {d.unreadable} row{d.unreadable === 1 ? '' : 's'} of this listing could not be read, so
-          {d.unreadable === 1 ? ' it is' : ' they are'} missing above rather than guessed at.
-        </div>
+          {d.unreadable} {t('row')}{d.unreadable === 1 ? '' : 's'} {t('of this listing could not be read, so')}{d.unreadable === 1 ? ' it is' : ' they are'} {t('missing above rather than guessed at.')}</div>
       )}
     </>
   )

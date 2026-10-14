@@ -23,6 +23,7 @@ import type {
 import { BindWarning } from './VpnStatusCard'
 import { FrpProxyEditor } from './FrpProxyEditor'
 import { Switch } from '../common/Switch'
+import { useT } from '../../i18n'
 
 /** A keypair that exists only in this form.
  *
@@ -73,6 +74,7 @@ interface VpnProfileFormProps {
 }
 
 export function VpnProfileForm({ profile, onClose, focus }: VpnProfileFormProps): React.JSX.Element {
+  const t = useT()
   const upsertVpnProfile = useApp((s) => s.upsertVpnProfile)
   // "Edit New frp client" is what the title said for a profile being created.
   // The caller mints the profile before opening the form, so the honest test is
@@ -258,8 +260,7 @@ export function VpnProfileForm({ profile, onClose, focus }: VpnProfileFormProps)
           />
           <span className="grow" />
           <button className="btn sm" onClick={onClose}>
-            Cancel
-          </button>
+            {t('Cancel')}</button>
           <button
             className="btn primary sm"
             disabled={blocking.length > 0 || !draft.name.trim() || saving}
@@ -272,7 +273,7 @@ export function VpnProfileForm({ profile, onClose, focus }: VpnProfileFormProps)
     >
       <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         <label className="field">
-          <span className="field-label">Name</span>
+          <span className="field-label">{t('Name')}</span>
           <input
             className="input"
             value={draft.name}
@@ -283,8 +284,7 @@ export function VpnProfileForm({ profile, onClose, focus }: VpnProfileFormProps)
         <label className="row" style={{ gap: 8 }}>
           <Switch checked={draft.autoStart} onChange={(v) => setDraft((d) => ({ ...d, autoStart: v }))} />
           <span className="muted" style={{ fontSize: 12 }}>
-            Connect automatically when OpsMaxx starts
-          </span>
+            {t('Connect automatically when OpsMaxx starts')}</span>
         </label>
 
         <div className="divider" />
@@ -338,9 +338,13 @@ export function VpnProfileForm({ profile, onClose, focus }: VpnProfileFormProps)
           <details className="disclosure">
             <summary className="disclosure-head">
               <ScrollText size={13} />
-              {stripped.length} {stripped.length === 1 ? 'directive was' : 'directives were'} removed
-              when this profile was imported
-            </summary>
+              {stripped.length === 1
+                ? t('{count} directive was removed when this profile was imported', {
+                    count: stripped.length
+                  })
+                : t('{count} directives were removed when this profile was imported', {
+                    count: stripped.length
+                  })}</summary>
             <div className="disclosure-body">
               {stripped.map((d, i) => (
                 <div key={`${d.directive}-${i}`} className="col" style={{ gap: 2 }}>
@@ -381,6 +385,7 @@ function UnrenderedIssues({
   shown: Set<string>
   nameMissing: boolean
 }): React.JSX.Element | null {
+  const t = useT()
   const orphans = blocking.filter((i) => !shown.has(i.path))
   if (orphans.length === 0 && !nameMissing) return null
   return (
@@ -390,7 +395,7 @@ function UnrenderedIssues({
     >
       <AlertTriangle size={12} style={{ flexShrink: 0, marginTop: 2 }} />
       <div style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}>
-        {nameMissing && <span>Give this profile a name.</span>}
+        {nameMissing && <span>{t('Give this profile a name.')}</span>}
         {orphans.map((i) => (
           <span key={i.path + i.code}>{i.message}</span>
         ))}
@@ -550,6 +555,7 @@ function WireGuardFields({
   pending,
   onPending
 }: WgProps): React.JSX.Element {
+  const t = useT()
   const systemModeBlocked = useSystemModeBlocked()
   const set = (patch: Partial<WireGuardSpec>): void => onChange({ ...spec, ...patch })
   const setPeer = (i: number, patch: Partial<WireGuardPeer>): void =>
@@ -558,7 +564,7 @@ function WireGuardFields({
   return (
     <>
       <div className="field">
-        <span className="field-label">Mode</span>
+        <span className="field-label">{t('Mode')}</span>
         <div className="row" style={{ gap: 6 }}>
           {(['userspace', 'system'] as const).map((m) => (
             <button
@@ -598,10 +604,10 @@ function WireGuardFields({
       />
 
       <label className="field">
-        <span className="field-label">Addresses</span>
+        <span className="field-label">{t('Addresses')}</span>
         <input
           className="input"
-          placeholder="10.0.0.2/32, fd00::2/128"
+          placeholder={t('10.0.0.2/32, fd00::2/128')}
           value={listStr(spec.addresses)}
           onChange={(e) => set({ addresses: parseList(e.target.value) })}
         />
@@ -609,13 +615,13 @@ function WireGuardFields({
         <Hint
           when={spec.addresses.length > 0}
           ok={spec.addresses.every(isCidr)}
-          text="Each address needs a prefix length, e.g. 10.0.0.2/32."
+          text={t('Each address needs a prefix length, e.g. 10.0.0.2/32.')}
         />
       </label>
 
       <div className="field-row">
         <label className="field">
-          <span className="field-label">DNS</span>
+          <span className="field-label">{t('DNS')}</span>
           <input
             className="input"
             placeholder="1.1.1.1"
@@ -625,7 +631,7 @@ function WireGuardFields({
           <Issue at="dns" map={issue} shown={shown} />
         </label>
         <label className="field">
-          <span className="field-label">MTU</span>
+          <span className="field-label">{t('MTU')}</span>
           <input
             className="input"
             type="number"
@@ -639,7 +645,7 @@ function WireGuardFields({
 
       <div className="field">
         <div className="row" style={{ gap: 8 }}>
-          <span className="field-label">Peers</span>
+          <span className="field-label">{t('Peers')}</span>
           <span className="grow" />
           <button
             className="btn sm"
@@ -647,8 +653,7 @@ function WireGuardFields({
               set({ peers: [...spec.peers, { publicKey: '', endpoint: '', allowedIps: ['0.0.0.0/0'] }] })
             }
           >
-            <Plus size={13} /> Add peer
-          </button>
+            <Plus size={13} /> {t('Add peer')}</button>
         </div>
         {spec.peers.map((p, i) => (
           <div key={i} className="hop-card" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -656,13 +661,13 @@ function WireGuardFields({
               <input
                 className="input"
                 style={{ flex: 1 }}
-                placeholder="Peer public key"
+                placeholder={t('Peer public key')}
                 value={p.publicKey}
                 onChange={(e) => setPeer(i, { publicKey: e.target.value })}
               />
               <button
                 className="icon-btn sm"
-                title="Remove peer"
+                title={t('Remove peer')}
                 onClick={() => set({ peers: spec.peers.filter((_, n) => n !== i) })}
               >
                 <Trash2 size={14} />
@@ -686,7 +691,7 @@ function WireGuardFields({
                 className="input"
                 type="number"
                 style={{ maxWidth: 130 }}
-                placeholder="Keepalive (s)"
+                placeholder={t('Keepalive (s)')}
                 value={p.persistentKeepalive ?? ''}
                 onChange={(e) =>
                   setPeer(i, {
@@ -699,12 +704,12 @@ function WireGuardFields({
             <Hint
               when={!!p.endpoint}
               ok={parseVpnEndpoint(p.endpoint) !== null}
-              text="Endpoints are host:port, or [v6-address]:port."
+              text={t('Endpoints are host:port, or [v6-address]:port.')}
             />
 
             <input
               className="input"
-              placeholder="Allowed IPs — 0.0.0.0/0, ::/0"
+              placeholder={t('Allowed IPs — 0.0.0.0/0, ::/0')}
               value={listStr(p.allowedIps)}
               onChange={(e) => setPeer(i, { allowedIps: parseList(e.target.value) })}
             />
@@ -778,6 +783,7 @@ function InterfaceKeyField({
   pending,
   onPending
 }: KeyFieldProps): React.JSX.Element {
+  const t = useT()
   const [privateKey, setPrivateKey] = useState(pending?.privateKey ?? '')
   const [reveal, setReveal] = useState(false)
   const [publicKey, setPublicKey] = useState(pending?.publicKey ?? '')
@@ -847,11 +853,10 @@ function InterfaceKeyField({
   return (
     <div className="field">
       <div className="row" style={{ gap: 8 }}>
-        <span className="field-label">Interface key</span>
+        <span className="field-label">{t('Interface key')}</span>
         <span className="grow" />
         <button className="btn sm" disabled={!canMint || busy} onClick={() => void mint()}>
-          <KeyRound size={13} /> Generate keypair
-        </button>
+          <KeyRound size={13} /> {t('Generate keypair')}</button>
       </div>
 
       <div className="row" style={{ gap: 6 }}>
@@ -886,7 +891,7 @@ function InterfaceKeyField({
         </button>
         <button
           className="icon-btn sm"
-          title="Copy private key"
+          title={t('Copy private key')}
           disabled={!privateKey}
           onClick={() => copyValue('Private key', privateKey)}
         >
@@ -906,8 +911,9 @@ function InterfaceKeyField({
             {inVault ? 'Replace the stored key' : 'Use this key'}
           </button>
           <span className="field-hint">
-            Until you do, this profile still uses{' '}
-            {inVault ? 'the key already in the vault' : 'no key at all'}.
+            {t('Until you do, this profile still uses {key}.', {
+              key: inVault ? t('the key already in the vault') : t('no key at all')
+            })}
           </span>
         </div>
       )}
@@ -930,23 +936,21 @@ function InterfaceKeyField({
         // provider's form. A public key you cannot get out is a keypair you
         // cannot use.
         <div className="hop-card" style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-          <span className="field-label">Public key</span>
+          <span className="field-label">{t('Public key')}</span>
           <div className="row" style={{ gap: 6 }}>
             <code className="mono" style={{ flex: 1, fontSize: 12, wordBreak: 'break-all' }}>
               {publicKey}
             </code>
             <button
               className="icon-btn sm"
-              title="Copy public key"
+              title={t('Copy public key')}
               onClick={() => copyValue('Public key', publicKey)}
             >
               <Copy size={14} />
             </button>
           </div>
           <span className="field-hint">
-            Give this to your VPN provider, or add it to your server’s [Peer] section. It is not a
-            secret — the private key above is.
-          </span>
+            {t('Give this to your VPN provider, or add it to your server’s [Peer] section. It is not a secret — the private key above is.')}</span>
         </div>
       )}
 
@@ -986,13 +990,14 @@ interface ListenerProps {
 }
 
 function ListenerFields({ listeners, issue, onChange, shown }: ListenerProps): React.JSX.Element {
+  const t = useT()
   const replace = (i: number, next: VpnListener): void =>
     onChange(listeners.map((l, n) => (n === i ? next : l)))
 
   return (
     <div className="field">
       <div className="row" style={{ gap: 8 }}>
-        <span className="field-label">Local listeners</span>
+        <span className="field-label">{t('Local listeners')}</span>
         <span className="grow" />
         <button
           className="btn sm"
@@ -1000,13 +1005,10 @@ function ListenerFields({ listeners, issue, onChange, shown }: ListenerProps): R
             onChange([...listeners, { kind: 'socks5', bindHost: '127.0.0.1', bindPort: 1080 }])
           }
         >
-          <Plus size={13} /> Add listener
-        </button>
+          <Plus size={13} /> {t('Add listener')}</button>
       </div>
       <span className="field-hint">
-        In userspace mode these are the only way traffic reaches the tunnel — nothing is routed
-        system-wide.
-      </span>
+        {t('In userspace mode these are the only way traffic reaches the tunnel — nothing is routed system-wide.')}</span>
       {listeners.map((l, i) => (
         <div key={i} className="hop-card" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <div className="input-group">
@@ -1025,8 +1027,8 @@ function ListenerFields({ listeners, issue, onChange, shown }: ListenerProps): R
               }}
             >
               <option value="socks5">SOCKS5</option>
-              <option value="http">HTTP proxy</option>
-              <option value="forward">Forward</option>
+              <option value="http">{t('HTTP proxy')}</option>
+              <option value="forward">{t('Forward')}</option>
             </select>
             <input
               className="input"
@@ -1038,13 +1040,13 @@ function ListenerFields({ listeners, issue, onChange, shown }: ListenerProps): R
               className="input"
               type="number"
               style={{ maxWidth: 110 }}
-              placeholder="Port"
+              placeholder={t('Port')}
               value={l.bindPort || ''}
               onChange={(e) => replace(i, { ...l, bindPort: Number(e.target.value) })}
             />
             <button
               className="icon-btn sm"
-              title="Remove listener"
+              title={t('Remove listener')}
               onClick={() => onChange(listeners.filter((_, n) => n !== i))}
             >
               <Trash2 size={14} />
@@ -1054,7 +1056,7 @@ function ListenerFields({ listeners, issue, onChange, shown }: ListenerProps): R
             <div className="input-group">
               <input
                 className="input"
-                placeholder="Target server inside the tunnel"
+                placeholder={t('Target server inside the tunnel')}
                 value={l.targetHost}
                 onChange={(e) => replace(i, { ...l, targetHost: e.target.value })}
               />
@@ -1062,7 +1064,7 @@ function ListenerFields({ listeners, issue, onChange, shown }: ListenerProps): R
                 className="input"
                 type="number"
                 style={{ maxWidth: 110 }}
-                placeholder="Target port"
+                placeholder={t('Target port')}
                 value={l.targetPort || ''}
                 onChange={(e) => replace(i, { ...l, targetPort: Number(e.target.value) })}
               />
@@ -1127,6 +1129,7 @@ function TailscaleFields({
   deviceName,
   onDeviceName
 }: TailscaleProps): React.JSX.Element {
+  const t = useT()
   const set = (patch: Partial<TailscaleSpec>): void => onChange({ ...spec, ...patch })
   // The same function the driver calls, so what this says is what `ts.up` gets.
   // Two fields where one wins is exactly the place a second implementation of
@@ -1137,17 +1140,14 @@ function TailscaleFields({
     <>
       <div className="field">
         <span className="field-hint">
-          OpsMaxx joins your tailnet itself — there is nothing to install. This profile
-          is its own device, with its own key, so it neither uses nor disturbs a
-          Tailscale app you may also be running on this machine.
-        </span>
+          {t('OpsMaxx joins your tailnet itself — there is nothing to install. This profile is its own device, with its own key, so it neither uses nor disturbs a Tailscale app you may also be running on this machine.')}</span>
       </div>
 
       <label className="field">
-        <span className="field-label">Device name, on every computer</span>
+        <span className="field-label">{t('Device name, on every computer')}</span>
         <input
           className="input"
-          placeholder="opsmaxx"
+          placeholder={t('opsmaxx')}
           value={spec.hostname ?? ''}
           onChange={(e) => set({ hostname: e.target.value || undefined })}
         />
@@ -1157,12 +1157,11 @@ function TailscaleFields({
           This one is part of the profile, so it travels to every computer you have
           paired — and a tailnet name identifies a single device, so if two of them
           run this profile Tailscale keeps them apart by adding <code>-1</code>,{' '}
-          <code>-2</code>. Give the second computer a name of its own below.
-        </span>
+          <code>-2</code>{t('. Give the second computer a name of its own below.')}</span>
       </label>
 
       <label className="field">
-        <span className="field-label">Name on this computer only</span>
+        <span className="field-label">{t('Name on this computer only')}</span>
         <input
           className="input"
           placeholder={spec.hostname ?? 'opsmaxx'}
@@ -1184,7 +1183,7 @@ function TailscaleFields({
         <span className="field-hint">
           {effective ? (
             <>
-              This computer will appear as <code>{effective}</code>
+              {t('This computer will appear as')}{' '}<code>{effective}</code>
               {overridden ? ' — the name above is unchanged elsewhere.' : '.'}
             </>
           ) : (
@@ -1200,23 +1199,21 @@ function TailscaleFields({
           onChange={(e) => set({ showPeers: e.target.checked })}
         />
         <span className="field-hint">
-          List the devices on this tailnet. Read-only — it changes what OpsMaxx shows,
-          never the tailnet itself. Off by default, because a device list is
-          information about a network you may not want mirrored here.
-        </span>
+          {t('List the devices on this tailnet. Read-only — it changes what OpsMaxx shows, never the tailnet itself. Off by default, because a device list is information about a network you may not want mirrored here.')}</span>
       </label>
     </>
   )
 }
 
 function OpenVpnFields({ spec, issue, onChange, shown, focus }: OvpnProps): React.JSX.Element {
+  const t = useT()
   const set = (patch: Partial<OpenVpnSpec>): void => onChange({ ...spec, ...patch })
   const platform = usePlatform()
 
   return (
     <>
       <label className="field">
-        <span className="field-label">Authentication</span>
+        <span className="field-label">{t('Authentication')}</span>
         <select
           className="input"
           value={spec.authMode}
@@ -1230,14 +1227,12 @@ function OpenVpnFields({ spec, issue, onChange, shown, focus }: OvpnProps): Reac
         </select>
         <Issue at="authMode" map={issue} shown={shown} />
         <span className="field-hint">
-          Credentials live in the vault and are handed to OpenVPN over its management socket — never
-          written to a file, never passed on the command line.
-        </span>
+          {t('Credentials live in the vault and are handed to OpenVPN over its management socket — never written to a file, never passed on the command line.')}</span>
       </label>
 
       {spec.remotes && spec.remotes.length > 0 && (
         <div className="field">
-          <span className="field-label">Remotes</span>
+          <span className="field-label">{t('Remotes')}</span>
           <div className="col" style={{ gap: 2 }}>
             {spec.remotes.map((r, i) => (
               <span key={i} className="mono" style={{ fontSize: 12 }}>
@@ -1247,7 +1242,7 @@ function OpenVpnFields({ spec, issue, onChange, shown, focus }: OvpnProps): Reac
           </div>
           {/* Read-only: they come out of the sanitised config body in the vault,
               and editing them here would desynchronise the two. */}
-          <span className="field-hint">Taken from the imported profile.</span>
+          <span className="field-hint">{t('Taken from the imported profile.')}</span>
         </div>
       )}
 
@@ -1258,14 +1253,12 @@ function OpenVpnFields({ spec, issue, onChange, shown, focus }: OvpnProps): Reac
           onChange={(v) => set({ redirectGateway: v })}
         />
         <span style={{ fontSize: 12, color: spec.redirectGateway ? 'var(--warn)' : 'var(--text-muted)' }}>
-          Send all traffic through this VPN. Off by default: a downloaded profile asking for your
-          default route is not a good enough reason to give it.
-        </span>
+          {t('Send all traffic through this VPN. Off by default: a downloaded profile asking for your default route is not a good enough reason to give it.')}</span>
       </label>
 
       {spec.staticChallenge && (
         <div className="field">
-          <span className="field-label">Static challenge</span>
+          <span className="field-label">{t('Static challenge')}</span>
           <span className="muted" style={{ fontSize: 12 }}>
             {spec.staticChallenge.text}
           </span>
@@ -1273,10 +1266,10 @@ function OpenVpnFields({ spec, issue, onChange, shown, focus }: OvpnProps): Reac
       )}
 
       <label className="field">
-        <span className="field-label">OpenVPN binary</span>
+        <span className="field-label">{t('OpenVPN binary')}</span>
         <input
           className="input"
-          placeholder="Detected automatically"
+          placeholder={t('Detected automatically')}
           // Opened from a "could not find OpenVPN" failure, this is the field
           // that answers it — so the caret is already in it, and the browser
           // scrolls it into view for free.
@@ -1312,6 +1305,7 @@ interface FrpProps {
 }
 
 function FrpFields({ spec, issue, onChange, shown, focus }: FrpProps): React.JSX.Element {
+  const t = useT()
   const set = (patch: Partial<FrpSpec>): void => onChange({ ...spec, ...patch })
 
   // The proxy list is below the server and transport fields, so a form opened
@@ -1352,7 +1346,7 @@ function FrpFields({ spec, issue, onChange, shown, focus }: FrpProps): React.JSX
     <>
       <div className="field-row">
         <label className="field">
-          <span className="field-label">Server address</span>
+          <span className="field-label">{t('Server address')}</span>
           <input
             className="input"
             placeholder="frp.example.com"
@@ -1362,7 +1356,7 @@ function FrpFields({ spec, issue, onChange, shown, focus }: FrpProps): React.JSX
           <Issue at="serverAddr" map={issue} shown={shown} />
         </label>
         <label className="field">
-          <span className="field-label">Server port</span>
+          <span className="field-label">{t('Server port')}</span>
           <input
             className="input"
             type="number"
@@ -1376,7 +1370,7 @@ function FrpFields({ spec, issue, onChange, shown, focus }: FrpProps): React.JSX
 
       <div className="field-row">
         <label className="field">
-          <span className="field-label">Transport</span>
+          <span className="field-label">{t('Transport')}</span>
           <select
             className="input"
             value={spec.transport.protocol}
@@ -1397,7 +1391,7 @@ function FrpFields({ spec, issue, onChange, shown, focus }: FrpProps): React.JSX
           </select>
         </label>
         <label className="field">
-          <span className="field-label">Corporate proxy</span>
+          <span className="field-label">{t('Corporate proxy')}</span>
           <input
             className="input"
             placeholder="http://proxy:8080"
@@ -1416,8 +1410,7 @@ function FrpFields({ spec, issue, onChange, shown, focus }: FrpProps): React.JSX
           onChange={(v) => set({ transport: { ...spec.transport, tlsEnable: v } })}
         />
         <span className="muted" style={{ fontSize: 12 }}>
-          Encrypt the control connection with TLS
-        </span>
+          {t('Encrypt the control connection with TLS')}</span>
       </label>
 
       {/* Turning TLS off is a blocking error unless it is confirmed, and until
@@ -1431,12 +1424,12 @@ function FrpFields({ spec, issue, onChange, shown, focus }: FrpProps): React.JSX
           onChange={(v) =>
             set({ confirmations: { ...spec.confirmations, allowPlaintextTransport: v } })
           }
-          label="Send the control connection unencrypted. Anyone on the path can read the token and the traffic."
+          label={t('Send the control connection unencrypted. Anyone on the path can read the token and the traffic.')}
         />
       )}
 
       <div className="field">
-        <span className="field-label">Authentication</span>
+        <span className="field-label">{t('Authentication')}</span>
         <span className="muted" style={{ fontSize: 12 }}>
           {spec.auth.method === 'oidc'
             ? `OIDC — ${spec.auth.oidc?.clientId ?? 'client not set'}`
@@ -1451,14 +1444,13 @@ function FrpFields({ spec, issue, onChange, shown, focus }: FrpProps): React.JSX
 
       <div className="field" ref={proxiesRef}>
         <div className="row" style={{ gap: 8 }}>
-          <span className="field-label">Proxies</span>
+          <span className="field-label">{t('Proxies')}</span>
           <span className="grow" />
           <button className="btn sm" onClick={addProxy}>
-            <Plus size={13} /> Add proxy
-          </button>
+            <Plus size={13} /> {t('Add proxy')}</button>
         </div>
         {spec.proxies.length === 0 && (
-          <span className="field-hint">An frp client with no proxies connects and exposes nothing.</span>
+          <span className="field-hint">{t('An frp client with no proxies connects and exposes nothing.')}</span>
         )}
         {spec.proxies.map((p, i) => (
           <FrpProxyEditor
@@ -1474,11 +1466,11 @@ function FrpFields({ spec, issue, onChange, shown, focus }: FrpProps): React.JSX
 
       {spec.visitors.length > 0 && (
         <div className="field">
-          <span className="field-label">Visitors</span>
+          <span className="field-label">{t('Visitors')}</span>
           {spec.visitors.map((v, i) => (
             <div key={i} className="col" style={{ gap: 4 }}>
               <span className="mono" style={{ fontSize: 12 }}>
-                {v.name} ({v.type}) → {v.serverName} on {v.bindAddr}:{v.bindPort}
+                {v.name} ({v.type}) → {v.serverName} {t('on')}{' '}{v.bindAddr}:{v.bindPort}
               </span>
               <BindWarning host={v.bindAddr} what="this visitor" />
             </div>
