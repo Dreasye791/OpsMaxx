@@ -23,6 +23,7 @@ import type { Server } from '../../types'
 import { NoteWhy, PanelShell } from '../monitor/PanelShell'
 import { VaultLockedHosts } from '../common/PanelError'
 import { isVaultLocked } from '../../lib/withVaultUnlock'
+import { useT } from '../../i18n'
 
 // Revoking an SSH key across the estate — the write half of what used to be one
 // Monitoring tab.
@@ -76,6 +77,7 @@ function outcomeClass(outcome: AccessCommitOutcome): string {
 }
 
 export function KeyRevokePanel({ servers }: { servers: Server[] }): React.JSX.Element {
+  const t = useT()
   const [entries, setEntries] = useState<Record<string, Entry>>({})
   const [selected, setSelected] = useState<string | null>(null)
   // Three states rather than one boolean, which is the shape this flow had on
@@ -294,13 +296,10 @@ export function KeyRevokePanel({ servers }: { servers: Server[] }): React.JSX.El
   return (
     <PanelShell
       icon={<KeyRound size={14} />}
-      title="Revoke a key"
+      title={t('Revoke a key')}
       about={
         <p>
-          Removes one key from every account across the estate that trusts it. The inventory below
-          is the reading the Monitoring sweep already took; nothing here re-reads a server until a
-          change has been made to it.
-        </p>
+          {t('Removes one key from every account across the estate that trusts it. The inventory below is the reading the Monitoring sweep already took; nothing here re-reads a server until a change has been made to it.')}</p>
       }
       /* Collecting from here, rather than sending the reader to another screen
          to do it. This panel acts on what the hourly key sweep has read, and a
@@ -318,19 +317,20 @@ export function KeyRevokePanel({ servers }: { servers: Server[] }): React.JSX.El
         <div className="panel-note is-unknown" data-testid="write-gated">
           <ShieldAlert size={12} />{' '}
           <b>
-            {gate === 'bridge'
-              ? ACCESS_WRITE_STALE_BRIDGE
-              : gate === 'build'
-                ? ACCESS_WRITE_DISABLED_SUMMARY
-                : ACCESS_WRITE_OFF_SUMMARY}
+            {t(
+              gate === 'bridge'
+                ? ACCESS_WRITE_STALE_BRIDGE
+                : gate === 'build'
+                  ? ACCESS_WRITE_DISABLED_SUMMARY
+                  : ACCESS_WRITE_OFF_SUMMARY
+            )}
           </b>
           {/* The switch, where the refusal is. Sending somebody to hunt for a
               setting they were not told the name of is what made this read as
               a dead end. */}
           {gate === 'opt-in' && (
             <button className="btn ghost sm revoke-gate-fix" onClick={() => openSettings('security')}>
-              <Settings2 size={13} /> Open the setting
-            </button>
+              <Settings2 size={13} /> {t('Open the setting')}</button>
           )}
           {/* Folded, because the reasoning outweighed the data: seven hundred
               characters of justification sat above the keys this screen exists
@@ -345,28 +345,23 @@ export function KeyRevokePanel({ servers }: { servers: Server[] }): React.JSX.El
               that is genuinely unproven — the dead-man's switch has not been
               watched firing on a real RHEL 9 host with KillUserProcesses=yes —
               because that is what they are accepting by turning it on. */}
-          <NoteWhy summary="Why it is off, and what it will be able to do">
-            <p>{gate === 'opt-in' ? ACCESS_WRITE_OPT_IN_NOTE : ACCESS_WRITE_DISABLED_REASON}</p>
-            <p>{ACCESS_WRITE_SCOPE}</p>
+          <NoteWhy summary={t('Why it is off, and what it will be able to do')}>
+            <p>{t(gate === 'opt-in' ? ACCESS_WRITE_OPT_IN_NOTE : ACCESS_WRITE_DISABLED_REASON)}</p>
+            <p>{t(ACCESS_WRITE_SCOPE)}</p>
           </NoteWhy>
         </div>
       )}
 
       {keys.length === 0 ? (
         <div className="panel-empty">
-          <p className="panel-empty-title">No keys have been collected to revoke.</p>
+          <p className="panel-empty-title">{t('No keys have been collected to revoke.')}</p>
           <p className="panel-empty-body">
-            The authorized_keys sweep belongs to <b>Fleet keys and access</b> on Monitoring — this
-            panel only acts on what that has already read, so with it switched off there is nothing
-            here to act on. Nothing is revoked by reading, and nothing is read by opening this.
-          </p>
+            {t('The authorized_keys sweep belongs to')}{' '}<b>{t('Fleet keys and access')}</b> {t('on Monitoring — this panel only acts on what that has already read, so with it switched off there is nothing here to act on. Nothing is revoked by reading, and nothing is read by opening this.')}</p>
           <div className="panel-empty-actions">
             <button className="btn ghost sm" onClick={() => openMonitor('access')}>
-              Open Fleet keys and access
-            </button>
+              {t('Open Fleet keys and access')}</button>
             <button className="btn ghost sm" onClick={() => openSettings('modules')}>
-              Choose modules
-            </button>
+              {t('Choose modules')}</button>
           </div>
         </div>
       ) : (
@@ -377,11 +372,8 @@ export function KeyRevokePanel({ servers }: { servers: Server[] }): React.JSX.El
               has a consequence. */}
           {unchecked.length > 0 && (
             <div className="panel-note is-unknown" data-testid="revoke-unchecked">
-              <ShieldAlert size={12} /> {unchecked.length} server
-              {unchecked.length === 1 ? ' was' : 's were'} not read, so this key may also be on{' '}
-              {unchecked.length === 1 ? 'it' : 'them'}: {unchecked.join(', ')}. Revoking here removes
-              it from the accounts listed below and from nowhere else.
-              <CheckNowButton collects="keys and access" onCollected={load} />
+              <ShieldAlert size={12} /> {unchecked.length} {t('server')}{unchecked.length === 1 ? ' was' : 's were'} {t('not read, so this key may also be on')}{' '}
+              {unchecked.length === 1 ? 'it' : 'them'}: {unchecked.join(', ')}{t('. Revoking here removes it from the accounts listed below and from nowhere else.')}<CheckNowButton collects="keys and access" onCollected={load} />
             </div>
           )}
 
@@ -389,10 +381,10 @@ export function KeyRevokePanel({ servers }: { servers: Server[] }): React.JSX.El
             <table className="table inv-table">
               <thead>
                 <tr>
-                  <th>Fingerprint</th>
-                  <th>Labelled</th>
-                  <th className="num">Accounts</th>
-                  <th>Where</th>
+                  <th>{t('Fingerprint')}</th>
+                  <th>{t('Labelled')}</th>
+                  <th className="num">{t('Accounts')}</th>
+                  <th>{t('Where')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -421,10 +413,9 @@ export function KeyRevokePanel({ servers }: { servers: Server[] }): React.JSX.El
                       {k.labels.length === 0 ? (
                         <span
                           className="inv-na"
-                          title="No comment on any line carrying this key. A key with no label is not an unused key — it is a key nobody wrote down the owner of."
+                          title={t('No comment on any line carrying this key. A key with no label is not an unused key — it is a key nobody wrote down the owner of.')}
                         >
-                          no label
-                        </span>
+                          {t('no label')}</span>
                       ) : (
                         k.labels.join(' · ')
                       )}
@@ -441,7 +432,7 @@ export function KeyRevokePanel({ servers }: { servers: Server[] }): React.JSX.El
 
           {problem !== null && (
             <div className="s-desc warn" data-testid="access-problem">
-              <b>Nothing was changed.</b> {problem}
+              <b>{t('Nothing was changed.')}</b> {problem}
             </div>
           )}
 
@@ -456,15 +447,10 @@ export function KeyRevokePanel({ servers }: { servers: Server[] }): React.JSX.El
           {pending !== null && (
             <div className="s-desc" data-testid="revoke-confirm">
               <b>
-                Revoke {pending.fingerprint} from {pending.preview.hosts.length} account
-                {pending.preview.hosts.length === 1 ? '' : 's'}?
+                {t('Revoke')}{' '}{pending.fingerprint} {t('from')}{' '}{pending.preview.hosts.length} {t('account')}{pending.preview.hosts.length === 1 ? '' : 's'}?
               </b>{' '}
-              This is staged, not applied. Each server takes a timestamped backup, replaces the file,
-              and arms its OWN rollback before OpsMaxx lets go — so if this app dies in the next
-              instant, the server puts the previous file back by itself after{' '}
-              {pending.preview.rollbackSeconds} seconds. Nothing becomes permanent until a second
-              connection has authenticated against the changed file.
-              {pending.preview.hosts.length > 0 && (
+              {t('This is staged, not applied. Each server takes a timestamped backup, replaces the file, and arms its OWN rollback before OpsMaxx lets go — so if this app dies in the next instant, the server puts the previous file back by itself after')}{' '}
+              {pending.preview.rollbackSeconds} {t('seconds. Nothing becomes permanent until a second connection has authenticated against the changed file.')}{pending.preview.hosts.length > 0 && (
                 <div className="mono" style={{ marginTop: 6 }}>
                   {pending.preview.hosts.map((h) => (
                     <div key={`${h.serverId}:${h.user}`}>
@@ -476,9 +462,7 @@ export function KeyRevokePanel({ servers }: { servers: Server[] }): React.JSX.El
               {(pending.preview.blocks.length > 0 || pending.preview.refusals.length > 0) && (
                 <div style={{ marginTop: 8 }} data-testid="revoke-blocked">
                   <b>
-                    {pending.preview.blocks.length + pending.preview.refusals.length} left out, and
-                    not by choice:
-                  </b>
+                    {pending.preview.blocks.length + pending.preview.refusals.length} {t('left out, and not by choice:')}</b>
                   <ul style={{ margin: '4px 0 0 16px' }}>
                     {pending.preview.blocks.map((b, i) => (
                       <li key={`b${i}`}>
@@ -502,8 +486,7 @@ export function KeyRevokePanel({ servers }: { servers: Server[] }): React.JSX.El
               <div style={{ marginTop: 6 }}>
                 <details>
                   <summary className="muted">
-                    What will run on each server
-                  </summary>
+                    {t('What will run on each server')}</summary>
                   {/* Shown, and sent back with the run: main derives it again
                       and refuses to touch a host if the two differ. */}
                   <pre className="mono" style={{ whiteSpace: 'pre-wrap' }}>
@@ -531,12 +514,12 @@ export function KeyRevokePanel({ servers }: { servers: Server[] }): React.JSX.El
               ))}
               {result.notStaged.map((n) => (
                 <div key={n.serverId} data-testid={`not-staged-${n.serverId}`} style={{ marginBottom: 6 }}>
-                  <span className="chip loud">Not staged</span> Nothing was changed on {n.serverName}:{' '}
+                  <span className="chip loud">{t('Not staged')}</span> {t('Nothing was changed on')}{' '}{n.serverName}:{' '}
                   {n.detail}
                 </div>
               ))}
               {result.reports.length === 0 && result.notStaged.length === 0 && (
-                <span>Nothing ran: every server was left out.</span>
+                <span>{t('Nothing ran: every server was left out.')}</span>
               )}
             </div>
           )}
@@ -559,16 +542,14 @@ export function KeyRevokePanel({ servers }: { servers: Server[] }): React.JSX.El
             {pending !== null ? (
               <>
                 <button className="btn ghost" disabled={running} onClick={() => setPending(null)}>
-                  Cancel
-                </button>
+                  {t('Cancel')}</button>
                 <button
                   className="btn danger"
                   data-testid="revoke-go"
                   disabled={running || pending.preview.hosts.length === 0}
                   onClick={() => void run()}
                 >
-                  Stage the revocation
-                </button>
+                  {t('Stage the revocation')}</button>
               </>
             ) : (
               <button
@@ -592,8 +573,7 @@ export function KeyRevokePanel({ servers }: { servers: Server[] }): React.JSX.El
                           : 'Shows exactly what would run on which servers. Nothing is written until you confirm it, and nothing becomes permanent until a second, independent session has proved the server still lets OpsMaxx in.'
                 }
               >
-                Plan the revocation
-              </button>
+                {t('Plan the revocation')}</button>
             )}
           </div>
         </>

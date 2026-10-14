@@ -14,6 +14,7 @@ import {
 } from '../../../../shared/listeningPorts'
 import { LOCAL_ID, LOCAL_TARGET } from '../../../../shared/execTarget'
 import type { Server } from '../../types'
+import { useT } from '../../i18n'
 
 function level(v: number): string {
   return v > 85 ? 'danger' : v > 65 ? 'warn' : 'ok'
@@ -49,6 +50,7 @@ export function MonitorView({
   // it keeps sampling over the shell's SSH connection in the background.
   visible?: boolean
 }): React.JSX.Element {
+  const t = useT()
   // One host the user navigated to, so it may prompt. See the hook.
   const m = useServerMetrics(server, visible && server.status !== 'offline', true)
   const real = server.demo === false
@@ -238,10 +240,9 @@ export function MonitorView({
       {net !== null && 'error' in net && (
         <div className="card" style={{ marginBottom: 16 }}>
           <div className="sidebar-title" style={{ marginBottom: 8 }}>
-            Network
-          </div>
+            {t('Network')}</div>
           <span className="faint" style={{ fontSize: 11 }}>
-            Could not be read: {net.error}
+            {t('Could not be read:')}{' '}{net.error}
           </span>
         </div>
       )}
@@ -249,8 +250,7 @@ export function MonitorView({
       {net !== null && 'interfaces' in net && (net.interfaces.length > 0 || net.dns.length > 0) && (
         <div className="card" style={{ marginBottom: 16 }}>
           <div className="sidebar-title" style={{ marginBottom: 12 }}>
-            Network
-          </div>
+            {t('Network')}</div>
           <div className="col" style={{ gap: 8 }}>
             {net.interfaces.map((iface) => (
               <div className="row" key={iface.name} style={{ alignItems: 'baseline', gap: 'var(--sp-3)' }}>
@@ -275,17 +275,14 @@ export function MonitorView({
             {net.dns.length > 0 && (
               <div className="row" style={{ alignItems: 'baseline', gap: 'var(--sp-3)' }}>
                 <span className="mono" style={{ minWidth: 96 }}>
-                  DNS
-                </span>
+                  {t('DNS')}</span>
                 <span className="col" style={{ gap: 2 }}>
                   <span className="mono selectable">{net.dns.join('  ')}</span>
                   {/* Worth saying: "your DNS server is 127.0.0.53" sends people
                       looking for a problem that is not there. */}
                   {isStubResolver(net) && (
                     <span className="faint" style={{ fontSize: 11 }}>
-                      systemd-resolved stub — the upstream resolvers are not in
-                      /etc/resolv.conf
-                    </span>
+                      {t('systemd-resolved stub — the upstream resolvers are not in /etc/resolv.conf')}</span>
                   )}
                 </span>
               </div>
@@ -303,10 +300,9 @@ export function MonitorView({
       {ports !== null && 'error' in ports && (
         <div className="card" style={{ marginBottom: 16 }}>
           <div className="sidebar-title" style={{ marginBottom: 8 }}>
-            Listening ports
-          </div>
+            {t('Listening ports')}</div>
           <span className="faint" style={{ fontSize: 11 }}>
-            Could not be read: {ports.error}
+            {t('Could not be read:')}{' '}{ports.error}
           </span>
         </div>
       )}
@@ -314,7 +310,7 @@ export function MonitorView({
       {ports !== null && 'ports' in ports && ports.ports.length > 0 && (
         <div className="card" style={{ marginBottom: 16 }}>
           <div className="row" style={{ marginBottom: 12, alignItems: 'baseline', gap: 'var(--sp-3)' }}>
-            <span className="sidebar-title">Listening ports</span>
+            <span className="sidebar-title">{t('Listening ports')}</span>
             {/* Every count on screen, so the filter says what it is hiding
                 rather than implying there is nothing there. */}
             <div className="segment" style={{ marginLeft: 'auto' }}>
@@ -333,7 +329,7 @@ export function MonitorView({
           <div className="col" style={{ gap: 4 }}>
             {filterByProto(ports.ports, proto).length === 0 && (
               <span className="faint" style={{ fontSize: 11 }}>
-                Nothing is listening on {proto === 'all' ? 'this host' : proto.toUpperCase()}.
+                {t('Nothing is listening on')}{' '}{proto === 'all' ? 'this host' : proto.toUpperCase()}.
               </span>
             )}
             {filterByProto(ports.ports, proto).map((p) => (
@@ -369,9 +365,7 @@ export function MonitorView({
                 short. That distinction is the whole point of saying this. */}
             {ports.partialOwners && (
               <span className="faint" style={{ fontSize: 11, marginTop: 4 }}>
-                Some owning processes are not visible without elevated privileges. Every listening
-                socket is listed.
-              </span>
+                {t('Some owning processes are not visible without elevated privileges. Every listening socket is listed.')}</span>
             )}
           </div>
         </div>
@@ -384,7 +378,7 @@ export function MonitorView({
       <div className="content">
         <div className="empty" style={{ height: 260 }}>
           <Loader2 size={22} className="spin" />
-          <p>Collecting live metrics from {local ? 'this machine' : server.host}…</p>
+          <p>{t('Collecting live metrics from')}{' '}{local ? 'this machine' : server.host}…</p>
         </div>
       </div>
     )
@@ -397,7 +391,7 @@ export function MonitorView({
           <div className="empty-icon" style={{ color: 'var(--danger)' }}>
             <AlertTriangle size={22} />
           </div>
-          <h3>Metrics unavailable</h3>
+          <h3>{t('Metrics unavailable')}</h3>
           <p className="mono">{m.error}</p>
         </div>
         {hostReads}
@@ -409,7 +403,7 @@ export function MonitorView({
     <div className="content">
       {real && (
         <div className="row" style={{ marginBottom: 12 }}>
-          <span className="chip ok">live</span>
+          <span className="chip ok">{t('live')}</span>
           <span className="muted" style={{ fontSize: 12 }}>
             {/* This machine is not reached over SSH, and saying so would be a
                 small lie in the one place the panel explains itself. */}
@@ -419,29 +413,27 @@ export function MonitorView({
       )}
       <div className="monitor" style={{ marginBottom: 16 }}>
         <Metric
-            label="CPU"
+            label={t('CPU')}
             icon={<Cpu size={13} />}
             value={m.cpu}
             history={m.cpuHistory}
             cores={m.host?.cpuCores ?? null}
           />
-        <Metric label="Memory" icon={<MemoryStick size={13} />} value={m.ram} history={m.ramHistory} />
-        <Metric label="Disk" icon={<HardDrive size={13} />} value={m.disk} history={m.diskHistory} />
+        <Metric label={t('Memory')} icon={<MemoryStick size={13} />} value={m.ram} history={m.ramHistory} />
+        <Metric label={t('Disk')} icon={<HardDrive size={13} />} value={m.disk} history={m.diskHistory} />
         <div className="metric-card">
           <div className="m-head">
-            <span>Network</span>
+            <span>{t('Network')}</span>
           </div>
           <div className="row" style={{ justifyContent: 'space-between' }}>
             <div className="col" style={{ gap: 2 }}>
               <span className="muted" style={{ fontSize: 11 }}>
-                <ArrowDown size={11} /> Download
-              </span>
+                <ArrowDown size={11} /> {t('Download')}</span>
               <b className="mono">{rate(m.rx)}</b>
             </div>
             <div className="col" style={{ gap: 2 }}>
               <span className="muted" style={{ fontSize: 11 }}>
-                <ArrowUp size={11} /> Upload
-              </span>
+                <ArrowUp size={11} /> {t('Upload')}</span>
               <b className="mono">{rate(m.tx)}</b>
             </div>
           </div>
@@ -457,8 +449,7 @@ export function MonitorView({
       {mounts.length > 0 && (
         <div className="card" style={{ marginBottom: 16 }}>
           <div className="sidebar-title" style={{ marginBottom: 12 }}>
-            Filesystems
-          </div>
+            {t('Filesystems')}</div>
           <div className="col" style={{ gap: 6 }}>
             {mounts.map((mt) => (
               <div className="row" key={mt.mount} style={{ alignItems: 'center', gap: 'var(--sp-3)' }}>
@@ -466,7 +457,7 @@ export function MonitorView({
                   {mt.mount}
                 </span>
                 <span className="faint" style={{ fontSize: 11 }}>
-                  {bytes(mt.usedKb * 1024)} of {bytes(mt.totalKb * 1024)}
+                  {bytes(mt.usedKb * 1024)} {t('of')}{' '}{bytes(mt.totalKb * 1024)}
                 </span>
                 <span className={clsx('chip', mt.usedPercent >= 90 && 'danger', mt.usedPercent >= 75 && mt.usedPercent < 90 && 'warn')}>
                   {mt.usedPercent}%
@@ -481,8 +472,7 @@ export function MonitorView({
 
       <div className="card">
         <div className="sidebar-title" style={{ marginBottom: 12 }}>
-          System information
-        </div>
+          {t('System information')}</div>
         <div className="info-grid">
           {info.map(([k, v]) => (
             <div className="info-item" key={k}>

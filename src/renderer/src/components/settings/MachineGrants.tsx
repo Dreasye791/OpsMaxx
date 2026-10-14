@@ -9,6 +9,7 @@ import {
   type MachineGrant,
   type MachineGrantView
 } from '../../../../shared/machineGrants'
+import { useT } from '../../i18n'
 
 /**
  * The one screen that lists what this machine may read without the master
@@ -48,6 +49,7 @@ function granted(at: string | undefined): string {
 }
 
 export function MachineGrants(): React.JSX.Element {
+  const t = useT()
   const [rows, setRows] = useState<MachineGrantView[] | null>(null)
   const [unavailable, setUnavailable] = useState(false)
 
@@ -91,27 +93,27 @@ export function MachineGrants(): React.JSX.Element {
     return (
       <EmptyState
         compact
-        title="Grants cannot be listed right now"
+        title={t('Grants cannot be listed right now')}
         message="The preload bridge on this build has no way to read them. Restart the app; if it persists, this version cannot show them and nothing can be revoked from here."
       />
     )
   }
 
-  if (rows === null) return <div className="s-desc">Reading this machine’s keychain…</div>
+  if (rows === null) return <div className="s-desc">{t('Reading this machine’s keychain…')}</div>
 
   if (rows.length === 0) {
     return (
       <EmptyState
         compact
-        title="Nothing runs without your master password"
-        message="No secret on this machine is readable without it. Scheduled backups and addy will ask you to unlock after a restart."
+        title={t('Nothing runs without your master password')}
+        message={t('No secret on this machine is readable without it. Scheduled backups and addy will ask you to unlock after a restart.')}
       />
     )
   }
 
   return (
     <div>
-      <div className="s-desc">{MACHINE_GRANT_MEANING}</div>
+      <div className="s-desc">{t(MACHINE_GRANT_MEANING)}</div>
       {rows.map((row) => (
         <div className="setting-row" key={row.id}>
           <div className="s-info">
@@ -121,16 +123,13 @@ export function MachineGrants(): React.JSX.Element {
             <div className="s-desc">{granted(row.grantedAt)}</div>
             {row.orphaned && (
               <div className="s-desc warn">
-                <AlertTriangle size={12} /> Orphaned — this authorises something that no longer
-                exists.
-              </div>
+                <AlertTriangle size={12} /> {t('Orphaned — this authorises something that no longer exists.')}</div>
             )}
             {row.note && <div className="s-desc warn">{row.note}</div>}
             <div className="s-desc">{row.consequence}</div>
           </div>
           <button className="btn sm danger" onClick={() => void revoke(row)}>
-            <ShieldOff size={13} /> Revoke
-          </button>
+            <ShieldOff size={13} /> {t('Revoke')}</button>
         </div>
       ))}
     </div>

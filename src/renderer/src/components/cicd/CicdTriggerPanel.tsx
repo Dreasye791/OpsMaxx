@@ -12,6 +12,7 @@ import type {
   CicdPipeline,
   CicdTriggerResult
 } from '../../../../shared/cicd'
+import { useT } from '../../i18n'
 
 /**
  * Start a run — the `cicdTrigger` operate surface.
@@ -37,6 +38,7 @@ export function CicdTriggerPanel({
   connections?: CicdConnection[]
   bridge?: CicdBridge
 }): React.JSX.Element {
+  const t = useT()
   const stored = useCicdConnectionList()
   const connections = seed ?? stored
   const canRefresh = cicdBridgeHas(bridge, 'refresh')
@@ -66,8 +68,8 @@ export function CicdTriggerPanel({
         <input
           className="input"
           value={filter}
-          placeholder="Filter pipelines…"
-          aria-label="Filter pipelines"
+          placeholder={t('Filter pipelines…')}
+          aria-label={t('Filter pipelines')}
           onChange={(e) => setFilter(e.target.value)}
         />
         <span className="spacer" />
@@ -77,20 +79,17 @@ export function CicdTriggerPanel({
           title={canRefresh ? undefined : 'This build cannot read on demand.'}
           onClick={() => void bridge?.refresh().catch(() => undefined)}
         >
-          Refresh
-        </button>
+          {t('Refresh')}</button>
       </div>
 
       <div className="panel-stats" data-testid="cicd-trigger-counts">
         <span>
-          {shown.length} of {all.length} {all.length === 1 ? 'pipeline' : 'pipelines'} can be
-          started
-        </span>
+          {shown.length} {t('of')}{' '}{all.length} {all.length === 1 ? 'pipeline' : 'pipelines'} {t('can be started')}</span>
       </div>
 
       {requested.length > 0 && (
         <div className="cicd-rows">
-          <div className="ui-label cicd-bucket">Asked for this session · {requested.length}</div>
+          <div className="ui-label cicd-bucket">{t('Asked for this session ·')}{' '}{requested.length}</div>
           {requested.map((r) => (
             <div key={r.key} className="cicd-row">
               {/* Never green, and never a fabricated run number. Jenkins hands
@@ -102,11 +101,10 @@ export function CicdTriggerPanel({
               )}
               <span className="grow ellipsis">{r.label}</span>
               {r.result.run && <span className="mono">#{r.result.run.id}</span>}
-              <span className="faint">{duration(r.at)} ago</span>
+              <span className="faint">{duration(r.at)} {t('ago')}</span>
               {r.result.webUrl !== undefined && (
                 <a href={r.result.webUrl} target="_blank" rel="noreferrer">
-                  Open in the provider
-                </a>
+                  {t('Open in the provider')}</a>
               )}
             </div>
           ))}
@@ -121,7 +119,7 @@ export function CicdTriggerPanel({
       {connections.length === 0 ? (
         <EmptyState
           compact
-          title="No CI account is connected"
+          title={t('No CI account is connected')}
           message="Connect one on the CI/CD panel first. Nothing here can reach a CI server until then."
         />
       ) : shown.length === 0 ? (
@@ -152,7 +150,7 @@ export function CicdTriggerPanel({
                 {pipeline.name}
               </span>
               <span className="faint ellipsis">{connection.name}</span>
-              <span className="ui-label">Start…</span>
+              <span className="ui-label">{t('Start…')}</span>
             </button>
           ))}
         </div>
@@ -201,6 +199,7 @@ export function TriggerModal({
   onClose: () => void
   onStarted: (result: CicdTriggerResult) => void
 }): React.JSX.Element {
+  const t = useT()
   const [params, setParams] = useState<CicdParam[] | null>(null)
   const [values, setValues] = useState<Record<string, string>>({})
   const [ref, setRef] = useState(pipeline.last?.branch ?? '')
@@ -289,27 +288,25 @@ export function TriggerModal({
     >
       {/* The blast radius, in the user's terms rather than the API's. */}
       <div className="panel-note is-watch">
-        This starts a real run on {connection.name}. OpsMaxx does not administer that server and
-        cannot stop the run once it has been accepted — whatever the pipeline deploys, deploys.
-      </div>
+        {t('This starts a real run on')}{' '}{connection.name}{t('. OpsMaxx does not administer that server and cannot stop the run once it has been accepted — whatever the pipeline deploys, deploys.')}</div>
 
       {/* Absent for Jenkins rather than disabled: there is no Jenkins field this
           would set, so a greyed box would be claiming one exists. */}
       {needsRef && (
         <Field
-          label="Run against"
+          label={t('Run against')}
           required
-          hint="The branch, tag or commit the pipeline runs on."
+          hint={t('The branch, tag or commit the pipeline runs on.')}
         >
           <input className="input" value={ref} autoFocus onChange={(e) => setRef(e.target.value)} />
         </Field>
       )}
 
       {params === null ? (
-        <Reading label="Reading what this pipeline accepts…" />
+        <Reading label={t('Reading what this pipeline accepts…')} />
       ) : params.length === 0 ? (
         /* No manufactured empty form. */
-        <div className="ui-note">This pipeline takes no parameters.</div>
+        <div className="ui-note">{t('This pipeline takes no parameters.')}</div>
       ) : (
         params.map((p) => (
           <Field
@@ -344,7 +341,7 @@ export function TriggerModal({
                 value={values[p.key] ?? ''}
                 onChange={(e) => setValues((v) => ({ ...v, [p.key]: e.target.value }))}
               >
-                <option value="">Choose…</option>
+                <option value="">{t('Choose…')}</option>
                 {(p.choices ?? []).map((c) => (
                   <option key={c} value={c}>
                     {c}

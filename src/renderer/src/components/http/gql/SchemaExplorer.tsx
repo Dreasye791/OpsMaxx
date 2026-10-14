@@ -16,6 +16,7 @@ import {
 import { clsx } from '../../../lib/format'
 import type { SchemaEntry } from '../../../store/gqlSchemas'
 import { ContextMenu, type MenuEntry } from '../../connections/ContextMenu'
+import { useT } from '../../../i18n'
 
 // The schema, browsable. Every name and description here came from the server,
 // so all of it is React text (SEC-M9).
@@ -59,13 +60,14 @@ export function SchemaExplorer({
   /** "https://… via web-01", for the not-loaded state. */
   target: string
 }): React.JSX.Element {
+  const t = useT()
   const schema =
     entry?.status === 'ready' ? entry.schema : entry?.status === 'loading' ? entry.previous?.schema : undefined
 
   return (
     <aside
       className={clsx('hc-gql-explorer', `is-${mode}`)}
-      aria-label="Schema explorer"
+      aria-label={t('Schema explorer')}
       onKeyDown={(e) => {
         if (e.key === 'Escape') {
           e.stopPropagation()
@@ -74,7 +76,7 @@ export function SchemaExplorer({
       }}
     >
       <div className="hc-gql-explorer-head">
-        <span className="hc-gql-explorer-title">Schema explorer</span>
+        <span className="hc-gql-explorer-title">{t('Schema explorer')}</span>
         <span className="hc-gql-spacer" />
         <button
           type="button"
@@ -86,30 +88,28 @@ export function SchemaExplorer({
         >
           <Pin size={13} />
         </button>
-        <button type="button" className="btn ghost sm" aria-label="Close explorer (Esc)" title="Close explorer (Esc)" onClick={onClose}>
+        <button type="button" className="btn ghost sm" aria-label={t('Close explorer (Esc)')} title={t('Close explorer (Esc)')} onClick={onClose}>
           <X size={13} />
         </button>
       </div>
-      {entry?.status === 'loading' && <p className="hc-gql-note">Loading schema…</p>}
+      {entry?.status === 'loading' && <p className="hc-gql-note">{t('Loading schema…')}</p>}
       {entry?.status === 'ready' && entry.error && (
-        <p className="hc-gql-note is-error">Reload failed: {entry.error}. Showing the schema from before.</p>
+        <p className="hc-gql-note is-error">{t('Reload failed:')}{' '}{entry.error}{t('. Showing the schema from before.')}</p>
       )}
       {entry?.status === 'ready' && entry.note && <p className="hc-gql-note">{entry.note}</p>}
       {entry?.status === 'error' && (
         <div className="hc-gql-note is-error">
           <p>{entry.message}</p>
           <button type="button" className="btn sm" onClick={onLoad}>
-            Retry
-          </button>
+            {t('Retry')}</button>
         </div>
       )}
       {!entry && (
         <div className="hc-gql-empty">
-          <p>Schema not loaded.</p>
+          <p>{t('Schema not loaded.')}</p>
           <button type="button" className="btn primary sm" onClick={onLoad}>
-            Load schema
-          </button>
-          <p className="hc-gql-note">Introspection is sent to {target}.</p>
+            {t('Load schema')}</button>
+          <p className="hc-gql-note">{t('Introspection is sent to')}{' '}{target}.</p>
         </div>
       )}
       {schema && <SchemaTree schema={schema} />}
@@ -118,6 +118,7 @@ export function SchemaExplorer({
 }
 
 function SchemaTree({ schema }: { schema: GraphQLSchema }): React.JSX.Element {
+  const t = useT()
   const [filter, setFilter] = useState('')
   const [focus, setFocus] = useState<string | null>(null)
   const [open, setOpen] = useState<Record<string, boolean>>({ Query: true })
@@ -197,16 +198,15 @@ function SchemaTree({ schema }: { schema: GraphQLSchema }): React.JSX.Element {
       <input
         className="input mono hc-gql-filter"
         type="search"
-        placeholder="Filter"
-        aria-label="Filter schema"
+        placeholder={t('Filter')}
+        aria-label={t('Filter schema')}
         value={filter}
         onChange={(e) => setFilter(e.target.value)}
       />
       {focused ? (
         <div className="hc-gql-focus">
           <button type="button" className="btn ghost sm" onClick={() => setFocus(null)}>
-            ‹ Roots
-          </button>
+            {t('‹ Roots')}</button>
           <p className="hc-gql-type-head mono">
             {focused.name} <span className="hc-gql-kind">{kindOf(focused)}</span>
           </p>
@@ -225,7 +225,7 @@ function SchemaTree({ schema }: { schema: GraphQLSchema }): React.JSX.Element {
           </ul>
         </div>
       ) : (
-        <ul role="tree" aria-label="Schema" className="hc-gql-tree">
+        <ul role="tree" aria-label={t('Schema')} className="hc-gql-tree">
           {roots(schema).map(({ label, type }) => {
             const expanded = q !== '' || !!open[label]
             const members = membersOf(type).filter(matches)
@@ -244,7 +244,7 @@ function SchemaTree({ schema }: { schema: GraphQLSchema }): React.JSX.Element {
           })}
           {matchingTypes.length > 0 && (
             <li role="treeitem" aria-expanded>
-              <span className="hc-gql-root">Types</span>
+              <span className="hc-gql-root">{t('Types')}</span>
               <ul role="group">
                 {matchingTypes.map((t) => (
                   <li key={t.name} role="treeitem" className="hc-gql-field">

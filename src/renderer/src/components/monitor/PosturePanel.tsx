@@ -25,6 +25,7 @@ import { FACT_STATUS_HELP, type HostFacts } from '../../../../shared/hostFacts'
 import type { Server } from '../../types'
 import { NoteWhy, PanelShell } from './PanelShell'
 import { SweepEmpty } from './SweepEmpty'
+import { useT } from '../../i18n'
 
 // Security posture — roadmap item 24, renderer half.
 //
@@ -432,6 +433,7 @@ function DirectiveRow({ r }: { r: SshdReading }): React.JSX.Element {
  * whether it is wise. See src/shared/posture.ts on why.
  */
 function FirewallRules({ posture }: { posture: HostPosture }): React.JSX.Element {
+  const t = useT()
   const fw = posture.firewall
   const s = postureSource(posture, 'firewall')
   if (fw === null) {
@@ -444,12 +446,7 @@ function FirewallRules({ posture }: { posture: HostPosture }): React.JSX.Element
   if (!fw.rulesRequested) {
     return (
       <div className="inv-na">
-        The rule lines were not collected for this server, and this space is therefore not a
-        statement about what it lets in. The capability <b>Firewall rules: the addresses and
-        ports this server accepts</b> is not granted to the access group that governs this server,
-        so OpsMaxx never asked for them. Grant it in AI access if you want them; the counts
-        above are unaffected either way.
-      </div>
+        {t('The rule lines were not collected for this server, and this space is therefore not a statement about what it lets in. The capability')}{' '}<b>{t('Firewall rules: the addresses and ports this server accepts')}</b> {t('is not granted to the access group that governs this server, so OpsMaxx never asked for them. Grant it in AI access if you want them; the counts above are unaffected either way.')}</div>
     )
   }
   if (fw.ruleLines.length === 0) {
@@ -457,10 +454,7 @@ function FirewallRules({ posture }: { posture: HostPosture }): React.JSX.Element
     // one thing this must never look like is a short list.
     return (
       <div className="inv-na loud">
-        The rule lines could not be read on this server, which is not a report of an empty ruleset.
-        {s.detail ? ` Collector said: ${s.detail}.` : ''} Most of these close with passwordless
-        sudo for the account OpsMaxx connects as.
-      </div>
+        {t('The rule lines could not be read on this server, which is not a report of an empty ruleset.')}{s.detail ? ` Collector said: ${s.detail}.` : ''} {t('Most of these close with passwordless sudo for the account OpsMaxx connects as.')}</div>
     )
   }
   return (
@@ -479,9 +473,8 @@ function FirewallRules({ posture }: { posture: HostPosture }): React.JSX.Element
               // one, one step quieter.
               <span className="state-unknown">
                 {' '}
-                · showing {listing.lines.length} of {listing.matched}, cut at{' '}
-                {listing.bound.maxLines} lines on the server
-              </span>
+                {t('· showing')}{' '}{listing.lines.length} {t('of')}{' '}{listing.matched}{t(', cut at')}{' '}
+                {listing.bound.maxLines} {t('lines on the server')}</span>
             )}
           </div>
           {listing.lines.length === 0 ? (
@@ -573,6 +566,7 @@ function NotReadRow({
    *  honestly show. */
   securityUpdates: number | null
 }): React.JSX.Element {
+  const t = useT()
   const n = NOT_READ[state]
   return (
     <td colSpan={COLUMNS.length} data-host={host} data-col="not-read" data-row-state={state}>
@@ -581,8 +575,7 @@ function NotReadRow({
         {securityUpdates !== null && (
           <>
             {' '}
-            Its last inventory counted {securityUpdates} pending security update
-            {securityUpdates === 1 ? '' : 's'} — that one number is the Inventory probe&rsquo;s, read
+            {t('Its last inventory counted')}{' '}{securityUpdates} {t('pending security update')}{securityUpdates === 1 ? '' : 's'} — that one number is the Inventory probe&rsquo;s, read
             at some earlier point, and it is not a posture reading.
           </>
         )}
@@ -613,6 +606,7 @@ export function PosturePanel({
   servers: Server[]
   onOpen?: (serverId: string) => void
 }): React.JSX.Element {
+  const t = useT()
   const [entries, setEntries] = useState<Record<string, Entry>>({})
   const [facts, setFacts] = useState<Record<string, HostFacts | null>>({})
   const [busy, setBusy] = useState(false)
@@ -754,24 +748,22 @@ export function PosturePanel({
         className={primary ? 'btn primary sm' : 'btn ghost sm'}
         disabled={busy}
         onClick={() => void refresh()}
-        title="Collects posture from every server now, ignoring the hourly clock. Nothing is changed by this: no firewall is enabled, no SELinux mode is set and no configuration is written."
+        title={t('Collects posture from every server now, ignoring the hourly clock. Nothing is changed by this: no firewall is enabled, no SELinux mode is set and no configuration is written.')}
       >
         <RefreshCw size={13} className={clsx(busy && 'spin')} />
         {busy ? 'Checking…' : 'Check now'}
       </button>
-      <SweepProgress active={busy} label="Collecting security posture" />
+      <SweepProgress active={busy} label={t('Collecting security posture')} />
     </div>
   )
 
   return (
     <PanelShell
       icon={<ShieldAlert size={14} />}
-      title="Security posture"
+      title={t('Security posture')}
       about={
         <p>
-          Firewalls, SELinux and AppArmor, sshd settings, OOM kills and certificate expiry, per
-          server. Everything is read; no firewall is enabled and no configuration is written.
-        </p>
+          {t('Firewalls, SELinux and AppArmor, sshd settings, OOM kills and certificate expiry, per server. Everything is read; no firewall is enabled and no configuration is written.')}</p>
       }
       actions={checkNow(summary.collected === 0)}
     >
@@ -780,7 +772,7 @@ export function PosturePanel({
           subject="No security posture has been collected yet."
           busy={busy}
           onCheckNow={() => void refresh()}
-          note="Firewalls are read, never enabled; SELinux modes are read, never set; no configuration file is written."
+          note={t('Firewalls are read, never enabled; SELinux modes are read, never set; no configuration file is written.')}
         />
       ) : (
         <>
@@ -788,28 +780,26 @@ export function PosturePanel({
             <span>
               {/* "hosts", not "servers": this machine is one of the rows now, and it
               is not a server. summarisePosture has always called them hosts. */}
-          {summary.hosts} host{summary.hosts === 1 ? '' : 's'} · posture for {summary.collected}
+          {summary.hosts} {t('host')}{summary.hosts === 1 ? '' : 's'} {t('· posture for')}{' '}{summary.collected}
             </span>
             {/* Every count here has its gap beside it. A security roll-up drawn
                 over only the hosts that answered is the exact shape of
                 reassuring fiction this panel exists to avoid. */}
             <span>
-              {summary.firewallActive} filtering
-              {summary.firewallInactive > 0 && <span className="state-watch"> · {summary.firewallInactive} not</span>}
+              {summary.firewallActive} {t('filtering')}{summary.firewallInactive > 0 && <span className="state-watch"> · {summary.firewallInactive} {t('not')}</span>}
               {summary.firewallUnknown > 0 && (
-                <span className="state-unknown"> · {summary.firewallUnknown} could not be read</span>
+                <span className="state-unknown"> · {summary.firewallUnknown} {t('could not be read')}</span>
               )}
             </span>
             <span>
-              {summary.macEnforcing} enforcing
-              {summary.macAbsent > 0 && <span> · {summary.macAbsent} with none installed</span>}
-              {summary.macUnknown > 0 && <span className="state-unknown"> · {summary.macUnknown} unknown</span>}
+              {summary.macEnforcing} {t('enforcing')}{summary.macAbsent > 0 && <span> · {summary.macAbsent} {t('with none installed')}</span>}
+              {summary.macUnknown > 0 && <span className="state-unknown"> · {summary.macUnknown} {t('unknown')}</span>}
             </span>
             <span>
-              {summary.sshdWeak > 0 && <span className="state-watch">{summary.sshdWeak} with a weak sshd setting</span>}
-              {summary.sshdWeak === 0 && <span>no weak sshd settings found</span>}
+              {summary.sshdWeak > 0 && <span className="state-watch">{summary.sshdWeak} {t('with a weak sshd setting')}</span>}
+              {summary.sshdWeak === 0 && <span>{t('no weak sshd settings found')}</span>}
               {summary.sshdUnknown > 0 && (
-                <span className="state-unknown"> · {summary.sshdUnknown} sshd config could not be read</span>
+                <span className="state-unknown"> · {summary.sshdUnknown} {t('sshd config could not be read')}</span>
               )}
             </span>
             {/* Both of these carry their gap, for the reason every count above
@@ -819,29 +809,28 @@ export function PosturePanel({
                 host that refused, because neither can support a "none". */}
             <span>
               {summary.oomKilling > 0 ? (
-                <span className="state-watch">{summary.oomKilling} killing processes for memory</span>
+                <span className="state-watch">{summary.oomKilling} {t('killing processes for memory')}</span>
               ) : (
-                <span>no OOM kills seen</span>
+                <span>{t('no OOM kills seen')}</span>
               )}
               {summary.oomUnknown > 0 && (
-                <span className="state-unknown"> · {summary.oomUnknown} kernel log could not be read over a stated window</span>
+                <span className="state-unknown"> · {summary.oomUnknown} {t('kernel log could not be read over a stated window')}</span>
               )}
             </span>
             <span>
               {summary.certExpired > 0 && (
-                <span className="state-watch">{summary.certExpired} with an EXPIRED certificate</span>
+                <span className="state-watch">{summary.certExpired} {t('with an EXPIRED certificate')}</span>
               )}
               {summary.certExpired === 0 && summary.certExpiringSoon === 0 && (
-                <span>no certificate inside {CERT_EXPIRY_DAYS} days</span>
+                <span>{t('no certificate inside')}{' '}{CERT_EXPIRY_DAYS} {t('days')}</span>
               )}
               {summary.certExpiringSoon > 0 && (
                 <span className="state-watch">
                   {summary.certExpired > 0 ? ' · ' : ''}
-                  {summary.certExpiringSoon} expiring within {CERT_EXPIRY_DAYS} days
-                </span>
+                  {summary.certExpiringSoon} {t('expiring within')}{' '}{CERT_EXPIRY_DAYS} {t('days')}</span>
               )}
               {summary.certUnknown > 0 && (
-                <span className="state-unknown"> · {summary.certUnknown} could not be fully read</span>
+                <span className="state-unknown"> · {summary.certUnknown} {t('could not be fully read')}</span>
               )}
             </span>
           </div>
@@ -851,34 +840,27 @@ export function PosturePanel({
               {/* The first sentence is the reason this panel exists and does
                   not fold under anything. What folds is the remedy — true,
                   useful, and read once per estate rather than per visit. */}
-              <ShieldQuestion size={12} /> {summary.firewallUnknown + summary.sshdUnknown} check
-              {summary.firewallUnknown + summary.sshdUnknown === 1 ? '' : 's'} across this estate could
-              not run, and a check that could not run is not a check that passed. Those servers are not
-              in the counts above and they are not clear.
-              {/* Not all of those checks are the same kind of gap, and this is
+              <ShieldQuestion size={12} /> {summary.firewallUnknown + summary.sshdUnknown} {t('check')}{summary.firewallUnknown + summary.sshdUnknown === 1 ? '' : 's'} {t('across this estate could not run, and a check that could not run is not a check that passed. Those servers are not in the counts above and they are not clear.')}{/* Not all of those checks are the same kind of gap, and this is
                   the sentence that keeps them apart: a server nobody could read
                   contributes every one of its checks to that number, and the
                   remedy below is not its remedy. */}
               {notRead > 0 && (
                 <>
                   {' '}
-                  {notRead} host{notRead === 1 ? '' : 's'} here{' '}
-                  {notRead === 1 ? 'was' : 'were'} not read at all — every check on{' '}
-                  {notRead === 1 ? 'it' : 'them'} is in that number, and{' '}
+                  {notRead} {t('host')}{notRead === 1 ? '' : 's'} {t('here')}{' '}
+                  {notRead === 1 ? 'was' : 'were'} {t('not read at all — every check on')}{' '}
+                  {notRead === 1 ? 'it' : 'them'} {t('is in that number, and')}{' '}
                   {notRead === 1 ? 'its row says' : 'their rows say'} why.
                 </>
               )}
-              <NoteWhy summary="How to close them">
-                Most of these close with passwordless sudo for the account OpsMaxx connects as,
-                which lets the probe read a ruleset and ask sshd for its effective configuration.
-                Nothing about that grants any write.
-              </NoteWhy>
+              <NoteWhy summary={t('How to close them')}>
+                {t('Most of these close with passwordless sudo for the account OpsMaxx connects as, which lets the probe read a ruleset and ask sshd for its effective configuration. Nothing about that grants any write.')}</NoteWhy>
             </div>
           )}
 
           {failed.map((f) => (
             <div key={f.serverId} className="panel-note is-alarm">
-              {f.serverName}: the posture probe failed — {f.error}
+              {f.serverName}{t(': the posture probe failed —')}{' '}{f.error}
             </div>
           ))}
 
@@ -886,10 +868,10 @@ export function PosturePanel({
             <table className="table inv-table">
               <thead>
                 <tr>
-                  <th>Host</th>
+                  <th>{t('Host')}</th>
                   {COLUMNS.map((c) => (
-                    <th key={c.id} title={c.help}>
-                      {c.label}
+                    <th key={c.id} title={c.help ? t(c.help) : undefined}>
+                      {t(c.label)}
                     </th>
                   ))}
                 </tr>
@@ -926,18 +908,17 @@ export function PosturePanel({
                         {r.cells !== null && !r.online && (
                           <span
                             className="inv-na"
-                            title="This server is offline now. Everything in this row was read before it stopped answering."
+                            title={t('This server is offline now. Everything in this row was read before it stopped answering.')}
                           >
                             {' '}
-                            offline
-                          </span>
+                            {t('offline')}</span>
                         )}
                         {r.posture?.sshd && (
                           <button
                             className="btn ghost sm"
                             style={{ marginLeft: 6 }}
                             onClick={() => setOpen((o) => (o === r.serverId ? null : r.serverId))}
-                            title="Show every directive in the hardening baseline, including the ones that could not be read."
+                            title={t('Show every directive in the hardening baseline, including the ones that could not be read.')}
                           >
                             {open === r.serverId ? 'Hide sshd' : 'sshd'}
                           </button>
@@ -949,7 +930,7 @@ export function PosturePanel({
                             onClick={() =>
                               setOpenRules((o) => (o === r.serverId ? null : r.serverId))
                             }
-                            title="The rule lines this server’s firewall lists, as it printed them — or the reason there are none to show. Collected only where the Firewall rules capability is granted."
+                            title={t('The rule lines this server’s firewall lists, as it printed them — or the reason there are none to show. Collected only where the Firewall rules capability is granted.')}
                           >
                             {openRules === r.serverId ? 'Hide rules' : 'rules'}
                           </button>
@@ -989,19 +970,12 @@ export function PosturePanel({
                               <b>Read from sshd&rsquo;s own effective configuration.</b>
                             ) : (
                               <b>
-                                Read from configuration files, not from sshd. A directive nobody
-                                wrote down is decided by a compiled-in default this probe cannot
-                                see, so it is shown as unread rather than guessed.
-                              </b>
+                                {t('Read from configuration files, not from sshd. A directive nobody wrote down is decided by a compiled-in default this probe cannot see, so it is shown as unread rather than guessed.')}</b>
                             )}
                             {r.posture.sshd.matchBlocks !== null && r.posture.sshd.matchBlocks > 0 && (
                               <div className="state-watch" style={{ marginTop: 4 }}>
-                                This configuration has {r.posture.sshd.matchBlocks} conditional{' '}
-                                <span className="mono">Match</span> block
-                                {r.posture.sshd.matchBlocks === 1 ? '' : 's'}. The values below are
-                                the global ones; a connection matching one of those blocks gets
-                                different answers.
-                              </div>
+                                {t('This configuration has')}{' '}{r.posture.sshd.matchBlocks} {t('conditional')}{' '}
+                                <span className="mono">{t('Match')}</span> {t('block')}{r.posture.sshd.matchBlocks === 1 ? '' : 's'}{t('. The values below are the global ones; a connection matching one of those blocks gets different answers.')}</div>
                             )}
                             <div style={{ marginTop: 6 }}>
                               {SSHD_DIRECTIVES.map((d) => {

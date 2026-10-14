@@ -5,6 +5,7 @@ import { clsx } from '../../lib/format'
 import { toast } from '../../store/toast'
 import { auditExport, auditOutcome } from './auditOutcome'
 import type { AuditOutcomeTone } from './auditOutcome'
+import { useT } from '../../i18n'
 
 // Chip classes, not inline colour. This was
 // `var(--text-success, #3fb950)` — and `--text-success` does not exist, so
@@ -35,6 +36,7 @@ function endOfLocalDay(dateStr: string): number {
 }
 
 export function AiAuditLog(): React.JSX.Element {
+  const t = useT()
   const [entries, setEntries] = useState<AuditEntry[]>([])
   const [appendFailure, setAppendFailure] = useState<string | null>(null)
   const [integrity, setIntegrity] = useState<AuditIntegrity | null>(null)
@@ -108,11 +110,9 @@ export function AiAuditLog(): React.JSX.Element {
 
   return (
     <div className="settings-section">
-      <h2>Audit Log</h2>
+      <h2>{t('Audit Log')}</h2>
       <div className="sub">
-        Every AI action OpsMaxx processed, whether allowed, approved, denied or failed. Never
-        includes passwords, keys or other secrets.
-      </div>
+        {t('Every AI action OpsMaxx processed, whether allowed, approved, denied or failed. Never includes passwords, keys or other secrets.')}</div>
 
       {integrity?.state === 'broken' && (
         <div
@@ -126,10 +126,7 @@ export function AiAuditLog(): React.JSX.Element {
             fontSize: 'var(--fs-sm)'
           }}
         >
-          <strong>This log has been altered since it was written.</strong> Entries are
-          hash-chained and the most recent one is recorded outside the file; they no longer
-          agree. Treat what is below as unreliable.
-          <div style={{ marginTop: 6, color: 'var(--text-muted)' }}>{integrity.reason}</div>
+          <strong>{t('This log has been altered since it was written.')}</strong> {t('Entries are hash-chained and the most recent one is recorded outside the file; they no longer agree. Treat what is below as unreliable.')}<div style={{ marginTop: 6, color: 'var(--text-muted)' }}>{integrity.reason}</div>
         </div>
       )}
 
@@ -145,16 +142,13 @@ export function AiAuditLog(): React.JSX.Element {
             fontSize: 'var(--fs-sm)'
           }}
         >
-          <strong>This log has stopped recording.</strong> New AI actions are not being written to
-          it, so the entries below are not a complete record. Everything else about OpsMaxx is
-          working normally.
-          <div style={{ marginTop: 6, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+          <strong>{t('This log has stopped recording.')}</strong> {t('New AI actions are not being written to it, so the entries below are not a complete record. Everything else about OpsMaxx is working normally.')}<div style={{ marginTop: 6, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
             {appendFailure}
           </div>
         </div>
       )}
 
-      {entries.length === 0 && <div className="s-desc">No AI activity recorded yet.</div>}
+      {entries.length === 0 && <div className="s-desc">{t('No AI activity recorded yet.')}</div>}
 
       {entries.length > 0 && (
         <>
@@ -162,12 +156,12 @@ export function AiAuditLog(): React.JSX.Element {
             <input
               className="input"
               style={{ flex: '2 1 220px' }}
-              placeholder="Search agent, workspace, server or action…"
+              placeholder={t('Search agent, workspace, server or action…')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
             <select className="input" style={{ flex: '1 1 160px' }} value={workspace} onChange={(e) => setWorkspace(e.target.value)}>
-              <option value={ALL}>All workspaces</option>
+              <option value={ALL}>{t('All workspaces')}</option>
               {workspaceOptions.map((w) => (
                 <option key={w} value={w}>
                   {w}
@@ -175,7 +169,7 @@ export function AiAuditLog(): React.JSX.Element {
               ))}
             </select>
             <select className="input" style={{ flex: '1 1 160px' }} value={server} onChange={(e) => setServer(e.target.value)}>
-              <option value={ALL}>All servers</option>
+              <option value={ALL}>{t('All servers')}</option>
               {serverOptions.map((s) => (
                 <option key={s} value={s}>
                   {s}
@@ -189,7 +183,7 @@ export function AiAuditLog(): React.JSX.Element {
               value={from}
               max={to || undefined}
               onChange={(e) => setFrom(e.target.value)}
-              aria-label="From date"
+              aria-label={t('From date')}
             />
             <input
               className="input"
@@ -198,12 +192,11 @@ export function AiAuditLog(): React.JSX.Element {
               value={to}
               min={from || undefined}
               onChange={(e) => setTo(e.target.value)}
-              aria-label="To date"
+              aria-label={t('To date')}
             />
             {filtersActive && (
               <button className="btn sm" onClick={clearFilters}>
-                Clear filters
-              </button>
+                {t('Clear filters')}</button>
             )}
             {/* An audit log that cannot leave the app is not an audit log: it
                 cannot go into an incident write-up, a ticket, or a compliance
@@ -223,8 +216,7 @@ export function AiAuditLog(): React.JSX.Element {
                 })()
               }}
             >
-              <Download size={13} /> Export
-            </button>
+              <Download size={13} /> {t('Export')}</button>
           </div>
 
           <div className="s-desc" style={{ marginBottom: 8 }}>
@@ -233,22 +225,22 @@ export function AiAuditLog(): React.JSX.Element {
               : `${filtered.length} of ${entries.length} entries match`}
           </div>
 
-          {filtered.length === 0 && <div className="s-desc">No entries match these filters.</div>}
+          {filtered.length === 0 && <div className="s-desc">{t('No entries match these filters.')}</div>}
 
           {filtered.length > 0 && (
             <table className="table">
               <thead>
                 <tr>
-                  <th>Time</th>
-                  <th>Agent</th>
-                  <th>Session</th>
-                  <th>Workspace / Server</th>
-                  <th>Action</th>
+                  <th>{t('Time')}</th>
+                  <th>{t('Agent')}</th>
+                  <th>{t('Session')}</th>
+                  <th>{t('Workspace / Server')}</th>
+                  <th>{t('Action')}</th>
                   {/* One column, not two. `Approval` and `Result` both said
                       "denied" for the row an incident reviewer cares about
                       most, and two identical cells were exactly the width the
                       missing session column needed. */}
-                  <th>Outcome</th>
+                  <th>{t('Outcome')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -275,8 +267,10 @@ export function AiAuditLog(): React.JSX.Element {
                             anything. */}
                         {e.error && <div className="s-desc danger">{e.error}</div>}
                       </td>
-                      <td title={outcome.detail}>
-                        <span className={clsx('chip', TONE_CHIP[outcome.tone])}>{outcome.label}</span>
+                      <td title={t(outcome.detail)}>
+                        <span className={clsx('chip', TONE_CHIP[outcome.tone])}>
+                          {t(outcome.label)}
+                        </span>
                       </td>
                     </tr>
                   )

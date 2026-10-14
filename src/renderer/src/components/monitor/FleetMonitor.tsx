@@ -53,6 +53,7 @@ import { DockerPanel } from '../docker/DockerPanel'
 import { KubernetesPanel } from '../kubernetes/KubernetesPanel'
 import { ProcessesPanel } from '../processes/ProcessesPanel'
 import { CicdPanel } from '../cicd/CicdPanel'
+import { useT } from '../../i18n'
 
 /**
  * How many tabs may stand in the strip at once, Overview and Alerts included.
@@ -95,6 +96,7 @@ function GroupSection({
   setGroupDrop: (i: number | null) => void
   commit: () => void
 }): React.JSX.Element {
+  const t = useT()
   const openServer = useApp((s) => s.openServer)
   const toggleMonitorGroup = useApp((s) => s.toggleMonitorGroup)
   const renameMonitorGroup = useApp((s) => s.renameMonitorGroup)
@@ -182,7 +184,7 @@ function GroupSection({
         {!group.system && !renaming && (
           <button
             className="icon-btn xs"
-            title="Delete group — its cards move back to Ungrouped"
+            title={t('Delete group — its cards move back to Ungrouped')}
             onClick={(e) => {
               e.stopPropagation()
               deleteMonitorGroup(group.id)
@@ -238,7 +240,7 @@ function GroupSection({
           ))}
           {slotAt(cards.length)}
           {cards.length === 0 && (
-            <div className="mg-empty">Drag cards here</div>
+            <div className="mg-empty">{t('Drag cards here')}</div>
           )}
         </div>
       )}
@@ -261,6 +263,7 @@ function GroupSection({
  * Every one of those was being thrown away by a trip to another icon.
  */
 export function FleetMonitor({ hidden = false }: { hidden?: boolean }): React.JSX.Element {
+  const t = useT()
   const servers = useWorkspaceServers()
   const openServerTab = useApp((s) => s.openServer)
   const setModal = useApp((s) => s.setModal)
@@ -547,11 +550,9 @@ export function FleetMonitor({ hidden = false }: { hidden?: boolean }): React.JS
           action={
             <div className="row" style={{ gap: 8, justifyContent: 'center' }}>
               <button className="btn" onClick={() => setModal('import-ssh')}>
-                <Download size={15} /> Import from ~/.ssh/config
-              </button>
+                <Download size={15} /> {t('Import from ~/.ssh/config')}</button>
               <button className="btn primary" onClick={() => setModal('add-server')}>
-                <Plus size={15} /> Add Server
-              </button>
+                <Plus size={15} /> {t('Add Server')}</button>
             </div>
           }
         />
@@ -611,17 +612,15 @@ export function FleetMonitor({ hidden = false }: { hidden?: boolean }): React.JS
           <>
         <div className="content-header">
           <div>
-            <h1 className="ui-page-title">Monitoring</h1>
+            <h1 className="ui-page-title">{t('Monitoring')}</h1>
             {/* "reading only" rather than "live metrics": it is the contract of
                 the destination now, not a description of the overview tab. */}
             <div className="sub ui-note">
-              {online} of {servers.length} servers online · reading only
-            </div>
+              {online} {t('of')}{' '}{servers.length} {t('servers online · reading only')}</div>
           </div>
           <span className="spacer" />
           <button className="btn ghost" onClick={() => addMonitorGroup('New group')}>
-            <FolderPlus size={14} /> New group
-          </button>
+            <FolderPlus size={14} /> {t('New group')}</button>
         </div>
 
         {/* Always rendered, where it used to appear only once a module was on.
@@ -632,14 +631,12 @@ export function FleetMonitor({ hidden = false }: { hidden?: boolean }): React.JS
             className={clsx('seg-btn', activeTab === 'overview' && 'active')}
             onClick={() => setTab('overview')}
           >
-            Overview
-          </button>
+            {t('Overview')}</button>
           <button
             className={clsx('seg-btn', activeTab === 'alerts' && 'active')}
             onClick={() => setTab('alerts')}
           >
-            Alerts
-            {/* The count, so the tab says whether it is worth opening. Only when
+            {t('Alerts')}{/* The count, so the tab says whether it is worth opening. Only when
                 there is one: a permanent "0" trains people to stop reading it. */}
             {alertCount > 0 && <span className="chip danger" style={{ marginLeft: 6 }}>{alertCount}</span>}
           </button>
@@ -670,7 +667,7 @@ export function FleetMonitor({ hidden = false }: { hidden?: boolean }): React.JS
                   setOffOpen(false)
                 }}
               >
-                More <ChevronDown size={13} />
+                {t('More')}{' '}<ChevronDown size={13} />
               </button>
               {moreOpen && (
                 <div className="mon-pop">
@@ -720,8 +717,7 @@ export function FleetMonitor({ hidden = false }: { hidden?: boolean }): React.JS
               {offOpen && (
                 <div className="mon-pop wide">
                   <div className="s-desc" style={{ marginBottom: 6 }}>
-                    Switched off. Enabling one adds a tab here.
-                  </div>
+                    {t('Switched off. Enabling one adds a tab here.')}</div>
                   {offTabs.map((m) => (
                     <div key={m.id} className="mon-pop-row static">
                       <span className="s-title">{m.label}</span>
@@ -736,8 +732,7 @@ export function FleetMonitor({ hidden = false }: { hidden?: boolean }): React.JS
                       openSettings('modules')
                     }}
                   >
-                    Choose modules
-                  </button>
+                    {t('Choose modules')}</button>
                 </div>
               )}
             </div>

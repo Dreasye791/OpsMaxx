@@ -8,6 +8,7 @@ import type {
   VpnDiagnoseResult
 } from '../../../../shared/vpn'
 import { bridgeHas } from '../../lib/bridge'
+import { useT } from '../../i18n'
 
 // The connectivity checklist on the VPN card.
 //
@@ -62,6 +63,7 @@ export function VpnDiagnose({
   id: string
   showTarget?: boolean
 }): React.JSX.Element | null {
+  const t = useT()
   const [host, setHost] = useState('')
   const [port, setPort] = useState('')
   const [busy, setBusy] = useState(false)
@@ -94,13 +96,13 @@ export function VpnDiagnose({
 
   return (
     <div className="col" style={{ gap: 6 }}>
-      <span className="field-label">Diagnose</span>
+      <span className="field-label">{t('Diagnose')}</span>
       <div className="row" style={{ gap: 6 }}>
         {showTarget && (
           <input
             className="input"
             style={{ flex: 1, minWidth: 0 }}
-            placeholder="Host or address on the far side"
+            placeholder={t('Host or address on the far side')}
             value={host}
             onChange={(e) => setHost(e.target.value)}
             disabled={busy}
@@ -110,7 +112,7 @@ export function VpnDiagnose({
           <input
             className="input"
             style={{ width: 76 }}
-            placeholder="Port"
+            placeholder={t('Port')}
             inputMode="numeric"
             value={port}
             onChange={(e) => setPort(e.target.value)}
@@ -163,8 +165,7 @@ export function VpnDiagnose({
               {/* Named for what was measured. It includes the peer's forwarding
                   and the far service's accept, so calling it a round trip would
                   be a stronger claim than the number supports. */}
-              TCP connect took {res.latencyMs} ms through the tunnel.
-            </span>
+              {t('TCP connect took')}{' '}{res.latencyMs} {t('ms through the tunnel.')}</span>
           )}
         </div>
       )}

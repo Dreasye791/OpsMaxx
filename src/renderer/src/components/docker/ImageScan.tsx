@@ -7,6 +7,7 @@ import {
   type ImageScanProbe,
   type ScanSummary
 } from '../../../../shared/imageScan'
+import { useT } from '../../i18n'
 
 // Item 42's scanner consumer on screen.
 //
@@ -28,6 +29,7 @@ export function ImageScanPanel({
   image: string
   scan: (ref: string) => Promise<ImageScanProbe>
 }): React.JSX.Element {
+  const t = useT()
   const [probe, setProbe] = useState<ImageScanProbe | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -49,12 +51,12 @@ export function ImageScanPanel({
     <div style={{ marginTop: 6 }}>
       <button className="btn ghost sm" disabled={loading} onClick={() => void run()}>
         <ShieldAlert size={12} /> {probe === null ? 'Scan this image' : 'Scan again'}
-        {loading && <span className="faint"> reading…</span>}
+        {loading && <span className="faint"> {t('reading…')}</span>}
       </button>
 
       {probe !== null && !probe.ok && (
         <div className="s-note is-alarm">
-          <TriangleAlert size={12} /> The scan did not run: <span className="mono">{probe.detail}</span>
+          <TriangleAlert size={12} /> {t('The scan did not run:')}{' '}<span className="mono">{probe.detail}</span>
         </div>
       )}
 

@@ -40,6 +40,7 @@ import { formatDbAddress } from '../../../../shared/dbAddress'
 import { EmptyState } from '../common/EmptyState'
 import type { DatabaseConn, DbKind, Server } from '../../types'
 import type { DbConnectConfig, DbInfo, DbQueryResult, DbTestResult } from '../../../../shared/db'
+import { useT } from '../../i18n'
 
 /** Where the connection has got to. Named because Results reads it too. */
 type ConnPhase = 'idle' | 'connecting' | 'ok' | 'error'
@@ -128,6 +129,7 @@ export function DatabaseView({
    */
   visible: boolean
 }): React.JSX.Element {
+  const t = useT()
   const deleteDatabase = useApp((s) => s.deleteDatabase)
   const servers = useWorkspaceServers()
   // The bastion this database is reached through, when it has one. Named in
@@ -440,8 +442,8 @@ export function DatabaseView({
             <input
               className="input"
               style={{ height: 26, width: 170, padding: '0 22px 0 8px' }}
-              placeholder="database"
-              title="Database (type or pick)"
+              placeholder={t('database')}
+              title={t('Database (type or pick)')}
               value={dbName}
               onFocus={() => setPickerOpen(true)}
               onChange={(e) => {
@@ -465,7 +467,7 @@ export function DatabaseView({
             />
             <button
               className="icon-btn sm"
-              title="Show all databases"
+              title={t('Show all databases')}
               style={{ marginLeft: -22, height: 22, width: 22 }}
               onClick={() => {
                 setTyped(false)
@@ -476,7 +478,7 @@ export function DatabaseView({
             </button>
             {pickerOpen && (
               <div className="menu" style={{ top: 30, left: 0, minWidth: 190, maxHeight: 300, overflowY: 'auto' }}>
-                <div className="menu-label">Databases ({allDbs.length})</div>
+                <div className="menu-label">{t('Databases (')}{allDbs.length})</div>
                 {shownDbs.map((d) => (
                   <button
                     key={d}
@@ -502,19 +504,16 @@ export function DatabaseView({
         )}
         <div className="row" style={{ gap: 4, marginLeft: 4 }}>
           <button className={`btn sm${mode === 'query' ? ' primary' : ''}`} onClick={() => setMode('query')}>
-            <FileCode2 size={13} /> Query
-          </button>
+            <FileCode2 size={13} /> {t('Query')}</button>
           <button className={`btn sm${mode === 'shell' ? ' primary' : ''}`} onClick={() => setMode('shell')}>
-            <TerminalSquare size={13} /> Shell
-          </button>
+            <TerminalSquare size={13} /> {t('Shell')}</button>
           {isTree && (
             <button
               className={`btn sm${mode === 'monitor' ? ' primary' : ''}`}
               onClick={() => setMode('monitor')}
-              title="Live server activity, sampled while this tab is on screen"
+              title={t('Live server activity, sampled while this tab is on screen')}
             >
-              <Gauge size={13} /> Monitor
-            </button>
+              <Gauge size={13} /> {t('Monitor')}</button>
           )}
           {hasOps && (
             <button
@@ -522,8 +521,7 @@ export function DatabaseView({
               onClick={() => setMode('ops')}
               title={opsLevel ? `Last operational read: ${OPS_BADGE[opsLevel].title}` : undefined}
             >
-              <Activity size={13} /> Operations
-              {opsLevel && opsLevel !== 'ok' && (
+              <Activity size={13} /> {t('Operations')}{opsLevel && opsLevel !== 'ok' && (
                 <span className={`chip ${OPS_BADGE[opsLevel].chip}`} style={{ marginLeft: 4 }}>
                   {OPS_BADGE[opsLevel].label}
                 </span>
@@ -535,17 +533,14 @@ export function DatabaseView({
         {conn.phase === 'connecting' && <Loader2 size={14} className="spin" />}
         {conn.phase === 'ok' && (
           <span className="chip ok" title={conn.message}>
-            <CheckCircle2 size={12} /> connected
-          </span>
+            <CheckCircle2 size={12} /> {t('connected')}</span>
         )}
         {conn.phase === 'error' && (
           <span className="chip danger" title={conn.message}>
-            <AlertTriangle size={12} /> error
-          </span>
+            <AlertTriangle size={12} /> {t('error')}</span>
         )}
         <button className="btn sm" onClick={test}>
-          <Plug size={13} /> Test
-        </button>
+          <Plug size={13} /> {t('Test')}</button>
         <button
           className="btn sm danger"
           onClick={() => {
@@ -575,16 +570,13 @@ export function DatabaseView({
               first, so that is the button that gets offered instead. */}
           {classifyConnectionError(conn.detail) === 'host-key' ? (
             <button className="btn sm" onClick={() => openSettings('security')}>
-              Review saved keys
-            </button>
+              {t('Review saved keys')}</button>
           ) : (
             <button className="btn sm" onClick={() => openDatabaseEditor(db.id)}>
-              <Pencil size={13} /> Edit connection
-            </button>
+              <Pencil size={13} /> {t('Edit connection')}</button>
           )}
           <button className="btn sm" onClick={test}>
-            Retry
-          </button>
+            {t('Retry')}</button>
         </div>
       )}
 
@@ -617,20 +609,20 @@ export function DatabaseView({
             {conn.phase === 'error' ? (
               <EmptyState
                 compact
-                title="Not connected"
+                title={t('Not connected')}
                 message="Nothing can be listed until the connection works."
               />
             ) : conn.phase === 'connecting' || (!info && !objects.length) ? (
               <div className="row faint" style={{ gap: 8, padding: 12 }}>
                 <Loader2 size={13} className="spin" />
-                <span>Loading…</span>
+                <span>{t('Loading…')}</span>
               </div>
             ) : objects.length === 0 ? (
               <EmptyState compact title={`No ${objectWord.toLowerCase()}`} message={emptyHint} />
             ) : shownObjects.length === 0 ? (
               <EmptyState
                 compact
-                title="Nothing matches"
+                title={t('Nothing matches')}
                 message={`No ${objectWord.toLowerCase()} here match “${objectFilter}”.`}
               />
             ) : isTree ? (
@@ -665,7 +657,7 @@ export function DatabaseView({
           className={clsx('resizer static', schema.dragging && 'dragging')}
           onMouseDown={schema.onMouseDown}
           role="separator"
-          aria-label="Resize the schema column"
+          aria-label={t('Resize the schema column')}
         />
 
         <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minWidth: 0 }}>
@@ -704,19 +696,16 @@ export function DatabaseView({
             />
             <div className="row" style={{ marginTop: 8 }}>
               <button className="btn primary sm" disabled={running} onClick={run}>
-                {running ? <Loader2 size={13} className="spin" /> : <Play size={13} />} Run
-                <span className="kbd" style={{ marginLeft: 6 }}>
-                  Ctrl ⏎
-                </span>
+                {running ? <Loader2 size={13} className="spin" /> : <Play size={13} />} {t('Run')}<span className="kbd" style={{ marginLeft: 6 }}>
+                  {t('Ctrl ⏎')}</span>
               </button>
               <span className="spacer" />
               {result?.elapsedMs != null && (
                 <span className="faint" style={{ fontSize: 11 }}>
                   {result.rowCount != null ? `${result.rowCount} rows · ` : ''}
-                  {result.elapsedMs} ms
-                </span>
+                  {result.elapsedMs} {t('ms')}</span>
               )}
-              <button className="icon-btn sm" title="Refresh schema" onClick={() => void test()}>
+              <button className="icon-btn sm" title={t('Refresh schema')} onClick={() => void test()}>
                 <RefreshCw size={14} />
               </button>
             </div>
@@ -731,7 +720,7 @@ export function DatabaseView({
               className={clsx('resizer-h', editor.dragging && 'dragging')}
               onMouseDown={editor.onMouseDown}
               role="separator"
-              aria-label="Resize the query editor"
+              aria-label={t('Resize the query editor')}
             />
           )}
 
@@ -770,8 +759,7 @@ export function DatabaseView({
                   : 'This is irreversible. There is no undo and no backup taken.'}
               </p>
               <label className="s-desc" htmlFor="db-confirm-phrase">
-                Type <b>{pendingRun.phrase}</b> to confirm.
-              </label>
+                {t('Type')}{' '}<b>{pendingRun.phrase}</b> {t('to confirm.')}</label>
               <input
                 id="db-confirm-phrase"
                 className="input"
@@ -786,7 +774,7 @@ export function DatabaseView({
               />
             </>
           ) : (
-            <p className="s-desc">This writes to the database.</p>
+            <p className="s-desc">{t('This writes to the database.')}</p>
           )}
         </Modal>
       )}
@@ -823,6 +811,7 @@ function DatabaseNode({
   onToggle: () => void
   onPick: (collection: string) => void
 }): React.JSX.Element {
+  const t = useT()
   const loaded = Array.isArray(collections) ? collections : null
   const shown = filter && loaded && !name.toLowerCase().includes(filter)
     ? loaded.filter((c) => c.toLowerCase().includes(filter))
@@ -852,11 +841,11 @@ function DatabaseNode({
           {collections === 'loading' ? (
             <div className="row faint db-tree-note" style={{ gap: 8 }}>
               <Loader2 size={12} className="spin" />
-              <span>Loading…</span>
+              <span>{t('Loading…')}</span>
             </div>
           ) : collections === 'denied' ? (
             <div className="faint db-tree-note">
-              This user may not list {name}&rsquo;s collections.
+              {t('This user may not list')}{' '}{name}&rsquo;s collections.
             </div>
           ) : shown === null ? null : shown.length === 0 ? (
             <div className="faint db-tree-note">
@@ -899,6 +888,7 @@ function Results({
   phase: ConnPhase
   where: string
 }): React.JSX.Element {
+  const t = useT()
   // Connecting is not "no results yet".
   //
   // The empty state below tells the user to write a query and press Run, which
@@ -910,7 +900,7 @@ function Results({
     return (
       <div className="row faint" style={{ gap: 8, padding: 16, alignItems: 'center' }}>
         <Loader2 size={14} className="spin" />
-        <span>Connecting to {where}…</span>
+        <span>{t('Connecting to')}{' '}{where}…</span>
       </div>
     )
   }
@@ -918,7 +908,7 @@ function Results({
     return (
       <EmptyState
         compact
-        title="Not connected"
+        title={t('Not connected')}
         message="Fix the connection above, then run a query. Nothing has been sent to the server."
       />
     )
@@ -932,7 +922,7 @@ function Results({
     return (
       <EmptyState
         compact
-        title="No results yet"
+        title={t('No results yet')}
         message="Write a query above and press Run. Nothing is sent to the server until you do."
       />
     )
@@ -963,7 +953,7 @@ function Results({
               <td className="faint">{i + 1}</td>
               {r.map((v, j) => (
                 <td key={j} className="mono selectable" style={CELL_STYLE}>
-                  {v === null ? <span className="faint">NULL</span> : formatDbCell(v)}
+                  {v === null ? <span className="faint">{t('NULL')}</span> : formatDbCell(v)}
                 </td>
               ))}
             </tr>
@@ -1013,6 +1003,7 @@ function Results({
 }
 
 export function DatabaseWorkspace(): React.JSX.Element {
+  const t = useT()
   const databases = useApp((s) => s.databases)
   const activeId = useApp((s) => s.activeDatabaseId)
   const openIds = useApp((s) => s.openDatabaseIds)
@@ -1030,11 +1021,10 @@ export function DatabaseWorkspace(): React.JSX.Element {
           <div className="empty-icon">
             <Table2 size={26} />
           </div>
-          <h3>No database selected</h3>
-          <p>Add a database connection, then select it to run queries.</p>
+          <h3>{t('No database selected')}</h3>
+          <p>{t('Add a database connection, then select it to run queries.')}</p>
           <button className="btn primary" onClick={openDatabaseCreator}>
-            <Plug size={15} /> Add Database
-          </button>
+            <Plug size={15} /> {t('Add Database')}</button>
         </div>
       </div>
     )
@@ -1060,7 +1050,7 @@ export function DatabaseWorkspace(): React.JSX.Element {
        * not clickable while it is invisible.
        */}
       <TabStrip
-        label="Database tabs"
+        label={t('Database tabs')}
         items={open.map((d) => ({
           id: d.id,
           title: d.name,

@@ -4,6 +4,7 @@ import { useApp } from '../../store/app'
 import { toast } from '../../store/toast'
 import { clsx } from '../../lib/format'
 import { retentionOverrideNotice } from './connectionRetention'
+import { useT } from '../../i18n'
 
 interface PoolEntry {
   key: string
@@ -24,6 +25,7 @@ const CHOICES: { minutes: number; label: string }[] = [
 ]
 
 export function SshSessions(): React.JSX.Element {
+  const t = useT()
   const settings = useApp((s) => s.settings)
   const setSettings = useApp((s) => s.setSettings)
   const [pool, setPool] = useState<PoolEntry[]>([])
@@ -46,12 +48,9 @@ export function SshSessions(): React.JSX.Element {
     <div>
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Keep authenticated connection</div>
+          <div className="s-title">{t('Keep authenticated connection')}</div>
           <div className="s-desc">
-            New sessions, file browsing and monitoring reuse an existing authenticated connection
-            instead of logging in again. On servers with two-factor authentication, a code is only
-            requested when no connection is being reused — so this sets how often you are asked.
-          </div>
+            {t('New sessions, file browsing and monitoring reuse an existing authenticated connection instead of logging in again. On servers with two-factor authentication, a code is only requested when no connection is being reused — so this sets how often you are asked.')}</div>
           {/* This row promises how often a two-factor code is requested.
               Background checking keeps every watched server's connection alive
               continuously, which makes the promise false — so the row that
@@ -65,7 +64,7 @@ export function SshSessions(): React.JSX.Element {
               className={clsx('seg-btn', settings.sshMasterIdleMinutes === c.minutes && 'active')}
               onClick={() => setSettings({ sshMasterIdleMinutes: c.minutes })}
             >
-              {c.label}
+              {t(c.label)}
             </button>
           ))}
         </div>
@@ -73,16 +72,15 @@ export function SshSessions(): React.JSX.Element {
 
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Shared connections</div>
+          <div className="s-title">{t('Shared connections')}</div>
           <div className="s-desc">
             {pool.length
-              ? 'Disconnecting one forces the next connection to that server to authenticate again.'
-              : 'None open. The first connection to a server authenticates and is then reused.'}
+              ? t('Disconnecting one forces the next connection to that server to authenticate again.')
+              : t('None open. The first connection to a server authenticates and is then reused.')}
           </div>
         </div>
         <button className="btn sm" onClick={load}>
-          Refresh
-        </button>
+          {t('Refresh')}</button>
       </div>
 
       {pool.map((p) => (
@@ -121,8 +119,7 @@ export function SshSessions(): React.JSX.Element {
               await close()
             }}
           >
-            <Unlink size={13} /> Disconnect
-          </button>
+            <Unlink size={13} /> {t('Disconnect')}</button>
         </div>
       ))}
     </div>

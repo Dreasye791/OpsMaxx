@@ -1,6 +1,7 @@
 import { useRef, useState, type ReactNode } from 'react'
 import { ChevronDown, Loader2 } from 'lucide-react'
 import { ContextMenu, type MenuEntry } from '../connections/ContextMenu'
+import { useT } from '../../i18n'
 import './primitives.css'
 
 export interface SplitButtonProps {
@@ -29,6 +30,7 @@ export function SplitButton({
   iconOnly,
   ariaLabel
 }: SplitButtonProps): React.JSX.Element {
+  const t = useT()
   const [menu, setMenu] = useState<DOMRect | null>(null)
   // A press on ▾ while the menu is open closes it through the outside-click
   // handler before the click lands; without this the click would reopen it.
@@ -51,8 +53,8 @@ export function SplitButton({
         <button
           type="button"
           className={`btn ${variant} hc-splitbtn-more`}
-          aria-label={`More ${label} options`}
-          title={`More ${label} options`}
+          aria-label={t('More {label} options', { label })}
+          title={t('More {label} options', { label })}
           aria-haspopup="menu"
           aria-expanded={menu !== null}
           onPointerDown={() => (wasOpen.current = menu !== null)}

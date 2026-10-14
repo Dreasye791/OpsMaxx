@@ -8,6 +8,7 @@ import {
 } from '../../../../shared/enginePrecheck'
 import type { PackageManager } from '../../../../shared/hostFacts'
 import type { JobSpec } from '../../../../shared/jobs'
+import { useT } from '../../i18n'
 
 // Item 42's engine upgrade, on screen.
 //
@@ -39,6 +40,7 @@ export function EngineUpgradePanel({
    */
   onRun?: (spec: JobSpec) => void
 }): React.JSX.Element {
+  const t = useT()
   const [probe, setProbe] = useState<EnginePrecheckProbe | null>(null)
   const [loading, setLoading] = useState(false)
   const [confirmed, setConfirmed] = useState(false)
@@ -86,11 +88,11 @@ export function EngineUpgradePanel({
           <label className="row" style={{ gap: 6, alignItems: 'center' }}>
             <input
               type="checkbox"
-              aria-label="I have read the package list"
+              aria-label={t('I have read the package list')}
               checked={confirmed}
               onChange={(e) => setConfirmed(e.target.checked)}
             />
-            <span>I have read the above and docker-ce is installed on this server.</span>
+            <span>{t('I have read the above and docker-ce is installed on this server.')}</span>
           </label>
         </>
       )}
@@ -112,8 +114,7 @@ export function EngineUpgradePanel({
               if (plan.spec !== null) onRun?.(plan.spec)
             }}
           >
-            Upgrade the engine
-          </button>
+            {t('Upgrade the engine')}</button>
         </>
       )}
     </div>

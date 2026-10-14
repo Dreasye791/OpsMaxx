@@ -2,12 +2,14 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { ChevronDown } from 'lucide-react'
 import { PICKERLESS_MODE, SESSION_MODES, resolveDefaultSessionGroup, sessionModeLabel } from '../../../../shared/mcp'
+import { Trans } from '../../i18n/Trans'
 import type { AccessGroup, SessionMode } from '../../../../shared/mcp'
 import { ContextMenu } from '../connections/ContextMenu'
 import type { MenuEntry } from '../connections/ContextMenu'
 import { Modal } from '../common/Modal'
 import { clsx } from '../../lib/format'
 import { toast } from '../../store/toast'
+import { useT } from '../../i18n'
 
 // The approval dialog paints above every Modal and menu; opened from inside it,
 // both have to be mounted in its layer or they appear underneath it.
@@ -50,6 +52,7 @@ export function ModePicker({
    *  re-read it before anything is picked against it. */
   onOpen?: () => void
 }): React.JSX.Element {
+  const t = useT()
   const [menu, setMenu] = useState<DOMRect | null>(null)
   const [confirming, setConfirming] = useState(false)
   const layer = useRef<Element | undefined>(undefined)
@@ -109,27 +112,23 @@ export function ModePicker({
       <div data-testid="bypass-confirm" className="s-desc" style={{ lineHeight: 1.6 }}>
         {defaultScope && (
           <p style={{ margin: '0 0 8px', color: 'var(--danger)' }}>
-            Every new agent session will start in Bypass — including CLI-paired and OAuth sessions, which
-            connect without showing anyone a profile picker. Sessions that already exist keep their profile.
-          </p>
+            {t('Every new agent session will start in Bypass — including CLI-paired and OAuth sessions, which connect without showing anyone a profile picker. Sessions that already exist keep their profile.')}</p>
         )}
         <p style={{ margin: 0 }}>
-          {defaultScope ? 'A session in Bypass' : 'The agent'} runs everything it asks for, with no prompt and no
-          refusal. This lifts:
-        </p>
+          {defaultScope ? 'A session in Bypass' : 'The agent'} {t('runs everything it asks for, with no prompt and no refusal. This lifts:')}</p>
         <ul style={{ margin: '4px 0 10px' }}>
-          <li>access-group restrictions on workspaces and servers</li>
-          <li>the rules guarding sensitive files such as /etc/shadow and ~/.ssh</li>
-          <li>escalation shells such as sudo -i and su</li>
-          <li>frp reverse proxies</li>
-          <li>every approval prompt</li>
+          <li>{t('access-group restrictions on workspaces and servers')}</li>
+          <li>{t('the rules guarding sensitive files such as /etc/shadow and ~/.ssh')}</li>
+          <li>{t('escalation shells such as sudo -i and su')}</li>
+          <li>{t('frp reverse proxies')}</li>
+          <li>{t('every approval prompt')}</li>
         </ul>
-        <p style={{ margin: 0 }}>Still in force:</p>
+        <p style={{ margin: 0 }}>{t('Still in force:')}</p>
         <ul style={{ margin: '4px 0 0' }}>
-          <li>Protected workspaces and servers, where the agent is held at Ask first</li>
-          <li>No AI Access, and the workspaces the session is scoped to</li>
-          <li>Stop All AI Access</li>
-          <li>the audit log, which marks every call that ran only because of Bypass</li>
+          <li>{t('Protected workspaces and servers, where the agent is held at Ask first')}</li>
+          <li>{t('No AI Access, and the workspaces the session is scoped to')}</li>
+          <li>{t('Stop All AI Access')}</li>
+          <li>{t('the audit log, which marks every call that ran only because of Bypass')}</li>
         </ul>
       </div>
     </Modal>
@@ -144,7 +143,9 @@ export function ModePicker({
         className={clsx('btn', size === 'sm' && 'sm', 'hc-mode-picker', value === 'bypass' && 'is-bypass')}
         disabled={disabled}
         title={title}
-        aria-label={`Profile: ${sessionModeLabel(value, groupName)}${title ? `. ${title}` : ''}`}
+        aria-label={`${t('Profile: {mode}', { mode: t(sessionModeLabel(value, groupName)) })}${
+          title ? `. ${title}` : ''
+        }`}
         aria-haspopup="menu"
         aria-expanded={menu !== null}
         onPointerDown={() => (wasOpen.current = menu !== null)}
@@ -156,20 +157,20 @@ export function ModePicker({
           setMenu(reopen ? e.currentTarget.getBoundingClientRect() : null)
         }}
       >
-        {value === 'custom' && groups ? 'Custom' : sessionModeLabel(value, groupName)}
+        {value === 'custom' && groups ? t('Custom') : t(sessionModeLabel(value, groupName))}
         <ChevronDown size={13} aria-hidden="true" />
       </button>
       {value === 'custom' && groups && (
         <select
           className="input"
           style={{ maxWidth: 180 }}
-          aria-label="Access group for the Custom profile"
+          aria-label={t('Access group for the Custom profile')}
           data-testid="custom-group"
           value={groupId ?? ''}
           disabled={disabled}
           onChange={(e) => void onGroupChange?.(e.target.value)}
         >
-          {!groupId && <option value="">Pick an access group…</option>}
+          {!groupId && <option value="">{t('Pick an access group…')}</option>}
           {groups.map((g) => (
             <option key={g.id} value={g.id}>
               {g.name}
@@ -205,6 +206,7 @@ export function ModePicker({
  * is Custom on the default access group, and no access at all without one.
  */
 export function StartsInMode(): React.JSX.Element {
+  const t = useT()
   // undefined while reading, null when it could not be read.
   const [label, setLabel] = useState<{ mode: SessionMode; text: string } | null | undefined>(undefined)
   useEffect(() => {
@@ -235,18 +237,28 @@ export function StartsInMode(): React.JSX.Element {
       live = false
     }
   }, [])
-  if (label === undefined) return <div className="s-desc">Starts in: reading your default profile…</div>
+  if (label === undefined) return <div className="s-desc">{t('Starts in: reading your default profile…')}</div>
   if (label === null) {
     return (
       <div className="s-desc warn">
-        Starts in your default profile, which could not be read — check it under AI &amp; MCP → Security.
+        {t(
+          'Starts in your default profile, which could not be read — check it under AI & MCP → Security.'
+        )}
       </div>
     )
   }
   return (
     <div className="s-desc" data-testid="starts-in-mode">
-      Starts in: <span className={clsx('chip', label.mode === 'bypass' && 'danger')}>{label.text}</span> (your
-      default — change under AI &amp; MCP → Security)
+      <Trans
+        source="Starts in: {mode} (your default — change under AI & MCP → Security)"
+        components={{
+          mode: (
+            <span className={clsx('chip', label.mode === 'bypass' && 'danger')}>
+              {t(label.text)}
+            </span>
+          )
+        }}
+      />
     </div>
   )
 }

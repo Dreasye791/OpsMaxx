@@ -11,6 +11,8 @@ import { ConnectAgent } from './ConnectAgent'
 import { useNav, AI_SECTIONS, AI_SECTION_LABELS } from '../../store/nav'
 import type { AiSection } from '../../store/nav'
 import type { McpAgentSession, ApprovalRequest } from '../../../../shared/mcp'
+import { useT } from '../../i18n'
+import { Trans } from '../../i18n/Trans'
 
 // Keyed by the nav store's union, so a page added there without an icon here
 // fails the build. The labels come from nav.ts, which is where the command
@@ -27,6 +29,7 @@ const SECTION_ICONS: Record<AiSection, React.JSX.Element> = {
 }
 
 function Overview(): React.JSX.Element {
+  const t = useT()
   const [sessions, setSessions] = useState<McpAgentSession[]>([])
   const [approvals, setApprovals] = useState<ApprovalRequest[]>([])
   const [status, setStatus] = useState<{ running: boolean; port: number | null }>({ running: false, port: null })
@@ -47,52 +50,55 @@ function Overview(): React.JSX.Element {
 
   return (
     <div className="settings-section">
-      <h2>AI & MCP</h2>
+      <h2>{t('AI & MCP')}</h2>
       <div className="sub">
-        Let AI agents like Claude Code, Codex, Gemini CLI and other MCP-compatible clients operate your
-        servers through OpsMaxx — without ever seeing an SSH password, private key or database
-        credential. OpsMaxx resolves the friendly names, enforces access-group policy and asks for
-        your approval on anything sensitive.
-      </div>
+        {t('Let AI agents like Claude Code, Codex, Gemini CLI and other MCP-compatible clients operate your servers through OpsMaxx — without ever seeing an SSH password, private key or database credential. OpsMaxx resolves the friendly names, enforces access-group policy and asks for your approval on anything sensitive.')}</div>
 
       <div className="card-grid" style={{ marginTop: 18 }}>
         <div className="card">
-          <div className="s-title">Bridge status</div>
-          <div className="s-desc">{status.running ? `Running on 127.0.0.1:${status.port}` : 'Disabled'}</div>
+          <div className="s-title">{t('Bridge status')}</div>
+          <div className="s-desc">
+            {status.running
+              ? t('Running on 127.0.0.1:{port}', { port: status.port ?? '—' })
+              : t('Disabled')}
+          </div>
         </div>
         <div className="card">
-          <div className="s-title">Active sessions</div>
-          <div className="s-desc">{active.length} of {sessions.length} connected agent session(s)</div>
+          <div className="s-title">{t('Active sessions')}</div>
+          <div className="s-desc">{active.length} {t('of')}{' '}{sessions.length} {t('connected agent session(s)')}</div>
         </div>
         <div className="card">
-          <div className="s-title">Pending approvals</div>
-          <div className="s-desc">{approvals.length} action(s) waiting on you</div>
+          <div className="s-title">{t('Pending approvals')}</div>
+          <div className="s-desc">{approvals.length} {t('action(s) waiting on you')}</div>
         </div>
       </div>
 
       <ConnectAgent onConnected={load} />
 
-      <h3 style={{ marginTop: 24 }}>How it works</h3>
+      <h3 style={{ marginTop: 24 }}>{t('How it works')}</h3>
       <ol className="s-desc" style={{ lineHeight: 1.8 }}>
-        <li>Pick a profile — Read only, Ask first, Auto (routine work runs, risky actions ask) or Bypass; or Custom, to use an access group instead.</li>
-        <li>Create an AI Agent session scoped to one or more workspaces with that profile, and copy its token.</li>
-        <li>Point Claude Code, Codex or another MCP client at OpsMaxx's local MCP server with that token.</li>
-        <li>Approve or deny actions as they come up — the AI waits for your answer.</li>
+        <li>{t('Pick a profile — Read only, Ask first, Auto (routine work runs, risky actions ask) or Bypass; or Custom, to use an access group instead.')}</li>
+        <li>{t('Create an AI Agent session scoped to one or more workspaces with that profile, and copy its token.')}</li>
+        <li>{t('Point Claude Code, Codex or another MCP client at OpsMaxx\'s local MCP server with that token.')}</li>
+        <li>{t('Approve or deny actions as they come up — the AI waits for your answer.')}</li>
       </ol>
       <div className="s-desc">
-        Optional: under Access Groups, hold a workspace or server below every session's group with an
-        assignment, or mark it Protected so agents there are held at Ask first — for production.
-      </div>
+        {t('Optional: under Access Groups, hold a workspace or server below every session\'s group with an assignment, or mark it Protected so agents there are held at Ask first — for production.')}</div>
       <div className="s-desc">
-        <b>Connect an agent</b> above does steps 1–4 in one click. Codex and Gemini CLI are still
-        wired up by hand — <code className="mono">opsmaxx codex</code>, or the snippet under AI
-        Agents.
+        <Trans
+          source="{b} above does steps 1–4 in one click. Codex and Gemini CLI are still wired up by hand — {code}, or the snippet under AI Agents."
+          components={{
+            b: <b>{t('Connect an agent')}</b>,
+            code: <code className="mono">{t('opsmaxx codex')}</code>
+          }}
+        />
       </div>
     </div>
   )
 }
 
 export function AiPanel(): React.JSX.Element {
+  const t = useT()
   // Held in the nav store rather than locally so a message elsewhere in the app
   // can send the user straight to the page that fixes it.
   const section = useNav((s) => s.aiSection)
@@ -109,7 +115,7 @@ export function AiPanel(): React.JSX.Element {
               onClick={() => setSection(id)}
             >
               {SECTION_ICONS[id]}
-              {AI_SECTION_LABELS[id]}
+              {t(AI_SECTION_LABELS[id])}
             </button>
           ))}
         </nav>

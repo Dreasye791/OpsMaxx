@@ -9,6 +9,9 @@ import {
   BellOff
 } from 'lucide-react'
 import { useUpdater } from '../../store/updater'
+import { useT } from '../../i18n'
+import type { TFunction } from '../../i18n'
+import { Trans } from '../../i18n/Trans'
 import { Modal } from '../common/Modal'
 import {
   channelOfVersion,
@@ -22,7 +25,8 @@ import { Switch } from '../common/Switch'
 // answer "what am I about to install": beta cascades, so the newest thing on
 // offer there is often an ordinary stable release.
 function OfferedTag({ version }: { version: string }): React.JSX.Element | null {
-  return channelOfVersion(version) === 'beta' ? <span className="build-tag">beta</span> : null
+  const t = useT()
+  return channelOfVersion(version) === 'beta' ? <span className="build-tag">{t('beta')}</span> : null
 }
 
 // The same switch Settings uses. Duplicated rather than imported because that
@@ -43,16 +47,20 @@ function SettingSwitch({
   disabled?: boolean
   onChange: (v: boolean) => void
 }): React.JSX.Element {
+  // Translated here for the same reason Settings' copy of this helper does it:
+  // the key is the English source, so this covers the three rows below without
+  // three call sites having to agree about anything.
+  const t = useT()
   return (
     <div className="setting-row">
       <div className="s-info">
-        <div className="s-title">{label}</div>
-        <div className="s-desc">{desc}</div>
+        <div className="s-title">{t(label)}</div>
+        <div className="s-desc">{t(desc)}</div>
       </div>
       <Switch
         checked={checked && !disabled}
         disabled={disabled}
-        label={label}
+        label={t(label)}
         onChange={onChange}
       />
     </div>
@@ -63,34 +71,53 @@ function SettingSwitch({
 // without the user working out what time it is now. A clock that has moved
 // backwards since the check would otherwise print a negative age, which reads
 // as a bug, so anything in the future is simply "just now".
-function checkedAgo(iso: string | null): string {
-  if (!iso) return 'Not checked yet.'
+function checkedAgo(iso: string | null, t: TFunction): string {
+  if (!iso) return t('Not checked yet.')
   const at = Date.parse(iso)
-  if (Number.isNaN(at)) return 'Not checked yet.'
+  if (Number.isNaN(at)) return t('Not checked yet.')
   const mins = Math.floor(Math.max(0, Date.now() - at) / 60000)
-  if (mins < 1) return 'Last checked just now.'
-  if (mins < 60) return `Last checked ${mins} minute${mins === 1 ? '' : 's'} ago.`
+  if (mins < 1) return t('Last checked just now.')
+  // English marks the plural, so both forms get their own key and a language
+  // picks whichever its counting rule wants. `t` has no ICU plurals; a pair of
+  // entries costs nothing, and a language with no plural maps both to one
+  // string.
+  if (mins < 60) {
+    return t(mins === 1 ? 'Last checked {count} minute ago.' : 'Last checked {count} minutes ago.', {
+      count: mins
+    })
+  }
   const hours = Math.floor(mins / 60)
-  if (hours < 24) return `Last checked ${hours} hour${hours === 1 ? '' : 's'} ago.`
+  if (hours < 24) {
+    return t(hours === 1 ? 'Last checked {count} hour ago.' : 'Last checked {count} hours ago.', {
+      count: hours
+    })
+  }
   const days = Math.floor(hours / 24)
-  return `Last checked ${days} day${days === 1 ? '' : 's'} ago.`
+  return t(days === 1 ? 'Last checked {count} day ago.' : 'Last checked {count} days ago.', {
+    count: days
+  })
 }
 
 // Why this build cannot replace itself. Taken from the capabilities the main
 // process sent, never from anything the renderer can sniff for itself — the
 // renderer has no business re-deriving a rule that decides whether an installer
 // will run.
-function noSelfInstallReason(caps: UpdaterCapabilities): string {
+function noSelfInstallReason(caps: UpdaterCapabilities, t: TFunction): string {
   if (caps.platform === 'darwin') {
-    return 'macOS builds here are not notarized, so OpsMaxx cannot safely replace itself automatically — download the new version and open it the same way as the first install.'
+    return t(
+      'macOS builds here are not notarized, so OpsMaxx cannot safely replace itself automatically — download the new version and open it the same way as the first install.'
+    )
   }
   if (caps.isPortable) {
-    return 'This is the portable build, which runs from wherever you put it — OpsMaxx cannot replace its own executable, so download the new version and swap it in.'
+    return t(
+      'This is the portable build, which runs from wherever you put it — OpsMaxx cannot replace its own executable, so download the new version and swap it in.'
+    )
   }
-  return 'This build cannot install updates itself — download the new version from the releases page.'
+  return t('This build cannot install updates itself — download the new version from the releases page.')
 }
 
 export function UpdatePanel(): React.JSX.Element {
+  const t = useT()
   const status = useUpdater((s) => s.status)
   const prefs = useUpdater((s) => s.prefs)
   const caps = useUpdater((s) => s.capabilities)
@@ -128,7 +155,7 @@ export function UpdatePanel(): React.JSX.Element {
 
   return (
     <div className="settings-section">
-      <h2>About &amp; Updates</h2>
+      <h2>{t('About & Updates')}</h2>
       <div className="setting-row">
         <div className="s-info">
           <div className="s-title">
@@ -136,26 +163,32 @@ export function UpdatePanel(): React.JSX.Element {
             {caps?.runningChannel === 'beta' && <span className="build-tag">beta</span>}
           </div>
           <div className="s-desc">
-            {status.state === 'idle' && checkedAgo(prefs.lastCheckedAt)}
-            {status.state === 'checking' && 'Checking for updates…'}
-            {status.state === 'not-available' && `You're on the latest version. ${checkedAgo(prefs.lastCheckedAt)}`}
+            {status.state === 'idle' && checkedAgo(prefs.lastCheckedAt, t)}
+            {status.state === 'checking' && t('Checking for updates…')}
+            {status.state === 'not-available' &&
+              t("You're on the latest version. {ago}", { ago: checkedAgo(prefs.lastCheckedAt, t) })}
             {status.state === 'available' &&
-              (prefs.autoDownload ? `v${status.version} found — starting download…` : `v${status.version} is available.`)}
-            {status.state === 'downloading' && `Downloading update… ${Math.round(status.percent)}%`}
-            {status.state === 'downloaded' && `v${status.version} is ready to install.`}
-            {status.state === 'manual' && `v${status.version} is available.`}
-            {status.state === 'error' && `Could not check for updates: ${status.message}`}
+              (prefs.autoDownload
+                ? t('v{version} found — starting download…', { version: status.version })
+                : t('v{version} is available.', { version: status.version }))}
+            {status.state === 'downloading' &&
+              t('Downloading update… {percent}%', { percent: Math.round(status.percent) })}
+            {status.state === 'downloaded' &&
+              t('v{version} is ready to install.', { version: status.version })}
+            {status.state === 'manual' && t('v{version} is available.', { version: status.version })}
+            {status.state === 'error' &&
+              t('Could not check for updates: {message}', { message: status.message })}
           </div>
         </div>
         <div className="row" style={{ gap: 6 }}>
           {status.state === 'available' && !prefs.autoDownload && (
             <button className="btn sm primary" onClick={download}>
-              <Download size={13} /> Download
+              <Download size={13} /> {t('Download')}
             </button>
           )}
           <button className="btn sm" disabled={checking} onClick={check}>
             {checking ? <Loader2 size={13} className="spin" /> : <RefreshCw size={13} />}
-            Check for updates
+            {t('Check for updates')}
           </button>
         </div>
       </div>
@@ -165,21 +198,25 @@ export function UpdatePanel(): React.JSX.Element {
           <CheckCircle2 size={16} />
           <div style={{ flex: 1 }}>
             <div className="s-title">
-              Update ready <OfferedTag version={status.version} />
+              {t('Update ready')} <OfferedTag version={status.version} />
             </div>
             <div className="s-desc">
               {canAutoInstall
-                ? `OpsMaxx will restart to finish installing v${status.version}.`
-                : `v${status.version} has been downloaded, but this build cannot install it itself.`}
+                ? t('OpsMaxx will restart to finish installing v{version}.', {
+                    version: status.version
+                  })
+                : t('v{version} has been downloaded, but this build cannot install it itself.', {
+                    version: status.version
+                  })}
             </div>
           </div>
           {canAutoInstall ? (
             <button className="btn sm primary" onClick={() => setConfirmRestart(true)}>
-              Restart &amp; update
+              {t('Restart & update')}
             </button>
           ) : (
             <button className="btn sm" onClick={() => void window.opsmaxx?.updater.openReleasePage()}>
-              <ExternalLink size={13} /> Releases page
+              <ExternalLink size={13} /> {t('Releases page')}
             </button>
           )}
         </div>
@@ -190,12 +227,13 @@ export function UpdatePanel(): React.JSX.Element {
           <AlertTriangle size={16} />
           <div style={{ flex: 1 }}>
             <div className="s-title">
-              v{status.version} is available <OfferedTag version={status.version} />
+              {t('v{version} is available', { version: status.version })}{' '}
+              <OfferedTag version={status.version} />
             </div>
-            <div className="s-desc">{noSelfInstallReason(caps)}</div>
+            <div className="s-desc">{noSelfInstallReason(caps, t)}</div>
           </div>
           <button className="btn sm" onClick={() => void window.opsmaxx?.updater.openReleasePage()}>
-            <ExternalLink size={13} /> Download
+            <ExternalLink size={13} /> {t('Download')}
           </button>
         </div>
       )}
@@ -204,22 +242,27 @@ export function UpdatePanel(): React.JSX.Element {
         <div className="backup-banner warn">
           <AlertTriangle size={16} />
           <div style={{ flex: 1 }}>
-            <div className="s-title">Update check failed</div>
-            <div className="s-desc">{status.message} — you can always grab the latest release directly.</div>
+            <div className="s-title">{t('Update check failed')}</div>
+            <div className="s-desc">
+              {t('{message} — you can always grab the latest release directly.', {
+                message: status.message
+              })}
+            </div>
           </div>
           <button className="btn sm" onClick={() => void window.opsmaxx?.updater.openReleasePage()}>
-            <Download size={13} /> Releases page
+            <Download size={13} /> {t('Releases page')}
           </button>
         </div>
       )}
 
-      <div className="backup-h">Update channel</div>
+      <div className="backup-h">{t('Update channel')}</div>
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Channel</div>
+          <div className="s-title">{t('Channel')}</div>
           <div className="s-desc">
-            Stable is the released build. Beta gets new features earlier, and gets their bugs earlier
-            too — it is the build that has not been through as many hands yet.
+            {t(
+              'Stable is the released build. Beta gets new features earlier, and gets their bugs earlier too — it is the build that has not been through as many hands yet.'
+            )}
           </div>
         </div>
         <select
@@ -228,12 +271,12 @@ export function UpdatePanel(): React.JSX.Element {
           value={prefs.channel}
           onChange={(e) => selectChannel(e.target.value as UpdateChannel)}
         >
-          <option value="stable">Stable</option>
-          <option value="beta">Beta</option>
+          <option value="stable">{t('Stable')}</option>
+          <option value="beta">{t('Beta')}</option>
         </select>
       </div>
 
-      <div className="backup-h">Automatic updates</div>
+      <div className="backup-h">{t('Automatic updates')}</div>
       <SettingSwitch
         label="Check for updates automatically"
         desc="Off means OpsMaxx only looks when you press Check for updates."
@@ -242,10 +285,11 @@ export function UpdatePanel(): React.JSX.Element {
       />
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">How often to check</div>
+          <div className="s-title">{t('How often to check')}</div>
           <div className="s-desc">
-            Every check happens at launch as well. A longer interval only affects an app that stays
-            open for days.
+            {t(
+              'Every check happens at launch as well. A longer interval only affects an app that stays open for days.'
+            )}
           </div>
         </div>
         <select
@@ -257,9 +301,9 @@ export function UpdatePanel(): React.JSX.Element {
             setPrefs({ checkIntervalHours: Number(e.target.value) as CheckIntervalHours })
           }
         >
-          <option value={0}>Only at launch</option>
-          <option value={6}>Every 6 hours</option>
-          <option value={24}>Every 24 hours</option>
+          <option value={0}>{t('Only at launch')}</option>
+          <option value={6}>{t('Every 6 hours')}</option>
+          <option value={24}>{t('Every 24 hours')}</option>
         </select>
       </div>
       <SettingSwitch
@@ -274,7 +318,7 @@ export function UpdatePanel(): React.JSX.Element {
           canAutoInstall
             ? 'Apply a downloaded update the next time you close OpsMaxx, instead of waiting for you to restart it now.'
             : caps
-              ? `Unavailable on this build. ${noSelfInstallReason(caps)}`
+              ? t('Unavailable on this build. {reason}', { reason: noSelfInstallReason(caps, t) })
               : 'Unavailable until OpsMaxx knows what this build can install.'
         }
         checked={prefs.autoInstallOnQuit}
@@ -285,28 +329,28 @@ export function UpdatePanel(): React.JSX.Element {
       {dismissedVersion !== null ? (
         <div className="setting-row">
           <div className="s-info">
-            <div className="s-title">Ignoring v{dismissedVersion}</div>
+            <div className="s-title">{t('Ignoring v{version}', { version: dismissedVersion })}</div>
             <div className="s-desc">
-              The status bar stays quiet about this version. A newer one brings the indicator back on
-              its own.
+              {t('The status bar stays quiet about this version. A newer one brings the indicator back on its own.')}
             </div>
           </div>
           <button className="btn sm" onClick={undismiss}>
-            Stop ignoring
+            {t('Stop ignoring')}
           </button>
         </div>
       ) : (
         (status.state === 'available' || status.state === 'downloaded' || status.state === 'manual') && (
           <div className="setting-row">
             <div className="s-info">
-              <div className="s-title">Not now</div>
+              <div className="s-title">{t('Not now')}</div>
               <div className="s-desc">
-                Hide the status-bar indicator for v{status.version}. Updates stay on, and the next
-                version will say so.
+                {t('Hide the status-bar indicator for v{version}. Updates stay on, and the next version will say so.', {
+                  version: status.version
+                })}
               </div>
             </div>
             <button className="btn sm" onClick={dismiss}>
-              <BellOff size={13} /> Ignore this version
+              <BellOff size={13} /> {t('Ignore this version')}
             </button>
           </div>
         )
@@ -314,38 +358,41 @@ export function UpdatePanel(): React.JSX.Element {
 
       {confirmRestart && (
         <Modal
-          title="Restart to finish updating?"
-          subtitle="OpsMaxx closes and reopens on the new version."
+          title={t('Restart to finish updating?')}
+          subtitle={t('OpsMaxx closes and reopens on the new version.')}
           onClose={() => setConfirmRestart(false)}
           footer={
             <>
               <span className="spacer" />
               <button className="btn" onClick={() => setConfirmRestart(false)}>
-                Not now
+                {t('Not now')}
               </button>
               <button className="btn primary" onClick={install}>
-                Restart &amp; update
+                {t('Restart & update')}
               </button>
             </>
           }
         >
           <p>
-            Every open SSH session, tunnel and file transfer ends when the app closes. Anything
-            running on a server keeps running there, but OpsMaxx will not be watching it.
+            {t('Every open SSH session, tunnel and file transfer ends when the app closes. Anything running on a server keeps running there, but OpsMaxx will not be watching it.')}
           </p>
         </Modal>
       )}
 
       {confirmDowngrade && (
         <Modal
-          title="Switch to the stable channel?"
-          subtitle={caps ? `You are running v${caps.currentVersion}, a beta build.` : undefined}
+          title={t('Switch to the stable channel?')}
+          subtitle={
+            caps
+              ? t('You are running v{version}, a beta build.', { version: caps.currentVersion })
+              : undefined
+          }
           onClose={() => setConfirmDowngrade(false)}
           footer={
             <>
               <span className="spacer" />
               <button className="btn" onClick={() => setConfirmDowngrade(false)}>
-                Stay on beta
+                {t('Stay on beta')}
               </button>
               <button
                 className="btn primary"
@@ -354,17 +401,18 @@ export function UpdatePanel(): React.JSX.Element {
                   setConfirmDowngrade(false)
                 }}
               >
-                Switch to stable
+                {t('Switch to stable')}
               </button>
             </>
           }
         >
           <p>
-            The newest stable release is probably older than the beta you are on. OpsMaxx will
-            offer it as an update and installing it moves this app <b>down</b> a version, taking the
-            beta-only features with it.
+            <Trans
+              source="The newest stable release is probably older than the beta you are on. OpsMaxx will offer it as an update and installing it moves this app {b} a version, taking the beta-only features with it."
+              components={{ b: <b>{t('down')}</b> }}
+            />
           </p>
-          <p>Nothing changes until you install that update, and you can switch back to beta first.</p>
+          <p>{t('Nothing changes until you install that update, and you can switch back to beta first.')}</p>
         </Modal>
       )}
     </div>

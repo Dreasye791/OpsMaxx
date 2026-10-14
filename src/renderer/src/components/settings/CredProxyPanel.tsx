@@ -20,6 +20,7 @@ import type {
 import type { VaultEntry } from '../../../../shared/vault'
 import { UnlockVaultButton } from '../common/UnlockVaultButton'
 import { Switch } from '../common/Switch'
+import { useT } from '../../i18n'
 
 // The API credential proxy — roadmap item 7, settings half.
 //
@@ -75,6 +76,7 @@ const emptyDraft = (): Draft => ({
 })
 
 export function CredProxyPanel(): React.JSX.Element {
+  const t = useT()
   const [status, setStatus] = useState<CredProxyStatus | null>(null)
   // `null` until read. The sentence this guards is REASSURING -- "the proxy
   // will refuse everything, that is the safe state" -- and a false reassurance
@@ -244,37 +246,32 @@ export function CredProxyPanel(): React.JSX.Element {
     <div className="credproxy-panel">
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">API credential proxy</div>
+          <div className="s-title">{t('API credential proxy')}</div>
           <div className="s-desc">
-            A script, a dev server or an agent calls a third-party API through OpsMaxx without
-            ever holding the key. Point its base URL at the address below; the credential is added
-            here, on the way out, and never comes back in a response.
-            <br />
-            Nothing is intercepted and no certificate is installed — a caller opts in by pointing at
-            us, which is why an unconfigured tool is unaffected.
-          </div>
+            {t('A script, a dev server or an agent calls a third-party API through OpsMaxx without ever holding the key. Point its base URL at the address below; the credential is added here, on the way out, and never comes back in a response.')}<br />
+            {t('Nothing is intercepted and no certificate is installed — a caller opts in by pointing at us, which is why an unconfigured tool is unaffected.')}</div>
         </div>
         <Switch
           checked={!!status?.listening}
-          label="Run the API credential proxy"
+          label={t('Run the API credential proxy')}
           onChange={(v) => void toggle(v)}
         />
       </div>
 
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Port</div>
+          <div className="s-title">{t('Port')}</div>
           <div className="s-desc">
             {status?.address
-              ? `Listening on ${status.address}.`
-              : 'Not listening. It binds 127.0.0.1 only.'}{' '}
-            {CRED_PROXY_LOOPBACK_NOTE}
+              ? t('Listening on {address}.', { address: status.address })
+              : t('Not listening. It binds 127.0.0.1 only.')}{' '}
+            {t(CRED_PROXY_LOOPBACK_NOTE)}
           </div>
         </div>
         <input
           className="input"
           style={{ width: 90 }}
-          aria-label="Proxy port"
+          aria-label={t('Proxy port')}
           value={portDraft}
           onChange={(e) => setPortDraft(e.target.value)}
           onBlur={() => {
@@ -288,29 +285,37 @@ export function CredProxyPanel(): React.JSX.Element {
           {status.parked.reason === 'vault-locked'
             ? (
                 <>
-                  {`The vault is locked, so ${status.parked.calls} call${status.parked.calls === 1 ? '' : 's'} ${status.parked.calls === 1 ? 'was' : 'were'} parked since ${new Date(status.parked.since).toLocaleTimeString()} rather than sent without a credential. `}
+                  {t('The vault is locked, so {count} {calls} {were} parked since {time} rather than sent without a credential. ', {
+                    count: status.parked.calls,
+                    calls: status.parked.calls === 1 ? 'call' : 'calls',
+                    were: status.parked.calls === 1 ? 'was' : 'were',
+                    time: new Date(status.parked.since).toLocaleTimeString()
+                  })}
                   <UnlockVaultButton reason="Unlocking releases the calls parked while the vault was closed." />
                 </>
               )
-            : `A rule points at a vault entry that no longer holds anything. ${status.parked.calls} call${status.parked.calls === 1 ? '' : 's'} refused since ${new Date(status.parked.since).toLocaleTimeString()}.`}
+            : t('A rule points at a vault entry that no longer holds anything. {count} {calls} refused since {time}.', {
+                count: status.parked.calls,
+                calls: status.parked.calls === 1 ? 'call' : 'calls',
+                time: new Date(status.parked.since).toLocaleTimeString()
+              })}
         </div>
       )}
 
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Tokens</div>
+          <div className="s-title">{t('Tokens')}</div>
           <div className="s-desc">
-            One per caller, sent as <code>{CRED_PROXY_TOKEN_HEADER}</code> on every request.{' '}
-            {CRED_PROXY_TOKEN_NOTE}
+            {t('One per caller, sent as')}{' '}<code>{CRED_PROXY_TOKEN_HEADER}</code> {t('on every request.')}{' '}
+            {t(CRED_PROXY_TOKEN_NOTE)}
             <br />
-            Give each script or agent its own, so revoking one does not stop the others.
-          </div>
+            {t('Give each script or agent its own, so revoking one does not stop the others.')}</div>
         </div>
         <div className="row-actions">
           <input
             className="input"
-            placeholder="What is it for"
-            aria-label="Token name"
+            placeholder={t('What is it for')}
+            aria-label={t('Token name')}
             value={newTokenName}
             onChange={(e) => setNewTokenName(e.target.value)}
             style={{ width: 190 }}
@@ -318,25 +323,22 @@ export function CredProxyPanel(): React.JSX.Element {
           <input
             className="input"
             type="date"
-            aria-label="Token end date (optional)"
-            title="Optional end date. A token with no end date never expires."
+            aria-label={t('Token end date (optional)')}
+            title={t('Optional end date. A token with no end date never expires.')}
             value={newTokenExpiry}
             onChange={(e) => setNewTokenExpiry(e.target.value)}
             style={{ width: 150 }}
           />
           <button className="btn primary" disabled={newTokenName.trim() === ''} onClick={() => void createToken()}>
-            Create token
-          </button>
+            {t('Create token')}</button>
         </div>
       </div>
 
       {tokens === null ? (
-        <div className="s-note state-unknown">Reading the tokens…</div>
+        <div className="s-note state-unknown">{t('Reading the tokens…')}</div>
       ) : tokens.length === 0 ? (
         <div className="s-note">
-          No tokens, so every request is refused. Create one above and give it to the script that
-          needs it.
-        </div>
+          {t('No tokens, so every request is refused. Create one above and give it to the script that needs it.')}</div>
       ) : (
         <ul className="credproxy-rules">
           {tokens.map((t) => {
@@ -387,33 +389,26 @@ export function CredProxyPanel(): React.JSX.Element {
 
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Rules</div>
+          <div className="s-title">{t('Rules')}</div>
           <div className="s-desc">
-            One destination, one credential, one way of sending it. Nothing applies by default: a
-            destination with no rule is refused, never forwarded.
-          </div>
+            {t('One destination, one credential, one way of sending it. Nothing applies by default: a destination with no rule is refused, never forwarded.')}</div>
         </div>
         <button className="btn" onClick={() => setDraft(emptyDraft())}>
-          Add rule
-        </button>
+          {t('Add rule')}</button>
       </div>
 
       {unavailable && (
         <div className="s-note state-unknown">
-          This build does not expose the credential proxy, so what it would allow cannot be read
-          here.
-        </div>
+          {t('This build does not expose the credential proxy, so what it would allow cannot be read here.')}</div>
       )}
 
       {!unavailable && rules === null && !draft && (
-        <div className="s-note state-unknown">Reading the rules…</div>
+        <div className="s-note state-unknown">{t('Reading the rules…')}</div>
       )}
 
       {rules?.length === 0 && !draft && (
         <div className="s-note">
-          No rules yet, so the proxy will refuse everything. That is the safe state, not a broken
-          one.
-        </div>
+          {t('No rules yet, so the proxy will refuse everything. That is the safe state, not a broken one.')}</div>
       )}
 
       <ul className="credproxy-rules">
@@ -422,13 +417,13 @@ export function CredProxyPanel(): React.JSX.Element {
             <div>
               <div className="rule-name">{r.name}</div>
               <div className="rule-detail">
-                {r.origin} — key from “{entryName(r.credential.vaultEntryId)}”, sent as{' '}
+                {r.origin} {t('— key from “')}{entryName(r.credential.vaultEntryId)}{t('”, sent as')}{' '}
                 {describeInjection(r.injection)}
                 {r.enabled ? '' : ' (switched off)'}
               </div>
               {status?.listening && (
                 <div className="rule-detail">
-                  Point your client at{' '}
+                  {t('Point your client at')}{' '}
                   <code>{credProxyBaseUrl(status.port, r.origin)}</code>
                 </div>
               )}
@@ -449,11 +444,9 @@ export function CredProxyPanel(): React.JSX.Element {
                   })
                 }
               >
-                Edit
-              </button>
+                {t('Edit')}</button>
               <button className="btn danger outline" onClick={() => void remove(r.id)}>
-                Remove
-              </button>
+                {t('Remove')}</button>
             </div>
           </li>
         ))}
@@ -463,29 +456,27 @@ export function CredProxyPanel(): React.JSX.Element {
         <div className="credproxy-draft">
           <input
             className="input"
-            aria-label="Rule name"
-            placeholder="Billing API"
+            aria-label={t('Rule name')}
+            placeholder={t('Billing API')}
             value={draft.name}
             onChange={(e) => setDraft({ ...draft, name: e.target.value })}
           />
           <input
             className="input"
-            aria-label="Destination"
+            aria-label={t('Destination')}
             placeholder="https://api.example.com"
             value={draft.origin}
             onChange={(e) => setDraft({ ...draft, origin: e.target.value })}
           />
           <div className="s-desc">
-            The exact origin, and only that origin. A rule for api.example.com does not cover
-            api.example.com.something-else, and it does not follow a redirect anywhere either.
-          </div>
+            {t('The exact origin, and only that origin. A rule for api.example.com does not cover api.example.com.something-else, and it does not follow a redirect anywhere either.')}</div>
           <select
             className="input"
-            aria-label="Vault entry"
+            aria-label={t('Vault entry')}
             value={draft.vaultEntryId}
             onChange={(e) => setDraft({ ...draft, vaultEntryId: e.target.value })}
           >
-            <option value="">Choose a vault entry…</option>
+            <option value="">{t('Choose a vault entry…')}</option>
             {entries.map((e) => (
               <option key={e.id} value={e.id}>
                 {e.name}
@@ -494,7 +485,7 @@ export function CredProxyPanel(): React.JSX.Element {
           </select>
           <select
             className="input"
-            aria-label="Which field"
+            aria-label={t('Which field')}
             value={draft.slot}
             onChange={(e) => setDraft({ ...draft, slot: e.target.value as CredProxySlot })}
           >
@@ -507,7 +498,7 @@ export function CredProxyPanel(): React.JSX.Element {
           {draft.slot === 'field' && (
             <input
               className="input"
-              aria-label="Field name"
+              aria-label={t('Field name')}
               placeholder="publishable_key"
               value={draft.fieldKey}
               onChange={(e) => setDraft({ ...draft, fieldKey: e.target.value })}
@@ -515,7 +506,7 @@ export function CredProxyPanel(): React.JSX.Element {
           )}
           <select
             className="input"
-            aria-label="How it is sent"
+            aria-label={t('How it is sent')}
             value={draft.kind}
             onChange={(e) =>
               setDraft({ ...draft, kind: e.target.value as CredProxyInjectionKind })
@@ -538,11 +529,9 @@ export function CredProxyPanel(): React.JSX.Element {
           )}
           <div className="row-actions">
             <button className="btn primary" onClick={() => void save()}>
-              Save rule
-            </button>
+              {t('Save rule')}</button>
             <button className="btn" onClick={() => setDraft(null)}>
-              Cancel
-            </button>
+              {t('Cancel')}</button>
           </div>
         </div>
       )}
@@ -551,17 +540,14 @@ export function CredProxyPanel(): React.JSX.Element {
 
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Recent calls</div>
+          <div className="s-title">{t('Recent calls')}</div>
           <div className="s-desc">
-            Destination, rule, outcome and how long it took. Never the body, the headers or the
-            query string — a rule that puts the key in a query parameter is exactly the rule whose
-            query string must not be written down.
-          </div>
+            {t('Destination, rule, outcome and how long it took. Never the body, the headers or the query string — a rule that puts the key in a query parameter is exactly the rule whose query string must not be written down.')}</div>
         </div>
       </div>
 
       {calls.length === 0 ? (
-        <div className="s-note">Nothing has come through yet.</div>
+        <div className="s-note">{t('Nothing has come through yet.')}</div>
       ) : (
         <ul className="credproxy-calls">
           {calls.map((c) => (
@@ -575,7 +561,7 @@ export function CredProxyPanel(): React.JSX.Element {
                 {c.outcome === 'forwarded' ? `${c.status}` : c.outcome}
               </span>
               <span className="call-rule">{c.ruleName ?? 'no rule'}</span>
-              <span className="call-ms">{c.ms} ms</span>
+              <span className="call-ms">{c.ms} {t('ms')}</span>
               {c.detail && <span className="call-detail">{c.detail}</span>}
             </li>
           ))}

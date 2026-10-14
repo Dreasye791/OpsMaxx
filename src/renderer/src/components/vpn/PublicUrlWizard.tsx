@@ -8,6 +8,7 @@ import { isVpnRunning } from '../../../../shared/vpn'
 import type { NgrokSpec, VpnProfile } from '../../../../shared/vpn'
 import { headline } from './useVpnProfiles'
 import { Switch } from '../common/Switch'
+import { useT } from '../../i18n'
 
 /**
  * "Get a public URL", asked as the question it actually is.
@@ -51,6 +52,7 @@ export function PublicUrlWizard({
   onAddNgrok,
   onClose
 }: PublicUrlWizardProps): React.JSX.Element {
+  const t = useT()
   const profiles = useApp((s) => s.vpns)
   const statuses = useApp((s) => s.vpnStatuses)
   const upsertVpnProfile = useApp((s) => s.upsertVpnProfile)
@@ -156,10 +158,10 @@ export function PublicUrlWizard({
   if (url) {
     return (
       <Modal
-        title="Your service is public"
+        title={t('Your service is public')}
         subtitle={local}
         onClose={onClose}
-        cancelLabel="Done"
+        cancelLabel={t('Done')}
         confirm={{ label: 'Copy URL', onClick: copy }}
       >
         <div className="col" style={{ gap: 10 }}>
@@ -174,13 +176,9 @@ export function PublicUrlWizard({
             </button>
           </div>
           <p className="s-desc">
-            Anyone with this address reaches {local} on this machine, for as long as the profile
-            is running. Stopping it takes the address away.
-          </p>
+            {t('Anyone with this address reaches')}{' '}{local} {t('on this machine, for as long as the profile is running. Stopping it takes the address away.')}</p>
           <p className="s-desc">
-            ngrok assigns a new address each run unless the account has a reserved domain, so this
-            one will not survive a restart.
-          </p>
+            {t('ngrok assigns a new address each run unless the account has a reserved domain, so this one will not survive a restart.')}</p>
         </div>
       </Modal>
     )
@@ -189,10 +187,10 @@ export function PublicUrlWizard({
   // ------------------------------------------------------- waiting on ngrok
   if (busy) {
     return (
-      <Modal title="Publishing…" subtitle={local} onClose={onClose} cancelLabel={null}>
+      <Modal title={t('Publishing…')} subtitle={local} onClose={onClose} cancelLabel={null}>
         <div className="row" style={{ gap: 10, alignItems: 'center', padding: '8px 0' }}>
           <Loader2 size={18} className="spin" />
-          <span>Asking ngrok for an address for {local}.</span>
+          <span>{t('Asking ngrok for an address for')}{' '}{local}.</span>
         </div>
       </Modal>
     )
@@ -202,7 +200,7 @@ export function PublicUrlWizard({
   if (provider === 'ngrok' && ngrokProfile) {
     return (
       <Modal
-        title="Publish through ngrok"
+        title={t('Publish through ngrok')}
         subtitle={ngrokProfile.name}
         onClose={onClose}
         confirm={{
@@ -216,15 +214,11 @@ export function PublicUrlWizard({
               one keystroke apart and one of them is a database. */}
           <div className="hop-card col" style={{ gap: 6 }}>
             <span style={{ fontSize: 'var(--fs-body)' }}>
-              This makes <b className="mono">{local}</b> reachable from the public internet.
-            </span>
+              {t('This makes')}{' '}<b className="mono">{local}</b> {t('reachable from the public internet.')}</span>
             <span className="muted" style={{ fontSize: 'var(--fs-sm)' }}>
-              Anyone who has the address can reach it. There is no password in front of it unless
-              your own service has one.
-            </span>
+              {t('Anyone who has the address can reach it. There is no password in front of it unless your own service has one.')}</span>
             <span className="muted" style={{ fontSize: 'var(--fs-sm)' }}>
-              Traffic crosses ngrok's servers to get here.
-            </span>
+              {t('Traffic crosses ngrok\'s servers to get here.')}</span>
           </div>
 
           <label className="row" style={{ gap: 8, alignItems: 'flex-start' }}>
@@ -240,8 +234,7 @@ export function PublicUrlWizard({
                 color: acknowledged ? 'var(--text-muted)' : 'var(--warn)'
               }}
             >
-              I want {local} reachable from the public internet.
-            </span>
+              {t('I want')}{' '}{local} {t('reachable from the public internet.')}</span>
           </label>
         </div>
       </Modal>
@@ -250,12 +243,10 @@ export function PublicUrlWizard({
 
   // ------------------------------------------------------- the choice itself
   return (
-    <Modal title="Get a public URL" subtitle={local} onClose={onClose}>
+    <Modal title={t('Get a public URL')} subtitle={local} onClose={onClose}>
       <div className="col" style={{ gap: 10 }}>
         <p className="s-desc" style={{ marginTop: 0 }}>
-          Both of these put {local} on the internet. Which one is right depends on what you
-          already have.
-        </p>
+          {t('Both of these put')}{' '}{local} {t('on the internet. Which one is right depends on what you already have.')}</p>
 
         <button
           type="button"
@@ -266,10 +257,9 @@ export function PublicUrlWizard({
             <Globe size={13} />
           </span>
           <span className="setup-q-body">
-            <span className="setup-q-title">ngrok</span>
+            <span className="setup-q-title">{t('ngrok')}</span>
             <span className="setup-q-detail">
-              ngrok gives you the address and runs the server. Nothing to host.
-            </span>
+              {t('ngrok gives you the address and runs the server. Nothing to host.')}</span>
             <span className="setup-q-cost">
               {ngrokProfile
                 ? 'Ready — an authtoken is in the vault.'
@@ -287,10 +277,9 @@ export function PublicUrlWizard({
             <Share2 size={13} />
           </span>
           <span className="setup-q-body">
-            <span className="setup-q-title">Your own frp server</span>
+            <span className="setup-q-title">{t('Your own frp server')}</span>
             <span className="setup-q-detail">
-              The address is on a domain you control, and the traffic crosses only your server.
-            </span>
+              {t('The address is on a domain you control, and the traffic crosses only your server.')}</span>
             <span className="setup-q-cost">
               {frpReady ? 'Ready — a tunnel server is configured.' : (frpGap ?? 'Needs a server you control.')}
             </span>

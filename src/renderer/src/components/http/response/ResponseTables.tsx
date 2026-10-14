@@ -3,15 +3,17 @@ import type { HttpResponseOk } from '../../../../../shared/httpClient'
 import { maskUrlsIn } from '../../../../../shared/httpErrors'
 import { useHttpCookies } from '../../../store/httpCookies'
 import { bytes } from '../../../lib/format'
+import { useT } from '../../../i18n'
 
 // The response's Headers, Cookies and Timeline tabs. Everything the server
 // sent is rendered as React text: no markup, no links.
 
 export function HeadersView({ headers }: { headers: Record<string, string> }): React.JSX.Element {
+  const t = useT()
   const rows = Object.entries(headers)
-  if (rows.length === 0) return <p className="hc-rv-empty">No headers.</p>
+  if (rows.length === 0) return <p className="hc-rv-empty">{t('No headers.')}</p>
   return (
-    <table className="hc-rv-table" aria-label="Response headers">
+    <table className="hc-rv-table" aria-label={t('Response headers')}>
       <tbody>
         {rows.map(([name, value]) => (
           <tr key={name}>
@@ -65,24 +67,25 @@ export function CookiesView({
   sent: SentView
   workspaceId: Id
 }): React.JSX.Element {
+  const t = useT()
   const set = (response.setCookie ?? []).map(parseSetCookie)
   const sentNames = sentCookieNames(sent)
   const host = hostOf(sent.url)
   return (
     <div className="hc-rv-cookies">
-      <h4 className="ui-label">Set by this response</h4>
+      <h4 className="ui-label">{t('Set by this response')}</h4>
       {set.length === 0 ? (
         <p className="hc-rv-empty">None.</p>
       ) : (
-        <table className="hc-rv-table" aria-label="Cookies set by this response">
+        <table className="hc-rv-table" aria-label={t('Cookies set by this response')}>
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Value</th>
-              <th>Domain</th>
-              <th>Path</th>
-              <th>Expires</th>
-              <th>Flags</th>
+              <th>{t('Name')}</th>
+              <th>{t('Value')}</th>
+              <th>{t('Domain')}</th>
+              <th>{t('Path')}</th>
+              <th>{t('Expires')}</th>
+              <th>{t('Flags')}</th>
             </tr>
           </thead>
           <tbody>
@@ -99,17 +102,17 @@ export function CookiesView({
           </tbody>
         </table>
       )}
-      <h4 className="ui-label">Sent from the jar</h4>
+      <h4 className="ui-label">{t('Sent from the jar')}</h4>
       <p className="hc-rv-empty">{sentNames.length === 0 ? 'None.' : sentNames.join(', ')}</p>
       {host && (
         <button
           className="btn sm"
           onClick={() => useHttpCookies.getState().clearDomain(`${workspaceId}|${sent.route.key}`, host)}
         >
-          Clear jar for {host}
+          {t('Clear jar for')}{' '}{host}
         </button>
       )}
-      <p className="hc-rv-note">Cookies are kept until OpsMaxx quits.</p>
+      <p className="hc-rv-note">{t('Cookies are kept until OpsMaxx quits.')}</p>
     </div>
   )
 }
@@ -132,6 +135,7 @@ const TLS_LINE = {
  * headers are masked again here by name, so a gap in one place is not a leak.
  */
 export function TimelineView({ sent, response }: { sent: SentView; response: HttpResponseOk }): React.JSX.Element {
+  const t = useT()
   const facts: [string, string][] = [
     ['Method', sent.method],
     ['URL', maskUrlsIn(sent.url)],
@@ -154,8 +158,8 @@ export function TimelineView({ sent, response }: { sent: SentView; response: Htt
           </div>
         ))}
       </dl>
-      <h4 className="ui-label">Request headers</h4>
-      <table className="hc-rv-table" aria-label="Request headers as sent">
+      <h4 className="ui-label">{t('Request headers')}</h4>
+      <table className="hc-rv-table" aria-label={t('Request headers as sent')}>
         <tbody>
           {sent.headers.map(([name, value], i) => (
             <tr key={`${name}-${i}`}>

@@ -16,6 +16,7 @@ import { isVpnRunning } from '../../../../shared/vpn'
 import type { FrpSpec } from '../../../../shared/vpn'
 import { headline } from './useVpnProfiles'
 import { Switch } from '../common/Switch'
+import { useT } from '../../i18n'
 
 /**
  * The last thing between a typed port number and a port on the internet.
@@ -49,6 +50,7 @@ export function FrpPublishDialog({
   localPort,
   onClose
 }: FrpPublishDialogProps): React.JSX.Element {
+  const t = useT()
   const upsertVpnProfile = useApp((s) => s.upsertVpnProfile)
   const status = useApp((s) => s.vpnStatuses[target.profile.id])
 
@@ -110,7 +112,7 @@ export function FrpPublishDialog({
 
   return (
     <Modal
-      title="Publish a local port"
+      title={t('Publish a local port')}
       subtitle={target.profile.name}
       onClose={onClose}
       confirm={{
@@ -121,7 +123,7 @@ export function FrpPublishDialog({
     >
       <div className="col" style={{ gap: 14 }}>
         <Field
-          label="Name"
+          label={t('Name')}
           required
           error={
             collides
@@ -135,7 +137,7 @@ export function FrpPublishDialog({
             className="input"
             value={label}
             onChange={(e) => setLabel(e.target.value)}
-            aria-label="Name"
+            aria-label={t('Name')}
           />
         </Field>
 
@@ -160,7 +162,7 @@ export function FrpPublishDialog({
             onChange={setAcknowledged}
           />
           <span style={{ fontSize: 12, color: acknowledged ? 'var(--text-muted)' : 'var(--warn)' }}>
-            I want {exposure.local} reachable at {exposure.url}.
+            {t('I want')}{' '}{exposure.local} {t('reachable at')}{' '}{exposure.url}.
           </span>
         </label>
       </div>

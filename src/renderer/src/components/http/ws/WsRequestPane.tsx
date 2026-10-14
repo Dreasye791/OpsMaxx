@@ -31,6 +31,7 @@ import { Composer, ComposerToolbar } from './Composer'
 import { INITIAL_VIEW, MessageLog, MessageToolbar, type LogView } from './MessageLog'
 import { isLive, submitWs, updateWs, wsRequestOf } from './wsActions'
 import './ws.css'
+import { useT } from '../../../i18n'
 
 type Section = 'message' | 'params' | 'auth' | 'headers' | 'settings'
 
@@ -103,6 +104,7 @@ function dotClass(s: WsSession | undefined): string {
 }
 
 export function WsRequestPane({ tabId }: { tabId: Id }): React.JSX.Element | null {
+  const t = useT()
   const tab = useHttp((s) => s.tabs.find((t) => t.id === tabId))
   const collections = useApi((s) => s.collections)
   const workspace = useApi((s) => s.workspace)
@@ -145,12 +147,11 @@ export function WsRequestPane({ tabId }: { tabId: Id }): React.JSX.Element | nul
 
   const bar = (
     <div className="hc-ws-bar" ref={barRef} data-step={step}>
-      <span className="hc-ws-badge" aria-label="WebSocket">
-        WS
-      </span>
+      <span className="hc-ws-badge" aria-label={t('WebSocket')}>
+        {t('WS')}</span>
       <div className="hc-ws-url">
         {live ? (
-          <span className="hc-ws-url-locked mono" title="Disconnect to edit" aria-label="WebSocket URL">
+          <span className="hc-ws-url-locked mono" title={t('Disconnect to edit')} aria-label={t('WebSocket URL')}>
             {req.url}
           </span>
         ) : (
@@ -191,7 +192,7 @@ export function WsRequestPane({ tabId }: { tabId: Id }): React.JSX.Element | nul
     section === 'message' ? (
       <ComposerToolbar tabId={tabId} />
     ) : locked ? (
-      <p className="hc-ws-locked-note">Disconnect to edit: these went out with the upgrade request.</p>
+      <p className="hc-ws-locked-note">{t('Disconnect to edit: these went out with the upgrade request.')}</p>
     ) : undefined
 
   const body: ReactNode =
@@ -256,8 +257,7 @@ export function WsRequestPane({ tabId }: { tabId: Id }): React.JSX.Element | nul
           void openSocket(tabId)
         }}
       >
-        Retry with ws://
-      </button>
+        {t('Retry with ws://')}</button>
     ) : null
   ) : fixOf.action === 'choose-vault' ? (
     <button type="button" className="btn sm" onClick={() => openSection('auth')}>
@@ -272,8 +272,7 @@ export function WsRequestPane({ tabId }: { tabId: Id }): React.JSX.Element | nul
   const connectAnyway =
     failure?.class === 'unresolved-variable' && !unresolvedInOrigin(req.url, failure.unresolved ?? []) ? (
       <button type="button" className="btn ghost sm" onClick={() => void openSocket(tabId, { allowUnresolved: true })}>
-        Connect anyway
-      </button>
+        {t('Connect anyway')}</button>
     ) : null
 
   const text = statusText(session, now)
@@ -286,8 +285,7 @@ export function WsRequestPane({ tabId }: { tabId: Id }): React.JSX.Element | nul
         {connectAnyway}
         {(state === 'closed' || state === 'error') && (
           <button type="button" className="btn ghost sm" onClick={() => void openSocket(tabId)}>
-            Reconnect
-          </button>
+            {t('Reconnect')}</button>
         )}
         <span className="hc-ws-spacer" />
         <SplitToggles tabId={tabId} />
@@ -332,18 +330,17 @@ export function WsRequestPane({ tabId }: { tabId: Id }): React.JSX.Element | nul
 
   const requestSummary = (
     <span className="hc-ws-summary">
-      Request ·{' '}
+      {t('Request ·')}{' '}
       <button type="button" className="btn ghost sm" onClick={() => openSection('message')}>
-        Message
-      </button>
+        {t('Message')}</button>
       <button type="button" className="btn ghost sm" onClick={() => openSection('params')}>
-        Params {enabledCount(req.params)}
+        {t('Params')}{' '}{enabledCount(req.params)}
       </button>
       <button type="button" className="btn ghost sm" onClick={() => openSection('auth')}>
-        Auth{req.auth.type !== 'none' && req.auth.type !== 'inherit' ? ' •' : ''}
+        {t('Auth')}{req.auth.type !== 'none' && req.auth.type !== 'inherit' ? ' •' : ''}
       </button>
       <button type="button" className="btn ghost sm" onClick={() => openSection('headers')}>
-        Headers {enabledCount(req.headers)}
+        {t('Headers')}{' '}{enabledCount(req.headers)}
       </button>
     </span>
   )
@@ -427,6 +424,7 @@ function WsSettings({
   stripped: string[]
   onProtocols: (protocols: string[]) => void
 }): React.JSX.Element {
+  const t = useT()
   // The field keeps what was typed, so "a, " survives long enough to type "b".
   const [text, setText] = useState(() => req.protocols.join(', '))
   const set = (protocols: string[]): void => {
@@ -453,11 +451,11 @@ function WsSettings({
   return (
     <div className="hc-ws-settings">
       <label className="hc-ws-field">
-        <span className="ui-label">Subprotocols</span>
+        <span className="ui-label">{t('Subprotocols')}</span>
         <input
           className="input mono"
-          aria-label="Subprotocols"
-          placeholder="graphql-ws, v2.json"
+          aria-label={t('Subprotocols')}
+          placeholder={t('graphql-ws, v2.json')}
           value={text}
           readOnly={readOnly}
           onChange={(e) => {
@@ -474,30 +472,27 @@ function WsSettings({
       </label>
       {lost !== -1 && (
         <p className="hc-ws-warn" role="note">
-          Not kept from last session: subprotocol {lost + 1} carried a credential.{' '}
+          {t('Not kept from last session: subprotocol')}{' '}{lost + 1} {t('carried a credential.')}{' '}
           <button type="button" className="btn ghost sm" disabled={readOnly} onClick={() => void paste()}>
-            Paste
-          </button>{' '}
-          Or write a {'{{variable}}'} there, whose value can live in the vault.
-        </p>
+            {t('Paste')}</button>{' '}
+          {t('Or write a')}{' '}{'{{variable}}'} {t('there, whose value can live in the vault.')}</p>
       )}
       {secret !== undefined && (
         <p className="hc-ws-warn" role="note">
-          A subprotocol looks like a credential rather than a protocol name. Not saved: kept for this session only.{' '}
+          {t('A subprotocol looks like a credential rather than a protocol name. Not saved: kept for this session only.')}{' '}
           <button type="button" className="btn ghost sm" disabled={readOnly} onClick={(e) => asVariable(e, secret)}>
-            Set as variable…
-          </button>{' '}
-          then write {'{{subprotocol}}'} in its place, and the vault can hold it.
-        </p>
+            {t('Set as variable…')}</button>{' '}
+          {t('then write')}{' '}{'{{subprotocol}}'} {t('in its place, and the vault can hold it.')}</p>
       )}
     </div>
   )
 }
 
 function Handshake({ session }: { session: WsSession | undefined }): React.JSX.Element {
+  const t = useT()
   const sent = session?.sent
   const protocol = session?.protocol
-  if (!sent && protocol === undefined) return <p className="hc-ws-empty">Connect to see the upgrade request.</p>
+  if (!sent && protocol === undefined) return <p className="hc-ws-empty">{t('Connect to see the upgrade request.')}</p>
   // Subprotocols can carry a bearer token (Kubernetes does). What was offered
   // is in the sent headers, masked by the build; what the server chose is
   // masked here by the same rule.
@@ -509,7 +504,7 @@ function Handshake({ session }: { session: WsSession | undefined }): React.JSX.E
       {sent && (
         <>
           <p className="hc-ws-note mono">
-            GET {sent.url} · via {sent.route.label}
+            {t('GET')}{' '}{sent.url} {t('· via')}{' '}{sent.route.label}
           </p>
           <table className="hc-ws-headers">
             <tbody>

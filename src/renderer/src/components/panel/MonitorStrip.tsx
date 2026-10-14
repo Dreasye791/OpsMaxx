@@ -4,6 +4,7 @@ import { useServerMetrics } from '../../hooks/useServerMetrics'
 import { Sparkline } from '../common/Sparkline'
 import { clsx } from '../../lib/format'
 import type { Server } from '../../types'
+import { useT } from '../../i18n'
 
 function rate(bytesPerSec: number): string {
   if (bytesPerSec >= 1048576) return `${(bytesPerSec / 1048576).toFixed(1)} MB/s`
@@ -27,6 +28,7 @@ export function MonitorStrip({
   server: Server
   visible: boolean
 }): React.JSX.Element {
+  const t = useT()
   const open = useApp((s) => s.settings.showMonitorStrip)
   const setSettings = useApp((s) => s.setSettings)
   // Sampling runs commands over the same SSH connection the shell uses, so it
@@ -40,9 +42,9 @@ export function MonitorStrip({
 
   if (!open) {
     return (
-      <button className="monitor-strip collapsed" onClick={toggle} title="Show server metrics">
+      <button className="monitor-strip collapsed" onClick={toggle} title={t('Show server metrics')}>
         <Activity size={13} />
-        <span>Monitor</span>
+        <span>{t('Monitor')}</span>
         <span className="spacer" />
         <ChevronUp size={14} />
       </button>
@@ -74,7 +76,7 @@ export function MonitorStrip({
     <div className="monitor-strip">
       <div className="ms-title">
         <Activity size={13} />
-        <span>Monitor</span>
+        <span>{t('Monitor')}</span>
         {m.error ? (
           <span className="ms-err">{m.error}</span>
         ) : (
@@ -85,10 +87,9 @@ export function MonitorStrip({
         <span className="spacer" />
         {m.host && (
           <span className="faint mono" style={{ fontSize: 'var(--fs-xs)' }}>
-            {m.host.hostname} · {m.host.cores} vCPU
-          </span>
+            {m.host.hostname} · {m.host.cores} {t('vCPU')}</span>
         )}
-        <button className="icon-btn xs" onClick={toggle} title="Hide server metrics">
+        <button className="icon-btn xs" onClick={toggle} title={t('Hide server metrics')}>
           <ChevronDown size={14} />
         </button>
       </div>
@@ -100,7 +101,7 @@ export function MonitorStrip({
         <div className="ms-stat">
           <div className="ms-head">
             <Wifi size={12} className="faint" />
-            <span className="ms-label">Network</span>
+            <span className="ms-label">{t('Network')}</span>
           </div>
           <div className={clsx('ms-net mono')}>
             <span>↓ {rate(m.rx)}</span>

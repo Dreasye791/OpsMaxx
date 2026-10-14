@@ -59,6 +59,84 @@ button {
   outline: none;
 }
 
+/* ======================= Chinese typography ======================= */
+/*
+ * Everything here keys off `:lang(zh)`, which is why LocaleBridge writes the
+ * resolved language onto <html>. Nothing in this block is cosmetic taste: a
+ * Chinese UI set with the Latin rules this stylesheet uses everywhere else
+ * reads as broken rather than as translated, in four specific ways.
+ *
+ * 1. FONT. Geist ships no Han glyphs, so every Chinese character on screen is
+ *    already a fallback — this only decides WHICH fallback. Left to the generic
+ *    `sans-serif` at the end of the stack, a Windows box can resolve it to a
+ *    serif, and an interface whose body text is a Chinese serif reads as a
+ *    document rather than as an application. Naming the SC faces also picks the
+ *    Simplified forms explicitly on a machine whose system language is
+ *    Traditional.
+ *
+ *    Same family names as tokens.css declares, re-listed rather than appended:
+ *    a CSS custom property cannot be extended in place, so the whole stack is
+ *    restated with the CJK faces inserted. Changing the Latin stack in
+ *    tokens.css means changing it here too.
+ *
+ * 2. TRACKING. Han glyphs are drawn to fill a full-width em box. The small
+ *    positive letter-spacing that stops 11–13px Latin from setting solid — and
+ *    that this stylesheet applies to labels and buttons — makes Chinese look
+ *    like the words have been pulled apart. Zero, at exactly the sizes and on
+ *    exactly the surfaces the app tracks.
+ *
+ * 3. LINE BREAKING. `line-break: strict` is what forbids a comma, a full stop or
+ *    a closing quote from opening a line. It is the single most visible
+ *    difference between Chinese typeset properly and Chinese run through a
+ *    translation layer: loose punctuation at a line start is the tell.
+ *
+ * 4. WRAPPING. Chinese has no spaces, so a long unbroken run offers the
+ *    line-breaker nothing to break on and widens a grid column instead of
+ *    wrapping. `anywhere` on the prose surfaces gives it somewhere to go.
+ *    Deliberately NOT on `body` or on everything: it also permits a break
+ *    mid-identifier, which would damage paths, host names and terminal output —
+ *    the strings in this app that must never be re-flowed.
+ */
+:lang(zh) {
+  --font-ui: 'Geist', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC',
+    'Source Han Sans SC', 'Hiragino Sans GB', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', 'Sarasa Mono SC', 'Cascadia Mono', 'Microsoft YaHei Mono',
+    'SF Mono', Consolas, monospace;
+  line-break: strict;
+  word-break: normal;
+}
+:lang(zh) body,
+:lang(zh) .activity-label,
+:lang(zh) .sidebar-title,
+:lang(zh) .nav-item,
+:lang(zh) .menu-item,
+:lang(zh) .menu-label,
+:lang(zh) .s-title,
+:lang(zh) .s-desc,
+:lang(zh) .result-title,
+:lang(zh) .result-section,
+:lang(zh) .statusbar,
+:lang(zh) .seg-btn,
+:lang(zh) .btn {
+  letter-spacing: 0;
+}
+:lang(zh) .s-desc,
+:lang(zh) .field-hint,
+:lang(zh) .empty p,
+:lang(zh) .settings-section .sub {
+  overflow-wrap: anywhere;
+}
+/* Headings and labels get a hair of negative tracking instead of zero: at 14px
+   and up, full-width Han set solid is airier than the Latin it replaced, and
+   the tighter measure is what keeps a translated heading the same visual weight
+   as the English one rather than a heavier block. */
+:lang(zh) h1,
+:lang(zh) h2,
+:lang(zh) h3,
+:lang(zh) .sidebar-title {
+  letter-spacing: -0.01em;
+}
+
 /* Scrollbars */
 ::-webkit-scrollbar {
   width: 10px;

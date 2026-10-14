@@ -25,6 +25,7 @@ import {
   withFreshIds,
   type TreeActions
 } from './treeMenus'
+import { useT } from '../../../i18n'
 
 export interface TreeRow {
   id: Id
@@ -139,6 +140,7 @@ export interface CollectionTreeProps {
  * Mod+Z undoes the last delete, Shift+F10 opens the row menu.
  */
 export function CollectionTree(props: CollectionTreeProps): React.JSX.Element {
+  const t = useT()
   const { query, renaming, setRenaming, undo } = props
   const ws = useApp((s) => s.activeWorkspaceId)
   const all = useApi((s) => s.collections)
@@ -269,16 +271,14 @@ export function CollectionTree(props: CollectionTreeProps): React.JSX.Element {
     return (
       <EmptyState
         compact
-        title="No collections yet"
+        title={t('No collections yet')}
         message="Save a request, or import an OpenAPI spec or a cURL command."
         action={
           <div className="hc-empty-actions">
             <button type="button" className="btn primary sm" onClick={props.onNewCollection}>
-              New collection
-            </button>
+              {t('New collection')}</button>
             <button type="button" className="btn sm" onClick={() => props.onImport()}>
-              Import…
-            </button>
+              {t('Import…')}</button>
           </div>
         }
       />
@@ -287,8 +287,8 @@ export function CollectionTree(props: CollectionTreeProps): React.JSX.Element {
 
   return (
     <>
-      <div role="tree" aria-label="Collections" className="hc-tree">
-        {rows.length === 0 && <p className="hc-tree-empty">Nothing matches “{query}”.</p>}
+      <div role="tree" aria-label={t('Collections')} className="hc-tree">
+        {rows.length === 0 && <p className="hc-tree-empty">{t('Nothing matches “')}{query}”.</p>}
         {rows.map((r, i) => {
           const selected = r.kind === 'request' ? activeRef?.requestId === r.id : r.kind === 'collection' && activeRef?.collectionId === r.id && !activeRef.requestId
           return (
@@ -356,7 +356,7 @@ export function CollectionTree(props: CollectionTreeProps): React.JSX.Element {
                 tabIndex={-1}
                 className="hc-icon-btn hc-tree-more"
                 aria-label={`Actions for ${r.name}`}
-                title="Actions"
+                title={t('Actions')}
                 onClick={(e) => {
                   e.stopPropagation()
                   const b = e.currentTarget.getBoundingClientRect()

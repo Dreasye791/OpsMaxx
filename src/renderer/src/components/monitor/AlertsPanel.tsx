@@ -43,6 +43,7 @@ import {
   runbookUnavailableSentence,
   type RunbookView
 } from '../../../../shared/runbooks'
+import { useT } from '../../i18n'
 
 // The alert inbox — roadmap item 19b.
 //
@@ -201,6 +202,7 @@ function RunbookBody({
   hostId: string | null
   hostName: string
 }): React.JSX.Element {
+  const t = useT()
   const [view, setView] = useState<RunbookView | null | 'unreachable'>(null)
   const [draft, setDraft] = useState<string | null>(null)
   const [saveFailed, setSaveFailed] = useState(false)
@@ -223,7 +225,7 @@ function RunbookBody({
     )
   }
   if (view === null) {
-    return <div className="alerts-quiet-line">Reading the runbook…</div>
+    return <div className="alerts-quiet-line">{t('Reading the runbook…')}</div>
   }
 
   // The note being edited is the one for the CURRENT selection: a host note
@@ -245,15 +247,11 @@ function RunbookBody({
     <>
       {view.notesUnreadable && (
         <div className="s-desc warn" data-testid="runbook-notes-unreadable">
-          The runbook notes file could not be read, so nothing below is your note — it is nothing
-          at all. Saving now would overwrite whatever is in that file.
-        </div>
+          {t('The runbook notes file could not be read, so nothing below is your note — it is nothing at all. Saving now would overwrite whatever is in that file.')}</div>
       )}
 
       <div className="s-desc" data-testid="runbook-note-provenance">
-        Your note for {LABEL[kind]} on {scope}. This is text you wrote; nothing on a server can
-        change it.
-      </div>
+        {t('Your note for')}{' '}{LABEL[kind]} {t('on')}{' '}{scope}{t('. This is text you wrote; nothing on a server can change it.')}</div>
       <textarea
         className="input"
         rows={4}
@@ -265,17 +263,15 @@ function RunbookBody({
       />
       {saveFailed && (
         <div className="s-desc warn" data-testid="runbook-save-failed">
-          That note was not saved, so it is not there. It is still in the box above — copy it
-          somewhere before you leave this screen.
-        </div>
+          {t('That note was not saved, so it is not there. It is still in the box above — copy it somewhere before you leave this screen.')}</div>
       )}
       {hostId !== null && view.kindNote && (
         <div className="s-desc" data-testid="runbook-kind-note">
-          <b>Every server, for {LABEL[kind]}:</b> {view.kindNote.text}
+          <b>{t('Every server, for')}{' '}{LABEL[kind]}:</b> {view.kindNote.text}
         </div>
       )}
 
-      <div className="alerts-subhead">What was run</div>
+      <div className="alerts-subhead">{t('What was run')}</div>
       <div className="s-desc" data-testid="runbook-no-run">
         {RUNBOOK_NO_RUN_NOTE}
       </div>
@@ -287,6 +283,7 @@ function RunbookBody({
 /** The half nobody typed. Four sentences and a list, and which sentence it is
  *  is the whole point — see the five statuses in shared/runbooks.ts. */
 function RunbookRecallBody({ view }: { view: RunbookView }): React.JSX.Element {
+  const t = useT()
   const r = view.recall
   if (r.status === 'no-host') {
     return (
@@ -322,11 +319,11 @@ function RunbookRecallBody({ view }: { view: RunbookView }): React.JSX.Element {
       {r.occurrences.map((occ) => (
         <div key={occ.at} style={{ marginTop: 8 }}>
           <div className="alerts-meta">
-            Raised {new Date(occ.at).toLocaleString()}
+            {t('Raised')}{' '}{new Date(occ.at).toLocaleString()}
             {occ.resolvedAt === null ? '' : `, cleared ${new Date(occ.resolvedAt).toLocaleString()}`}
           </div>
           {occ.jobs.length === 0 ? (
-            <div className="alerts-quiet-line">Nothing ran during this one.</div>
+            <div className="alerts-quiet-line">{t('Nothing ran during this one.')}</div>
           ) : (
             occ.jobs.map((j) => (
               <div key={j.id}>
@@ -356,9 +353,7 @@ function RunbookRecallBody({ view }: { view: RunbookView }): React.JSX.Element {
           )}
           {occ.elided > 0 && (
             <div className="alerts-meta">
-              {occ.elided} further step{occ.elided === 1 ? '' : 's'} in this incident are not
-              listed. They are in the job itself.
-            </div>
+              {occ.elided} {t('further step')}{occ.elided === 1 ? '' : 's'} {t('in this incident are not listed. They are in the job itself.')}</div>
           )}
         </div>
       ))}
@@ -407,6 +402,7 @@ function OutstandingCard({
   hostLabel: string
   onRunbook: () => void
 }): React.JSX.Element {
+  const t = useT()
   const snoozedUntil = a.snoozedUntil
   const snoozed = snoozedUntil !== undefined && snoozedUntil > now
   // The reading, in the unit the reading is actually in — and nothing at all
@@ -420,7 +416,7 @@ function OutstandingCard({
         <span className="alert-kind">{LABEL[a.kind]}</span>
         <span className="alert-host">{hostLabel}</span>
         {reading !== '' && <span className="alert-reading">{reading}</span>}
-        <span className="alert-since">since {when(a.since, now)}</span>
+        <span className="alert-since">{t('since')}{' '}{when(a.since, now)}</span>
       </div>
 
       {/* Said out loud rather than shown as absence. A snoozed alert that
@@ -428,9 +424,7 @@ function OutstandingCard({
           quiet, which is the failure mode damping already had to answer for. */}
       {snoozed && (
         <div className="alert-snoozed-note">
-          Silenced: snoozed until {new Date(snoozedUntil).toLocaleTimeString()}. The condition has
-          not changed, so the status-bar chip stays up.
-        </div>
+          {t('Silenced: snoozed until')}{' '}{new Date(snoozedUntil).toLocaleTimeString()}{t('. The condition has not changed, so the status-bar chip stays up.')}</div>
       )}
 
       <div className="alert-actions">
@@ -442,27 +436,24 @@ function OutstandingCard({
             does not outrank the alert it belongs to. */}
         <button
           className="btn sm"
-          title="You have seen it and are dealing with it. The chip goes and nothing more is said until the condition itself clears — however long that takes."
+          title={t('You have seen it and are dealing with it. The chip goes and nothing more is said until the condition itself clears — however long that takes.')}
           onClick={() => acknowledgeAlert(a.serverId, a.kind)}
         >
-          Acknowledge
-        </button>
+          {t('Acknowledge')}</button>
         <button
           className="btn ghost sm"
-          title="Your note for this alert, and what was actually run the last three times it fired on this server."
+          title={t('Your note for this alert, and what was actually run the last three times it fired on this server.')}
           onClick={onRunbook}
         >
-          Runbook
-        </button>
+          {t('Runbook')}</button>
 
         <div className="alert-snooze">
           {snoozed ? (
             <button className="btn ghost sm" onClick={() => unsnoozeAlert(a.serverId, a.kind)}>
-              Wake
-            </button>
+              {t('Wake')}</button>
           ) : (
             <>
-              <span className="alert-snooze-label">Snooze for</span>
+              <span className="alert-snooze-label">{t('Snooze for')}</span>
               <span className="alert-snooze-group">
                 {SNOOZE_CHOICES.map((c) => (
                   <button
@@ -484,6 +475,7 @@ function OutstandingCard({
 }
 
 export function AlertsPanel(): React.JSX.Element {
+  const t = useT()
   const active = useAlerts((s) => s.active)
   const samplerStatus = useFleetStatus((s) => s.status)
   const samplingEnabled = useApp((s) => s.settings.fleetSamplingEnabled)
@@ -620,7 +612,7 @@ export function AlertsPanel(): React.JSX.Element {
       <div className="alerts-head">
         <AlertTriangle size={16} className={outstanding.length > 0 ? 'warn' : 'faint'} />
         <div className="grow">
-          <div className="alerts-title">Alerts</div>
+          <div className="alerts-title">{t('Alerts')}</div>
           <div className="alerts-sub">
             {outstanding.length === 0
               ? 'Nothing outstanding.'
@@ -628,12 +620,11 @@ export function AlertsPanel(): React.JSX.Element {
             {rows === null ? '' : `${rows.length} recorded.`}
           </div>
         </div>
-        <span className={clsx('chip', chip.tone)} title={alertCoverageLines(samplerStatus?.running, samplingEnabled)[0].text}>
+        <span className={clsx('chip', chip.tone)} title={t(alertCoverageLines(samplerStatus?.running, samplingEnabled)[0].text)}>
           {chip.label}
         </span>
         <button className="btn ghost sm" onClick={read} disabled={reading}>
-          <RefreshCw size={12} /> Refresh
-        </button>
+          <RefreshCw size={12} /> {t('Refresh')}</button>
       </div>
 
       {/* Not folded away with the rest of the prose, and not for symmetry: this
@@ -642,11 +633,9 @@ export function AlertsPanel(): React.JSX.Element {
       {!alertsEnabled && (
         <div className="alerts-banner">
           <span className="grow">
-            Resource alerts are switched off, so nothing new will be added below.
-          </span>
+            {t('Resource alerts are switched off, so nothing new will be added below.')}</span>
           <button className="btn ghost sm" onClick={() => openSettings('monitoring')}>
-            Monitoring settings
-          </button>
+            {t('Monitoring settings')}</button>
         </div>
       )}
 
@@ -654,7 +643,7 @@ export function AlertsPanel(): React.JSX.Element {
           be silent across an estate, so it is human-only and it says what it
           does NOT stop as prominently as what it does. */}
       <div className="alerts-section-head">
-        <span className="alerts-heading">Maintenance window</span>
+        <span className="alerts-heading">{t('Maintenance window')}</span>
       </div>
       {/* An OPEN window replaces the composer. It used to render byte-identical
           to no window at all — same dropdown, same empty reason field, same
@@ -666,13 +655,10 @@ export function AlertsPanel(): React.JSX.Element {
       {live !== null ? (
         <div className="alerts-banner alerts-banner-live" style={{ flexWrap: 'wrap', gap: 6 }}>
           <span className="grow">
-            <b>Maintenance window active.</b>{' '}
-            {live.alertCount} alert{live.alertCount === 1 ? '' : 's'} on {live.serverCount} server
-            {live.serverCount === 1 ? '' : 's'} {live.all ? '— everything outstanding — ' : ''}
-            silenced until {new Date(live.until).toLocaleTimeString()} ({remainingText(live.until, now)}{' '}
-            left). They are still being sampled, their chips stay up, and webhook endpoints still
-            receive everything.
-          </span>
+            <b>{t('Maintenance window active.')}</b>{' '}
+            {live.alertCount} {t('alert')}{live.alertCount === 1 ? '' : 's'} {t('on')}{' '}{live.serverCount} {t('server')}{live.serverCount === 1 ? '' : 's'} {live.all ? '— everything outstanding — ' : ''}
+            {t('silenced until')}{' '}{new Date(live.until).toLocaleTimeString()} ({remainingText(live.until, now)}{' '}
+            {t('left). They are still being sampled, their chips stay up, and webhook endpoints still receive everything.')}</span>
           <button
             className="btn"
             onClick={() => {
@@ -685,32 +671,29 @@ export function AlertsPanel(): React.JSX.Element {
               }
             }}
           >
-            End window now
-          </button>
+            {t('End window now')}</button>
         </div>
       ) : (
       <div className="alerts-banner" style={{ flexWrap: 'wrap', gap: 6 }}>
         {windowPlan === null ? (
           <>
             <span className="grow">
-              Stop announcing alerts on some servers for a while. They keep being sampled, their
-              chips stay up, and webhook endpoints still receive everything.
-            </span>
+              {t('Stop announcing alerts on some servers for a while. They keep being sampled, their chips stay up, and webhook endpoints still receive everything.')}</span>
             <select
               className="input sm"
-              aria-label="Window length"
+              aria-label={t('Window length')}
               value={windowHours}
               onChange={(e) => setWindowHours(Number(e.target.value))}
             >
-              <option value={1}>1 hour</option>
-              <option value={2}>2 hours</option>
-              <option value={4}>4 hours</option>
-              <option value={8}>8 hours</option>
+              <option value={1}>{t('1 hour')}</option>
+              <option value={2}>{t('2 hours')}</option>
+              <option value={4}>{t('4 hours')}</option>
+              <option value={8}>{t('8 hours')}</option>
             </select>
             <input
               className="input sm"
-              aria-label="What the window is for"
-              placeholder="What it is for"
+              aria-label={t('What the window is for')}
+              placeholder={t('What it is for')}
               value={windowNote}
               onChange={(e) => setWindowNote(e.target.value)}
             />
@@ -728,8 +711,7 @@ export function AlertsPanel(): React.JSX.Element {
                 setWindowError(c.ok ? null : c.reason)
               }}
             >
-              Open a window
-            </button>
+              {t('Open a window')}</button>
           </>
         ) : (
           <>
@@ -745,11 +727,9 @@ export function AlertsPanel(): React.JSX.Element {
                 setWindowError(n === 0 ? 'The window was not opened.' : null)
               }}
             >
-              Confirm
-            </button>
+              {t('Confirm')}</button>
             <button className="btn" onClick={() => setWindowPlan(null)}>
-              Cancel
-            </button>
+              {t('Cancel')}</button>
           </>
         )}
       </div>
@@ -760,7 +740,7 @@ export function AlertsPanel(): React.JSX.Element {
           Outstanding. The page.
           --------------------------------------------------------------- */}
       <div className="alerts-section-head">
-        <span className="alerts-heading">Outstanding</span>
+        <span className="alerts-heading">{t('Outstanding')}</span>
         {outstanding.length > 0 && <span className="chip warn">{outstanding.length}</span>}
         {/* The count alone read the same whether the fleet was announcing or
             silent. */}
@@ -777,10 +757,9 @@ export function AlertsPanel(): React.JSX.Element {
         <div className="alerts-quiet">
           <CheckCircle2 size={18} className="ok" />
           <div>
-            <div className="alerts-quiet-title">Nothing is outstanding right now.</div>
+            <div className="alerts-quiet-title">{t('Nothing is outstanding right now.')}</div>
             <div className="alerts-quiet-sub">
-              Anything that has been raised and cleared is in the history below.
-            </div>
+              {t('Anything that has been raised and cleared is in the history below.')}</div>
           </div>
         </div>
       ) : (
@@ -804,8 +783,7 @@ export function AlertsPanel(): React.JSX.Element {
       <details className="disclosure alerts-fold" data-testid="alerts-how-it-works">
         <summary className="disclosure-head">
           <ChevronRight size={14} className="chev" />
-          How alerting works — where each kind comes from, and what a snooze does
-        </summary>
+          {t('How alerting works — where each kind comes from, and what a snooze does')}</summary>
         <div className="disclosure-body">
           {/* Coverage, per kind, because the kinds are not produced by the same
               thing. The first line is the settings screen's own sentence from the
@@ -822,7 +800,7 @@ export function AlertsPanel(): React.JSX.Element {
               coverage for two kinds that have none at all. */}
           {alertCoverageLines(samplerStatus?.running, samplingEnabled).map((line) => (
             <div className="s-desc" key={line.source} data-testid={`alert-coverage-${line.source}`}>
-              <b>{line.kinds.map((k) => LABEL[k]).join(', ')}.</b> {line.text}
+              <b>{line.kinds.map((k) => LABEL[k]).join(', ')}.</b> {t(line.text)}
             </div>
           ))}
 
@@ -834,10 +812,7 @@ export function AlertsPanel(): React.JSX.Element {
               screen that disagreed with it. They are in the history below, and
               there is nothing to snooze because nothing repeats. */}
           <div className="s-desc">
-            <b>Database verdicts are not listed under Outstanding and cannot be snoozed:</b> they
-            are occurrences rather than conditions, so there is no repeat to stop. Every one is in
-            the history below.
-          </div>
+            <b>{t('Database verdicts are not listed under Outstanding and cannot be snoozed:')}</b> {t('they are occurrences rather than conditions, so there is no repeat to stop. Every one is in the history below.')}</div>
 
           {/* The pending period, said out loud.
               A rule that silently delays alerts is indistinguishable from one
@@ -846,25 +821,14 @@ export function AlertsPanel(): React.JSX.Element {
               table that enforces them, so the sentence cannot drift from the
               behaviour. */}
           <div className="s-desc" data-testid="alert-dwell">
-            <b>CPU, memory and load have to stay over the line for {dwellMinutes} minutes</b> —
-            and be read at least {DWELL_MIN_SAMPLES} times in that period — before anything is
-            said. A compile or a log rotation takes a host to 100% for a few seconds, and that is
-            not an incident. The status-bar chip still follows every reading, so nothing is
-            hidden; the all-clear waits the same {dwellMinutes} minutes, so one quiet sample on a
-            host that is still busy does not close an alert that is still true. Disk, inodes and
-            certificates have no wait: they do not move between two samples, and delaying them
-            would buy nothing.
-          </div>
+            <b>{t('CPU, memory and load have to stay over the line for')}{' '}{dwellMinutes} {t('minutes')}</b> {t('— and be read at least')}{' '}{DWELL_MIN_SAMPLES} {t('times in that period — before anything is said. A compile or a log rotation takes a host to 100% for a few seconds, and that is not an incident. The status-bar chip still follows every reading, so nothing is hidden; the all-clear waits the same')}{' '}{dwellMinutes} {t('minutes, so one quiet sample on a host that is still busy does not close an alert that is still true. Disk, inodes and certificates have no wait: they do not move between two samples, and delaying them would buy nothing.')}</div>
 
           {/* The two actions on a card, in the words their own tooltips use.
               Written down once here so the buttons themselves do not have to
               carry an explanation each. */}
           <div className="s-desc">
-            <b>Snoozing</b> stops this app talking about one host-and-kind for a while and leaves
-            the status-bar chip up, because the condition has not changed.{' '}
-            <b>Acknowledging</b> takes it out of Outstanding entirely and says nothing more until
-            the condition itself clears, however long that takes.
-          </div>
+            <b>{t('Snoozing')}</b> {t('stops this app talking about one host-and-kind for a while and leaves the status-bar chip up, because the condition has not changed.')}{' '}
+            <b>{t('Acknowledging')}</b> {t('takes it out of Outstanding entirely and says nothing more until the condition itself clears, however long that takes.')}</div>
         </div>
       </details>
 
@@ -884,13 +848,12 @@ export function AlertsPanel(): React.JSX.Element {
         <summary className="disclosure-head">
           <ChevronRight size={14} className="chev" />
           <BookOpen size={13} />
-          Runbook — your note, and what was run the last three times
-        </summary>
+          {t('Runbook — your note, and what was run the last three times')}</summary>
         <div className="disclosure-body">
           <div className="row" style={{ gap: 8, alignItems: 'center' }}>
             <select
               className="input"
-              aria-label="Runbook alert kind"
+              aria-label={t('Runbook alert kind')}
               value={runbook.kind}
               onChange={(e) =>
                 setRunbook((r) => ({ ...r, kind: e.target.value as StoreAlertKind }))
@@ -904,11 +867,11 @@ export function AlertsPanel(): React.JSX.Element {
             </select>
             <select
               className="input"
-              aria-label="Runbook server"
+              aria-label={t('Runbook server')}
               value={runbook.hostId ?? ''}
               onChange={(e) => setRunbook((r) => ({ ...r, hostId: e.target.value || null }))}
             >
-              <option value="">Every server</option>
+              <option value="">{t('Every server')}</option>
               {servers.map((srv) => (
                 <option key={srv.id} value={srv.id}>
                   {serverLabels.get(srv.id) ?? srv.name}
@@ -934,24 +897,19 @@ export function AlertsPanel(): React.JSX.Element {
         <summary className="disclosure-head">
           <ChevronRight size={14} className="chev" />
           <SlidersHorizontal size={13} />
-          Per-server thresholds — CPU and memory, where the estate is not uniform
-        </summary>
+          {t('Per-server thresholds — CPU and memory, where the estate is not uniform')}</summary>
         <div className="disclosure-body">
           <div className="s-desc">
-            The CPU and memory line for one server, where the estate is not uniform — a build box at
-            95% is working and a database at 95% is in trouble. Blank uses the workspace default of{' '}
-            {globalThreshold}%. Disk, inodes and load are deliberately not settable per server: they
-            are the numbers the Fleet Monitor colours a bar at and lists a server under, and an alert
-            firing at a different number from the screen it sends you to is worse than no alert.
-          </div>
+            {t('The CPU and memory line for one server, where the estate is not uniform — a build box at 95% is working and a database at 95% is in trouble. Blank uses the workspace default of')}{' '}
+            {globalThreshold}{t('%. Disk, inodes and load are deliberately not settable per server: they are the numbers the Fleet Monitor colours a bar at and lists a server under, and an alert firing at a different number from the screen it sends you to is worse than no alert.')}</div>
           {servers.length === 0 && !hydrated ? (
             // Same reason as the capacity panel: saved servers arrive from an
             // await, so an empty list at launch is "not read yet", not "none".
             // Only the empty branch waits -- a list with something in it needs
             // no confirmation.
-            <div className="alerts-quiet-line">Reading your servers…</div>
+            <div className="alerts-quiet-line">{t('Reading your servers…')}</div>
           ) : servers.length === 0 ? (
-            <div className="alerts-quiet-line">This workspace has no servers.</div>
+            <div className="alerts-quiet-line">{t('This workspace has no servers.')}</div>
           ) : (
             <table className="mini-table">
               <tbody>
@@ -993,17 +951,15 @@ export function AlertsPanel(): React.JSX.Element {
           so it stays on the page rather than behind a chevron.
           --------------------------------------------------------------- */}
       <div className="alerts-section-head">
-        <span className="alerts-heading">History</span>
+        <span className="alerts-heading">{t('History')}</span>
       </div>
       {failed ? (
         <div className="alerts-banner">
-          The alert log could not be read, so this history is not the history — it is nothing at
-          all. Anything raised while it is unreadable is still delivered.
-        </div>
+          {t('The alert log could not be read, so this history is not the history — it is nothing at all. Anything raised while it is unreadable is still delivered.')}</div>
       ) : rows === null ? (
-        <div className="alerts-quiet-line">Reading the alert log…</div>
+        <div className="alerts-quiet-line">{t('Reading the alert log…')}</div>
       ) : rows.length === 0 ? (
-        <div className="alerts-quiet-line">No alert has been recorded yet.</div>
+        <div className="alerts-quiet-line">{t('No alert has been recorded yet.')}</div>
       ) : (
         <table className="mini-table alerts-history">
           <tbody>
@@ -1023,11 +979,7 @@ export function AlertsPanel(): React.JSX.Element {
       )}
       {rows !== null && rows.length > LIMIT && (
         <div className="alerts-meta" style={{ marginTop: 4 }}>
-          Showing the most recent {LIMIT} of {rows.length} read back. Older events are kept for as
-          long as the history store keeps anything, and are not shown here — but they are still
-          read, which is what keeps a months-old alert from announcing itself again at every
-          launch.
-        </div>
+          {t('Showing the most recent')}{' '}{LIMIT} {t('of')}{' '}{rows.length} {t('read back. Older events are kept for as long as the history store keeps anything, and are not shown here — but they are still read, which is what keeps a months-old alert from announcing itself again at every launch.')}</div>
       )}
     </div>
   )

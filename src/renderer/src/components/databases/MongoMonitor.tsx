@@ -23,6 +23,7 @@ import {
   type MongoTopRate
 } from '../../../../shared/dbOps'
 import type { DbConnectConfig } from '../../../../shared/db'
+import { useT } from '../../i18n'
 
 /**
  * Live server activity, the way Compass's performance tab reads it.
@@ -176,6 +177,7 @@ export function MongoMonitor({
   cfg: DbConnectConfig
   visible: boolean
 }): React.JSX.Element {
+  const t = useT()
   /**
    * Every command here is an admin one — `top` and `$currentOp` are refused
    * anywhere else, and `serverStatus` is conventionally read there. The
@@ -359,14 +361,14 @@ export function MongoMonitor({
         {running && !latest && !statusError && <Loader2 size={13} className="spin" />}
         {now?.uptimeSeconds !== null && now?.uptimeSeconds !== undefined && (
           <span className="faint">
-            up {formatSeconds(now.uptimeSeconds)}
+            {t('up')}{' '}{formatSeconds(now.uptimeSeconds)}
           </span>
         )}
       </div>
 
       <div className="db-mon-grid">
         <Panel
-          title="Operations"
+          title={t('Operations')}
           note={statusError ? refusal(statusError, 'serverStatus').note : null}
           detail={statusError ? refusal(statusError, 'serverStatus').detail : null}
         >
@@ -401,28 +403,26 @@ export function MongoMonitor({
               right now, so they are shown as they were read and never
               differenced. */}
           <div className="db-mon-stats">
-            <Stat label="active reads" value={gauge(now?.activeReads)} history={gaugeSeries((s) => s.activeReads)} color="var(--ok)" />
-            <Stat label="active writes" value={gauge(now?.activeWrites)} history={gaugeSeries((s) => s.activeWrites)} color="var(--ok)" />
-            <Stat label="queued reads" value={gauge(now?.queuedReads)} history={gaugeSeries((s) => s.queuedReads)} color="var(--warn)" />
-            <Stat label="queued writes" value={gauge(now?.queuedWrites)} history={gaugeSeries((s) => s.queuedWrites)} color="var(--warn)" />
+            <Stat label={t('active reads')} value={gauge(now?.activeReads)} history={gaugeSeries((s) => s.activeReads)} color="var(--ok)" />
+            <Stat label={t('active writes')} value={gauge(now?.activeWrites)} history={gaugeSeries((s) => s.activeWrites)} color="var(--ok)" />
+            <Stat label={t('queued reads')} value={gauge(now?.queuedReads)} history={gaugeSeries((s) => s.queuedReads)} color="var(--warn)" />
+            <Stat label={t('queued writes')} value={gauge(now?.queuedWrites)} history={gaugeSeries((s) => s.queuedWrites)} color="var(--warn)" />
           </div>
           <div className="faint db-mon-foot">
-            Queued is the one to watch: a client in the queue is waiting for the lock rather than
-            working.
-          </div>
+            {t('Queued is the one to watch: a client in the queue is waiting for the lock rather than working.')}</div>
         </Panel>
 
         <Panel
-          title="Network"
+          title={t('Network')}
           note={statusError ? refusal(statusError, 'serverStatus').note : null}
           detail={statusError ? refusal(statusError, 'serverStatus').detail : null}
         >
           <div className="db-mon-stats">
-            <Stat label="bytes in" value={bytesPerSec(latest?.bytesInPerSec)} history={series((r) => r.bytesInPerSec)} />
-            <Stat label="bytes out" value={bytesPerSec(latest?.bytesOutPerSec)} history={series((r) => r.bytesOutPerSec)} />
-            <Stat label="requests" value={`${perSec(latest?.requestsPerSec)}/s`} history={series((r) => r.requestsPerSec)} />
+            <Stat label={t('bytes in')} value={bytesPerSec(latest?.bytesInPerSec)} history={series((r) => r.bytesInPerSec)} />
+            <Stat label={t('bytes out')} value={bytesPerSec(latest?.bytesOutPerSec)} history={series((r) => r.bytesOutPerSec)} />
+            <Stat label={t('requests')} value={`${perSec(latest?.requestsPerSec)}/s`} history={series((r) => r.requestsPerSec)} />
             <Stat
-              label="connections"
+              label={t('connections')}
               value={
                 now?.connectionsCurrent === null || now?.connectionsCurrent === undefined
                   ? '—'
@@ -434,18 +434,18 @@ export function MongoMonitor({
         </Panel>
 
         <Panel
-          title="Memory"
+          title={t('Memory')}
           note={statusError ? refusal(statusError, 'serverStatus').note : null}
           detail={statusError ? refusal(statusError, 'serverStatus').detail : null}
         >
           <div className="db-mon-stats">
-            <Stat label="resident" value={now?.memResidentBytes === null || now?.memResidentBytes === undefined ? '—' : formatBytes(now.memResidentBytes)} history={gaugeSeries((s) => s.memResidentBytes)} />
-            <Stat label="virtual" value={now?.memVirtualBytes === null || now?.memVirtualBytes === undefined ? '—' : formatBytes(now.memVirtualBytes)} history={gaugeSeries((s) => s.memVirtualBytes)} />
+            <Stat label={t('resident')} value={now?.memResidentBytes === null || now?.memResidentBytes === undefined ? '—' : formatBytes(now.memResidentBytes)} history={gaugeSeries((s) => s.memResidentBytes)} />
+            <Stat label={t('virtual')} value={now?.memVirtualBytes === null || now?.memVirtualBytes === undefined ? '—' : formatBytes(now.memVirtualBytes)} history={gaugeSeries((s) => s.memVirtualBytes)} />
           </div>
         </Panel>
 
         <Panel
-          title="Hottest collections"
+          title={t('Hottest collections')}
           note={topError ? refusal(topError, 'top').note : null}
           detail={topError ? refusal(topError, 'top').detail : null}
         >
@@ -453,11 +453,11 @@ export function MongoMonitor({
             <table className="table db-mon-table">
               <thead>
                 <tr>
-                  <th>namespace</th>
+                  <th>{t('namespace')}</th>
                   <th>ops/s</th>
                   <th>reads/s</th>
                   <th>writes/s</th>
-                  <th>mean</th>
+                  <th>{t('mean')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -486,7 +486,7 @@ export function MongoMonitor({
         </Panel>
 
         <Panel
-          title="Slowest operations"
+          title={t('Slowest operations')}
           note={opsError ? refusal(opsError, '$currentOp').note : null}
           detail={opsError ? refusal(opsError, '$currentOp').detail : null}
         >
@@ -495,11 +495,11 @@ export function MongoMonitor({
               <table className="table db-mon-table">
                 <thead>
                   <tr>
-                    <th>op</th>
-                    <th>namespace</th>
-                    <th>running</th>
-                    <th>plan</th>
-                    <th>lock</th>
+                    <th>{t('op')}</th>
+                    <th>{t('namespace')}</th>
+                    <th>{t('running')}</th>
+                    <th>{t('plan')}</th>
+                    <th>{t('lock')}</th>
                   </tr>
                 </thead>
                 <tbody>

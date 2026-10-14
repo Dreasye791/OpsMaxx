@@ -1,5 +1,7 @@
 # FAQ
 
+**English** · [简体中文](zh-CN/faq.md)
+
 Common questions about installing, trusting, and using OpsMaxx.
 
 [← Back to the README](../README.md)

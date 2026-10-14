@@ -34,6 +34,7 @@ import {
   type CloudInstance,
   type CloudLocation
 } from '../../../../shared/cloudCommands'
+import { useT } from '../../i18n'
 
 /**
  * The cloud half of the connection editor.
@@ -213,6 +214,7 @@ export function CloudTargetFields({
   draft: CloudDraft
   onChange: (next: CloudDraft) => void
 }): React.JSX.Element {
+  const t = useT()
   const labels = LABELS[provider]
   const [detection, setDetection] = useState<Detection>(NOT_CHECKED)
   const [accounts, setAccounts] = useState<Level<CloudAccount>>(emptyLevel)
@@ -372,27 +374,23 @@ export function CloudTargetFields({
           {provider === 'aws' && (
             <div className="field">
               <label className="field-label" htmlFor="cloud-osuser">
-                OS user
-              </label>
+                {t('OS user')}</label>
               <input
                 id="cloud-osuser"
                 className="input"
                 value={draft.osUser}
-                placeholder="ubuntu"
+                placeholder={t('ubuntu')}
                 onChange={(e) => set({ osUser: e.target.value })}
               />
               <span className="field-hint">
-                The account on the instance. EC2 Instance Connect publishes a key for this user for
-                sixty seconds; nothing is stored.
-              </span>
+                {t('The account on the instance. EC2 Instance Connect publishes a key for this user for sixty seconds; nothing is stored.')}</span>
             </div>
           )}
 
           {provider !== 'azure' && (
             <div className="field">
               <label className="field-label" htmlFor="cloud-transport">
-                Transport
-              </label>
+                {t('Transport')}</label>
               <select
                 id="cloud-transport"
                 className="input"
@@ -411,11 +409,9 @@ export function CloudTargetFields({
 
           {provider === 'azure' && (
             <div className="field">
-              <label className="field-label">Authentication</label>
+              <label className="field-label">{t('Authentication')}</label>
               <div className="field-hint">
-                Microsoft Entra ID. Azure issues a short-lived certificate for each connection; no
-                key is stored and access expires on its own.
-              </div>
+                {t('Microsoft Entra ID. Azure issues a short-lived certificate for each connection; no key is stored and access expires on its own.')}</div>
             </div>
           )}
 
@@ -447,6 +443,7 @@ function CommandPreview({
   provider: CloudProvider
   draft: CloudDraft
 }): React.JSX.Element | null {
+  const t = useT()
   const [open, setOpen] = useState(false)
   const target = draftToTarget(provider, draft)
   if (!target) return null
@@ -465,24 +462,20 @@ function CommandPreview({
     <div className="field">
       <button type="button" className="disclosure" onClick={() => setOpen(!open)}>
         <ChevronRight size={12} className={clsx('disclosure-chevron', open && 'open')} />
-        What OpsMaxx will run
-      </button>
+        {t('What OpsMaxx will run')}</button>
       {open && (
         <>
           <pre className="field-hint" style={{ whiteSpace: 'pre-wrap', userSelect: 'text' }}>
             {text}
           </pre>
           <span className="field-hint">
-            Run with your own {CLOUD_PROVIDER_CLI_NAME[provider]}, as you. OpsMaxx connects to what
-            these hand back; it never runs an SSH client of its own.
-          </span>
+            {t('Run with your own')}{' '}{CLOUD_PROVIDER_CLI_NAME[provider]}{t(', as you. OpsMaxx connects to what these hand back; it never runs an SSH client of its own.')}</span>
           <button
             type="button"
             className="btn size-28"
             onClick={() => void navigator.clipboard?.writeText(text)}
           >
-            <Copy size={12} /> Copy
-          </button>
+            <Copy size={12} /> {t('Copy')}</button>
         </>
       )}
     </div>
@@ -590,6 +583,7 @@ function Picker({
   onChange: (value: string) => void
   disabled?: boolean
 }): React.JSX.Element {
+  const t = useT()
   const id = `cloud-${label.toLowerCase().replace(/\s+/g, '-')}`
   const [picking, setPicking] = useState(false)
 
@@ -646,9 +640,7 @@ function Picker({
         <div className="cloud-pick">
           {shown.length === 0 ? (
             <div className="faint" style={{ padding: '6px 10px' }}>
-              Nothing matches what you have typed. It is still a valid {label.toLowerCase()} if
-              you know it — the list is only what we could enumerate.
-            </div>
+              {t('Nothing matches what you have typed. It is still a valid')}{' '}{label.toLowerCase()} {t('if you know it — the list is only what we could enumerate.')}</div>
           ) : (
             shown.map((o) => (
               <button
@@ -667,20 +659,18 @@ function Picker({
           )}
           {options.length > shown.length && (
             <div className="faint" style={{ padding: '4px 10px' }}>
-              {shown.length} of {options.length} — keep typing to narrow.
-            </div>
+              {shown.length} {t('of')}{' '}{options.length} {t('— keep typing to narrow.')}</div>
           )}
         </div>
       )}
       {chosen && chosen.label !== value && <span className="field-hint">{chosen.label}</span>}
       {level.loading && (
         <span className="field-hint">
-          <Loader2 size={11} className="spin" /> Looking…
-        </span>
+          <Loader2 size={11} className="spin" /> {t('Looking…')}</span>
       )}
       {!level.loading && level.error && (
         <span className="field-hint">
-          {level.error} You can still type the {label.toLowerCase()} in.
+          {level.error} {t('You can still type the')}{' '}{label.toLowerCase()} in.
         </span>
       )}
     </div>
@@ -703,13 +693,14 @@ function CliStatus({
   detection: Detection
   onRetry: () => void
 }): React.JSX.Element {
+  const t = useT()
   const name = CLOUD_PROVIDER_CLI_NAME[provider]
 
   if (!detection.checked) {
     return (
       <div className="field">
         <span className="field-hint">
-          <Loader2 size={11} className="spin" /> Looking for {name}…
+          <Loader2 size={11} className="spin" /> {t('Looking for')}{' '}{name}…
         </span>
       </div>
     )
@@ -722,12 +713,9 @@ function CliStatus({
           <AlertTriangle size={11} /> {detection.error || `${name} was not detected.`}
         </span>
         <span className="field-hint">
-          OpsMaxx uses the {name} you already have installed, and never installs one itself. Install
-          it, sign in, then check again.
-        </span>
+          {t('OpsMaxx uses the')}{' '}{name} {t('you already have installed, and never installs one itself. Install it, sign in, then check again.')}</span>
         <button type="button" className="btn size-28" onClick={onRetry}>
-          <RefreshCw size={12} /> Check again
-        </button>
+          <RefreshCw size={12} /> {t('Check again')}</button>
       </div>
     )
   }
@@ -741,11 +729,10 @@ function CliStatus({
         <Terminal size={11} /> {detection.path}
       </span>
       {detection.authenticated ? (
-        <span className="field-hint ok">Signed in as {detection.account}</span>
+        <span className="field-hint ok">{t('Signed in as')}{' '}{detection.account}</span>
       ) : (
         <span className="field-hint danger">
-          <AlertTriangle size={11} /> Not signed in. Sign in with {name}, then check again.
-        </span>
+          <AlertTriangle size={11} /> {t('Not signed in. Sign in with')}{' '}{name}{t(', then check again.')}</span>
       )}
     </div>
   )

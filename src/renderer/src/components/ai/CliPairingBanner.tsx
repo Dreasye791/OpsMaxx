@@ -3,6 +3,7 @@ import { Modal } from '../common/Modal'
 import type { CliPairingRequest } from '../../../../shared/mcp'
 import { bridgeOn } from '../../lib/bridge'
 import { StartsInMode } from './ModePicker'
+import { useT } from '../../i18n'
 
 // Mounted once at the app root, like ApprovalWatcher: the `opsmaxx
 // claude|codex|run` CLI launcher can pair from any tab the user happens to
@@ -10,6 +11,7 @@ import { StartsInMode } from './ModePicker'
 // local process asked for it — only display it and let the user type it into
 // their own terminal proves they can see both.
 export function CliPairingBanner(): React.JSX.Element | null {
+  const t = useT()
   const [request, setRequest] = useState<CliPairingRequest | null>(null)
   const [secondsLeft, setSecondsLeft] = useState(0)
 
@@ -38,29 +40,27 @@ export function CliPairingBanner(): React.JSX.Element | null {
   }
 
   return (
-    <Modal title="A CLI wants to connect" onClose={cancel}>
+    <Modal title={t('A CLI wants to connect')} onClose={cancel}>
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Agent</div>
+          <div className="s-title">{t('Agent')}</div>
           <div className="s-desc">{request.agentName}</div>
           <StartsInMode />
         </div>
       </div>
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Type this code into the terminal that asked for it</div>
+          <div className="s-title">{t('Type this code into the terminal that asked for it')}</div>
           <div className="s-title mono" style={{ fontSize: 28, letterSpacing: 6, marginTop: 6 }}>
             {request.code}
           </div>
           <div className="s-desc" style={{ marginTop: 6 }}>
-            Expires in {secondsLeft}s. If you did not run an OpsMaxx CLI command, click Cancel.
-          </div>
+            {t('Expires in')}{' '}{secondsLeft}{t('s. If you did not run an OpsMaxx CLI command, click Cancel.')}</div>
         </div>
       </div>
       <div className="setting-row" style={{ marginTop: 12 }}>
         <button className="btn danger outline" onClick={cancel}>
-          Cancel
-        </button>
+          {t('Cancel')}</button>
       </div>
     </Modal>
   )

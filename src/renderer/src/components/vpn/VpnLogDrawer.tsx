@@ -4,6 +4,7 @@ import { Modal } from '../common/Modal'
 import type { VpnLogLine } from '../../types'
 import { clsx } from '../../lib/format'
 import { bridgeHas } from '../../lib/bridge'
+import { useT } from '../../i18n'
 
 // The renderer's own cap. Main already rings its buffer, but a drawer left open
 // through a reconnect loop would otherwise grow an unbounded React list in a
@@ -60,6 +61,7 @@ export function VpnLogDrawer({
   profileName,
   onClose
 }: VpnLogDrawerProps): React.JSX.Element {
+  const t = useT()
   const [lines, setLines] = useState<VpnLogLine[]>([])
   const [copied, setCopied] = useState(false)
 
@@ -130,7 +132,7 @@ export function VpnLogDrawer({
       footer={
         <>
           <span className="faint" style={{ fontSize: 11 }}>
-            Showing the last {MAX_LINES} lines.
+            {t('Showing the last')}{' '}{MAX_LINES} lines.
           </span>
           <span className="spacer" />
           {/* Because the thing people come here for is usually one line — an
@@ -143,11 +145,9 @@ export function VpnLogDrawer({
             {copied ? 'Copied' : 'Copy all'}
           </button>
           <button className="btn" onClick={() => setLines([])}>
-            Clear view
-          </button>
+            {t('Clear view')}</button>
           <button className="btn primary" onClick={onClose}>
-            Close
-          </button>
+            {t('Close')}</button>
         </>
       }
     >
@@ -161,7 +161,7 @@ export function VpnLogDrawer({
         }}
       >
         {lines.length === 0 ? (
-          <div className="log-line faint">No output yet.</div>
+          <div className="log-line faint">{t('No output yet.')}</div>
         ) : (
           collapse(lines).map((l, i) => (
             <div key={`${l.at}-${i}`} className={clsx('log-line', STREAM_CLASS[l.stream])}>

@@ -11,6 +11,7 @@ import {
 } from '../../../../shared/frpTunnel'
 import type { FrpPublicHost, FrpSpec, FrpTokenResult, VpnProfile } from '../../../../shared/vpn'
 import { Switch } from '../common/Switch'
+import { useT } from '../../i18n'
 
 /**
  * `vpn.frpToken`, read off the bridge rather than called through it.
@@ -79,6 +80,7 @@ export function FrpTunnelSetup({
   onClose,
   onDone
 }: FrpTunnelSetupProps): React.JSX.Element {
+  const t = useT()
   const upsertVpnProfile = useApp((s) => s.upsertVpnProfile)
   const base = existing?.spec.kind === 'frp' ? existing.spec : null
 
@@ -180,7 +182,7 @@ export function FrpTunnelSetup({
 
   return (
     <Modal
-      title="Set up a tunnel server"
+      title={t('Set up a tunnel server')}
       subtitle="Once. After this, publishing a port is one step."
       size="lg"
       onClose={onClose}
@@ -189,18 +191,15 @@ export function FrpTunnelSetup({
       <div className="col" style={{ gap: 14 }}>
         {/* Said once, here, and nowhere else in this pane. */}
         <p className="muted" style={{ fontSize: 12, margin: 0, lineHeight: 1.5 }}>
-          OpsMaxx does not serve public addresses. frp publishes through an frp server you run,
-          under a domain you own — so those are the two things this asks for. It is the only time
-          it will.
-        </p>
+          {t('OpsMaxx does not serve public addresses. frp publishes through an frp server you run, under a domain you own — so those are the two things this asks for. It is the only time it will.')}</p>
 
-        <Field label="Name">
+        <Field label={t('Name')}>
           <input className="input" value={name} onChange={(e) => setName(e.target.value)} />
         </Field>
 
         <div className="field-row">
           <Field
-            label="frp server address"
+            label={t('frp server address')}
             required
             error={
               serverAddr.trim() === '' ? 'Name the frp server this client dials.' : null
@@ -214,7 +213,7 @@ export function FrpTunnelSetup({
             />
           </Field>
           <Field
-            label="Control port"
+            label={t('Control port')}
             required
             error={serverPort > 0 && serverPort < 65536 ? null : 'A port between 1 and 65535.'}
           >
@@ -229,7 +228,7 @@ export function FrpTunnelSetup({
         </div>
 
         <Field
-          label="Server token"
+          label={t('Server token')}
           hint={
             storeToken
               ? 'Stored in the vault. Leave it empty if your frp server has no token.'
@@ -250,7 +249,7 @@ export function FrpTunnelSetup({
 
         <div className="field-row">
           <Field
-            label="Your domain"
+            label={t('Your domain')}
             required
             error={
               baseDomain.trim() === ''
@@ -267,7 +266,7 @@ export function FrpTunnelSetup({
               onChange={(e) => setBaseDomain(e.target.value)}
             />
           </Field>
-          <Field label="Served over">
+          <Field label={t('Served over')}>
             <select
               className="input"
               value={scheme}
@@ -280,7 +279,7 @@ export function FrpTunnelSetup({
               ))}
             </select>
           </Field>
-          <Field label="Port in the URL">
+          <Field label={t('Port in the URL')}>
             <input
               className="input"
               type="number"
@@ -296,13 +295,11 @@ export function FrpTunnelSetup({
           // wish fails in the browser rather than here, where it could be
           // explained.
           <span className="field-hint">
-            Choose https only if something in front of your frp server terminates TLS for these
-            names. frp does not do it for you.
-          </span>
+            {t('Choose https only if something in front of your frp server terminates TLS for these names. frp does not do it for you.')}</span>
         )}
 
         <div className="field">
-          <span className="field-label">The DNS record</span>
+          <span className="field-label">{t('The DNS record')}</span>
           <code
             className="input"
             style={{ display: 'block', fontSize: 12, padding: '6px 8px', userSelect: 'text' }}
@@ -310,8 +307,7 @@ export function FrpTunnelSetup({
             {record}
           </code>
           <span className="field-hint">
-            A wildcard, so every service you publish later gets a name without another DNS change.
-            {example ? ` A service named "staging" would appear at ${example}.` : ''}
+            {t('A wildcard, so every service you publish later gets a name without another DNS change.')}{example ? ` A service named "staging" would appear at ${example}.` : ''}
           </span>
         </div>
 
@@ -321,14 +317,12 @@ export function FrpTunnelSetup({
         <label className="row" style={{ gap: 8, alignItems: 'flex-start' }}>
           <Switch
             checked={confirmed}
-            label="I have created this record, and my frp server serves HTTP for these names."
+            label={t('I have created this record, and my frp server serves HTTP for these names.')}
             style={{ marginTop: 1 }}
             onChange={setConfirmed}
           />
           <span style={{ fontSize: 12, color: confirmed ? 'var(--text-muted)' : 'var(--warn)' }}>
-            I have created this record, and my frp server serves HTTP for these names. OpsMaxx
-            does not check — it cannot see your DNS.
-          </span>
+            {t('I have created this record, and my frp server serves HTTP for these names. OpsMaxx does not check — it cannot see your DNS.')}</span>
         </label>
       </div>
     </Modal>

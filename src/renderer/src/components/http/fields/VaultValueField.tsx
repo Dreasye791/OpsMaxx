@@ -6,6 +6,7 @@ import { Popover } from '../../common/Popover'
 import { VaultPicker } from './VaultPicker'
 import { UnlockVaultButton } from '../../common/UnlockVaultButton'
 import '../../common/primitives.css'
+import { useT } from '../../../i18n'
 
 export interface VaultValueFieldProps {
   /** A literal, or `vault:<entryId>#password|username`. */
@@ -33,6 +34,7 @@ export function vaultLabel(value: string): { name: string; missing: boolean } | 
  * request is sent. A vault reference shows the entry's name and a lock.
  */
 export function VaultValueField({ value, onChange, allowLiteral, ariaLabel }: VaultValueFieldProps): React.JSX.Element {
+  const t = useT()
   // Re-render when the vault opens or its entries change, so a name appears.
   useVault((s) => s.entries)
   const unlocked = useVault((s) => s.unlocked)
@@ -54,22 +56,21 @@ export function VaultValueField({ value, onChange, allowLiteral, ariaLabel }: Va
     return (
       <div className="hc-vault-value" role="group" aria-label={ariaLabel}>
         <Lock size={12} aria-hidden="true" />
-        <span className={label.missing ? 'hc-vault-name is-missing' : 'hc-vault-name'} title="Read from the vault when the request is sent">
+        <span className={label.missing ? 'hc-vault-name is-missing' : 'hc-vault-name'} title={t('Read from the vault when the request is sent')}>
           {label.name}
         </span>
         {unlocked ? (
           <button type="button" className="btn ghost sm" onClick={openPicker}>
-            Change…
-          </button>
+            {t('Change…')}</button>
         ) : (
-          <UnlockVaultButton reason="Show which vault entry this value is read from." label="Unlock" className="btn ghost sm" />
+          <UnlockVaultButton reason="Show which vault entry this value is read from." label={t('Unlock')} className="btn ghost sm" />
         )}
         {allowLiteral && (
           <button
             type="button"
             className="btn ghost sm"
-            aria-label="Stop reading this from the vault"
-            title="Stop reading this from the vault"
+            aria-label={t('Stop reading this from the vault')}
+            title={t('Stop reading this from the vault')}
             onClick={() => onChange('')}
           >
             <X size={12} aria-hidden="true" />
@@ -84,17 +85,17 @@ export function VaultValueField({ value, onChange, allowLiteral, ariaLabel }: Va
       {allowLiteral ? (
         <input className="hc-input hc-mono" aria-label={ariaLabel} value={value} onChange={(e) => onChange(e.target.value)} />
       ) : (
-        <span className="hc-vault-name is-empty">No vault entry chosen</span>
+        <span className="hc-vault-name is-empty">{t('No vault entry chosen')}</span>
       )}
       <button
         type="button"
         className="btn ghost sm"
-        aria-label="Read from vault…"
-        title="Read from vault…"
+        aria-label={t('Read from vault…')}
+        title={t('Read from vault…')}
         onClick={openPicker}
       >
         <KeyRound size={12} aria-hidden="true" />
-        {!allowLiteral && <span>Choose…</span>}
+        {!allowLiteral && <span>{t('Choose…')}</span>}
       </button>
       {pick}
     </div>

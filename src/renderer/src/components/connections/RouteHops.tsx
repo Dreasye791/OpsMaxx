@@ -1,6 +1,7 @@
 import { ArrowDown, ArrowUp, KeyRound, Plus, Shield, Trash2 } from 'lucide-react'
 import { useWorkspaceServers } from '../../store/app'
 import type { Hop } from '../../types'
+import { useT } from '../../i18n'
 
 let hopSeq = 0
 
@@ -14,6 +15,7 @@ interface Props {
 // Shared jump-route editor. Used both inside the add/edit server dialog and by
 // the standalone route editor, so the two can never drift apart.
 export function RouteHops({ hops, onChange, excludeServerId }: Props): React.JSX.Element {
+  const t = useT()
   const servers = useWorkspaceServers()
 
   const add = (): void =>
@@ -78,18 +80,16 @@ export function RouteHops({ hops, onChange, excludeServerId }: Props): React.JSX
     <div className="field">
       <div className="row" style={{ marginBottom: 6 }}>
         <label className="field-label" style={{ margin: 0 }}>
-          Jump hosts {hops.length > 0 && `(${hops.length})`}
+          {t('Jump hosts')}{' '}{hops.length > 0 && `(${hops.length})`}
         </label>
         <span className="spacer" />
         <button className="btn sm" onClick={add}>
-          <Plus size={13} /> Add jump host
-        </button>
+          <Plus size={13} /> {t('Add jump host')}</button>
       </div>
 
       {hops.length === 0 && (
         <span className="field-hint">
-          Connects directly. Add a jump host to reach a server that is only routable from a bastion.
-        </span>
+          {t('Connects directly. Add a jump host to reach a server that is only routable from a bastion.')}</span>
       )}
 
       {hops.map((h, i) => (
@@ -97,16 +97,16 @@ export function RouteHops({ hops, onChange, excludeServerId }: Props): React.JSX
           <div className="row" style={{ gap: 6 }}>
             <Shield size={14} style={{ color: 'var(--warn)' }} />
             <span className="faint" style={{ fontSize: 11 }}>
-              Hop {i + 1}
+              {t('Hop')}{' '}{i + 1}
             </span>
             <span className="spacer" />
-            <button className="icon-btn sm" title="Move up" onClick={() => move(i, -1)}>
+            <button className="icon-btn sm" title={t('Move up')} onClick={() => move(i, -1)}>
               <ArrowUp size={13} />
             </button>
-            <button className="icon-btn sm" title="Move down" onClick={() => move(i, 1)}>
+            <button className="icon-btn sm" title={t('Move down')} onClick={() => move(i, 1)}>
               <ArrowDown size={13} />
             </button>
-            <button className="icon-btn sm" title="Remove" onClick={() => remove(h.id)}>
+            <button className="icon-btn sm" title={t('Remove')} onClick={() => remove(h.id)}>
               <Trash2 size={13} />
             </button>
           </div>
@@ -115,14 +115,14 @@ export function RouteHops({ hops, onChange, excludeServerId }: Props): React.JSX
             className="input"
             value={h.serverId ?? ''}
             onChange={(e) => selectSavedServer(h.id, e.target.value)}
-            title="Reuse a saved server, including its stored credentials"
+            title={t('Reuse a saved server, including its stored credentials')}
           >
-            <option value="">Custom server — set details below</option>
+            <option value="">{t('Custom server — set details below')}</option>
             {servers
               .filter((s) => s.id !== excludeServerId)
               .map((s) => (
                 <option key={s.id} value={s.id}>
-                  Use saved: {s.name} ({s.username}@{s.host})
+                  {t('Use saved:')}{' '}{s.name} ({s.username}@{s.host})
                 </option>
               ))}
           </select>
@@ -155,16 +155,16 @@ export function RouteHops({ hops, onChange, excludeServerId }: Props): React.JSX
               dialog rather than overflowing it. */}
           <div className="hop-fields">
             <label className="hop-field hop-name">
-              <span className="field-label">Label</span>
+              <span className="field-label">{t('Label')}</span>
               <input
                 className="input"
-                placeholder="bastion"
+                placeholder={t('bastion')}
                 value={h.label}
                 onChange={(e) => patch(h.id, 'label', e.target.value)}
               />
             </label>
             <label className="hop-field hop-host">
-              <span className="field-label">Server / IP</span>
+              <span className="field-label">{t('Server / IP')}</span>
               <input
                 className="input"
                 placeholder="10.20.0.10"
@@ -174,7 +174,7 @@ export function RouteHops({ hops, onChange, excludeServerId }: Props): React.JSX
               />
             </label>
             <label className="hop-field hop-port">
-              <span className="field-label">Port</span>
+              <span className="field-label">{t('Port')}</span>
               <input
                 className="input"
                 value={h.port}
@@ -183,7 +183,7 @@ export function RouteHops({ hops, onChange, excludeServerId }: Props): React.JSX
               />
             </label>
             <label className="hop-field hop-user">
-              <span className="field-label">Username</span>
+              <span className="field-label">{t('Username')}</span>
               <input
                 className="input"
                 value={h.username}
@@ -207,8 +207,7 @@ export function RouteHops({ hops, onChange, excludeServerId }: Props): React.JSX
               disabled={!!h.serverId}
               onClick={() => void pickKey(h.id)}
             >
-              <KeyRound size={13} /> Browse
-            </button>
+              <KeyRound size={13} /> {t('Browse')}</button>
           </div>
         </div>
       ))}

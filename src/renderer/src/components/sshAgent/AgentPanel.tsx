@@ -5,6 +5,7 @@ import { useVault } from '../../store/vault'
 import { UnlockVaultButton } from '../common/UnlockVaultButton'
 import { toast } from '../../store/toast'
 import type { AgentIdentity, AgentStatus, ApprovalScope } from '../../../../shared/sshAgentHost'
+import { useT } from '../../i18n'
 
 /**
  * Turning the agent on, and the one thing the user has to do afterwards.
@@ -15,6 +16,7 @@ import type { AgentIdentity, AgentStatus, ApprovalScope } from '../../../../shar
  * is shown, with the exact line to put in a shell, and it is copyable.
  */
 export function AgentPanel(): React.JSX.Element {
+  const t = useT()
   const settings = useApp((s) => s.settings.sshAgent)
   const setSettings = useApp((s) => s.setSettings)
   const [status, setStatus] = useState<AgentStatus>({ running: false, identities: 0 })
@@ -52,11 +54,9 @@ export function AgentPanel(): React.JSX.Element {
     <div className="agent-panel">
       <label className="setting-row">
         <div>
-          <div className="setting-label">Let other tools use the SSH keys in your vault</div>
+          <div className="setting-label">{t('Let other tools use the SSH keys in your vault')}</div>
           <div className="setting-desc">
-            Starts an SSH agent that offers the keys stored here to git, ansible, rsync and anything
-            else that looks for one. Nothing is signed without asking you first.
-          </div>
+            {t('Starts an SSH agent that offers the keys stored here to git, ansible, rsync and anything else that looks for one. Nothing is signed without asking you first.')}</div>
         </div>
         <input
           type="checkbox"
@@ -73,19 +73,17 @@ export function AgentPanel(): React.JSX.Element {
 
       {status.running && status.path && (
         <div className="agent-panel-sock">
-          <div className="setting-label">Point your shell at it</div>
+          <div className="setting-label">{t('Point your shell at it')}</div>
           {/* The step that is easy to skip and silently fatal: an agent
               nothing points at does nothing, `git push` goes on using ~/.ssh,
               and the user concludes the feature is broken. */}
           <div className="setting-desc">
-            Add this to your shell profile, or run it in a terminal to try it now. The path changes
-            each time OpsMaxx starts.
-          </div>
+            {t('Add this to your shell profile, or run it in a terminal to try it now. The path changes each time OpsMaxx starts.')}</div>
           <div className="agent-panel-code">
             <code>{envLine}</code>
             <button
               className="btn"
-              aria-label="Copy"
+              aria-label={t('Copy')}
               onClick={() => {
                 void navigator.clipboard.writeText(envLine)
                 setCopied(true)
@@ -97,7 +95,7 @@ export function AgentPanel(): React.JSX.Element {
             </button>
           </div>
           <div className="setting-desc">
-            Then <code>ssh-add -l</code> should list {usable.length}{' '}
+            {t('Then')}{' '}<code>{t('ssh-add -l')}</code> {t('should list')}{' '}{usable.length}{' '}
             {usable.length === 1 ? 'key' : 'keys'}.
           </div>
         </div>
@@ -105,8 +103,7 @@ export function AgentPanel(): React.JSX.Element {
 
       <div className="agent-panel-keys">
         <div className="setting-label">
-          <KeyRound size={14} aria-hidden /> Keys it can offer
-        </div>
+          <KeyRound size={14} aria-hidden /> {t('Keys it can offer')}</div>
         {/* A LOCKED VAULT IS NOT AN EMPTY ONE.
             `identities()` reads through `vaultEntriesForResolve`, which
             answers nothing while the vault is locked — so every key vanished
@@ -119,15 +116,12 @@ export function AgentPanel(): React.JSX.Element {
           (vaultLocked ? (
             <div className="row" style={{ gap: 'var(--sp-2)', alignItems: 'center' }}>
               <div className="setting-desc grow">
-                The vault is locked, so the agent has no keys to offer and is refusing to sign.
-                Your keys are still there.
-              </div>
+                {t('The vault is locked, so the agent has no keys to offer and is refusing to sign. Your keys are still there.')}</div>
               <UnlockVaultButton reason="Unlocking lets the SSH agent offer your keys again." />
             </div>
           ) : (
             <div className="setting-desc">
-              No SSH keys in the vault yet. Add one with its private key and it appears here.
-            </div>
+              {t('No SSH keys in the vault yet. Add one with its private key and it appears here.')}</div>
           ))}
         {usable.map((k) => (
           <div key={k.entryId} className="agent-panel-key">
@@ -151,50 +145,44 @@ export function AgentPanel(): React.JSX.Element {
         <>
           <label className="setting-row">
             <div>
-              <div className="setting-label">When you approve, remember it for</div>
+              <div className="setting-label">{t('When you approve, remember it for')}</div>
               <div className="setting-desc">
-                What the prompt offers by default. You can always pick something else in the prompt
-                itself.
-              </div>
+                {t('What the prompt offers by default. You can always pick something else in the prompt itself.')}</div>
             </div>
             <select
               value={settings.defaultScope}
               onChange={(e) => void apply({ defaultScope: e.target.value as ApprovalScope })}
             >
-              <option value="once">this signature only</option>
-              <option value="window">{settings.windowMinutes} minutes</option>
-              <option value="session">until the vault locks</option>
+              <option value="once">{t('this signature only')}</option>
+              <option value="window">{settings.windowMinutes} {t('minutes')}</option>
+              <option value="session">{t('until the vault locks')}</option>
             </select>
           </label>
 
           <label className="setting-row">
             <div>
-              <div className="setting-label">When that time runs out</div>
+              <div className="setting-label">{t('When that time runs out')}</div>
               {/* Two settings rather than one, because "how long" and "what
                   then" have different right answers: refusing outright is for
                   somebody who wants a key usable for one task and then inert
                   without having to remember to revoke it. */}
               <div className="setting-desc">
-                Ask again, or stop using that key entirely until OpsMaxx restarts.
-              </div>
+                {t('Ask again, or stop using that key entirely until OpsMaxx restarts.')}</div>
             </div>
             <select
               value={settings.onExpiry}
               onChange={(e) => void apply({ onExpiry: e.target.value as 'ask-again' | 'refuse' })}
             >
-              <option value="ask-again">ask again</option>
-              <option value="refuse">refuse until restart</option>
+              <option value="ask-again">{t('ask again')}</option>
+              <option value="refuse">{t('refuse until restart')}</option>
             </select>
           </label>
 
           <label className="setting-row">
             <div>
-              <div className="setting-label">Stop signing when the vault auto-locks the screen</div>
+              <div className="setting-label">{t('Stop signing when the vault auto-locks the screen')}</div>
               <div className="setting-desc">
-                The vault keeps resolving credentials for background work after it hides your
-                entries. This makes signatures stop at that point too — for when you want the agent
-                inert the moment you walk away, rather than only when the vault fully locks.
-              </div>
+                {t('The vault keeps resolving credentials for background work after it hides your entries. This makes signatures stop at that point too — for when you want the agent inert the moment you walk away, rather than only when the vault fully locks.')}</div>
             </div>
             <input
               type="checkbox"

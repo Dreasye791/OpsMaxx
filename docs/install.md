@@ -1,5 +1,7 @@
 # Install
 
+**English** · [简体中文](zh-CN/install.md)
+
 Every install route for Windows, macOS and Linux — and what to do about the first-run security warning.
 
 [← Back to the README](../README.md)

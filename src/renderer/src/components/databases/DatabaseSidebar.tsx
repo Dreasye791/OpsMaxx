@@ -17,6 +17,7 @@ import { ContextMenu, MenuEntry } from '../connections/ContextMenu'
 import { openDatabaseEditor } from '../../store/dbEditor'
 import type { DatabaseConn, DbKind, Folder } from '../../types'
 import { EmptyState } from '../common/EmptyState'
+import { useT } from '../../i18n'
 
 // A tooltip is a display surface like any other. `d.host` may be a whole
 // connection string on a record saved before the parser was fixed, so it goes
@@ -47,6 +48,7 @@ export const KIND_SHORT: Record<DbKind, string> = {
 }
 
 export function DatabaseSidebar(): React.JSX.Element {
+  const t = useT()
   const databases = useWorkspaceDatabases()
   const folders = useWorkspaceFolders('database')
   const activeId = useApp((s) => s.activeDatabaseId)
@@ -201,10 +203,10 @@ export function DatabaseSidebar(): React.JSX.Element {
         onDragLeave={() => setDropTarget(null)}
         onDrop={() => drop(null, 'Databases')}
       >
-        <Database size={11} /> Databases <span className="count">{databases.length}</span>
+        <Database size={11} /> {t('Databases')}{' '}<span className="count">{databases.length}</span>
         <button
           className="icon-btn xs"
-          title="New folder"
+          title={t('New folder')}
           onClick={(e) => {
             e.stopPropagation()
             setRenaming(addFolder('New folder', null, 'database'))
@@ -220,7 +222,7 @@ export function DatabaseSidebar(): React.JSX.Element {
       {databases.length === 0 && folders.length === 0 && (
         <EmptyState
           compact
-          title="No database connections"
+          title={t('No database connections')}
           message="Add one to browse schemas, run queries and read the server's own status."
         />
       )}

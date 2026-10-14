@@ -12,6 +12,7 @@ import type { EstatePoint } from '../../store/fleet'
 import type { FleetHealth } from '../../../../shared/hostHealth'
 import type { FleetTotals } from '../../store/fleet'
 import { bytes, clsx } from '../../lib/format'
+import { useT } from '../../i18n'
 
 /**
  * The estate in one band, at the top of the overview.
@@ -69,6 +70,7 @@ function MeterTile({
   used: number
   total: number
 }): React.JSX.Element {
+  const t = useT()
   const p = pctOf(used, total)
   const tone = p >= 90 ? 'danger' : p >= 75 ? 'warn' : 'ok'
   return (
@@ -94,7 +96,7 @@ function MeterTile({
       {/* The absolutes stay, below the proportion rather than instead of it:
           the percentage is for deciding, the bytes are for reporting. */}
       <div className="kpi-sub">
-        {bytes(used)} of {bytes(total)}
+        {bytes(used)} {t('of')}{' '}{bytes(total)}
       </div>
     </div>
   )
@@ -106,18 +108,19 @@ export function FleetKpis({
   serverCount,
   trend
 }: FleetKpisProps): React.JSX.Element {
+  const t = useT()
   const unreachable = health.unreachable.length
   const reportingLabel =
     totals.reporting === serverCount ? 'reporting' : `of ${serverCount} reporting`
 
   return (
-    <section className="kpi-band" aria-label="Fleet summary">
+    <section className="kpi-band" aria-label={t('Fleet summary')}>
       <div className="kpi">
         <div className="kpi-top">
           <span className="kpi-icon">
             <ServerIcon size={13} />
           </span>
-          <span className="kpi-label">Servers</span>
+          <span className="kpi-label">{t('Servers')}</span>
         </div>
         <div className="kpi-value">{totals.reporting}</div>
         <div className="kpi-sub">{reportingLabel}</div>
@@ -132,11 +135,11 @@ export function FleetKpis({
             <span className="kpi-icon">
               <CircleAlert size={13} />
             </span>
-            <span className="kpi-label">Failed services</span>
+            <span className="kpi-label">{t('Failed services')}</span>
           </div>
           <div className="kpi-value">{health.failedUnits}</div>
           <div className="kpi-sub">
-            on {health.failingHosts} {health.failingHosts === 1 ? 'server' : 'servers'}
+            {t('on')}{' '}{health.failingHosts} {health.failingHosts === 1 ? 'server' : 'servers'}
           </div>
         </div>
       )}
@@ -147,7 +150,7 @@ export function FleetKpis({
             <span className="kpi-icon">
               <Unplug size={13} />
             </span>
-            <span className="kpi-label">Unreachable</span>
+            <span className="kpi-label">{t('Unreachable')}</span>
           </div>
           <div className="kpi-value">{unreachable}</div>
           <div className="kpi-sub">
@@ -161,10 +164,10 @@ export function FleetKpis({
           <span className="kpi-icon">
             <Cpu size={13} />
           </span>
-          <span className="kpi-label">vCPU</span>
+          <span className="kpi-label">{t('vCPU')}</span>
         </div>
         <div className="kpi-value">{totals.cores}</div>
-        <div className="kpi-sub">across the estate</div>
+        <div className="kpi-sub">{t('across the estate')}</div>
       </div>
 
       {/**
@@ -183,7 +186,7 @@ export function FleetKpis({
           <span className="kpi-icon">
             <Activity size={13} />
           </span>
-          <span className="kpi-label">CPU</span>
+          <span className="kpi-label">{t('CPU')}</span>
         </div>
         <div className="kpi-value">
           {Math.round(trend[trend.length - 1]?.cpu ?? 0)}
@@ -203,13 +206,13 @@ export function FleetKpis({
 
       <MeterTile
         icon={<MemoryStick size={13} />}
-        label="Memory"
+        label={t('Memory')}
         used={totals.memUsed}
         total={totals.memTotal}
       />
       <MeterTile
         icon={<HardDrive size={13} />}
-        label="Disk"
+        label={t('Disk')}
         used={totals.diskUsed}
         total={totals.diskTotal}
       />

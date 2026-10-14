@@ -8,6 +8,7 @@ import { PanelShell } from './PanelShell'
 import { PanelError } from '../common/PanelError'
 import { withVaultUnlock, isVaultLocked } from '../../lib/withVaultUnlock'
 import { sshTargetFor } from '../../lib/ssh'
+import { useT } from '../../i18n'
 
 // What each server supervises for this account, read from its own systemd.
 //
@@ -32,6 +33,7 @@ interface Row {
 }
 
 export function ServicesPanel({ servers }: { servers: Server[] }): React.JSX.Element {
+  const t = useT()
   // `null` until read, never `[]`. Rendering an empty list as "nothing is
   // supervised" before asking is the claim this app has been fixing all week.
   const [rows, setRows] = useState<Row[] | null>(null)
@@ -142,7 +144,7 @@ export function ServicesPanel({ servers }: { servers: Server[] }): React.JSX.Ele
     // drew heavier than the heading. Hierarchy exactly inverted, by absence.
     <PanelShell
       icon={<ServerCog size={14} />}
-      title="Server services"
+      title={t('Server services')}
       about={
         <p>
           What each server&rsquo;s own systemd supervises for your account. Read-only — nothing is
@@ -191,7 +193,7 @@ export function ServicesPanel({ servers }: { servers: Server[] }): React.JSX.Ele
         // manager names the Vault in the left sidebar. Wayfinding to something
         // on screen beats a button that lands somewhere with no answer on it.
         <div className="panel-empty">
-          <p className="panel-empty-title">No servers to ask.</p>
+          <p className="panel-empty-title">{t('No servers to ask.')}</p>
           <p className="panel-empty-body">
             A server belongs to one workspace, and this panel only asks the active one&rsquo;s. Add a
             server to this workspace, or switch to the workspace yours are in from the picker beside
@@ -205,19 +207,16 @@ export function ServicesPanel({ servers }: { servers: Server[] }): React.JSX.Ele
         // instruction to press the thing you just pressed.
         <div className="panel-empty">
           <p className="panel-empty-title">
-            Reading {servers.length} server{servers.length === 1 ? '' : 's'}…
+            {t('Reading')}{' '}{servers.length} {t('server')}{servers.length === 1 ? '' : 's'}…
           </p>
           <p className="panel-empty-body">
-            Each is asked over its own connection, so a large estate takes a moment. Servers that
-            are unreachable or have no systemd are reported rather than skipped.
-          </p>
+            {t('Each is asked over its own connection, so a large estate takes a moment. Servers that are unreachable or have no systemd are reported rather than skipped.')}</p>
         </div>
       ) : rows === null ? (
         <div className="panel-empty">
-          <p className="panel-empty-title">Nothing read yet.</p>
+          <p className="panel-empty-title">{t('Nothing read yet.')}</p>
           <p className="panel-empty-body">
-            Press <b>Read services</b> to ask each server what it is supervising for you.
-          </p>
+            {t('Press')}{' '}<b>{t('Read services')}</b> {t('to ask each server what it is supervising for you.')}</p>
         </div>
       ) : (
         rows.map((r) => {
@@ -253,11 +252,10 @@ export function ServicesPanel({ servers }: { servers: Server[] }): React.JSX.Ele
                 <button
                   className="btn sm"
                   data-testid={`install-on-${r.serverId}`}
-                  title="Opens Operations › Jobs › Install a service, with this server chosen. Writing a unit file changes a server, so it lives on the rail where everything does."
+                  title={t('Opens Operations › Jobs › Install a service, with this server chosen. Writing a unit file changes a server, so it lives on the rail where everything does.')}
                   onClick={() => openUnitInstall(r.serverId)}
                 >
-                  <Plus size={12} /> New service…
-                </button>
+                  <Plus size={12} /> {t('New service…')}</button>
               </div>
               {shown.length > 0 && (
                 <table className="mini-table">

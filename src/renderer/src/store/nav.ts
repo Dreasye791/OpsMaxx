@@ -36,6 +36,7 @@ export const AI_SECTIONS = Object.keys(AI_SECTION_LABELS) as AiSection[]
 export type SettingsSection =
   | 'general'
   | 'appearance'
+  | 'language'
   | 'terminal'
   | 'connections'
   | 'ssh'
@@ -55,10 +56,16 @@ export type SettingsSection =
  * Beside the type rather than inside the Settings component, because the
  * command palette lists these pages too and a second copy of fourteen strings
  * is fourteen chances for the two lists to disagree about what a page is named.
+ *
+ * Read through `t()` at the point of use rather than translated here: this is a
+ * module-level constant, evaluated once at import, long before a language has
+ * been resolved out of the saved settings. A `t()` call at this scope would
+ * freeze every page name in whatever the build happened to start as.
  */
 export const SETTINGS_SECTION_LABELS: Record<SettingsSection, string> = {
   general: 'General',
   appearance: 'Appearance',
+  language: 'Language',
   terminal: 'Terminal',
   connections: 'Connections',
   ssh: 'SSH',

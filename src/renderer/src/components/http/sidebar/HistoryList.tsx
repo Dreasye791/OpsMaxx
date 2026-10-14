@@ -10,6 +10,7 @@ import { Modal } from '../../common/Modal'
 import { SaveRequestDialog } from '../dialogs/SaveRequestDialog'
 import { MethodBadge } from './CollectionTree'
 import { historyMenu, historySourceExists, type HistoryActions } from './treeMenus'
+import { useT } from '../../../i18n'
 
 export const HISTORY_PAGE = 50
 
@@ -54,6 +55,7 @@ type Menu = { x: number; y: number; entries: MenuEntry[] }
  * keyring, or in memory only); the filter is a plain substring match there.
  */
 export function HistoryList({ query }: { query: string }): React.JSX.Element {
+  const t = useT()
   const [entries, setEntries] = useState<HistoryEntry[]>([])
   const [state, setState] = useState<'loading' | 'ready' | 'error'>('loading')
   const [more, setMore] = useState(false)
@@ -122,12 +124,12 @@ export function HistoryList({ query }: { query: string }): React.JSX.Element {
   return (
     <div className="hc-history">
       <div className="hc-history-head">
-        <span className="ui-label">Recent requests</span>
+        <span className="ui-label">{t('Recent requests')}</span>
         <button
           type="button"
           className="hc-icon-btn"
-          aria-label="History options"
-          title="History options"
+          aria-label={t('History options')}
+          title={t('History options')}
           aria-haspopup="menu"
           onClick={(e) => {
             const b = e.currentTarget.getBoundingClientRect()
@@ -143,11 +145,10 @@ export function HistoryList({ query }: { query: string }): React.JSX.Element {
       </div>
       {!sealed && (
         <p className="hc-history-note" role="note">
-          History is kept for this session only — this machine has no OS keyring.
-        </p>
+          {t('History is kept for this session only — this machine has no OS keyring.')}</p>
       )}
       {state === 'loading' && (
-        <div className="hc-history-skeleton" aria-busy="true" aria-label="Loading history">
+        <div className="hc-history-skeleton" aria-busy="true" aria-label={t('Loading history')}>
           <div />
           <div />
           <div />
@@ -155,10 +156,9 @@ export function HistoryList({ query }: { query: string }): React.JSX.Element {
       )}
       {state === 'error' && (
         <div className="hc-history-note" role="alert">
-          Could not read history.{' '}
+          {t('Could not read history.')}{' '}
           <button type="button" className="btn sm" onClick={() => void load()}>
-            Retry
-          </button>
+            {t('Retry')}</button>
         </div>
       )}
       {state === 'ready' && entries.length === 0 && (
@@ -197,7 +197,7 @@ export function HistoryList({ query }: { query: string }): React.JSX.Element {
                     {e.response ? (
                       <span className={`hc-status hc-status--${Math.floor(e.response.status / 100)}xx`}>{e.response.status}</span>
                     ) : e.errorClass ? (
-                      <span className="hc-status hc-status--error">Error</span>
+                      <span className="hc-status hc-status--error">{t('Error')}</span>
                     ) : null}
                     <span className="hc-history-time">{time(e.at)}</span>
                   </button>
@@ -206,7 +206,7 @@ export function HistoryList({ query }: { query: string }): React.JSX.Element {
                     tabIndex={-1}
                     className="hc-icon-btn hc-tree-more"
                     aria-label={`Actions for ${e.request.url || e.request.name}`}
-                    title="Actions"
+                    title={t('Actions')}
                     onClick={(ev) => {
                       const b = ev.currentTarget.getBoundingClientRect()
                       setMenu({ x: b.left, y: b.bottom, entries: historyMenu(e, actions) })
@@ -221,8 +221,7 @@ export function HistoryList({ query }: { query: string }): React.JSX.Element {
         ))}
       {state === 'ready' && more && (
         <button type="button" className="btn ghost sm hc-history-more" onClick={() => void load(entries.at(-1)?.at)}>
-          Show older
-        </button>
+          {t('Show older')}</button>
       )}
       {menu && <ContextMenu x={menu.x} y={menu.y} entries={menu.entries} onClose={() => setMenu(null)} />}
       {saving && (
@@ -235,7 +234,7 @@ export function HistoryList({ query }: { query: string }): React.JSX.Element {
       )}
       {clearing && (
         <Modal
-          title="Clear all history?"
+          title={t('Clear all history?')}
           onClose={() => setClearing(false)}
           confirm={{
             label: 'Clear history',
@@ -249,7 +248,7 @@ export function HistoryList({ query }: { query: string }): React.JSX.Element {
             }
           }}
         >
-          <p>Every request in history is removed from this device. This cannot be undone.</p>
+          <p>{t('Every request in history is removed from this device. This cannot be undone.')}</p>
         </Modal>
       )}
     </div>

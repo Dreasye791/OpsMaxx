@@ -1,5 +1,7 @@
 # Vault, backup and settings
 
+**English** · [简体中文](zh-CN/vault.md)
+
 The encrypted secrets vault, what a backup contains, and the settings worth knowing about.
 
 [← Back to the README](../README.md)

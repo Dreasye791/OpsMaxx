@@ -4,6 +4,8 @@
 
 # OpsMaxx
 
+**English** · [简体中文](README.zh-CN.md)
+
 **A free, open-source SSH client, SFTP browser, database manager, secrets vault and secure AI-agent gateway — in one desktop app.**
 
 Your DevOps workstation, everywhere. Windows · macOS · Linux.
@@ -72,6 +74,7 @@ Most terminal tools do one thing. A typical DevOps task needs four: open a shell
 | **CI/CD** | Jenkins, GitLab and GitHub Actions read beside the server a run changed — pipelines, run history, and the log of the step that failed. Reading only, and off until you turn it on: enabling it polls somebody else's API on a timer with a token you supply |
 | **Vault** | AES-256-GCM secrets store, with credentials in your OS keychain rather than a config file |
 | **AI agent gateway** | Claude Code, Claude Desktop and Codex can work through it without ever seeing a password, key, IP or username |
+| **Interface languages** | English and **Simplified Chinese** (简体中文), switched in **Settings › Language** or left to follow your operating system. This covers the application itself; the documentation stays English. What the layer cannot see, and what is still untranslated, is in [docs/i18n.md](docs/i18n.md) |
 
 → **[The full feature list, what it replaces, and the work it was built for](docs/features.md)**
 
@@ -117,6 +120,7 @@ Already keep hosts in `~/.ssh/config`? Import them instead of retyping — `Prox
 | **[Tunnels and VPN](docs/tunnels.md)** | Forwards, SOCKS5, WireGuard, OpenVPN and frp |
 | **[Vault and settings](docs/vault.md)** | The secrets store, backups, and the settings worth knowing |
 | **[Security](docs/security.md)** | How credentials are stored and kept out of plaintext on disk |
+| **[Languages](docs/i18n.md)** | The translation layer: the English string as the key, what the two measurement tools can and cannot see, and what is left to translate |
 | **[FAQ](docs/faq.md)** | The questions that come up most |
 
 ## Security
@@ -136,7 +140,7 @@ Found a vulnerability? Please read [SECURITY.md](SECURITY.md) — do not open a 
 ## Contributing
 
 
-Contributions are very welcome, whether that is code, documentation, a bug report or a translation. Start with [CONTRIBUTING.md](CONTRIBUTING.md) for the architecture overview and development workflow, and please follow our [Code of Conduct](CODE_OF_CONDUCT.md).
+Contributions are very welcome, whether that is code, documentation, a bug report or a translation. Start with [CONTRIBUTING.md](CONTRIBUTING.md) for the architecture overview and development workflow, and please follow our [Code of Conduct](CODE_OF_CONDUCT.md). For a translation, [docs/i18n.md](docs/i18n.md) covers the layer, the two commands that measure it, and what is left — an entry is one line in the catalogue, and a missing one falls back to English rather than breaking the screen.
 
 Good first issues are labelled [`good first issue`](https://github.com/OpsMaxx/OpsMaxx/labels/good%20first%20issue).
 

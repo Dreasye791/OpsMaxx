@@ -1,6 +1,7 @@
 import type { ApiCollectionV2 } from '../../../../../shared/apiModel'
 import { Modal } from '../../common/Modal'
 import { countRequests } from '../sidebar/treeMenus'
+import { useT } from '../../../i18n'
 
 /** The one tree deletion that asks first: a whole collection. An undo toast follows. */
 export function DeleteCollectionDialog({
@@ -12,6 +13,7 @@ export function DeleteCollectionDialog({
   onConfirm: () => void
   onClose: () => void
 }): React.JSX.Element {
+  const t = useT()
   const n = countRequests(collection.items)
   return (
     <Modal
@@ -30,8 +32,7 @@ export function DeleteCollectionDialog({
         {n === 0
           ? 'The collection is empty.'
           : `Its ${n} ${n === 1 ? 'request' : 'requests'}, folders, variables and connection settings are deleted with it.`}{' '}
-        You can undo this from the notice that follows.
-      </p>
+        {t('You can undo this from the notice that follows.')}</p>
     </Modal>
   )
 }

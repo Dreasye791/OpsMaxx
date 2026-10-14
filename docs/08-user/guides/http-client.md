@@ -12,6 +12,8 @@ docgov:
 ---
 # HTTP client
 
+**English** · [简体中文](../../zh-CN/08-user/guides/http-client.md)
+
 Send REST, WebSocket and GraphQL requests from inside OpsMaxx, over the same routes your terminals use.
 
 ## Goal

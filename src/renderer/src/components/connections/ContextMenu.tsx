@@ -1,5 +1,6 @@
 import { Fragment, ReactNode, useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useT } from '../../i18n'
 import { useClickOutside } from '../../hooks/useClickOutside'
 import '../common/primitives.css'
 
@@ -51,6 +52,12 @@ export function ContextMenu({
 }: ContextMenuProps): React.JSX.Element {
   const ref = useRef<HTMLDivElement>(null)
   const uid = useId()
+  // Translated HERE rather than at each call site: this component is what
+  // twenty-two files hand their menu entries to, and the alternative is every
+  // one of them having to remember. It is also safe for the entries whose
+  // label is data rather than copy — a server name offered as a menu item —
+  // because a miss renders its source, which is the name.
+  const t = useT()
   useClickOutside(ref, onClose)
   // First paint at the requested point, then corrected against the menu's
   // real size before the browser shows it. A fixed 230×320 estimate put a
@@ -135,7 +142,7 @@ export function ContextMenu({
         <Fragment key={i}>
           {e.section && (
             <div className="menu-label" role="presentation">
-              {e.section}
+              {t(e.section)}
             </div>
           )}
           {e.separator ? (
@@ -160,13 +167,13 @@ export function ContextMenu({
               {e.icon}
               {e.detail ? (
                 <span className="hc-menu-text">
-                  <span>{e.label}</span>
+                  <span>{t(e.label)}</span>
                   <span className="hc-menu-detail" id={`${uid}-${i}`} aria-hidden="true">
-                    {e.detail}
+                    {t(e.detail)}
                   </span>
                 </span>
               ) : (
-                <span>{e.label}</span>
+                <span>{t(e.label)}</span>
               )}
               {e.shortcut && (
                 <span className="hc-menu-shortcut" aria-hidden="true">
@@ -179,7 +186,7 @@ export function ContextMenu({
       ))}
       {footer && (
         <div className="hc-menu-foot" id={`${uid}-foot`} role="presentation">
-          {footer}
+          {t(footer)}
         </div>
       )}
     </div>,

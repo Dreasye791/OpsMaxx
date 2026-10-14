@@ -3,6 +3,7 @@ import { KeyRound, ShieldAlert, Network } from 'lucide-react'
 import type { AgentApprovalRequest, ApprovalScope } from '../../../../shared/sshAgentHost'
 import { ToastSlot } from '../common/Toasts'
 import { useArming } from '../../hooks/useArming'
+import { useT } from '../../i18n'
 
 /**
  * The prompt that appears when something asks the agent to sign.
@@ -20,6 +21,7 @@ import { useArming } from '../../hooks/useArming'
  * agent cannot see is worth knowing about, not worth hiding.
  */
 export function AgentApprovalWatcher(): React.JSX.Element | null {
+  const t = useT()
   const [queue, setQueue] = useState<AgentApprovalRequest[]>([])
 
   useEffect(() => {
@@ -63,32 +65,28 @@ export function AgentApprovalWatcher(): React.JSX.Element | null {
       <ToastSlot />
       <div className="agent-approval">
         <KeyRound size={28} className="agent-approval-icon" aria-hidden />
-        <h2>Something wants to use an SSH key</h2>
+        <h2>{t('Something wants to use an SSH key')}</h2>
 
         <dl className="agent-approval-facts">
-          <dt>Key</dt>
+          <dt>{t('Key')}</dt>
           <dd>
             {request.identity.name}
             <span className="agent-approval-fp">{request.identity.fingerprint}</span>
           </dd>
 
-          <dt>Going to</dt>
+          <dt>{t('Going to')}</dt>
           <dd>
             {request.destination ? (
               <>
                 <span className="agent-approval-fp">{request.destination.hostKeyFingerprint}</span>
                 {request.destination.forwarded && (
                   <span className="agent-approval-warn">
-                    <Network size={13} aria-hidden /> a forwarded connection — this request came from
-                    another machine
-                  </span>
+                    <Network size={13} aria-hidden /> {t('a forwarded connection — this request came from another machine')}</span>
                 )}
               </>
             ) : (
               <span className="agent-approval-warn">
-                <ShieldAlert size={13} aria-hidden /> the client did not say, so the key could be used
-                for anything
-              </span>
+                <ShieldAlert size={13} aria-hidden /> {t('the client did not say, so the key could be used for anything')}</span>
             )}
           </dd>
         </dl>
@@ -98,21 +96,17 @@ export function AgentApprovalWatcher(): React.JSX.Element | null {
             something you did not mean to, and it is not reversible. */}
         <div className="agent-approval-actions">
           <button className="btn" autoFocus onClick={() => answer(false)}>
-            Refuse
-          </button>
+            {t('Refuse')}</button>
           <button className="btn" {...yes('once')}>
-            Allow once
-          </button>
+            {t('Allow once')}</button>
           <button className="btn" {...yes('window')}>
-            Allow for a while
-          </button>
+            {t('Allow for a while')}</button>
           <button className="btn" {...yes('session')}>
-            Allow until the vault locks
-          </button>
+            {t('Allow until the vault locks')}</button>
         </div>
 
         {queue.length > 1 && (
-          <p className="fine">{queue.length - 1} more waiting.</p>
+          <p className="fine">{queue.length - 1} {t('more waiting.')}</p>
         )}
       </div>
     </div>

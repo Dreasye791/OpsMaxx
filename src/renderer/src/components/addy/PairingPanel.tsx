@@ -3,6 +3,7 @@ import { addyPairLink } from '../../../../shared/addyLink'
 import { AlertTriangle, Check, Copy, Loader2, Smartphone, X } from 'lucide-react'
 import { toast } from '../../store/toast'
 import type { AddyPairingConfirmation } from '../../../../shared/addy'
+import { useT } from '../../i18n'
 
 /**
  * Adding a device to an account.
@@ -68,6 +69,7 @@ export function PairingPanel({
   baseURL: string
   canShow?: boolean
 }): React.JSX.Element {
+  const t = useT()
   const [stage, setStage] = useState<Stage>('choose')
   const [code, setCode] = useState('')
   const [pairingId, setPairingId] = useState('')
@@ -235,7 +237,7 @@ export function PairingPanel({
   if (stage === 'compare' && confirmation) {
     return (
       <div className="pair-compare">
-        <h3>Do these match on both devices?</h3>
+        <h3>{t('Do these match on both devices?')}</h3>
         <div className="pair-emoji" aria-label={confirmation.sasWords}>
           {confirmation.sas.map((e, i) => (
             <span key={i}>{e}</span>
@@ -245,9 +247,7 @@ export function PairingPanel({
             some of these emoji render differently on different platforms. */}
         <p className="pair-words">{confirmation.sasWords}</p>
         <p className="fine">
-          Compare them with the other device before answering. If they differ, something is between
-          you.
-        </p>
+          {t('Compare them with the other device before answering. If they differ, something is between you.')}</p>
         {/* NAMED HERE BECAUSE IT CANNOT BE NAMED LATER. The label is sealed
             into the roster entry that adds the device, and roster entries are
             immutable — this instant is the only chance. Shown only to the
@@ -260,13 +260,13 @@ export function PairingPanel({
             laptop. */}
         {!confirmation.self && (
           <label className="pair-field">
-            <span>What is the other machine called?</span>
+            <span>{t('What is the other machine called?')}</span>
             <input
               value={newLabel}
               onChange={(e) => setNewLabel(e.target.value)}
               spellCheck={false}
               maxLength={60}
-              placeholder="Work laptop"
+              placeholder={t('Work laptop')}
             />
           </label>
         )}
@@ -275,8 +275,7 @@ export function PairingPanel({
               pairing that is not the one you think it is, and it is not
               reversible. */}
           <button className="btn" autoFocus disabled={busy} onClick={reject}>
-            <X size={14} /> They do not match
-          </button>
+            <X size={14} /> {t('They do not match')}</button>
           <button className="btn" disabled={busy} onClick={() => void accept()}>
             {busy ? <Loader2 size={14} className="spin" /> : <Check size={14} />}
             {busy ? ' Adding the device…' : ' They match'}
@@ -298,19 +297,17 @@ export function PairingPanel({
           <div className="pair-actions">
             {canShow && (
               <button className="btn" onClick={() => void start()}>
-                <Smartphone size={14} /> Show a code on this device
-              </button>
+                <Smartphone size={14} /> {t('Show a code on this device')}</button>
             )}
             <button className={canShow ? 'btn' : 'btn primary'} onClick={() => setStage('joining')}>
-              Type a code from another device
-            </button>
+              {t('Type a code from another device')}</button>
           </div>
         </>
       )}
 
       {stage === 'showing' && (
         <>
-          <div className="setting-label">Type this on the other device</div>
+          <div className="setting-label">{t('Type this on the other device')}</div>
           {/* ONE THING TO CARRY, NOT TWO.
               The id addresses the mailbox and the code proves who may open it,
               so both have to cross — but that is the protocol's business, not
@@ -321,7 +318,7 @@ export function PairingPanel({
             <code>{ticket}</code>
             <button
               className="btn"
-              aria-label="Copy the pairing code"
+              aria-label={t('Copy the pairing code')}
               onClick={() => {
                 void navigator.clipboard.writeText(ticket)
                 toast('Pairing code copied')
@@ -337,13 +334,12 @@ export function PairingPanel({
               which is the other thing the second machine does not know.
               It fills the form on arrival; it never joins by itself. */}
           <p className="fine">
-            Or send this link to the other machine — it fills both in:
-          </p>
+            {t('Or send this link to the other machine — it fills both in:')}</p>
           <div className="pair-code">
             <code className="pair-link">{pairLink}</code>
             <button
               className="btn"
-              aria-label="Copy the pairing link"
+              aria-label={t('Copy the pairing link')}
               onClick={() => {
                 void navigator.clipboard.writeText(pairLink)
                 toast('Pairing link copied')
@@ -353,40 +349,36 @@ export function PairingPanel({
             </button>
           </div>
           <p className="fine">
-            <Loader2 size={13} className="spin" /> Waiting for the other device. This code only works
-            while this window is open.
-          </p>
+            <Loader2 size={13} className="spin" /> {t('Waiting for the other device. This code only works while this window is open.')}</p>
         </>
       )}
 
       {stage === 'joining' && (
         <>
           <label className="pair-field">
-            <span>Pairing code from the other device</span>
+            <span>{t('Pairing code from the other device')}</span>
             <input
               value={typedTicket}
               onChange={(e) => setTypedTicket(e.target.value)}
               spellCheck={false}
               autoFocus
-              placeholder="Paste it here"
+              placeholder={t('Paste it here')}
             />
           </label>
           <button className="btn" disabled={splitTicket(typedTicket) === null} onClick={() => void join()}>
-            Join
-          </button>
+            {t('Join')}</button>
         </>
       )}
 
       {stage === 'done' && (
         <>
-          <div className="setting-desc">This device is now on the account.</div>
+          <div className="setting-desc">{t('This device is now on the account.')}</div>
           {/* A TERMINAL STATE WITH NO WAY BACK MEANT NO THIRD DEVICE. After a
               successful pairing the panel sat here, and the only route to
               another one was restarting the app — on the very screen whose job
               is adding machines. Pairing is not a thing you do once. */}
           <button className="btn" onClick={() => reset()}>
-            Pair another device
-          </button>
+            {t('Pair another device')}</button>
         </>
       )}
 
@@ -396,8 +388,7 @@ export function PairingPanel({
           <div>
             <span>{error}</span>
             <button className="btn" onClick={() => reset()}>
-              Start again
-            </button>
+              {t('Start again')}</button>
           </div>
         </div>
       )}

@@ -4,6 +4,7 @@ import { useFleetStatus, sweepBlock } from '../../store/fleetStatus'
 import { openSettings } from '../../store/nav'
 import { UnlockVaultButton } from '../common/UnlockVaultButton'
 import { SweepProgress } from './SweepProgress'
+import { useT } from '../../i18n'
 
 /**
  * The empty state for a panel that shows what the background sweep collected.
@@ -41,6 +42,7 @@ export function SweepEmpty({
   /** Only called for the 'check-now' action; the other kinds cannot be fixed by sweeping. */
   onCheckNow: () => void
 }): React.JSX.Element {
+  const t = useT()
   const status = useFleetStatus((s) => s.status)
   const enabled = useApp((s) => s.settings.fleetSamplingEnabled)
   const block = sweepBlock(status, enabled)
@@ -76,8 +78,7 @@ export function SweepEmpty({
         )}
         {block.action === 'open-settings' && (
           <button className="btn primary sm" onClick={() => openSettings('monitoring')}>
-            <Settings2 size={13} /> Open Monitoring settings
-          </button>
+            <Settings2 size={13} /> {t('Open Monitoring settings')}</button>
         )}
         {block.action === 'check-now' && (
           <>

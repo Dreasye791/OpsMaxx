@@ -11,6 +11,7 @@ import type {
   SessionMode
 } from '../../../../shared/mcp'
 import { ModePicker } from './ModePicker'
+import { useT } from '../../i18n'
 
 const VERDICT: Record<PermissionValue, string> = { allow: 'Allow', ask: 'Ask', deny: 'Deny' }
 
@@ -131,6 +132,7 @@ export function SessionAccess({
   groups: AccessGroup[]
   onChanged: () => void
 }): React.JSX.Element {
+  const t = useT()
   const [open, setOpen] = useState(false)
   const [detail, setDetail] = useState(false)
   const [rows, setRows] = useState<CapabilityExplanation[] | null>(null)
@@ -236,7 +238,7 @@ export function SessionAccess({
   return (
     <div style={{ width: '100%' }}>
       <div className="row" style={{ gap: 8, alignItems: 'center', marginTop: 6, flexWrap: 'wrap' }}>
-        <span className="s-desc">Profile</span>
+        <span className="s-desc">{t('Profile')}</span>
         <ModePicker
           value={mode}
           onChange={changeMode}
@@ -247,8 +249,7 @@ export function SessionAccess({
           size="sm"
         />
         <button className="btn sm" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
-          {open ? <ChevronDown size={13} /> : <ChevronRight size={13} />} Effective access
-        </button>
+          {open ? <ChevronDown size={13} /> : <ChevronRight size={13} />} {t('Effective access')}</button>
       </div>
 
       {/* Shown whether or not the panel is open: a restriction is the one thing
@@ -260,8 +261,7 @@ export function SessionAccess({
             ? `${cap(holding[0].where)} is restricted to ${holding[0].groupName}, so this agent gets at most that there.`
             : `${holding.length} targets are restricted, so this agent gets at most their group there.`}{' '}
           <button className="linklike" onClick={() => setOpen(true)}>
-            Review
-          </button>
+            {t('Review')}</button>
         </div>
       )}
 
@@ -272,15 +272,12 @@ export function SessionAccess({
             {shielded && (
               <>
                 {' '}
-                <span className="chip warn">Protected</span> {protectedCount} protected target
-                {protectedCount === 1 ? '' : 's'} in its workspaces {protectedCount === 1 ? 'holds' : 'hold'} it at
-                Ask first there.
-              </>
+                <span className="chip warn">{t('Protected')}</span> {protectedCount} {t('protected target')}{protectedCount === 1 ? '' : 's'} {t('in its workspaces')}{' '}{protectedCount === 1 ? 'holds' : 'hold'} {t('it at Ask first there.')}</>
             )}
           </div>
 
-          {rows === null && <div className="s-desc">Working it out…</div>}
-          {rows?.length === 0 && <div className="s-desc">This session is scoped to no workspace.</div>}
+          {rows === null && <div className="s-desc">{t('Working it out…')}</div>}
+          {rows?.length === 0 && <div className="s-desc">{t('This session is scoped to no workspace.')}</div>}
 
           {rows && rows.length > 0 && (
             <div style={{ display: 'grid', gap: 8 }}>
@@ -308,8 +305,7 @@ export function SessionAccess({
           {restrictions.length > 0 && (
             <div data-testid="restrictions">
               <div className="s-title" style={{ fontSize: 'var(--fs-sm)', marginBottom: 4 }}>
-                Restrictions on targets
-              </div>
+                {t('Restrictions on targets')}</div>
               {restrictions.map((r) => {
                 const lifted = mode === 'bypass' && r.groupId !== null
                 return (
@@ -324,34 +320,30 @@ export function SessionAccess({
                     </span>
                     {r.groupId && (
                       <button className="linklike" onClick={() => openAi('groups', r.groupId)}>
-                        Edit {r.groupName}
+                        {t('Edit')}{' '}{r.groupName}
                       </button>
                     )}
                     <button className="btn sm" onClick={() => void removeRestriction(r)}>
-                      <X size={12} /> Remove restriction
-                    </button>
+                      <X size={12} /> {t('Remove restriction')}</button>
                   </div>
                 )
               })}
               <div className="s-desc" style={{ marginTop: 4 }}>
-                A restriction belongs to the workspace or server, not to this agent. Earlier versions of Connect an
-                agent added them on their own; removing one lets each agent’s own group decide there.
-              </div>
+                {t('A restriction belongs to the workspace or server, not to this agent. Earlier versions of Connect an agent added them on their own; removing one lets each agent’s own group decide there.')}</div>
             </div>
           )}
 
           {rows && rows.length > 0 && (
             <div>
               <button className="linklike" onClick={() => setDetail((v) => !v)} aria-expanded={detail}>
-                {detail ? 'Hide' : 'Show'} why, per capability
-              </button>
+                {t(detail ? 'Hide' : 'Show')} {t('why, per capability')}</button>
               {detail && (
                 <table className="mini-table" style={{ width: '100%', marginTop: 6 }}>
                   <thead>
                     <tr>
-                      <th>Capability</th>
-                      <th>Result</th>
-                      <th>Why</th>
+                      <th>{t('Capability')}</th>
+                      <th>{t('Result')}</th>
+                      <th>{t('Why')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -376,7 +368,7 @@ export function SessionAccess({
           {mode === 'custom' && (
             <div>
               <button className="btn sm" onClick={() => openAi('groups', session.groupId)}>
-                <ShieldCheck size={13} /> Edit {groupName}
+                <ShieldCheck size={13} /> {t('Edit')}{' '}{groupName}
               </button>
             </div>
           )}

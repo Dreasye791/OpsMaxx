@@ -2,6 +2,7 @@ import { Info, X } from 'lucide-react'
 import type { MigrationReport } from '../../../../shared/apiMigration'
 import { useApi } from '../../store/api'
 import { useHttp } from '../../store/http'
+import { useT } from '../../i18n'
 
 const plural = (n: number, one: string, many = `${one}s`): string => `${n} ${n === 1 ? one : many}`
 
@@ -42,6 +43,7 @@ export function reportHasNews(r: MigrationReport | null): r is MigrationReport {
  * report's id, so a later migration shows its own.
  */
 export function UpgradeBanner({ onRecover }: { onRecover?: () => void }): React.JSX.Element | null {
+  const t = useT()
   const report = useApi((s) => s.report)
   const collections = useApi((s) => s.collections)
   const dismissed = useHttp((s) => s.bannerDismissed)
@@ -56,8 +58,7 @@ export function UpgradeBanner({ onRecover }: { onRecover?: () => void }): React.
       <Info size={16} aria-hidden />
       <div className="hc-banner-body">
         <div>
-          The HTTP client was rebuilt.
-          {moved && (
+          {t('The HTTP client was rebuilt.')}{moved && (
             <>
               {' '}
               <strong>{moved}</strong>
@@ -75,8 +76,7 @@ export function UpgradeBanner({ onRecover }: { onRecover?: () => void }): React.
                 <li key={c.id}>
                   {c.name}{' '}
                   <button className="btn sm" onClick={() => reimport(c.id)}>
-                    Re-import
-                  </button>
+                    {t('Re-import')}</button>
                 </li>
               ))}
             </ul>
@@ -84,10 +84,9 @@ export function UpgradeBanner({ onRecover }: { onRecover?: () => void }): React.
         )}
         {report.baseUrlCollisions.map((c) => (
           <div key={`${c.collectionId}|${c.environment}`}>
-            Environment <em>{c.environment}</em> also defines <code>baseUrl</code>. Requests in{' '}
-            <em>{nameOf(c.collectionId)}</em> will use the environment’s value (<code>{c.value}</code>) while{' '}
-            <em>{c.environment}</em> is active.
-          </div>
+            {t('Environment')}{' '}<em>{c.environment}</em> {t('also defines')}{' '}<code>{t('baseUrl')}</code>{t('. Requests in')}{' '}
+            <em>{nameOf(c.collectionId)}</em> {t('will use the environment’s value (')}<code>{c.value}</code>{t(') while')}{' '}
+            <em>{c.environment}</em> {t('is active.')}</div>
         ))}
         {report.rejected.length > 0 && (
           <div>
@@ -99,15 +98,14 @@ export function UpgradeBanner({ onRecover }: { onRecover?: () => void }): React.
         {onRecover && (
           <div className="hc-banner-actions">
             <button className="btn sm" onClick={onRecover}>
-              Recover old data…
-            </button>
+              {t('Recover old data…')}</button>
           </div>
         )}
       </div>
       <button
         className="icon-btn sm"
-        aria-label="Dismiss"
-        title="Dismiss"
+        aria-label={t('Dismiss')}
+        title={t('Dismiss')}
         onClick={() => useHttp.getState().dismissBanner(report.id)}
       >
         <X size={14} />

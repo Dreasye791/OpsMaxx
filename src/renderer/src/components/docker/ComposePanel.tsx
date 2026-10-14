@@ -26,6 +26,7 @@ import {
 import type { DockerContainer } from '../../../../shared/docker'
 import { EnvValueWrite } from './EnvValueWrite'
 import type { Server } from '../../types'
+import { useT } from '../../i18n'
 
 // Compose, the file half, sitting under the container list that already groups
 // by project.
@@ -90,6 +91,7 @@ export function ComposePanel({
   containers: DockerContainer[]
   sudo: boolean
 }): React.JSX.Element | null {
+  const t = useT()
   const [list, setList] = useState<ComposeListProbe | null>(null)
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState<string | null>(null)
@@ -435,7 +437,7 @@ export function ComposePanel({
     <div style={{ marginTop: 12 }}>
       <div className="row muted" style={{ fontSize: 11, alignItems: 'center' }}>
         <Layers size={12} />
-        <span className="grow">Compose projects</span>
+        <span className="grow">{t('Compose projects')}</span>
         {/* A spinner, like every other read in this surface. This one searches
             a bounded set of roots with `find` and is budgeted at 60 seconds —
             the longest read in the panel and the only one that gave no sign it
@@ -526,7 +528,7 @@ export function ComposePanel({
                   <div className="faint mono" style={{ fontSize: 11 }}>
                     {p.configFiles.join('  ')}
                   </div>
-                  {configLoading && <div className="faint">Reading the file…</div>}
+                  {configLoading && <div className="faint">{t('Reading the file…')}</div>}
                   {config && !config.ok && (
                     <div className="s-desc danger">
                       <TriangleAlert size={12} /> {COMPOSE_FAILURE_HELP[config.reason]}
@@ -562,9 +564,7 @@ export function ComposePanel({
                     ))}
                   {config?.ok && config.config.namesOnly && (
                     <div className="faint" style={{ fontSize: 11 }}>
-                      This engine would only give the service NAMES, so images, ports and
-                      environment are unknown here rather than absent.
-                    </div>
+                      {t('This engine would only give the service NAMES, so images, ports and environment are unknown here rather than absent.')}</div>
                   )}
                   {view?.services.map((s) => (
                     <div key={s.declared.name} className="cron-row">
@@ -656,7 +656,7 @@ export function ComposePanel({
                                   restart: {s.declared.restart ?? 'no (default)'}
                                 </span>
                                 {s.declared.dependsOn.length > 0 && (
-                                  <span className="chip">after {s.declared.dependsOn.join(', ')}</span>
+                                  <span className="chip">{t('after')}{' '}{s.declared.dependsOn.join(', ')}</span>
                                 )}
                                 {s.declared.ports.map((port) => (
                                   <span key={port} className="chip mono">
@@ -668,8 +668,7 @@ export function ComposePanel({
                                     {/* A service in a profile does NOT start
                                         with a plain `up`, which is the
                                         commonest reason one is "missing". */}
-                                    profile {s.declared.profiles.join(', ')} — not started by a plain up
-                                  </span>
+                                    {t('profile')}{' '}{s.declared.profiles.join(', ')} {t('— not started by a plain up')}</span>
                                 )}
                               </td>
                             </tr>
@@ -680,13 +679,11 @@ export function ComposePanel({
 
                   {view !== null && view.missing.length > 0 && (
                     <div className="faint" style={{ fontSize: 11 }}>
-                      Declared but never created: {view.missing.join(', ')}. These have no container
-                      at all, so they do not appear in the list above.
-                    </div>
+                      {t('Declared but never created:')}{' '}{view.missing.join(', ')}{t('. These have no container at all, so they do not appear in the list above.')}</div>
                   )}
                   {view !== null && view.undeclared.length > 0 && (
                     <div className="faint" style={{ fontSize: 11 }}>
-                      Running under this project but not declared in the file:{' '}
+                      {t('Running under this project but not declared in the file:')}{' '}
                       {view.undeclared.map((c) => c.name).join(', ')}.
                     </div>
                   )}
@@ -697,7 +694,7 @@ export function ComposePanel({
                       <div style={{ marginTop: 6 }}>
                         <div className="row muted" style={{ fontSize: 11 }}>
                           <KeyRound size={12} />
-                          <span>Environment</span>
+                          <span>{t('Environment')}</span>
                         </div>
                         {config.config.services
                           .filter((s) => s.environment.length > 0)
@@ -765,7 +762,7 @@ export function ComposePanel({
                   )}
                   {envError !== null && (
                     <div className="faint" style={{ fontSize: 11 }}>
-                      The env files could not be read: {envError}
+                      {t('The env files could not be read:')}{' '}{envError}
                     </div>
                   )}
                   {(envFiles !== null ||
@@ -790,7 +787,7 @@ export function ComposePanel({
             <div style={{ marginTop: 8 }}>
               <div className="row muted" style={{ fontSize: 11 }}>
                 <FileText size={12} />
-                <span>Compose files on disk</span>
+                <span>{t('Compose files on disk')}</span>
               </div>
               {list.search.files.map((f) => (
                 <div key={f.path} className="cron-row">
@@ -805,10 +802,7 @@ export function ComposePanel({
                might mean there is nothing, or it might mean nobody looked
                where the files are. */
             <div className="faint" style={{ fontSize: 11 }}>
-              Looked in {list.search.bound.roots.join(', ')}, {list.search.bound.maxDepth} levels
-              deep, on this filesystem only, stopping at {list.search.bound.maxResults} files.
-              Nothing outside those directories was read.
-              {list.search.truncated &&
+              {t('Looked in')}{' '}{list.search.bound.roots.join(', ')}, {list.search.bound.maxDepth} {t('levels deep, on this filesystem only, stopping at')}{' '}{list.search.bound.maxResults} {t('files. Nothing outside those directories was read.')}{list.search.truncated &&
                 ' That limit was reached, so this list is a prefix rather than an inventory.'}
             </div>
           )}
@@ -818,9 +812,7 @@ export function ComposePanel({
       {editing !== null && (
         <div className="s-desc" style={{ marginTop: 8 }}>
           <div>
-            <b>{editing.service}</b> — change the image in the compose file. This writes one line and
-            nothing else: no image is pulled and no container is restarted.
-          </div>
+            <b>{editing.service}</b> {t('— change the image in the compose file. This writes one line and nothing else: no image is pulled and no container is restarted.')}</div>
           {revertNote !== null && (
             <div className="faint" style={{ fontSize: 11, marginTop: 4 }}>{revertNote}</div>
           )}
@@ -835,16 +827,13 @@ export function ComposePanel({
               disabled={editing.to === editing.from || !validateImageRef(editing.to)}
               onClick={() => void commitEdit()}
             >
-              Write the file
-            </button>
+              {t('Write the file')}</button>
             <button className="btn ghost sm" onClick={() => setEditing(null)}>
-              Cancel
-            </button>
+              {t('Cancel')}</button>
           </div>
           {editing.to !== editing.from && !validateImageRef(editing.to) && (
             <div className="faint" style={{ fontSize: 11 }}>
-              That is not an image reference this will write into a file.
-            </div>
+              {t('That is not an image reference this will write into a file.')}</div>
           )}
           {editError !== null && (
             <div className="danger" style={{ fontSize: 11 }}>
@@ -861,7 +850,7 @@ export function ComposePanel({
           <div className="r-sub">{pending.plan.detail}</div>
           {pending.reasons.length > 0 && (
             <div className="s-note warn">
-              This job {pending.reasons.join(', and ')}.
+              {t('This job')}{' '}{pending.reasons.join(', and ')}.
             </div>
           )}
           <pre className="mono" style={{ fontSize: 11, whiteSpace: 'pre-wrap', margin: 0 }}>
@@ -891,24 +880,21 @@ export function ComposePanel({
                 )
               }
             >
-              Run
-            </button>
+              {t('Run')}</button>
             <button className="btn" onClick={() => setPending(null)}>
-              Cancel
-            </button>
+              {t('Cancel')}</button>
           </div>
         </div>
       )}
       {restart !== null && (
         <div className="list-row" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 6 }}>
-          <div className="r-title">Restart {restart.service}</div>
+          <div className="r-title">{t('Restart')}{' '}{restart.service}</div>
           {restart.refusal !== null ? (
             <>
               <div className="s-note warn">{restart.refusal}</div>
               <div className="row-actions">
                 <button className="btn" onClick={() => setRestart(null)}>
-                  Close
-                </button>
+                  {t('Close')}</button>
               </div>
             </>
           ) : (
@@ -926,7 +912,7 @@ export function ComposePanel({
                 {restart.targets.join('\n')}
               </pre>
               {restart.plan !== null && restart.plan.reasons.length > 0 && (
-                <div className="s-note warn">This {restart.plan.reasons.join(', and ')}.</div>
+                <div className="s-note warn">{t('This')}{' '}{restart.plan.reasons.join(', and ')}.</div>
               )}
               {restart.caveats.map((c) => (
                 <div key={c} className="s-note state-unknown">
@@ -952,11 +938,9 @@ export function ComposePanel({
                   }
                   onClick={() => void runRestart(restart)}
                 >
-                  Restart
-                </button>
+                  {t('Restart')}</button>
                 <button className="btn" onClick={() => setRestart(null)}>
-                  Cancel
-                </button>
+                  {t('Cancel')}</button>
               </div>
             </>
           )}

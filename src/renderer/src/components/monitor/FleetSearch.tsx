@@ -7,6 +7,7 @@ import { duration } from '../../lib/format'
 import type { Server } from '../../types'
 import { PanelShell } from './PanelShell'
 import { SweepEmpty } from './SweepEmpty'
+import { useT } from '../../i18n'
 
 // Fleet-wide search over what the sampler already knows.
 //
@@ -32,6 +33,7 @@ const ABOUT = (
 )
 
 function Row({ m, onOpen }: { m: FleetMatch; onOpen: (serverId: string) => void }): React.JSX.Element {
+  const t = useT()
   const Icon = ICON[m.kind]
   return (
     <button className="fleet-hit" onClick={() => onOpen(m.serverId)} title={`Open ${m.serverName}`}>
@@ -55,8 +57,7 @@ function Row({ m, onOpen }: { m: FleetMatch; onOpen: (serverId: string) => void 
         ) : (
           <>
             {m.stale ? 'last seen ' : ''}
-            {duration(m.at)} ago
-          </>
+            {duration(m.at)} {t('ago')}</>
         )}
       </span>
     </button>
@@ -70,6 +71,7 @@ export function FleetSearch({
   servers: Server[]
   onOpen: (serverId: string) => void
 }): React.JSX.Element {
+  const t = useT()
   const [query, setQuery] = useState('')
   const [sweeping, setSweeping] = useState(false)
   // The sweep is what fills this panel, so the empty state's button has to
@@ -113,17 +115,17 @@ export function FleetSearch({
     // the fifteen tabs you had landed in except the strip above. It gets the
     // same header as every other tab; the search field is the card's first
     // element, the way Run a command's composer is.
-    <PanelShell icon={<Search size={14} />} title="Fleet-wide search" about={ABOUT} className="fleet-search">
+    <PanelShell icon={<Search size={14} />} title={t('Fleet-wide search')} about={ABOUT} className="fleet-search">
       <div className="input-group">
         <Search size={14} className="faint" />
         <input
           className="input"
-          placeholder="Search units, ports, distributions and servers across the workspace…"
+          placeholder={t('Search units, ports, distributions and servers across the workspace…')}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
         {active && (
-          <button className="icon-btn sm" title="Clear" onClick={() => setQuery('')}>
+          <button className="icon-btn sm" title={t('Clear')} onClick={() => setQuery('')}>
             <X size={13} />
           </button>
         )}
@@ -133,7 +135,7 @@ export function FleetSearch({
         <div className="fleet-results">
           <div className="row muted" style={{ justifyContent: 'space-between' }}>
             <span>
-              {result.matches.length} match{result.matches.length === 1 ? '' : 'es'}
+              {result.matches.length} {t('match')}{result.matches.length === 1 ? '' : 'es'}
               {result.truncated > 0 && ` · ${result.truncated} more not shown`}
             </span>
           </div>
@@ -160,17 +162,14 @@ export function FleetSearch({
                   subject="Nothing has been sampled yet."
                   busy={sweeping}
                   onCheckNow={() => void sweepNow()}
-                  note="Servers are still matched by name above — everything else here comes from the sweep."
+                  note={t('Servers are still matched by name above — everything else here comes from the sweep.')}
                 />
               ) : (
                 <>
                   <p className="panel-empty-title">
-                    Nothing matched on the servers that could be searched.
-                  </p>
+                    {t('Nothing matched on the servers that could be searched.')}</p>
                   <p className="panel-empty-body">
-                    Try a shorter term — this searches unit names, listening ports, distributions
-                    and server names.
-                  </p>
+                    {t('Try a shorter term — this searches unit names, listening ports, distributions and server names.')}</p>
                 </>
               )}
             </div>

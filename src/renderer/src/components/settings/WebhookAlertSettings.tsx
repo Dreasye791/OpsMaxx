@@ -3,6 +3,7 @@ import { clsx, duration } from '../../lib/format'
 import { useApp } from '../../store/app'
 import type { WebhookConfig, WebhookDeliveryStatus } from '../../../../shared/webhook'
 import { Switch } from '../common/Switch'
+import { useT } from '../../i18n'
 
 // The URL is never read back across the bridge — main reports only whether one
 // is set. It is a bearer credential (anyone holding a Slack webhook can post as
@@ -15,6 +16,7 @@ import { Switch } from '../common/Switch'
 type Tone = 'ok' | 'warn' | 'danger'
 
 export function WebhookAlertSettings(): React.JSX.Element {
+  const t = useT()
   const [cfg, setCfg] = useState<WebhookConfig>({
     enabled: false,
     hasUrl: false,
@@ -127,18 +129,18 @@ export function WebhookAlertSettings(): React.JSX.Element {
     <>
       <SettingRowSwitchLike>
         <div className="s-info">
-          <div className="s-title">Send alerts to a webhook</div>
+          <div className="s-title">{t('Send alerts to a webhook')}</div>
           <div className="s-desc">
-            POSTs a small JSON message to any HTTPS endpoint — Slack, Discord, Teams and most
-            alerting systems accept one. Only the server&rsquo;s name, what fired and when are sent;
-            never a server, an IP, a log line or command output.
-            {!cfg.hasUrl && ' Add a URL below to enable this.'}
+            {t('POSTs a small JSON message to any HTTPS endpoint — Slack, Discord, Teams and most alerting systems accept one. Only the server’s name, what fired and when are sent; never a server, an IP, a log line or command output.')}
+            {!cfg.hasUrl && (
+              <>
+                {' '}
+                {t('Add a URL below to enable this.')}
+              </>
+            )}
           </div>
           <div className="s-desc">
-            It carries what Alerts raises, so that switch has to be on too. And nothing is raised
-            while you are elsewhere unless servers are checked in the background — so with that off,
-            this stays silent in exactly the case you set it up for.
-          </div>
+            {t('It carries what Alerts raises, so that switch has to be on too. And nothing is raised while you are elsewhere unless servers are checked in the background — so with that off, this stays silent in exactly the case you set it up for.')}</div>
         </div>
         {/* The shared Switch, not a <label><input type=checkbox>: `.switch`
             draws from an `.on` class, with no `:checked` selector anywhere, so
@@ -147,18 +149,18 @@ export function WebhookAlertSettings(): React.JSX.Element {
         <Switch
           checked={cfg.enabled}
           disabled={!cfg.hasUrl}
-          label="Send alerts to a webhook"
+          label={t('Send alerts to a webhook')}
           onChange={(v) => void apply({ enabled: v })}
         />
       </SettingRowSwitchLike>
 
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Webhook URL</div>
+          <div className="s-title">{t('Webhook URL')}</div>
           <div className="s-desc">
             {cfg.hasUrl
-              ? 'A URL is saved. It is stored with your other secrets and is never shown again — paste a new one to replace it, or save an empty field to remove it.'
-              : 'Stored with your other secrets, not in settings or backups. https only, since the URL is itself a credential.'}
+              ? t('A URL is saved. It is stored with your other secrets and is never shown again — paste a new one to replace it, or save an empty field to remove it.')
+              : t('Stored with your other secrets, not in settings or backups. https only, since the URL is itself a credential.')}
           </div>
           {saveMsg && <div className={clsx('s-desc', saveMsg.tone)}>{saveMsg.text}</div>}
         </div>
@@ -166,7 +168,7 @@ export function WebhookAlertSettings(): React.JSX.Element {
           <input
             className="input"
             type="password"
-            placeholder={cfg.hasUrl ? '••••••••  paste to replace' : 'https://hooks.slack.com/services/…'}
+            placeholder={cfg.hasUrl ? t('••••••••  paste to replace') : 'https://hooks.slack.com/services/…'}
             value={draft}
             onChange={(e) => {
               setDraft(e.target.value)
@@ -174,17 +176,15 @@ export function WebhookAlertSettings(): React.JSX.Element {
             }}
           />
           <button className="btn" onClick={() => void saveUrl()}>
-            Save
-          </button>
+            {t('Save')}</button>
         </div>
       </div>
 
       <div className="setting-row">
         <div className="s-info">
-          <div className="s-title">Test delivery</div>
+          <div className="s-title">{t('Test delivery')}</div>
           <div className="s-desc">
-            Sends one sample alert now, so a wrong URL is found here rather than during an incident.
-          </div>
+            {t('Sends one sample alert now, so a wrong URL is found here rather than during an incident.')}</div>
           {testMsg && <div className={clsx('s-desc', testMsg.tone)}>{testMsg.text}</div>}
           <DeliveryLines delivery={delivery} hasUrl={cfg.hasUrl} />
         </div>
@@ -195,15 +195,14 @@ export function WebhookAlertSettings(): React.JSX.Element {
 
       <SettingRowSwitchLike>
         <div className="s-info">
-          <div className="s-title">Also send when it recovers</div>
+          <div className="s-title">{t('Also send when it recovers')}</div>
           <div className="s-desc">
-            An alert with no resolution leaves the reader working out whether it is still happening.
-          </div>
+            {t('An alert with no resolution leaves the reader working out whether it is still happening.')}</div>
         </div>
         <Switch
           checked={cfg.notifyOnResolved && cfg.enabled}
           disabled={!cfg.enabled}
-          label="Also send when it recovers"
+          label={t('Also send when it recovers')}
           onChange={(v) => void apply({ notifyOnResolved: v })}
         />
       </SettingRowSwitchLike>

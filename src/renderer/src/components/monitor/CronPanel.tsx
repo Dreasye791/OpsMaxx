@@ -19,6 +19,7 @@ import type { Server } from '../../types'
 import { PanelShell } from './PanelShell'
 import type { OnDemandTarget } from '../../../../shared/ssh'
 import { withVaultUnlock } from '../../lib/withVaultUnlock'
+import { useT } from '../../i18n'
 
 // What is scheduled across the estate — currently unanswerable without visiting
 // every box.
@@ -133,11 +134,11 @@ function notEditableByReason(host: HostCron): [string, number][] {
 }
 
 function SourceStatus({ sources }: { sources?: CronSourceReport[] }): React.JSX.Element {
+  const t = useT()
   if (!sources || sources.length === 0) {
     return (
       <div className="faint">
-        This server did not report which sources it managed to read, so this list may be incomplete.
-      </div>
+        {t('This server did not report which sources it managed to read, so this list may be incomplete.')}</div>
     )
   }
   const { answered, total, incomplete, usedSudo } = summariseCronSources(sources)
@@ -152,10 +153,9 @@ function SourceStatus({ sources }: { sources?: CronSourceReport[] }): React.JSX.
           it: silent escalation is the wrong trade even when it is the only way
           to get an answer. */}
       {usedSudo && (
-        <span className="faint" title="Some sources were readable only as root, and were read with sudo -n — which never prompts.">
+        <span className="faint" title={t('Some sources were readable only as root, and were read with sudo -n — which never prompts.')}>
           {' '}
-          · read as root
-        </span>
+          {t('· read as root')}</span>
       )}
       {incomplete.map((s) => (
         <div key={s.id} className="state-unknown" style={{ marginTop: 2 }}>
@@ -168,6 +168,7 @@ function SourceStatus({ sources }: { sources?: CronSourceReport[] }): React.JSX.
 }
 
 export function CronPanel({ servers }: { servers: Server[] }): React.JSX.Element {
+  const t = useT()
   const [rows, setRows] = useState<HostCron[] | null>(null)
   const [loading, setLoading] = useState(false)
   const [filter, setFilter] = useState('')
@@ -320,7 +321,7 @@ export function CronPanel({ servers }: { servers: Server[] }): React.JSX.Element
       <button
         className="btn"
         data-testid={`edit-${host.serverId}`}
-        title="Opens Operations › Jobs › Change a schedule, with this job filled in. Changing or removing it writes this account's whole crontab, so it happens on the rail where everything writes."
+        title={t('Opens Operations › Jobs › Change a schedule, with this job filled in. Changing or removing it writes this account\'s whole crontab, so it happens on the rail where everything writes.')}
         onClick={() =>
           openCronEdit({
             serverId: host.serverId,
@@ -363,12 +364,10 @@ export function CronPanel({ servers }: { servers: Server[] }): React.JSX.Element
   return (
     <PanelShell
       icon={<CalendarClock size={14} />}
-      title="Scheduled jobs"
+      title={t('Scheduled jobs')}
       about={
         <p>
-          Every crontab and systemd timer across the estate, and which of them this account was
-          actually allowed to read.
-        </p>
+          {t('Every crontab and systemd timer across the estate, and which of them this account was actually allowed to read.')}</p>
       }
       actions={
         <>
@@ -376,7 +375,7 @@ export function CronPanel({ servers }: { servers: Server[] }): React.JSX.Element
             <input
               className="input"
               style={{ maxWidth: 220 }}
-              placeholder="Filter by command or file…"
+              placeholder={t('Filter by command or file…')}
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
             />
@@ -390,16 +389,11 @@ export function CronPanel({ servers }: { servers: Server[] }): React.JSX.Element
         // Before anything has been read this IS the panel, so it is framed as
         // an empty state rather than set at body weight beside the button.
         <div className="panel-empty">
-          <p className="panel-empty-title">Nothing has been read yet.</p>
+          <p className="panel-empty-title">{t('Nothing has been read yet.')}</p>
           <p className="panel-empty-body">
-            Reads crontabs, /etc/crontab, /etc/cron.d, other accounts’ crontabs and systemd timers
-            from every online server, and says which of those it was actually allowed to read.
-            Sources that are root-only are retried with <span className="mono">sudo -n</span>, which
-            never prompts for a password. Nothing is written or changed — this only looks.
-          </p>
+            {t('Reads crontabs, /etc/crontab, /etc/cron.d, other accounts’ crontabs and systemd timers from every online server, and says which of those it was actually allowed to read. Sources that are root-only are retried with')}{' '}<span className="mono">{t('sudo -n')}</span>{t(', which never prompts for a password. Nothing is written or changed — this only looks.')}</p>
           <p className="panel-empty-body">
-            Press <b>Read schedules</b> above to start.
-          </p>
+            {t('Press')}{' '}<b>{t('Read schedules')}</b> {t('above to start.')}</p>
         </div>
       )}
 
@@ -407,21 +401,19 @@ export function CronPanel({ servers }: { servers: Server[] }): React.JSX.Element
         <>
           <div className="panel-stats">
             <span>
-              {total} job{total === 1 ? '' : 's'} across {visible.length - failed.length} server
-              {visible.length - failed.length === 1 ? '' : 's'}
+              {total} {t('job')}{total === 1 ? '' : 's'} {t('across')}{' '}{visible.length - failed.length} {t('server')}{visible.length - failed.length === 1 ? '' : 's'}
             </span>
             {/* Lines that looked like jobs but did not parse are counted, not
                 hidden. A schedule silently missing from this view is a command
                 running on a box that nobody knows about. */}
-            {unparsed > 0 && <span className="state-unknown">{unparsed} line{unparsed === 1 ? '' : 's'} not understood</span>}
+            {unparsed > 0 && <span className="state-unknown">{unparsed} {t('line')}{unparsed === 1 ? '' : 's'} {t('not understood')}</span>}
             {/* Counted across the estate as well as per host: with a dozen
                 servers, a single host whose cron.d was refused is easy to
                 scroll past, and it is exactly the host you would want to look
                 at. */}
             {partial > 0 && (
               <span className="state-unknown">
-                {partial} server{partial === 1 ? '' : 's'} only partly readable
-              </span>
+                {partial} {t('server')}{partial === 1 ? '' : 's'} {t('only partly readable')}</span>
             )}
           </div>
 
@@ -443,13 +435,12 @@ export function CronPanel({ servers }: { servers: Server[] }): React.JSX.Element
                     <button
                       className="btn"
                       data-testid={`add-${h.serverId}`}
-                      title="Opens Operations › Jobs › Change a schedule, on this server. Writing a crontab changes a server, so it lives on the rail where everything does."
+                      title={t('Opens Operations › Jobs › Change a schedule, on this server. Writing a crontab changes a server, so it lives on the rail where everything does.')}
                       onClick={() =>
                         openCronEdit({ serverId: h.serverId, schedule: '0 3 * * *', command: '' })
                       }
                     >
-                      <Plus size={12} /> Add job…
-                    </button>
+                      <Plus size={12} /> {t('Add job…')}</button>
                   )}
                 </div>
                 <SourceStatus sources={h.sources} />
@@ -463,7 +454,7 @@ export function CronPanel({ servers }: { servers: Server[] }): React.JSX.Element
                     className="ui-note"
                     data-testid={`cron-not-editable-${h.serverId}`}
                   >
-                    {n} of these cannot be edited from OpsMaxx: {reason}
+                    {n} {t('of these cannot be edited from OpsMaxx:')}{' '}{reason}
                   </div>
                 ))}
                 {/* Why the pointer is not there, rather than simply not putting
@@ -473,8 +464,7 @@ export function CronPanel({ servers }: { servers: Server[] }): React.JSX.Element
                     the part it would delete. */}
                 {!ownCrontabReadable(h) && (
                   <div className="faint">
-                    This account’s crontab was not read in full, so nothing here can be edited.
-                  </div>
+                    {t('This account’s crontab was not read in full, so nothing here can be edited.')}</div>
                 )}
                 {h.entries.length === 0 && (
                   <div className="faint">
@@ -522,7 +512,7 @@ export function CronPanel({ servers }: { servers: Server[] }): React.JSX.Element
                       title={e.input === undefined ? e.command : `${e.command}\n\nstdin:\n${e.input}`}
                     >
                       {e.command}
-                      {e.input !== undefined && <span className="faint"> · stdin</span>}
+                      {e.input !== undefined && <span className="faint"> {t('· stdin')}</span>}
                     </span>
                     {e.user && <span className="faint">{e.user}</span>}
                     {rowControls(h, e)}

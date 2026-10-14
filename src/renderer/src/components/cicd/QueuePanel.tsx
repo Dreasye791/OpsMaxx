@@ -6,6 +6,7 @@ import { EmptyState } from '../common/EmptyState'
 import { cicdBridgeHas } from './state'
 import { Reading } from './Reading'
 import type { CicdBridge, CicdCapacity, CicdConnection, CicdQueueItem } from '../../../../shared/cicd'
+import { useT } from '../../i18n'
 
 /**
  * Why nothing is running.
@@ -34,6 +35,7 @@ export function QueuePanel({
   /** `cicdTrigger`. Decided at the mount point; this only renders it. */
   canTrigger?: boolean
 }): React.JSX.Element {
+  const t = useT()
   const [connectionId, setConnectionId] = useState(connections[0]?.id ?? '')
   const [state, setState] = useState<
     | { kind: 'idle' }
@@ -65,7 +67,7 @@ export function QueuePanel({
           <select
             className="input"
             value={connectionId}
-            aria-label="Account"
+            aria-label={t('Account')}
             onChange={(e) => setConnectionId(e.target.value)}
           >
             {connections.map((c) => (
@@ -100,17 +102,17 @@ export function QueuePanel({
       {/* A queue read is one HTTP call, but a Jenkins controller under load is
           exactly when somebody opens this tab — so "is it working or is it
           hung" is a real question here too, and a full stop cannot answer it. */}
-      {state.kind === 'reading' && <Reading label="Reading the queue and the executors…" />}
+      {state.kind === 'reading' && <Reading label={t('Reading the queue and the executors…')} />}
 
       {state.kind === 'ok' && (
         <>
           <Capacity capacity={state.capacity} queued={state.items.length} />
 
-          <h4 className="ui-label">Queue</h4>
+          <h4 className="ui-label">{t('Queue')}</h4>
           {state.items.length === 0 ? (
             <EmptyState
               compact
-              title="Nothing is queued"
+              title={t('Nothing is queued')}
               message="Every build this account can see has either started or finished."
             />
           ) : (
@@ -144,7 +146,7 @@ export function QueuePanel({
                       type="button"
                       className="btn secondary size-24"
                       disabled={dropping === i.id}
-                      title="Drop this item out of the queue. If it has already started, it is a running build and this will not stop it."
+                      title={t('Drop this item out of the queue. If it has already started, it is a running build and this will not stop it.')}
                       onClick={() => {
                         setDropping(i.id)
                         void bridge!
@@ -185,14 +187,13 @@ function Capacity({
   capacity: CicdCapacity
   queued: number
 }): React.JSX.Element {
+  const t = useT()
   const idle = Math.max(0, capacity.totalExecutors - capacity.busyExecutors)
   return (
     <>
       <div className="panel-stats">
         <span>
-          {capacity.busyExecutors} of {capacity.totalExecutors} executor
-          {capacity.totalExecutors === 1 ? '' : 's'} busy
-        </span>
+          {capacity.busyExecutors} {t('of')}{' '}{capacity.totalExecutors} {t('executor')}{capacity.totalExecutors === 1 ? '' : 's'} {t('busy')}</span>
         <span className="faint">
           {idle === 0 && queued > 0
             ? 'Nothing is free, so the queue is waiting on capacity rather than on a fault.'
@@ -200,7 +201,7 @@ function Capacity({
         </span>
       </div>
 
-      <h4 className="ui-label">Agents</h4>
+      <h4 className="ui-label">{t('Agents')}</h4>
       <div className="cicd-rows">
         {capacity.agents.map((a) => (
           <div key={a.name} className="cicd-queue-row">
@@ -213,12 +214,12 @@ function Capacity({
             </span>
             <span className="ellipsis">{remoteText(a.name)}</span>
             <span className="ui-note">
-              {a.executors} executor{a.executors === 1 ? '' : 's'}
+              {a.executors} {t('executor')}{a.executors === 1 ? '' : 's'}
               {!a.offline && a.idle ? ', idle' : ''}
             </span>
             <span className="spacer" />
             {a.diskFreeBytes !== undefined && (
-              <span className="cicd-row-age">{gib(a.diskFreeBytes)} free</span>
+              <span className="cicd-row-age">{gib(a.diskFreeBytes)} {t('free')}</span>
             )}
           </div>
         ))}
