@@ -653,6 +653,13 @@ and surface `skipped` — a vault-locked destination that never runs is the sile
 already warns about (`backup.ts:930-936`). The `Record<Kind,…>` tables fail to type-check until
 filled, which is the guard. **2–3 days, and it should go before anything else in this item.**
 
+**One inconsistency found while translating this panel, and deliberately left alone.** The export
+and import fields enforce `MIN_PASSPHRASE` — 12 characters, raised from 8 in `shared/backup.ts` —
+but the "stored on this machine" field on a backup destination still checks
+`machinePw.length < 8` (`BackupDestinations.tsx`, the Store/Replace row), which is the old
+threshold. Either a machine-stored passphrase is deliberately allowed to be weaker, or that check
+was missed when the minimum moved. Not changed: it is a behaviour question, not a translation one.
+
 ### 39. Kubernetes reads that are cheap and missing
 
 **All rows below are reachable.** `shared/k8sReview.ts` runs the thirteen reads in one round trip and `KubernetesPanel`'s **Cluster review** button renders them worst-first, with what was NOT read printed above the findings — a short list of findings otherwise reads as a clean cluster. Building it found a real defect: reading PodDisruptionBudgets in the wrong shape made `parseDrainPdbs` return nothing and every workload was then reported as having no budget, so text that yields no objects is now a blind spot rather than an empty cluster.
