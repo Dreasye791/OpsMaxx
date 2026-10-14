@@ -1,5 +1,7 @@
 # Features
 
+**English** · [简体中文](features.zh-CN.md)
+
 Everything OpsMaxx does, what it replaces, and the shapes of work it was built for.
 
 [← Back to the README](../README.md)
