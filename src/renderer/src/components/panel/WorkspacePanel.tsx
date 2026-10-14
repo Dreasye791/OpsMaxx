@@ -317,7 +317,10 @@ function NoTabs(): React.JSX.Element {
       title={t('No servers yet')}
       message={
         importFirst
-          ? `OpsMaxx found ${config.count} host${config.count === 1 ? '' : 's'} in your ~/.ssh/config. Import them, or add one by hand.`
+          ? t('OpsMaxx found {count} {hosts} in your ~/.ssh/config. Import them, or add one by hand.', {
+              count: config.count,
+              hosts: config.count === 1 ? 'host' : 'hosts'
+            })
           : 'Add a connection to get started, or import the ones you already have from ~/.ssh/config.'
       }
       action={

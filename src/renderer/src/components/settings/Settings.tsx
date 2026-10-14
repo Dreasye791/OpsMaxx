@@ -566,8 +566,8 @@ function KnownHosts(): React.JSX.Element {
           <div className="s-title">{t('Trusted SSH host keys')}</div>
           <div className="s-desc">
             {hosts.length
-              ? 'Connections are refused if a server presents a different key than the one saved here.'
-              : 'No servers trusted yet — the first connection to a server will ask.'}
+              ? t('Connections are refused if a server presents a different key than the one saved here.')
+              : t('No servers trusted yet — the first connection to a server will ask.')}
           </div>
         </div>
         <button className="btn sm" onClick={load}>
@@ -672,12 +672,12 @@ function VaultState(): React.JSX.Element {
         </div>
         <div className="s-desc">
           {exists === null
-            ? 'Reading this machine\u2019s keychain. Nothing is decided until it answers.'
+            ? t('Reading this machine’s keychain. Nothing is decided until it answers.')
             : !exists
-            ? 'A vault holds one copy of each credential and travels inside an encrypted backup. Without one, every server keeps its own.'
+            ? t('A vault holds one copy of each credential and travels inside an encrypted backup. Without one, every server keeps its own.')
             : unlocked
-              ? 'Anything that needs a saved credential can use it until the timer below runs out.'
-              : 'Anything that needs a saved credential will ask you to unlock first.'}
+              ? t('Anything that needs a saved credential can use it until the timer below runs out.')
+              : t('Anything that needs a saved credential will ask you to unlock first.')}
         </div>
       </div>
       {exists === null ? null : !exists ? (
@@ -1168,9 +1168,14 @@ export function Settings(): React.JSX.Element {
                 <div className="s-info">
                   <div className="s-title">{t('External editor command')}</div>
                   <div className="s-desc">
-                    Run to open a remote file — <code>code</code> for VS Code, <code>subl</code>,{' '}
-                    <code>nvim</code>, and so on. Leave empty to use the system default for the file
-                    type. Saving in the editor uploads the file back automatically.
+                    <Trans
+                      source="Run to open a remote file — {code} for VS Code, {subl}, {nvim}, and so on. Leave empty to use the system default for the file type. Saving in the editor uploads the file back automatically."
+                      components={{
+                        code: <code>code</code>,
+                        subl: <code>subl</code>,
+                        nvim: <code>nvim</code>
+                      }}
+                    />
                   </div>
                 </div>
                 <input
@@ -1263,14 +1268,14 @@ export function Settings(): React.JSX.Element {
                 <div className="s-info">
                   <div className="s-title">{t('Alert threshold')}</div>
                   <div className="s-desc">
-                    The same figure applies to CPU and to memory. Disk has its own, fixed at{' '}
-                    <strong>85%</strong>: a root filesystem past that alerts, which is the same
-                    85% at which the Fleet Monitor lists the server as needing attention and turns
-                    its disk bar red. Inodes use the same 85% and load its own fixed{' '}
-                    <strong>2 per core</strong>. Only the root filesystem is measured, for blocks
-                    and for inodes alike — a server that has filled /var and has room on / raises
-                    nothing here.{' '}
-                    {alertCoverageText(fleetStatus?.running, settings.fleetSamplingEnabled)}
+                    <Trans
+                      source="The same figure applies to CPU and to memory. Disk has its own, fixed at {disk}: a root filesystem past that alerts, which is the same 85% at which the Fleet Monitor lists the server as needing attention and turns its disk bar red. Inodes use the same 85% and load its own fixed {load}. Only the root filesystem is measured, for blocks and for inodes alike — a server that has filled /var and has room on / raises nothing here."
+                      components={{
+                        disk: <strong>85%</strong>,
+                        load: <strong>2 per core</strong>
+                      }}
+                    />{' '}
+                    {t(alertCoverageText(fleetStatus?.running, settings.fleetSamplingEnabled))}
                   </div>
                 </div>
                 <div className="segment">
@@ -1297,17 +1302,16 @@ export function Settings(): React.JSX.Element {
                       because this is the cost of turning it on and the whole
                       point is that it used to happen invisibly. */}
                   <div className="s-desc">
-                    While this is on, each checked server&rsquo;s connection is held open and never
-                    goes idle, so <strong>{t('Keep authenticated connection')}</strong> under SSH sessions
-                    stops applying to them at any setting. On a server with two-factor
-                    authentication that means no new code is requested until you turn this off or
-                    quit.
+                    <Trans
+                      source="While this is on, each checked server’s connection is held open and never goes idle, so {keep} under SSH sessions stops applying to them at any setting. On a server with two-factor authentication that means no new code is requested until you turn this off or quit."
+                      components={{ keep: <strong>{t('Keep authenticated connection')}</strong> }}
+                    />
                   </div>
                   <FleetSamplerLine />
                 </div>
                 <Switch
                   checked={settings.fleetSamplingEnabled}
-                  label="Check servers in the background"
+                  label={t('Check servers in the background')}
                   onChange={(v) => setSettings({ fleetSamplingEnabled: v })}
                 />
               </div>

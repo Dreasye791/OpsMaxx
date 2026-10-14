@@ -8,6 +8,7 @@ import { PICKERLESS_MODE } from '../../../../shared/mcp'
 import { Switch } from '../common/Switch'
 import { ModePicker } from './ModePicker'
 import { useT } from '../../i18n'
+import { Trans } from '../../i18n/Trans'
 
 
 /**
@@ -291,8 +292,10 @@ export function AiSecurity(): React.JSX.Element {
       <div className="setting-row" style={{ alignItems: 'flex-start' }}>
         <div className="s-info">
           <div className="s-desc">
-            {t('This command needs a token, and a token comes from an agent session. Create one, then paste the command into a terminal with that token in place of')}{' '}
-            <code className="mono">&lt;token&gt;</code>.
+            <Trans
+              source="This command needs a token, and a token comes from an agent session. Create one, then paste the command into a terminal with that token in place of {token}."
+              components={{ token: <code className="mono">&lt;token&gt;</code> }}
+            />
           </div>
         </div>
         <button className="btn sm" onClick={() => openAi('agents')}>
@@ -321,10 +324,16 @@ export function AiSecurity(): React.JSX.Element {
 
       <h3 style={{ marginTop: 18 }}>{t('Or skip typing tokens: the OpsMaxx CLI launcher')}</h3>
       <div className="s-desc">
-        {t('Install the CLI once (')}<code className="mono">{t('npm install -g opsmaxx')}</code>{t(', or')}{' '}
-        <code className="mono">{t('npm install -g .')}</code> {t('from this repo), then run')}{' '}
-        <code className="mono">{t('opsmaxx claude')}</code> {t('or')}{' '}<code className="mono">{t('opsmaxx codex')}</code>{t('. The first run pops a one-time pairing code right here in OpsMaxx — type it into the terminal and the session, token and MCP config are wired up for you.')}{' '}<code className="mono">opsmaxx run -- &lt;command&gt;</code>{' '}
-        {t('works the same way for any other MCP-aware CLI.')}</div>
+        <Trans
+          source="Install the CLI once ({npm1}, or {npm2} from this repo), then run {claude} or {codex}. The first run pops a one-time pairing code right here in OpsMaxx — type it into the terminal and the session, token and MCP config are wired up for you. {run} works the same way for any other MCP-aware CLI."
+          components={{
+            npm1: <code className="mono">{t('npm install -g opsmaxx')}</code>,
+            npm2: <code className="mono">{t('npm install -g .')}</code>,
+            claude: <code className="mono">{t('opsmaxx claude')}</code>,
+            codex: <code className="mono">{t('opsmaxx codex')}</code>,
+            run: <code className="mono">opsmaxx run -- &lt;command&gt;</code>
+          }}
+        /></div>
     </div>
   )
 }

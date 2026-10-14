@@ -432,8 +432,8 @@ export function AiAgents({ sessionsOnly = false }: { sessionsOnly?: boolean }): 
       <h2>{sessionsOnly ? t('Active Sessions') : t('AI Agents')}</h2>
       <div className="sub">
         {sessionsOnly
-          ? 'Every agent currently authorized to talk to OpsMaxx, with its workspace(s) and access group.'
-          : 'Create a scoped session for each AI client, then paste its token into that client\'s MCP configuration.'}
+          ? t('Every agent currently authorized to talk to OpsMaxx, with its workspace(s) and access group.')
+          : t('Create a scoped session for each AI client, then paste its token into that client\'s MCP configuration.')}
       </div>
 
       {!sessionsOnly && <CreateSessionForm workspaces={workspaces} groups={groups} onCreated={load} />}

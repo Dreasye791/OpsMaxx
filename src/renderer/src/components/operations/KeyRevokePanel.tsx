@@ -317,11 +317,13 @@ export function KeyRevokePanel({ servers }: { servers: Server[] }): React.JSX.El
         <div className="panel-note is-unknown" data-testid="write-gated">
           <ShieldAlert size={12} />{' '}
           <b>
-            {gate === 'bridge'
-              ? ACCESS_WRITE_STALE_BRIDGE
-              : gate === 'build'
-                ? ACCESS_WRITE_DISABLED_SUMMARY
-                : ACCESS_WRITE_OFF_SUMMARY}
+            {t(
+              gate === 'bridge'
+                ? ACCESS_WRITE_STALE_BRIDGE
+                : gate === 'build'
+                  ? ACCESS_WRITE_DISABLED_SUMMARY
+                  : ACCESS_WRITE_OFF_SUMMARY
+            )}
           </b>
           {/* The switch, where the refusal is. Sending somebody to hunt for a
               setting they were not told the name of is what made this read as
@@ -344,8 +346,8 @@ export function KeyRevokePanel({ servers }: { servers: Server[] }): React.JSX.El
               watched firing on a real RHEL 9 host with KillUserProcesses=yes —
               because that is what they are accepting by turning it on. */}
           <NoteWhy summary={t('Why it is off, and what it will be able to do')}>
-            <p>{gate === 'opt-in' ? ACCESS_WRITE_OPT_IN_NOTE : ACCESS_WRITE_DISABLED_REASON}</p>
-            <p>{ACCESS_WRITE_SCOPE}</p>
+            <p>{t(gate === 'opt-in' ? ACCESS_WRITE_OPT_IN_NOTE : ACCESS_WRITE_DISABLED_REASON)}</p>
+            <p>{t(ACCESS_WRITE_SCOPE)}</p>
           </NoteWhy>
         </div>
       )}

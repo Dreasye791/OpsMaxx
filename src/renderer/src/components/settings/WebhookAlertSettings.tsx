@@ -131,10 +131,13 @@ export function WebhookAlertSettings(): React.JSX.Element {
         <div className="s-info">
           <div className="s-title">{t('Send alerts to a webhook')}</div>
           <div className="s-desc">
-            POSTs a small JSON message to any HTTPS endpoint — Slack, Discord, Teams and most
-            alerting systems accept one. Only the server&rsquo;s name, what fired and when are sent;
-            never a server, an IP, a log line or command output.
-            {!cfg.hasUrl && ' Add a URL below to enable this.'}
+            {t('POSTs a small JSON message to any HTTPS endpoint — Slack, Discord, Teams and most alerting systems accept one. Only the server’s name, what fired and when are sent; never a server, an IP, a log line or command output.')}
+            {!cfg.hasUrl && (
+              <>
+                {' '}
+                {t('Add a URL below to enable this.')}
+              </>
+            )}
           </div>
           <div className="s-desc">
             {t('It carries what Alerts raises, so that switch has to be on too. And nothing is raised while you are elsewhere unless servers are checked in the background — so with that off, this stays silent in exactly the case you set it up for.')}</div>
@@ -156,8 +159,8 @@ export function WebhookAlertSettings(): React.JSX.Element {
           <div className="s-title">{t('Webhook URL')}</div>
           <div className="s-desc">
             {cfg.hasUrl
-              ? 'A URL is saved. It is stored with your other secrets and is never shown again — paste a new one to replace it, or save an empty field to remove it.'
-              : 'Stored with your other secrets, not in settings or backups. https only, since the URL is itself a credential.'}
+              ? t('A URL is saved. It is stored with your other secrets and is never shown again — paste a new one to replace it, or save an empty field to remove it.')
+              : t('Stored with your other secrets, not in settings or backups. https only, since the URL is itself a credential.')}
           </div>
           {saveMsg && <div className={clsx('s-desc', saveMsg.tone)}>{saveMsg.text}</div>}
         </div>
@@ -165,7 +168,7 @@ export function WebhookAlertSettings(): React.JSX.Element {
           <input
             className="input"
             type="password"
-            placeholder={cfg.hasUrl ? '••••••••  paste to replace' : 'https://hooks.slack.com/services/…'}
+            placeholder={cfg.hasUrl ? t('••••••••  paste to replace') : 'https://hooks.slack.com/services/…'}
             value={draft}
             onChange={(e) => {
               setDraft(e.target.value)

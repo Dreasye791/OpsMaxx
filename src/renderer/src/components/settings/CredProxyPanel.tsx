@@ -263,9 +263,9 @@ export function CredProxyPanel(): React.JSX.Element {
           <div className="s-title">{t('Port')}</div>
           <div className="s-desc">
             {status?.address
-              ? `Listening on ${status.address}.`
-              : 'Not listening. It binds 127.0.0.1 only.'}{' '}
-            {CRED_PROXY_LOOPBACK_NOTE}
+              ? t('Listening on {address}.', { address: status.address })
+              : t('Not listening. It binds 127.0.0.1 only.')}{' '}
+            {t(CRED_PROXY_LOOPBACK_NOTE)}
           </div>
         </div>
         <input
@@ -285,11 +285,20 @@ export function CredProxyPanel(): React.JSX.Element {
           {status.parked.reason === 'vault-locked'
             ? (
                 <>
-                  {`The vault is locked, so ${status.parked.calls} call${status.parked.calls === 1 ? '' : 's'} ${status.parked.calls === 1 ? 'was' : 'were'} parked since ${new Date(status.parked.since).toLocaleTimeString()} rather than sent without a credential. `}
+                  {t('The vault is locked, so {count} {calls} {were} parked since {time} rather than sent without a credential. ', {
+                    count: status.parked.calls,
+                    calls: status.parked.calls === 1 ? 'call' : 'calls',
+                    were: status.parked.calls === 1 ? 'was' : 'were',
+                    time: new Date(status.parked.since).toLocaleTimeString()
+                  })}
                   <UnlockVaultButton reason="Unlocking releases the calls parked while the vault was closed." />
                 </>
               )
-            : `A rule points at a vault entry that no longer holds anything. ${status.parked.calls} call${status.parked.calls === 1 ? '' : 's'} refused since ${new Date(status.parked.since).toLocaleTimeString()}.`}
+            : t('A rule points at a vault entry that no longer holds anything. {count} {calls} refused since {time}.', {
+                count: status.parked.calls,
+                calls: status.parked.calls === 1 ? 'call' : 'calls',
+                time: new Date(status.parked.since).toLocaleTimeString()
+              })}
         </div>
       )}
 
@@ -298,7 +307,7 @@ export function CredProxyPanel(): React.JSX.Element {
           <div className="s-title">{t('Tokens')}</div>
           <div className="s-desc">
             {t('One per caller, sent as')}{' '}<code>{CRED_PROXY_TOKEN_HEADER}</code> {t('on every request.')}{' '}
-            {CRED_PROXY_TOKEN_NOTE}
+            {t(CRED_PROXY_TOKEN_NOTE)}
             <br />
             {t('Give each script or agent its own, so revoking one does not stop the others.')}</div>
         </div>

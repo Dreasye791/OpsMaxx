@@ -106,14 +106,14 @@ export function MachineGrants(): React.JSX.Element {
       <EmptyState
         compact
         title={t('Nothing runs without your master password')}
-        message="No secret on this machine is readable without it. Scheduled backups and addy will ask you to unlock after a restart."
+        message={t('No secret on this machine is readable without it. Scheduled backups and addy will ask you to unlock after a restart.')}
       />
     )
   }
 
   return (
     <div>
-      <div className="s-desc">{MACHINE_GRANT_MEANING}</div>
+      <div className="s-desc">{t(MACHINE_GRANT_MEANING)}</div>
       {rows.map((row) => (
         <div className="setting-row" key={row.id}>
           <div className="s-info">

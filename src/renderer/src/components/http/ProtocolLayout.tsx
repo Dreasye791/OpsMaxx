@@ -341,7 +341,12 @@ function EmptyWorkbench(): React.JSX.Element {
         <button className="btn" onClick={() => useHttp.getState().openImport()}>
           {t('Import…')}</button>
         <span className="faint">
-          {[newTab && `${newTab} new tab`, region && `${region} move focus`].filter(Boolean).join(' · ')}
+          {[
+            newTab && t('{key} new tab', { key: newTab }),
+            region && t('{key} move focus', { key: region })
+          ]
+            .filter(Boolean)
+            .join(' · ')}
         </span>
       </div>
     </div>

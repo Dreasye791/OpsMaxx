@@ -75,8 +75,8 @@ export function SshSessions(): React.JSX.Element {
           <div className="s-title">{t('Shared connections')}</div>
           <div className="s-desc">
             {pool.length
-              ? 'Disconnecting one forces the next connection to that server to authenticate again.'
-              : 'None open. The first connection to a server authenticates and is then reused.'}
+              ? t('Disconnecting one forces the next connection to that server to authenticate again.')
+              : t('None open. The first connection to a server authenticates and is then reused.')}
           </div>
         </div>
         <button className="btn sm" onClick={load}>

@@ -188,7 +188,7 @@ export function BackupPanel(): React.JSX.Element {
           className="input grow"
           ref={exportPwRef}
           type="password"
-          placeholder={`Backup passphrase (min ${MIN_PASSPHRASE} characters)`}
+          placeholder={t('Backup passphrase (min {min} characters)', { min: MIN_PASSPHRASE })}
           value={exportPw}
           onChange={(e) => setExportPw(e.target.value)}
         />
@@ -204,10 +204,10 @@ export function BackupPanel(): React.JSX.Element {
           disabled={!exportReady || busy !== null}
           title={
             exportReady
-              ? 'Choose where to save the backup'
+              ? t('Choose where to save the backup')
               : exportPw.length < MIN_PASSPHRASE
-                ? `Pick a passphrase of at least ${MIN_PASSPHRASE} characters first`
-                : 'The two passphrases must match'
+                ? t('Pick a passphrase of at least {min} characters first', { min: MIN_PASSPHRASE })
+                : t('The two passphrases must match')
           }
           onClick={() => void runExport()}
         >
@@ -223,12 +223,7 @@ export function BackupPanel(): React.JSX.Element {
 
       <h3 className="backup-h">{t('Restore from backup')}</h3>
       <p className="s-desc" style={{ marginBottom: 10 }}>
-        Replaces everything currently in this app with the contents of the backup file. Type the
-        passphrase for that backup first, then choose the file — you get to see what is inside it
-        before anything is replaced, and the app restarts once the restore completes. The recorded
-        history of the servers already on this machine is cleared as part of the restore: a backup
-        does not carry history, and keeping the old estate's would leave two estates in one
-        timeline.
+        {t('Replaces everything currently in this app with the contents of the backup file. Type the passphrase for that backup first, then choose the file — you get to see what is inside it before anything is replaced, and the app restarts once the restore completes. The recorded history of the servers already on this machine is cleared as part of the restore: a backup does not carry history, and keeping the old estate\'s would leave two estates in one timeline.')}
       </p>
       <div className="row" style={{ gap: 8 }}>
         <input
@@ -264,7 +259,13 @@ export function BackupPanel(): React.JSX.Element {
               <br />
               {t('Created')}{' '}{when(staged.summary.createdAt)} · {staged.summary.workspaces} {t('workspaces ·')}{' '}
               {staged.summary.servers} {t('servers ·')}{' '}{staged.summary.databases} {t('databases ·')}{' '}
-              {staged.summary.secrets} {t('credentials')}{staged.summary.hasVault ? ' · vault included' : ''}
+              {staged.summary.secrets} {t('credentials')}
+              {staged.summary.hasVault && (
+                <>
+                  {' '}
+                  {t('· vault included')}
+                </>
+              )}
             </div>
           </div>
           <button className="btn sm" onClick={() => setStaged(null)}>
@@ -280,11 +281,7 @@ export function BackupPanel(): React.JSX.Element {
       <h3 className="backup-h" style={{ color: 'var(--danger)' }}>
         {t('Danger zone')}</h3>
       <p className="s-desc" style={{ marginBottom: 10 }}>
-        Permanently deletes every workspace, server, database, tunnel, stored credential, the
-        vault, trusted host keys and AI/MCP configuration — everything a backup covers, gone from
-        this machine. It also deletes the recorded history: every sample, event and observed fact
-        about your servers. This cannot be undone from within the app, and a backup does not
-        contain the history — only what a backup covers can be brought back.
+        {t('Permanently deletes every workspace, server, database, tunnel, stored credential, the vault, trusted host keys and AI/MCP configuration — everything a backup covers, gone from this machine. It also deletes the recorded history: every sample, event and observed fact about your servers. This cannot be undone from within the app, and a backup does not contain the history — only what a backup covers can be brought back.')}
       </p>
 
       {settings.backupDirty ? (

@@ -620,7 +620,7 @@ export function AlertsPanel(): React.JSX.Element {
             {rows === null ? '' : `${rows.length} recorded.`}
           </div>
         </div>
-        <span className={clsx('chip', chip.tone)} title={alertCoverageLines(samplerStatus?.running, samplingEnabled)[0].text}>
+        <span className={clsx('chip', chip.tone)} title={t(alertCoverageLines(samplerStatus?.running, samplingEnabled)[0].text)}>
           {chip.label}
         </span>
         <button className="btn ghost sm" onClick={read} disabled={reading}>
@@ -800,7 +800,7 @@ export function AlertsPanel(): React.JSX.Element {
               coverage for two kinds that have none at all. */}
           {alertCoverageLines(samplerStatus?.running, samplingEnabled).map((line) => (
             <div className="s-desc" key={line.source} data-testid={`alert-coverage-${line.source}`}>
-              <b>{line.kinds.map((k) => LABEL[k]).join(', ')}.</b> {line.text}
+              <b>{line.kinds.map((k) => LABEL[k]).join(', ')}.</b> {t(line.text)}
             </div>
           ))}
 

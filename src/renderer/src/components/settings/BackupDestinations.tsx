@@ -245,7 +245,7 @@ export function BackupDestinations(): React.JSX.Element {
         <EmptyState
           compact
           title={t('No destinations yet')}
-          message="Backups still work through the file you download above; a destination is what makes them happen on a schedule and get checked afterwards."
+          message={t('Backups still work through the file you download above; a destination is what makes them happen on a schedule and get checked afterwards.')}
         />
       )}
 
@@ -299,7 +299,7 @@ export function BackupDestinations(): React.JSX.Element {
                 <input
                   className="input grow"
                   type="password"
-                  placeholder={`Backup passphrase (min ${MIN_PASSPHRASE})`}
+                  placeholder={t('Backup passphrase (min {min})', { min: MIN_PASSPHRASE })}
                   value={password}
                   onChange={(e) => setRunPw((p) => ({ ...p, [dest.id]: e.target.value }))}
                 />
@@ -725,7 +725,9 @@ function DestinationEditor(props: EditorProps): React.JSX.Element {
                     className="input grow"
                     type="password"
                     placeholder={
-                      machineSet ? 'Stored on this machine — type to replace' : 'Backup passphrase'
+                      machineSet
+                        ? t('Stored on this machine — type to replace')
+                        : t('Backup passphrase')
                     }
                     value={machinePw}
                     onChange={(e) => setMachinePw(e.target.value)}
@@ -735,7 +737,7 @@ function DestinationEditor(props: EditorProps): React.JSX.Element {
                     disabled={machinePw.length < 8}
                     onClick={() => void saveMachinePw()}
                   >
-                    {machineSet ? 'Replace' : 'Store'}
+                    {machineSet ? t('Replace') : t('Store')}
                   </button>
                 </div>
                 {/* Said here, where the choice is made, and not in a document

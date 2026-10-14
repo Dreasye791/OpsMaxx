@@ -882,6 +882,154 @@ export const zhCN: Record<string, string> = {
     '{read} 读取没有返回结果，因此无法判断{meaning}。',
 
   // ─────────────────────────────────────────────────────────────────────────
+  // 「codemod 从未包裹」的那一类（见 docs/i18n.md §4 第三个盲点）。
+  //
+  // 这些句子此前是**裸 JSX 文本、JSX 表达式里的字面量、或非文案属性的 prop**，
+  // 所以源码扫描器完全不看它们 —— 既不计入差距，译了也不让任何数字下降，
+  // 而界面上一直是英文。渲染审计（i18n:render）是唯一发现它们的工具。
+  //
+  // 现在都接上了 t()，因此这批词条**会被 coverage 计入**。
+  // 带 {槽位} 的两条是句子内含 <strong> 标记，用 <Trans> 保持整句一个键。
+  // ─────────────────────────────────────────────────────────────────────────
+  'POSTs a small JSON message to any HTTPS endpoint — Slack, Discord, Teams and most alerting systems accept one. Only the server’s name, what fired and when are sent; never a server, an IP, a log line or command output.':
+    '向任意 HTTPS 端点 POST 一条简短的 JSON 消息 —— Slack、Discord、Teams 以及大多数告警系统都能接收。只发送服务器名、触发的告警与时间；绝不会发送服务器地址、IP、日志行或命令输出。',
+  'A URL is saved. It is stored with your other secrets and is never shown again — paste a new one to replace it, or save an empty field to remove it.':
+    '已保存一个地址。它与其他机密一起存储，之后不再显示 —— 粘贴新地址即可替换，或保存空值以删除它。',
+  'Stored with your other secrets, not in settings or backups. https only, since the URL is itself a credential.':
+    '与其他机密一起存储，不会写进设置或备份。只支持 https，因为该地址本身就是一项凭据。',
+  '••••••••  paste to replace': '••••••••  粘贴以替换',
+  'Disconnecting one forces the next connection to that server to authenticate again.':
+    '断开其中一条后，下次连接该服务器时必须重新认证。',
+  'None open. The first connection to a server authenticates and is then reused.':
+    '当前没有已建立的连接。首次连接某台服务器时进行认证，此后复用该连接。',
+  'Connections are refused if a server presents a different key than the one saved here.':
+    '若某台服务器出示的密钥与这里保存的不同，连接会被拒绝。',
+  'No servers trusted yet — the first connection to a server will ask.':
+    '尚未信任任何服务器 —— 首次连接某台服务器时会向你询问。',
+  'Reading this machine’s keychain. Nothing is decided until it answers.':
+    '正在读取本机钥匙串。在它返回结果之前，这里不做任何判断。',
+  'A vault holds one copy of each credential and travels inside an encrypted backup. Without one, every server keeps its own.':
+    '保险库保存每项凭据的一份副本，并随加密备份一起迁移。没有保险库时，每台服务器各自保存一份。',
+  'Anything that needs a saved credential can use it until the timer below runs out.':
+    '任何需要已保存凭据的操作都可以直接使用，直到下方计时结束。',
+  'Anything that needs a saved credential will ask you to unlock first.':
+    '任何需要已保存凭据的操作都会先请你解锁。',
+  'The same figure applies to CPU and to memory. Disk has its own, fixed at {disk}: a root filesystem past that alerts, which is the same 85% at which the Fleet Monitor lists the server as needing attention and turns its disk bar red. Inodes use the same 85% and load its own fixed {load}. Only the root filesystem is measured, for blocks and for inodes alike — a server that has filled /var and has room on / raises nothing here.':
+    '同一个数值同时适用于 CPU 与内存。磁盘另有自己的阈值，固定为 {disk}：根文件系统超过它就会告警，这与「机群监控」把服务器列为需要关注、并把磁盘条变红所用的那个 85% 是同一个数。inode 用的也是这个 85%，负载另有自己的固定值 {load}。只测量根文件系统，块与 inode 皆然 —— 一台 /var 已满而 / 仍有空间的服务器，在这里不会触发任何告警。',
+  'While this is on, each checked server’s connection is held open and never goes idle, so {keep} under SSH sessions stops applying to them at any setting. On a server with two-factor authentication that means no new code is requested until you turn this off or quit.':
+    '开启期间，每台被检查服务器上的连接会一直保持打开、不会空闲断开，因此 SSH 会话中的{keep}在任何设置下都不再适用于它们。在启用了双因素认证的服务器上，这意味着在你关闭此开关或退出之前，不会再要求输入新的一次性验证码。',
+  'No secret on this machine is readable without it. Scheduled backups and addy will ask you to unlock after a restart.':
+    '没有它，本机上的任何机密都无法读取。定时备份与 addy 会在重启后请你解锁。',
+  'Backups still work through the file you download above; a destination is what makes them happen on a schedule and get checked afterwards.':
+    '备份仍可通过上方下载的文件完成；设置目标位置的意义在于让备份按计划自动执行，并在之后接受检查。',
+  'Every agent currently authorized to talk to OpsMaxx, with its workspace(s) and access group.':
+    '当前获准与 OpsMaxx 通信的所有代理，及其工作区与访问组。',
+  'Create a scoped session for each AI client, then paste its token into that client\'s MCP configuration.':
+    '为每个 AI 客户端创建一个限定范围的会话，然后把该令牌粘贴进此客户端的 MCP 配置。',
+  'Replaces everything currently in this app with the contents of the backup file. Type the passphrase for that backup first, then choose the file — you get to see what is inside it before anything is replaced, and the app restarts once the restore completes. The recorded history of the servers already on this machine is cleared as part of the restore: a backup does not carry history, and keeping the old estate\'s would leave two estates in one timeline.':
+    '用备份文件的内容替换此应用当前的全部数据。请先输入该备份的口令，然后选择文件 —— 在替换任何内容之前你能先看到里面有什么，恢复完成后应用会重启。本机上原有服务器记录的历史也会在恢复中一并清除：备份不携带历史，若保留旧资产的历史，两条时间线就会混在同一个时间轴里。',
+  'Permanently deletes every workspace, server, database, tunnel, stored credential, the vault, trusted host keys and AI/MCP configuration — everything a backup covers, gone from this machine. It also deletes the recorded history: every sample, event and observed fact about your servers. This cannot be undone from within the app, and a backup does not contain the history — only what a backup covers can be brought back.':
+    '永久删除所有工作区、服务器、数据库、隧道、已保存的凭据、保险库、受信任的主机密钥与 AI/MCP 配置 —— 备份涵盖的一切都会从本机消失。它还会删除记录下来的历史：关于你服务器的每一次采样、事件与观察事实。此操作无法在应用内撤销，而备份本身不含历史 —— 只有备份涵盖的内容才可能恢复。',
+  '· vault included': '· 含保险库',
+  'Backup passphrase (min {min} characters)': '备份口令（至少 {min} 个字符）',
+  'Pick a passphrase of at least {min} characters first': '请先设置一个至少 {min} 个字符的口令',
+  'Choose where to save the backup': '选择备份保存位置',
+  'The two passphrases must match': '两次输入的口令必须一致',
+  'Backup passphrase (min {min})': '备份口令（至少 {min}）',
+  'Stored on this machine — type to replace': '已保存在本机 —— 输入以替换',
+  'Backup passphrase': '备份口令',
+  // 注意这里没有 'Replace'：文件中已有一条**不带引号**的 `Replace: '替换'`。
+  // 带引号与不带引号两种写法会被 tsc 当成同名属性（TS1117），但 eslint 的
+  // 重复键规则**发现不了** —— 所以改完词表必须跑 typecheck，不能只跑 lint。
+  'Store': '保存',
+
+  // 凭证代理面板：两处**运行时模板字符串**（含复数/动词槽位）与两条页面级常量。
+  'Listening on {address}.': '正在监听 {address}。',
+  // 'Not listening. It binds 127.0.0.1 only.' 已有条目（文中别处），此处只接线。
+  'The vault is locked, so {count} {calls} {were} parked since {time} rather than sent without a credential. ':
+    '保险库已锁定，因此自 {time} 起有 {count} 次调用被暂存，而不是在没有凭据的情况下发送。',
+  'A rule points at a vault entry that no longer holds anything. {count} {calls} refused since {time}.':
+    '有一条规则指向的保险库条目已不再存有任何内容。自 {time} 起已有 {count} 次调用被拒绝。',
+  'Every process on this machine can reach a loopback port, so being local is not a permission. The token is what separates your script from anything else running as you.':
+    '本机上的任何进程都能访问回环端口，所以「来自本机」并不构成授权。把你自己的脚本与其它以你身份运行的进程区分开的，是那个令牌。',
+  'Anything holding this token can spend your API budget through every rule below. It is not a password for you — it is the key a script or an agent presents instead of the credential itself. Treat it like the API key it stands in for, and rotate it when you would have rotated that.':
+    '持有此令牌的任何东西都能通过下面每一条规则花掉你的 API 预算。它不是给你用的密码 —— 它是脚本或代理用来代替凭据本身的钥匙。请像对待它所替代的那个 API 密钥一样对待它，该轮换时就轮换。',
+  'Run to open a remote file — {code} for VS Code, {subl}, {nvim}, and so on. Leave empty to use the system default for the file type. Saving in the editor uploads the file back automatically.':
+    '运行它即可打开远程文件 —— 例如 {code}（VS Code）、{subl}、{nvim} 等。留空则按文件类型使用系统默认程序。在编辑器里保存会把文件自动回传。',
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // `shared/` 里用 `+` 拼接的常量（见 docs/i18n.md §7 关于孤儿的那一节）。
+  //
+  // 它们**是已接线的** —— `SettingSwitch` 与 `NoteWhy` 在组件内部就调用 t(label)/
+  // t(desc)，所以键是「类常量算出的那个整串」。但那个整串在源码里从不成形，
+  // 因此从来没有人给它写过词条：源码扫描看不见、渲染审计只看到英文。
+  // 修法是**只补词条、不动代码**，但键必须与拼接结果逐字一致（含 — 与 ’ ）。
+  // ─────────────────────────────────────────────────────────────────────────
+  'Detached jobs write one directory per step under your own state directory on each server — five small marker files, plus the job’s own output, which is as large as the command makes it — so a job survives the connection dropping. Nothing is installed and nothing runs after the job, and the directory is removed as soon as OpsMaxx has read the exit status, or swept seven days later if it never gets back. With this off, jobs run on the attached path: closing the lid mid-upgrade sends SIGHUP to the remote command, and apt and dpkg do not ignore it.':
+    '分离运行的作业会在每台服务器上你自己的状态目录下，为每个步骤写一个目录 —— 五个小的标记文件，加上作业自身的输出（大小取决于命令）—— 因此作业能在连接断开后继续存在。不会安装任何东西，作业之后也不会再运行任何东西；OpsMaxx 读到退出状态后该目录即被删除，若始终没有读回则七天后清理。关闭此选项时，作业走「附加」路径：升级过程中合上盖子会向远端命令发送 SIGHUP，而 apt 与 dpkg 并不会忽略它。',
+  'Adding and revoking keys is off by default. Every refusal and both rollbacks are built and tested, and the change is staged behind a dead-man’s switch on the server itself — but nobody has yet watched that switch fire on a real RHEL 9 server with KillUserProcesses=yes, which is the case it exists for. Turn this on only if you can afford to be locked out of the server you point it at, and keep a second session open while you try it.':
+    '默认关闭添加与吊销密钥。每一次拒绝与两次回滚都已实现并测试，且改动由服务器自身的「失联保险开关」兜底 —— 但还没有人在一台真正启用 KillUserProcesses=yes 的 RHEL 9 上看过那个开关触发，而这正是它存在的理由。只有在你承受得起被锁在那台服务器之外时才打开它，并在此过程中保持另一个会话不要断。',
+  'Even once it is enabled it will only ever edit ~/.ssh/authorized_keys for the account OpsMaxx connects as on each server — not another account’s file, and not any path sshd was configured to read instead. On the account it connects as it also needs the server to report which key this session authenticated with (sshd’s ExposeAuthInfo, off by default); without that it refuses, because nothing can prove the key being removed is not the one holding the connection open.':
+    '即便启用，它也只会编辑 OpsMaxx 在每台服务器上所用账户的 ~/.ssh/authorized_keys —— 不会动其它账户的文件，也不会碰 sshd 被配置为改读的任何路径。在它所使用的账户上，还需要服务器能报告本次会话是用哪把密钥认证的（sshd 的 ExposeAuthInfo，默认关闭）；缺少这一点它会拒绝执行，因为无法证明要移除的密钥不是正维持着这条连接的那一把。',
+  'Changing authorized keys is not enabled in this build. The safety net behind it — the server restoring its own previous file if nothing confirms the change — is not yet dependable, and a rollback that cannot be relied on is worse than no rollback at all, because it tells you that you are safe. Reading is unaffected: nothing on this screen writes to any server.':
+    '此构建未启用修改授权密钥。它背后的安全网 —— 在没有任何确认时由服务器恢复自己的上一版文件 —— 尚不可靠；而一个不能依赖的回滚比没有回滚更糟，因为它会让你以为自己安全。读取不受影响：这个界面上的任何操作都不会写入服务器。',
+  'Changing authorized keys is not enabled in this build. Reading is unaffected — nothing on this screen writes to any server.':
+    '此构建未启用修改授权密钥。读取不受影响 —— 这个界面上的任何操作都不会写入服务器。',
+  'Revoking keys is switched off. Turn on “Allow adding and revoking keys on servers” in Settings to use it. Nothing on this screen writes to any server until you do.':
+    '吊销密钥已关闭。若要使用，请在设置中打开「允许在服务器上添加与吊销密钥」。在你打开之前，这个界面上的任何操作都不会写入服务器。',
+  'Restart OpsMaxx to revoke keys — this window is newer than the process behind it. Reading is unaffected.':
+    '重启 OpsMaxx 才能吊销密钥 —— 这个窗口比它背后的进程更新。读取不受影响。',
+  'Each of these is readable by anything running as you on this machine, without your master password. That is exactly what lets the work below happen while you are not here, and it is the reason to check the list.':
+    '其中每一项都能被本机上以你身份运行的任何东西读取，无需你的主密码。正是这一点让下面的工作能在你不在时照常进行 —— 也正因此才值得把这份清单过一遍。',
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 由**函数返回**的文案（alertCoverage.ts）。
+  //
+  // 这些句子活在 `settings/alertCoverage.ts` 的 COPY / NON_SAMPLER_COPY 表里，
+  // 由 `alertCoverageText()` / `alertCoverageLines()` 返回，渲染处原先是裸渲染
+  // —— 所以扫描器看不到「这是个调用点」，屏幕上却一直是英文。
+  // 修法是在**渲染处**接 t()，而不是在函数里：`tests/alertCoverage.test.ts`
+  // 断言的是**英文原文**（`toMatch(/wherever you are/)` 等），在函数内部翻译会
+  // 让那套测试与它的语义一起失效。
+  // ─────────────────────────────────────────────────────────────────────────
+  'Background checks are running, so alerts fire wherever you are in the app.':
+    '后台检查正在运行，因此无论你在应用的哪个位置，告警都会触发。',
+  'Background checks are switched on but not running right now — see the reason below. Until they are, a server is only sampled while its monitor is on screen.':
+    '后台检查已开启，但当前并未运行 —— 原因见下方。在它恢复之前，只有在监视器显示在屏幕上时才会对服务器采样。',
+  'Without background checks below, a server is only sampled while its monitor is on screen — so an alert can only fire while you are already looking at it.':
+    '未开启下方所述的后台检查时，只有在监视器显示在屏幕上时才会对服务器采样 —— 因此只有你正看着它时，告警才可能触发。',
+  'Job failures and tunnels are watched from the moment the app starts, whether or not background checks are on: a job reports its own steps, and tunnels are polled every ten seconds.':
+    '作业失败与隧道从应用启动那一刻起就被监视，无论后台检查是否开启：作业会报告自己的每个步骤，隧道每十秒轮询一次。',
+  'Database verdicts are the exception, and it is not a small one: they exist only because somebody opened the Databases page and read it. Nothing produces them in the background, so a database that goes into alarm overnight is not noticed until it is next read.':
+    '数据库结论是例外，而且这个例外并不小：它们之所以存在，只是因为有人打开数据库页面去读过。后台没有任何东西产生它们，因此一夜之间进入报警状态的数据库，要等到下一次被读取才会被注意到。',
+  'OOM kills and certificate expiry are read by the security posture probe, about once an hour. It has TWO switches, not one: it runs on the background sweep above, and only while the Security posture module is on for this workspace. With either of those off nothing reads them at all — not even while a monitor is on screen — until somebody presses Check now on the Security posture panel. With both on they are read about once an hour and raise with no screen open.':
+    'OOM 终止与证书到期由安全态势探针读取，大约每小时一次。它有两个开关，而不是一个：它依赖上方所述的后台扫描运行，且只在「安全态势」模块对当前工作区开启时才运行。任一开关关闭，就完全不会读取它们 —— 即使监视器在屏幕上也不会 —— 直到有人在安全态势面板上按下「立即检查」。两个开关都打开时大约每小时读取一次，且无需任何界面打开即可触发。',
+
+  // HTTP 客户端的快捷键提示：`ProtocolLayout.tsx` 用 `·` 把两段拼起来，
+  // 所以「整句」在源码里从不成形 —— 词表里那条整句键（`Ctrl+Shift+T new tab · F6
+  // move focus`）永远匹配不上，已删除，改成两个带 {key} 的模板键。
+  '{key} new tab': '{key} 新建标签页',
+  '{key} move focus': '{key} 切换焦点',
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 拆句片段的收尾（AiPanel / AiSecurity / BitwardenImport）。
+  //
+  // 这些都是围绕内联 <code> 拆成碎片的句子，原先按片段逐条翻译，中文语序必然错位
+  // （槽位位置被英文钉死）。现在各自整句一个键 + 命名槽位：{b}、{code}、{token}、
+  // {npm1}、{npm2}、{claude}、{codex}、{run} —— 槽位里是**命令名或标签**，不译；
+  // 位置由中文语序决定。
+  // ─────────────────────────────────────────────────────────────────────────
+  '{b} above does steps 1–4 in one click. Codex and Gemini CLI are still wired up by hand — {code}, or the snippet under AI Agents.':
+    '{b} 一步即可完成第 1–4 步。Codex 与 Gemini CLI 仍需手工接线 —— {code}，或使用「AI 代理」下面的那段配置。',
+  'This command needs a token, and a token comes from an agent session. Create one, then paste the command into a terminal with that token in place of {token}.':
+    '这条命令需要一个令牌，而令牌来自代理会话。先创建一个，然后把命令粘贴到终端里，并将 {token} 换成那个令牌。',
+  'Install the CLI once ({npm1}, or {npm2} from this repo), then run {claude} or {codex}. The first run pops a one-time pairing code right here in OpsMaxx — type it into the terminal and the session, token and MCP config are wired up for you. {run} works the same way for any other MCP-aware CLI.':
+    '只需安装一次 CLI（{npm1}，或用 {npm2} 从本地仓库安装），然后运行 {claude} 或 {codex}。首次运行时会在这里的 OpsMaxx 中弹出一次性配对码 —— 把它输入终端，会话、令牌与 MCP 配置就会自动接好。{run} 对其它的 MCP 客户端同样适用。',
+  'only if the account has it': '仅在该账户启用时才需填写',
+  'OpsMaxx found {count} {hosts} in your ~/.ssh/config. Import them, or add one by hand.':
+    'OpsMaxx 在你的 ~/.ssh/config 中找到了 {count} 台主机。导入它们，或手动添加一台。',
+
+  // ─────────────────────────────────────────────────────────────────────────
   // VPN 配置表单（components/vpn/VpnProfileForm.tsx）。
   //
   // 不译的：MTU、`internal-sftp`、示例地址 `10.0.0.2/32, fd00::2/128` —— 技术
@@ -2250,9 +2398,12 @@ export const zhCN: Record<string, string> = {
   'No destinations yet': '还没有目标',
   'Nothing has come through yet.': '还没有收到任何内容。',
   'Passphrase used for that backup': '该备份使用的口令',
-  'Backup passphrase (min 12 characters)': '备份口令（至少 12 个字符）',
+  // 这里原本还有两条带**死数字**的条目（`… (min 12 characters)` /
+  // `… at least 12 characters first`），已删除：源码里它们是**模板字符串**
+  // （`` `min ${MIN_PASSPHRASE} characters` ``），键里写死 12 就永远匹配不上 ——
+  // 也就是说那两条译文连同其「英文看着正常」的假象一起挂了很久。
+  // 现在用的是带 {min} 槽位的版本。
   'Type the backup passphrase first': '请先输入备份口令',
-  'Pick a passphrase of at least 12 characters first': '请先设置一个至少 12 个字符的口令',
   'A backup is your whole vault, wherever you send it': '备份就是整个保险库，无论你把它送到哪里',
   'Webhook URL': 'Webhook 地址',
   'Send alerts to a webhook': '把告警发送到 webhook',
@@ -2553,7 +2704,6 @@ export const zhCN: Record<string, string> = {
   'Layout (panels and splits)': '布局（面板与分栏）',
   'Open tabs and recently closed': '打开的标签页与最近关闭',
   'New HTTP request (Ctrl+Shift+T)': '新建 HTTP 请求（Ctrl+Shift+T）',
-  'Ctrl+Shift+T new tab · F6 move focus': 'Ctrl+Shift+T 新建标签页 · F6 切换焦点',
   'Which of these is this machine?': '哪一台是本机？',
   'Paste a URL or a curl command': '粘贴 URL 或 curl 命令',
   'Nothing can be said about this until sync runs.': '同步运行之前无法判断这一点。',

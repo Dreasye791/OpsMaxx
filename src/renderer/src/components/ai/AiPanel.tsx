@@ -12,6 +12,7 @@ import { useNav, AI_SECTIONS, AI_SECTION_LABELS } from '../../store/nav'
 import type { AiSection } from '../../store/nav'
 import type { McpAgentSession, ApprovalRequest } from '../../../../shared/mcp'
 import { useT } from '../../i18n'
+import { Trans } from '../../i18n/Trans'
 
 // Keyed by the nav store's union, so a page added there without an icon here
 // fails the build. The labels come from nav.ts, which is where the command
@@ -84,7 +85,14 @@ function Overview(): React.JSX.Element {
       <div className="s-desc">
         {t('Optional: under Access Groups, hold a workspace or server below every session\'s group with an assignment, or mark it Protected so agents there are held at Ask first — for production.')}</div>
       <div className="s-desc">
-        <b>{t('Connect an agent')}</b> {t('above does steps 1–4 in one click. Codex and Gemini CLI are still wired up by hand —')}{' '}<code className="mono">{t('opsmaxx codex')}</code>{t(', or the snippet under AI Agents.')}</div>
+        <Trans
+          source="{b} above does steps 1–4 in one click. Codex and Gemini CLI are still wired up by hand — {code}, or the snippet under AI Agents."
+          components={{
+            b: <b>{t('Connect an agent')}</b>,
+            code: <code className="mono">{t('opsmaxx codex')}</code>
+          }}
+        />
+      </div>
     </div>
   )
 }
