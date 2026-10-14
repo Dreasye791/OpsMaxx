@@ -1,5 +1,7 @@
 # Monitoring and fleet operations
 
+**English** · [简体中文](monitoring.zh-CN.md)
+
 Watching a fleet, and running the same change across it safely.
 
 [← Back to the README](../README.md)

@@ -72,7 +72,7 @@ OpsMaxx 是 **MobaXterm、PuTTY、Termius、SecureCRT 与 MobaXterm Personal Edi
 | **CI/CD** | 在 Jenkins、GitLab、GitHub Actions 中，把流水线、运行历史与失败步骤的日志读在对应服务器旁边。只读，且默认关闭：开启后会用你提供的令牌定时轮询第三方的 API |
 | **保险库** | AES-256-GCM 密钥存储，凭据放在操作系统钥匙串而非配置文件 |
 | **AI 代理网关** | Claude Code、Claude Desktop 与 Codex 可以经由它工作，却始终看不到密码、密钥、IP 或用户名 |
-| **界面语言** | 英文与 **简体中文**，在 **设置 › Language** 中切换，或设为跟随操作系统。这只覆盖应用界面，文档仍为英文。翻译层的机制、它看不到什么，以及尚未翻完的部分见 [docs/i18n.md](docs/i18n.md) |
+| **界面语言** | 英文与 **简体中文**，在 **设置 › 语言** 中切换，或设为跟随操作系统。这只覆盖应用界面，文档仍为英文。翻译层的机制、它看不到什么，以及尚未翻完的部分见 [docs/i18n.md](docs/i18n.md) |
 
 → **[完整功能列表、它替代了什么、以及它是为哪种工作而生](docs/features.md)**
 

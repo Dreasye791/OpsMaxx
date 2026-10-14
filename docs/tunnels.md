@@ -1,5 +1,7 @@
 # Tunnels and VPN
 
+**English** · [简体中文](tunnels.zh-CN.md)
+
 Port forwards, SOCKS proxies, WireGuard, OpenVPN, frp reverse proxies and the traffic inspector.
 
 [← Back to the README](../README.md)
