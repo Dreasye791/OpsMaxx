@@ -1030,6 +1030,95 @@ export const zhCN: Record<string, string> = {
     'OpsMaxx 在你的 ~/.ssh/config 中找到了 {count} 台主机。导入它们，或手动添加一台。',
 
   // ─────────────────────────────────────────────────────────────────────────
+  // 告警面板（components/monitor/AlertsPanel.tsx）。
+  //
+  // 这一屏渲染审计**走不到**（演示环境没有触发过告警），所以验收靠
+  // `npm run i18n:coverage`：译文一加，该文件的计数精确下降。
+  //
+  // 本段是**独立标签与整句**；同一文件里那些围绕数值或标记拆开的片段
+  // （如 `further step` + `in this incident…`）单独处理，因为片段方案会让中文
+  // 语序错位 —— 它们应改成带槽位的整句。见 docs/i18n.md §5。
+  // ─────────────────────────────────────────────────────────────────────────
+  'Reading the runbook…': '正在读取运行手册…',
+  'The runbook notes file could not be read, so nothing below is your note — it is nothing at all. Saving now would overwrite whatever is in that file.':
+    '运行手册笔记文件无法读取，因此下面显示的不是你的笔记 —— 它什么都不是。现在保存会覆盖那个文件里的内容。',
+  'That note was not saved, so it is not there. It is still in the box above — copy it somewhere before you leave this screen.':
+    '那条笔记没有保存，所以它不在那里。它仍在上方的输入框里 —— 离开此界面前先把它复制到别处。',
+  'What was run': '运行了什么',
+  'Nothing ran during this one.': '这一次没有任何东西运行。',
+  'You have seen it and are dealing with it. The chip goes and nothing more is said until the condition itself clears — however long that takes.':
+    '你已经看到并在处理它。状态条上的标记会消失，在条件本身解除之前不会再有任何提示 —— 无论要多久。',
+  'Acknowledge': '确认',
+  'Your note for this alert, and what was actually run the last three times it fired on this server.':
+    '你针对此告警的笔记，以及它在这台服务器上最近三次触发时实际运行了什么。',
+  'Resource alerts are switched off, so nothing new will be added below.':
+    '资源告警已关闭，因此下面不会新增任何内容。',
+  'Monitoring settings': '监控设置',
+  'Maintenance window': '维护窗口',
+  'Maintenance window active.': '维护窗口生效中。',
+  'End window now': '立即结束窗口',
+  'Stop announcing alerts on some servers for a while. They keep being sampled, their chips stay up, and webhook endpoints still receive everything.':
+    '让部分服务器在一段时间内不再播报告警。它们仍会被采样，标记仍会保留，webhook 端点也照旧收到全部内容。',
+  'Window length': '窗口时长',
+  'What the window is for': '窗口的用途',
+  'What it is for': '它的用途',
+  'Open a window': '打开一个窗口',
+  'Outstanding': '未解除',
+  'Nothing is outstanding right now.': '当前没有未解除的项。',
+  'Anything that has been raised and cleared is in the history below.':
+    '已触发并已解除的内容都在下方历史里。',
+  'How alerting works — where each kind comes from, and what a snooze does':
+    '告警如何运作 —— 每种告警来自哪里，以及「静音」做了什么',
+  'Runbook — your note, and what was run the last three times':
+    '运行手册 —— 你的笔记，以及最近三次运行了什么',
+  'Runbook alert kind': '运行手册告警类型',
+  'Runbook server': '运行手册服务器',
+  'Every server': '所有服务器',
+  'Per-server thresholds — CPU and memory, where the estate is not uniform':
+    '按服务器的阈值 —— 资产规模不统一时的 CPU 与内存',
+  'Reading your servers…': '正在读取你的服务器…',
+  'This workspace has no servers.': '此工作区没有服务器。',
+  'The alert log could not be read, so this history is not the history — it is nothing at all. Anything raised while it is unreadable is still delivered.':
+    '告警日志无法读取，因此这份历史并不是历史 —— 它什么都不是。在无法读取期间触发的告警仍会照常投递。',
+  'Reading the alert log…': '正在读取告警日志…',
+  'No alert has been recorded yet.': '还没有记录任何告警。',
+
+  // 同一屏里**围绕数值或标记拆开**的句子：改成带槽位的整句，中文语序才能正确
+  // （片段方案会让「…have to stay over the line for」与「minutes」在中文里错位）。
+  // 槽位里可能是数字（{count}/{minutes}/{percent}）或英文复数词（{alertWord}、
+  // {steps}）—— 复数槽位在中文里不需要出现，因此译文可以省略它们。
+  'Your note for {kind} on {scope}. This is text you wrote; nothing on a server can change it.':
+    '你在 {scope} 上针对 {kind} 的笔记。这是你自己写的文字；服务器上的任何东西都无法改动它。',
+  'Every server, for {kind}:': '所有服务器，针对 {kind}：',
+  '{count} further {steps} in this incident are not listed. They are in the job itself.':
+    '{count} 个后续步骤未在此事件中列出，它们都在作业本身里。',
+  'Silenced: snoozed until {time}. The condition has not changed, so the status-bar chip stays up.':
+    '已静音：暂停至 {time}。条件没有改变，因此状态条上的标记仍然保留。',
+  'Snooze for': '静音时长',
+  '{alertCount} {alertWord} on {serverCount} {serverWord}':
+    '{alertCount} 条告警，覆盖 {serverCount} 台服务器',
+  '— everything outstanding — ': '—— 全部未解除项 —— ',
+  'silenced until {time} ({remaining} left). They are still being sampled, their chips stay up, and webhook endpoints still receive everything.':
+    '已静音至 {time}（剩余 {remaining}）。它们仍会被采样，标记仍会保留，webhook 端点也照旧收到全部内容。',
+  'Database verdicts are not listed under Outstanding and cannot be snoozed:':
+    '数据库结论不会列在「未解除」下，也无法静音：',
+  'they are occurrences rather than conditions, so there is no repeat to stop. Every one is in the history below.':
+    '它们是发生记录而非持续状态，因此没有可停止的重复播报。每一条都在下方历史里。',
+  'CPU, memory and load have to stay over the line for {minutes} minutes':
+    'CPU、内存与负载必须持续超过阈值 {minutes} 分钟',
+  '{lead} — and be read at least {samples} times in that period — before anything is said. A compile or a log rotation takes a host to 100% for a few seconds, and that is not an incident. The status-bar chip still follows every reading, so nothing is hidden; the all-clear waits the same {minutes} minutes, so one quiet sample on a host that is still busy does not close an alert that is still true. Disk, inodes and certificates have no wait: they do not move between two samples, and delaying them would buy nothing.':
+    '{lead} —— 并且必须在那个区间内至少被读到 {samples} 次 —— 才会发出任何提示。一次编译或一次日志轮转会让主机在几秒内冲到 100%，那不算事故。状态条上的标记仍会跟随每一次读数，所以没有任何信息被藏起来；解除提示同样要等 {minutes} 分钟，这样在一台仍然繁忙的主机上出现的单次安静采样，不会关掉一个仍然成立的告警。磁盘、inode 与证书没有等待期：它们在两次采样之间不会变化，延迟只会白等。',
+  '{term} stops this app talking about one host-and-kind for a while and leaves the status-bar chip up, because the condition has not changed.':
+    '{term}会让本应用在一段时间内不再谈论某台主机的某一类告警，并保留状态条上的标记，因为条件并没有改变。',
+  'Acknowledging': '确认',
+  '{term} takes it out of Outstanding entirely and says nothing more until the condition itself clears, however long that takes.':
+    '{term}会把它从「未解除」中完全移除，并且在条件本身解除之前不再有任何提示 —— 无论要多久。',
+  'The CPU and memory line for one server, where the estate is not uniform — a build box at 95% is working and a database at 95% is in trouble. Blank uses the workspace default of {percent}%. Disk, inodes and load are deliberately not settable per server: they are the numbers the Fleet Monitor colours a bar at and lists a server under, and an alert firing at a different number from the screen it sends you to is worse than no alert.':
+    '当资产规模不统一时，为单台服务器设置 CPU 与内存的阈值 —— 一台构建机在 95% 时仍在正常工作，而一台数据库在 95% 时已经出问题了。留空则使用工作区默认值 {percent}%。磁盘、inode 与负载刻意不支持按服务器设置：它们正是「机群监控」用来给进度条上色、并把服务器列进清单的数字，而一个在与它引导你去看的界面上不同数值处触发的告警，比没有告警更糟。',
+  'Showing the most recent {shown} of {total} read back. Older events are kept for as long as the history store keeps anything, and are not shown here — but they are still read, which is what keeps a months-old alert from announcing itself again at every launch.':
+    '以下显示的是最近读回的 {shown} 条，共 {total} 条。更早的事件只要历史存储还保留着就会留存，只是不在这里显示 —— 不过它们仍会被读取，正是这一点让几个月前的告警不会在每次启动时又跳出来宣告一次。',
+
+  // ─────────────────────────────────────────────────────────────────────────
   // VPN 配置表单（components/vpn/VpnProfileForm.tsx）。
   //
   // 不译的：MTU、`internal-sftp`、示例地址 `10.0.0.2/32, fd00::2/128` —— 技术

@@ -44,6 +44,7 @@ import {
   type RunbookView
 } from '../../../../shared/runbooks'
 import { useT } from '../../i18n'
+import { Trans } from '../../i18n/Trans'
 
 // The alert inbox — roadmap item 19b.
 //
@@ -251,7 +252,10 @@ function RunbookBody({
       )}
 
       <div className="s-desc" data-testid="runbook-note-provenance">
-        {t('Your note for')}{' '}{LABEL[kind]} {t('on')}{' '}{scope}{t('. This is text you wrote; nothing on a server can change it.')}</div>
+        {t('Your note for {kind} on {scope}. This is text you wrote; nothing on a server can change it.', {
+          kind: LABEL[kind],
+          scope
+        })}</div>
       <textarea
         className="input"
         rows={4}
@@ -267,7 +271,7 @@ function RunbookBody({
       )}
       {hostId !== null && view.kindNote && (
         <div className="s-desc" data-testid="runbook-kind-note">
-          <b>{t('Every server, for')}{' '}{LABEL[kind]}:</b> {view.kindNote.text}
+          <b>{t('Every server, for {kind}:', { kind: LABEL[kind] })}</b> {view.kindNote.text}
         </div>
       )}
 
@@ -353,7 +357,10 @@ function RunbookRecallBody({ view }: { view: RunbookView }): React.JSX.Element {
           )}
           {occ.elided > 0 && (
             <div className="alerts-meta">
-              {occ.elided} {t('further step')}{occ.elided === 1 ? '' : 's'} {t('in this incident are not listed. They are in the job itself.')}</div>
+              {t('{count} further {steps} in this incident are not listed. They are in the job itself.', {
+                count: occ.elided,
+                steps: occ.elided === 1 ? 'step' : 'steps'
+              })}</div>
           )}
         </div>
       ))}
@@ -424,7 +431,9 @@ function OutstandingCard({
           quiet, which is the failure mode damping already had to answer for. */}
       {snoozed && (
         <div className="alert-snoozed-note">
-          {t('Silenced: snoozed until')}{' '}{new Date(snoozedUntil).toLocaleTimeString()}{t('. The condition has not changed, so the status-bar chip stays up.')}</div>
+          {t('Silenced: snoozed until {time}. The condition has not changed, so the status-bar chip stays up.', {
+            time: new Date(snoozedUntil).toLocaleTimeString()
+          })}</div>
       )}
 
       <div className="alert-actions">
@@ -656,9 +665,17 @@ export function AlertsPanel(): React.JSX.Element {
         <div className="alerts-banner alerts-banner-live" style={{ flexWrap: 'wrap', gap: 6 }}>
           <span className="grow">
             <b>{t('Maintenance window active.')}</b>{' '}
-            {live.alertCount} {t('alert')}{live.alertCount === 1 ? '' : 's'} {t('on')}{' '}{live.serverCount} {t('server')}{live.serverCount === 1 ? '' : 's'} {live.all ? '— everything outstanding — ' : ''}
-            {t('silenced until')}{' '}{new Date(live.until).toLocaleTimeString()} ({remainingText(live.until, now)}{' '}
-            {t('left). They are still being sampled, their chips stay up, and webhook endpoints still receive everything.')}</span>
+            {t('{alertCount} {alertWord} on {serverCount} {serverWord}', {
+              alertCount: live.alertCount,
+              alertWord: live.alertCount === 1 ? 'alert' : 'alerts',
+              serverCount: live.serverCount,
+              serverWord: live.serverCount === 1 ? 'server' : 'servers'
+            })}{' '}
+            {live.all ? t('— everything outstanding — ') : ''}
+            {t('silenced until {time} ({remaining} left). They are still being sampled, their chips stay up, and webhook endpoints still receive everything.', {
+              time: new Date(live.until).toLocaleTimeString(),
+              remaining: remainingText(live.until, now)
+            })}</span>
           <button
             className="btn"
             onClick={() => {
@@ -821,14 +838,32 @@ export function AlertsPanel(): React.JSX.Element {
               table that enforces them, so the sentence cannot drift from the
               behaviour. */}
           <div className="s-desc" data-testid="alert-dwell">
-            <b>{t('CPU, memory and load have to stay over the line for')}{' '}{dwellMinutes} {t('minutes')}</b> {t('— and be read at least')}{' '}{DWELL_MIN_SAMPLES} {t('times in that period — before anything is said. A compile or a log rotation takes a host to 100% for a few seconds, and that is not an incident. The status-bar chip still follows every reading, so nothing is hidden; the all-clear waits the same')}{' '}{dwellMinutes} {t('minutes, so one quiet sample on a host that is still busy does not close an alert that is still true. Disk, inodes and certificates have no wait: they do not move between two samples, and delaying them would buy nothing.')}</div>
+            <Trans
+              source="{lead} — and be read at least {samples} times in that period — before anything is said. A compile or a log rotation takes a host to 100% for a few seconds, and that is not an incident. The status-bar chip still follows every reading, so nothing is hidden; the all-clear waits the same {minutes} minutes, so one quiet sample on a host that is still busy does not close an alert that is still true. Disk, inodes and certificates have no wait: they do not move between two samples, and delaying them would buy nothing."
+              components={{
+                lead: (
+                  <b>
+                    {t('CPU, memory and load have to stay over the line for {minutes} minutes', {
+                      minutes: dwellMinutes
+                    })}
+                  </b>
+                )
+              }}
+              values={{ samples: DWELL_MIN_SAMPLES, minutes: dwellMinutes }}
+            /></div>
 
           {/* The two actions on a card, in the words their own tooltips use.
               Written down once here so the buttons themselves do not have to
               carry an explanation each. */}
           <div className="s-desc">
-            <b>{t('Snoozing')}</b> {t('stops this app talking about one host-and-kind for a while and leaves the status-bar chip up, because the condition has not changed.')}{' '}
-            <b>{t('Acknowledging')}</b> {t('takes it out of Outstanding entirely and says nothing more until the condition itself clears, however long that takes.')}</div>
+            <Trans
+              source="{term} stops this app talking about one host-and-kind for a while and leaves the status-bar chip up, because the condition has not changed."
+              components={{ term: <b>{t('Snoozing')}</b> }}
+            />{' '}
+            <Trans
+              source="{term} takes it out of Outstanding entirely and says nothing more until the condition itself clears, however long that takes."
+              components={{ term: <b>{t('Acknowledging')}</b> }}
+            /></div>
         </div>
       </details>
 
@@ -900,8 +935,9 @@ export function AlertsPanel(): React.JSX.Element {
           {t('Per-server thresholds — CPU and memory, where the estate is not uniform')}</summary>
         <div className="disclosure-body">
           <div className="s-desc">
-            {t('The CPU and memory line for one server, where the estate is not uniform — a build box at 95% is working and a database at 95% is in trouble. Blank uses the workspace default of')}{' '}
-            {globalThreshold}{t('%. Disk, inodes and load are deliberately not settable per server: they are the numbers the Fleet Monitor colours a bar at and lists a server under, and an alert firing at a different number from the screen it sends you to is worse than no alert.')}</div>
+            {t('The CPU and memory line for one server, where the estate is not uniform — a build box at 95% is working and a database at 95% is in trouble. Blank uses the workspace default of {percent}%. Disk, inodes and load are deliberately not settable per server: they are the numbers the Fleet Monitor colours a bar at and lists a server under, and an alert firing at a different number from the screen it sends you to is worse than no alert.', {
+              percent: globalThreshold
+            })}</div>
           {servers.length === 0 && !hydrated ? (
             // Same reason as the capacity panel: saved servers arrive from an
             // await, so an empty list at launch is "not read yet", not "none".
@@ -979,7 +1015,10 @@ export function AlertsPanel(): React.JSX.Element {
       )}
       {rows !== null && rows.length > LIMIT && (
         <div className="alerts-meta" style={{ marginTop: 4 }}>
-          {t('Showing the most recent')}{' '}{LIMIT} {t('of')}{' '}{rows.length} {t('read back. Older events are kept for as long as the history store keeps anything, and are not shown here — but they are still read, which is what keeps a months-old alert from announcing itself again at every launch.')}</div>
+          {t('Showing the most recent {shown} of {total} read back. Older events are kept for as long as the history store keeps anything, and are not shown here — but they are still read, which is what keeps a months-old alert from announcing itself again at every launch.', {
+            shown: LIMIT,
+            total: rows.length
+          })}</div>
       )}
     </div>
   )
